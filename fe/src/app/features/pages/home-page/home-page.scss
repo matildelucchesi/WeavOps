@@ -1,0 +1,17 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: #F8F1FF;
+    width: 100vw;
+}
+
+.wrapper {
+    min-height: 100vh;
+    background-color: #F8F1FF;
+    margin: 0;
+    width: 100vw;
+}
+
+:host ::ng-deep body {
+    background-color: #F8F1FF;
+}

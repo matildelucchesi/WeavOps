@@ -1,0 +1,56 @@
+:host {
+  display: block;
+  max-width: 100%;
+}
+
+.input-field {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+}
+
+/* Material internals: fill background and remove white gap */
+:host ::ng-deep .input-form .mat-mdc-text-field-wrapper,
+:host ::ng-deep .input-form .mdc-text-field--outlined,
+:host ::ng-deep .input-form .mat-mdc-form-field-flex {
+  background-color: #f8f1ff;
+}
+
+:host ::ng-deep .input-form .mdc-text-field__input {
+  background-color: #f8f1ff;
+  color: #3f177b;
+}
+
+:host ::ng-deep .input-form .mat-mdc-floating-label,
+:host ::ng-deep .input-form .mdc-floating-label {
+  color: #3f177b;
+}
+
+:host ::ng-deep .input-form .mdc-text-field__input::placeholder {
+  color: #3f177b;
+  opacity: 0.7;
+}
+
+:host ::ng-deep .input-form .mdc-notched-outline__leading,
+:host ::ng-deep .input-form .mdc-notched-outline__notch,
+:host ::ng-deep .input-form .mdc-notched-outline__trailing {
+  border-color: #3f177b;
+}
+
+:host ::ng-deep .input-form {
+  --mdc-outlined-text-field-outline-color: #3f177b;
+  --mdc-outlined-text-field-hover-outline-color: #3f177b;
+  --mdc-outlined-text-field-focus-outline-color: #3f177b;
+}
+
+:host ::ng-deep .input-form .mat-mdc-form-field-subscript-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+.input-form {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: fit-content;
+}
