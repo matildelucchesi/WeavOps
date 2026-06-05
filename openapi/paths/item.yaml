@@ -1,0 +1,104 @@
+﻿/items:
+  get:
+    summary: Recupera tutti i item
+    operationId: getItems
+    tags:
+      - Item
+    responses:
+      '200':
+        description: Lista item
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/item.yaml'
+
+  post:
+    summary: Crea un item
+    operationId: createItem
+    tags:
+      - Item
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/item.yaml'
+    responses:
+      '201':
+        description: Item creato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/item.yaml'
+      '400':
+        description: Richiesta non valida
+
+/items/{id}:
+  get:
+    summary: Recupera un item tramite ID
+    operationId: getItemById
+    tags:
+      - Item
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Item trovato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/item.yaml'
+      '404':
+        description: Item non trovato
+
+  put:
+    summary: Aggiorna un item
+    operationId: updateItem
+    tags:
+      - Item
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/item.yaml'
+    responses:
+      '200':
+        description: Item aggiornato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/item.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Item non trovato
+
+  delete:
+    summary: Elimina un item
+    operationId: deleteItem
+    tags:
+      - Item
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Item eliminato
+      '404':
+        description: Item non trovato

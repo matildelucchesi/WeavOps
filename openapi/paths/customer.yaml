@@ -1,0 +1,104 @@
+﻿/customers:
+  get:
+    summary: Recupera tutti i customer
+    operationId: getCustomers
+    tags:
+      - Customer
+    responses:
+      '200':
+        description: Lista customer
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/customer.yaml'
+
+  post:
+    summary: Crea un customer
+    operationId: createCustomer
+    tags:
+      - Customer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/customer.yaml'
+    responses:
+      '201':
+        description: Customer creato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/customer.yaml'
+      '400':
+        description: Richiesta non valida
+
+/customers/{id}:
+  get:
+    summary: Recupera un customer tramite ID
+    operationId: getCustomerById
+    tags:
+      - Customer
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Customer trovato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/customer.yaml'
+      '404':
+        description: Customer non trovato
+
+  put:
+    summary: Aggiorna un customer
+    operationId: updateCustomer
+    tags:
+      - Customer
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/customer.yaml'
+    responses:
+      '200':
+        description: Customer aggiornato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/customer.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Customer non trovato
+
+  delete:
+    summary: Elimina un customer
+    operationId: deleteCustomer
+    tags:
+      - Customer
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Customer eliminato
+      '404':
+        description: Customer non trovato

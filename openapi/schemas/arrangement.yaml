@@ -1,0 +1,53 @@
+type: object
+
+required:
+  - itemName
+  - reedCount
+  - reedCM
+  - reedHight
+  - warpLenght
+  - piecesCount
+  - pieceLenght
+  - warpEndCount
+  - hitsPerDm
+
+properties:
+  id:
+    type: string
+    description: Identificativo MongoDB generato dal server
+    readOnly: true
+  itemName:
+    type: string
+  reedCount:
+    type: number
+    description: Numero di denti del pettine - quanti denti ci sono per unità di misura
+  reedCM:
+    type: number
+    description: Numero di centimetri del pettine
+  reedHight:
+    type: number
+    format: float
+    decription: Altezza del pettine in centimetri - altezza del tessuto
+  warpLenght:
+    type: number
+    format: float
+    description: Lunghezza del filo di ordito in metri
+  piecesCount:
+    type: number
+    format: float
+    description: Numero di pezze che devono essere prodotte
+  pieceLenght:
+    type: number
+    format: float
+    description: Lunghezza di ogni pezza in metri
+  warpEndCount:
+    type: number
+    format: float
+    description: Numero fili ordito
+  hitsPerDm:
+    type: number
+    desription: Numero di colpi per decimetro
+  deliveryDate:
+    type: string
+    format: date-time
+

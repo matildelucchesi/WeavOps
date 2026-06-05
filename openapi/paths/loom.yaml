@@ -1,0 +1,104 @@
+﻿/looms:
+  get:
+    summary: Recupera tutti i loom
+    operationId: getLooms
+    tags:
+      - Loom
+    responses:
+      '200':
+        description: Lista loom
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/loom.yaml'
+
+  post:
+    summary: Crea un loom
+    operationId: createLoom
+    tags:
+      - Loom
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/loom.yaml'
+    responses:
+      '201':
+        description: Loom creato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom.yaml'
+      '400':
+        description: Richiesta non valida
+
+/looms/{id}:
+  get:
+    summary: Recupera un loom tramite id
+    operationId: getLoomById
+    tags:
+      - Loom
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Loom trovato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom.yaml'
+      '404':
+        description: Loom non trovato
+
+  put:
+    summary: Aggiorna un loom
+    operationId: updateLoom
+    tags:
+      - Loom
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/loom.yaml'
+    responses:
+      '200':
+        description: Loom aggiornato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Loom non trovato
+
+  delete:
+    summary: Elimina un loom
+    operationId: deleteLoom
+    tags:
+      - Loom
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Loom eliminato
+      '404':
+        description: Loom non trovato

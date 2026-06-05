@@ -1,0 +1,104 @@
+﻿/arrangements:
+  get:
+    summary: Recupera tutti i arrangement
+    operationId: getArrangements
+    tags:
+      - Arrangement
+    responses:
+      '200':
+        description: Lista arrangement
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/arrangement.yaml'
+
+  post:
+    summary: Crea un arrangement
+    operationId: createArrangement
+    tags:
+      - Arrangement
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/arrangement.yaml'
+    responses:
+      '201':
+        description: Arrangement creato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/arrangement.yaml'
+      '400':
+        description: Richiesta non valida
+
+/arrangements/{id}:
+  get:
+    summary: Recupera un arrangement tramite ID
+    operationId: getArrangementById
+    tags:
+      - Arrangement
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Arrangement trovato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/arrangement.yaml'
+      '404':
+        description: Arrangement non trovato
+
+  put:
+    summary: Aggiorna un arrangement
+    operationId: updateArrangement
+    tags:
+      - Arrangement
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/arrangement.yaml'
+    responses:
+      '200':
+        description: Arrangement aggiornato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/arrangement.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Arrangement non trovato
+
+  delete:
+    summary: Elimina un arrangement
+    operationId: deleteArrangement
+    tags:
+      - Arrangement
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Arrangement eliminato
+      '404':
+        description: Arrangement non trovato

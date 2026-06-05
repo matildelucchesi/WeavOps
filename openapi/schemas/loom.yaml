@@ -1,0 +1,20 @@
+type: object
+
+required:
+  - serialNumber
+  - status
+
+properties:
+  id:
+    type: string
+    description: Identificativo MongoDB generato dal server
+    readOnly: true
+  serialNumber:
+    type: string
+
+  status:
+    type: string
+    enum:
+      - WORKING
+      - STOPPED
+      - MAINTENANCE

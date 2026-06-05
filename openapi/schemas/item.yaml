@@ -1,0 +1,39 @@
+type: object
+
+required:
+  - customer
+  - arrangement
+
+properties:
+  id:
+    type: string
+    description: Identificativo MongoDB generato dal server
+    readOnly: true
+  arrangement:
+    $ref: './arrangement.yaml'
+  state:
+    type: string
+    enum:
+      - INITIALIZED
+      - RUNNING
+      - COMPLETED
+      - ABANDONED
+  customer:
+    $ref: './customer.yaml'
+  totalMeters:
+    type: number
+  metersRun:
+    type: number
+  processing:
+    type: array
+    items:
+      $ref: './process.yaml'
+  expectedEndDate:
+    type: string
+    format: date-time
+  endDate:
+    type: string
+    format: date-time
+  startDate:
+    type: string
+    format: date-time

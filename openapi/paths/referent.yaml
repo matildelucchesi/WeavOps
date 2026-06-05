@@ -1,0 +1,104 @@
+﻿/referents:
+  get:
+    summary: Recupera tutti i referenti
+    operationId: getReferents
+    tags:
+      - Referent
+    responses:
+      '200':
+        description: Lista referenti
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/referent.yaml'
+
+  post:
+    summary: Crea un referente
+    operationId: createReferent
+    tags:
+      - Referent
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/referent.yaml'
+    responses:
+      '201':
+        description: Referent creato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/referent.yaml'
+      '400':
+        description: Richiesta non valida
+
+/referents/{id}:
+  get:
+    summary: Recupera un referente tramite ID
+    operationId: getReferentById
+    tags:
+      - Referent
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Referent trovato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/referent.yaml'
+      '404':
+        description: Referent non trovato
+
+  put:
+    summary: Aggiorna un referente
+    operationId: updateReferent
+    tags:
+      - Referent
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/referent.yaml'
+    responses:
+      '200':
+        description: Referent aggiornato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/referent.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Referent non trovato
+
+  delete:
+    summary: Elimina un referente
+    operationId: deleteReferent
+    tags:
+      - Referent
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Referent eliminato
+      '404':
+        description: Referent non trovato

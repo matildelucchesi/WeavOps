@@ -1,0 +1,104 @@
+﻿/processes:
+  get:
+    summary: Recupera tutti i processi
+    operationId: getProcesses
+    tags:
+      - Process
+    responses:
+      '200':
+        description: Lista processi
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/process.yaml'
+
+  post:
+    summary: Crea un processo
+    operationId: createProcess
+    tags:
+      - Process
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/process.yaml'
+    responses:
+      '201':
+        description: Process creato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/process.yaml'
+      '400':
+        description: Richiesta non valida
+
+/processes/{id}:
+  get:
+    summary: Recupera un processo tramite ID
+    operationId: getProcessById
+    tags:
+      - Process
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Process trovato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/process.yaml'
+      '404':
+        description: Process non trovato
+
+  put:
+    summary: Aggiorna un processo
+    operationId: updateProcess
+    tags:
+      - Process
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/process.yaml'
+    responses:
+      '200':
+        description: Process aggiornato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/process.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Process non trovato
+
+  delete:
+    summary: Elimina un processo
+    operationId: deleteProcess
+    tags:
+      - Process
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Process eliminato
+      '404':
+        description: Process non trovato

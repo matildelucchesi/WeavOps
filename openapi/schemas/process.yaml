@@ -1,0 +1,37 @@
+type: object
+
+required:
+  - loomId
+  - speed
+  - efficiency
+  - totalMeters
+  - metersRun
+  - metersToGo
+  - startDate
+
+properties:
+  id:
+    type: string
+    description: Identificativo MongoDB generato dal server
+    readOnly: true
+  speed:
+    type: number
+  efficiency:
+    type: number
+  totalMeters:
+    type: number
+  metersRun:
+    type: number
+  metersToGo:
+    type: number
+  startDate:
+    type: string
+    format: date-time
+  endDate:
+    type: string
+    format: date-time
+  expectedEndDate:
+    type: string
+    format: date-time
+  loomId:
+    type: string

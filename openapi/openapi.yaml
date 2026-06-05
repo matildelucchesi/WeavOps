@@ -1,0 +1,50 @@
+openapi: 3.0.3
+
+info:
+  title: Demo API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+security:
+  - bearerAuth: []
+
+paths:
+  /looms:
+    $ref: './paths/loom.yaml#/~1looms'
+  /looms/{id}:
+    $ref: './paths/loom.yaml#/~1looms~1{id}'
+  /items:
+    $ref: './paths/item.yaml#/~1items'
+  /items/{id}:
+    $ref: './paths/item.yaml#/~1items~1{id}'
+  /arrangements:
+    $ref: './paths/arrangement.yaml#/~1arrangements'
+  /arrangements/{id}:
+    $ref: './paths/arrangement.yaml#/~1arrangements~1{id}'
+  /referents:
+    $ref: './paths/referent.yaml#/~1referents'
+  /referents/{id}:
+    $ref: './paths/referent.yaml#/~1referents~1{id}'
+  /processes:
+    $ref: './paths/process.yaml#/~1processes'
+  /processes/{id}:
+    $ref: './paths/process.yaml#/~1processes~1{id}'
+  /customers:
+    $ref: './paths/customer.yaml#/~1customers'
+  /customers/{id}:
+    $ref: './paths/customer.yaml#/~1customers~1{id}'
+  /users:
+    $ref: './paths/user.yaml#/~1users'
+  /users/{id}:
+    $ref: './paths/user.yaml#/~1users~1{id}'
+  /auth/login:
+    $ref: './paths/user.yaml#/~1auth~1login'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

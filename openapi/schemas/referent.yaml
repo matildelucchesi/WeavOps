@@ -1,0 +1,19 @@
+type: object
+
+required:
+  - firstName
+  - lastName
+
+properties:
+  id:
+    type: string
+    description: Identificativo MongoDB generato dal server
+    readOnly: true
+  firstName:
+    type: string
+  lastName:
+    type: string
+  phoneNumber:
+    type: string
+  email:
+      type: string

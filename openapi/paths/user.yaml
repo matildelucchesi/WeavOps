@@ -1,0 +1,149 @@
+/auth/login:
+  post:
+    summary: Effettua il login utente
+    operationId: login
+    security: []
+    tags:
+      - Auth
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - username
+              - password
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+                format: password
+    responses:
+      '200':
+        description: Login eseguito correttamente
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  description: Token di autenticazione da usare nelle richieste successive
+                tokenType:
+                  type: string
+                  example: Bearer
+                user:
+                  $ref: '../schemas/user.yaml'
+      '400':
+        description: Richiesta non valida
+      '401':
+        description: Credenziali non valide
+
+/users:
+  get:
+    summary: Recupera tutti gli utenti
+    operationId: getUsers
+    tags:
+      - User
+    responses:
+      '200':
+        description: Lista utenti
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/user.yaml'
+
+  post:
+    summary: Crea un utente
+    operationId: createUser
+    tags:
+      - User
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/user.yaml'
+    responses:
+      '201':
+        description: Utente creato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml'
+      '400':
+        description: Richiesta non valida
+
+/users/{id}:
+  get:
+    summary: Recupera un utente tramite id
+    operationId: getUserById
+    tags:
+      - User
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Utente trovato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml'
+      '404':
+        description: Utente non trovato
+
+  put:
+    summary: Aggiorna un utente
+    operationId: updateUser
+    tags:
+      - User
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/user.yaml'
+    responses:
+      '200':
+        description: Utente aggiornato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Utente non trovato
+
+  delete:
+    summary: Elimina un utente
+    operationId: deleteUser
+    tags:
+      - User
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Utente eliminato
+      '404':
+        description: Utente non trovato
