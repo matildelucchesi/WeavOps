@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { LoginComponent } from '../../reusable-components/login-component/login-component';
 
 @Component({
-  selector: 'app-home-page',
+  selector: 'app-login-page',
   imports: [LoginComponent],
-  templateUrl: './home-page.html',
-  styleUrl: './home-page.scss',
+  templateUrl: './login-page.html',
+  styleUrl: './login-page.scss',
   standalone: true,
 })
-export class HomePage {}
+export class LoginPage {}

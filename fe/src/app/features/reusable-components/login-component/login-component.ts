@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { InputComponent } from "../input-component/input-component";
 
 @Component({
@@ -8,4 +8,5 @@ import { InputComponent } from "../input-component/input-component";
   styleUrl: './login-component.scss',
   standalone: true,
 })
-export class LoginComponent {}
+export class LoginComponent {
+}

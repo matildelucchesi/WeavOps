@@ -1,0 +1,247 @@
+:host {
+    display: block;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 100vh;
+    background-color: #F8F1FF;
+    width: 100vw;
+}
+
+.wrapper {
+    position: relative;
+    justify-self: center;
+    z-index: 1000000;
+    background-color: #F8F1FF;
+    margin: 0;
+    width: fit-content;
+}
+
+:host ::ng-deep body {
+    background-color: #F8F1FF;
+}
+
+.logo {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+img{
+    width: 550px;
+    height: auto;
+}
+
+.login-weave {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.login-weave span {
+    position: absolute;
+    display: block;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.38) inset,
+        0 -1px 0 rgba(138, 69, 0, 0.2) inset,
+        0 2px 4px rgba(120, 61, 0, 0.14);
+}
+
+.login-weave span::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.login-weave--vertical {
+    right: clamp(58px, 9vw, 150px);
+    top: 40px;
+    bottom: 22px;
+    width: 118px;
+}
+
+.login-weave--vertical span {
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background:
+        repeating-linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.28) 0 8px,
+            rgba(255, 255, 255, 0) 8px 16px,
+            rgba(165, 82, 0, 0.22) 16px 24px,
+            rgba(255, 255, 255, 0) 24px 32px
+        ),
+        linear-gradient(
+            90deg,
+            #c76300 0%,
+            #F78701 28%,
+            #ffb65c 52%,
+            #F78701 78%,
+            #a95100 100%
+        ),
+        repeating-linear-gradient(
+            180deg,
+            #F78701 0 28%,
+            #ffb35c 28% 43%,
+            #F78701 43% 63%,
+            #d26e00 63% 78%,
+            #F78701 78% 100%
+        );
+    background-size: 100% 240px;
+    background-blend-mode: screen, normal, normal;
+    animation: weave-flow-down 4.8s linear infinite;
+}
+
+.login-weave--vertical span::after {
+    background:
+        repeating-linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.36) 0 18px,
+            rgba(255, 255, 255, 0) 18px 35px,
+            rgba(115, 58, 0, 0.24) 35px 53px,
+            rgba(255, 255, 255, 0) 53px 70px
+        );
+    mix-blend-mode: soft-light;
+}
+
+.login-weave--vertical span:nth-child(1) {
+    right: 72px;
+    top: 0;
+    bottom: 78px;
+    animation-delay: -1s;
+}
+
+.login-weave--vertical span:nth-child(2) {
+    right: 48px;
+    top: 26px;
+    bottom: 52px;
+    width: 5px;
+    opacity: 0.78;
+    animation-delay: -2.5s;
+}
+
+.login-weave--vertical span:nth-child(3) {
+    right: 24px;
+    top: 52px;
+    bottom: 26px;
+    animation-delay: -3.4s;
+}
+
+.login-weave--vertical span:nth-child(4) {
+    right: 0;
+    top: 78px;
+    bottom: 0;
+    width: 4px;
+    opacity: 0.9;
+    animation-delay: -1.8s;
+}
+
+.login-weave--horizontal {
+    left: 4vw;
+    right: 3vw;
+    bottom: 0;
+    height: 208px;
+}
+
+.login-weave--horizontal span {
+    right: 0;
+    height: 4px;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.28) 0 10px,
+            rgba(255, 255, 255, 0) 10px 18px,
+            rgba(165, 82, 0, 0.22) 18px 28px,
+            rgba(255, 255, 255, 0) 28px 36px
+        ),
+        linear-gradient(
+            180deg,
+            #c76300 0%,
+            #F78701 32%,
+            #ffb65c 55%,
+            #F78701 78%,
+            #a95100 100%
+        ),
+        repeating-linear-gradient(
+            90deg,
+            #F78701 0 24%,
+            #ffb35c 24% 36%,
+            #F78701 36% 57%,
+            #d26e00 57% 72%,
+            #F78701 72% 100%
+        );
+    background-size: 360px 100%;
+    background-blend-mode: screen, normal, normal;
+    animation: weave-flow-right 5.4s linear infinite;
+}
+
+.login-weave--horizontal span::after {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.34) 0 26px,
+            rgba(255, 255, 255, 0) 26px 48px,
+            rgba(115, 58, 0, 0.24) 48px 74px,
+            rgba(255, 255, 255, 0) 74px 96px
+        );
+    mix-blend-mode: soft-light;
+}
+
+.login-weave--horizontal span:nth-child(1) {
+    bottom: 170px;
+    left: 0;
+    right: 78px;
+    animation-delay: -1.3s;
+}
+
+.login-weave--horizontal span:nth-child(2) {
+    bottom: 144px;
+    left: 34px;
+    right: 52px;
+    opacity: 0.76;
+    animation-delay: -3.2s;
+}
+
+.login-weave--horizontal span:nth-child(3) {
+    bottom: 118px;
+    left: 74px;
+    right: 26px;
+    animation-delay: -0.6s;
+}
+
+.login-weave--horizontal span:nth-child(4) {
+    bottom: 92px;
+    left: 116px;
+    right: 0;
+    opacity: 0.86;
+    animation-delay: -4.5s;
+}
+
+@keyframes weave-flow-down {
+    from {
+        background-position-y: -240px;
+    }
+
+    to {
+        background-position-y: 240px;
+    }
+}
+
+@keyframes weave-flow-right {
+    from {
+        background-position-x: -360px;
+    }
+
+    to {
+        background-position-x: 360px;
+    }
+}
