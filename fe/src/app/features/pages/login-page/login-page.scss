@@ -76,9 +76,9 @@ img{
         repeating-linear-gradient(
             180deg,
             rgba(255, 255, 255, 0.28) 0 8px,
-            rgba(255, 255, 255, 0) 8px 16px,
-            rgba(165, 82, 0, 0.22) 16px 24px,
-            rgba(255, 255, 255, 0) 24px 32px
+            rgba(255, 255, 255, 0) 8px 15px,
+            rgba(165, 82, 0, 0.28) 15px 30px,
+            rgba(255, 255, 255, 0) 30px 38px
         ),
         linear-gradient(
             90deg,
@@ -92,13 +92,16 @@ img{
             180deg,
             #F78701 0 28%,
             #ffb35c 28% 43%,
-            #F78701 43% 63%,
-            #d26e00 63% 78%,
-            #F78701 78% 100%
+            #F78701 43% 56%,
+            #c26300 56% 84%,
+            #F78701 84% 100%
         );
     background-size: 100% 240px;
     background-blend-mode: screen, normal, normal;
-    animation: weave-flow-down 4.8s linear infinite;
+    animation-name: weave-flow-down;
+    animation-duration: 8s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
 }
 
 .login-weave--vertical span::after {
@@ -106,43 +109,57 @@ img{
         repeating-linear-gradient(
             180deg,
             rgba(255, 255, 255, 0.36) 0 18px,
-            rgba(255, 255, 255, 0) 18px 35px,
-            rgba(115, 58, 0, 0.24) 35px 53px,
-            rgba(255, 255, 255, 0) 53px 70px
+            rgba(255, 255, 255, 0) 18px 32px,
+            rgba(115, 58, 0, 0.3) 32px 62px,
+            rgba(255, 255, 255, 0) 62px 78px
         );
     mix-blend-mode: soft-light;
 }
 
 .login-weave--vertical span:nth-child(1) {
-    right: 72px;
+    right: 90px;
     top: 0;
-    bottom: 78px;
+    bottom: 90px;
     animation-delay: -1s;
 }
 
 .login-weave--vertical span:nth-child(2) {
-    right: 48px;
-    top: 26px;
-    bottom: 52px;
-    width: 5px;
+    right: 72px;
+    top: 18px;
+    bottom: 72px;
     opacity: 0.78;
     animation-delay: -2.5s;
 }
 
 .login-weave--vertical span:nth-child(3) {
-    right: 24px;
-    top: 52px;
-    bottom: 26px;
+    right: 54px;
+    top: 36px;
+    bottom: 54px;
     animation-delay: -3.4s;
 }
 
 .login-weave--vertical span:nth-child(4) {
-    right: 0;
-    top: 78px;
-    bottom: 0;
-    width: 4px;
+    right: 36px;
+    top: 54px;
+    bottom: 36px;
     opacity: 0.9;
     animation-delay: -1.8s;
+}
+
+.login-weave--vertical span:nth-child(5) {
+    right: 18px;
+    top: 72px;
+    bottom: 18px;
+    opacity: 0.72;
+    animation-delay: -3.9s;
+}
+
+.login-weave--vertical span:nth-child(6) {
+    right: 0;
+    top: 90px;
+    bottom: 0;
+    opacity: 0.84;
+    animation-delay: -2.1s;
 }
 
 .login-weave--horizontal {
@@ -160,8 +177,8 @@ img{
             90deg,
             rgba(255, 255, 255, 0.28) 0 10px,
             rgba(255, 255, 255, 0) 10px 18px,
-            rgba(165, 82, 0, 0.22) 18px 28px,
-            rgba(255, 255, 255, 0) 28px 36px
+            rgba(165, 82, 0, 0.28) 18px 36px,
+            rgba(255, 255, 255, 0) 36px 46px
         ),
         linear-gradient(
             180deg,
@@ -175,13 +192,16 @@ img{
             90deg,
             #F78701 0 24%,
             #ffb35c 24% 36%,
-            #F78701 36% 57%,
-            #d26e00 57% 72%,
-            #F78701 72% 100%
+            #F78701 36% 50%,
+            #c26300 50% 82%,
+            #F78701 82% 100%
         );
     background-size: 360px 100%;
     background-blend-mode: screen, normal, normal;
-    animation: weave-flow-right 5.4s linear infinite;
+    animation-name: weave-flow-right;
+    animation-duration: 9s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
 }
 
 .login-weave--horizontal span::after {
@@ -189,41 +209,57 @@ img{
         repeating-linear-gradient(
             90deg,
             rgba(255, 255, 255, 0.34) 0 26px,
-            rgba(255, 255, 255, 0) 26px 48px,
-            rgba(115, 58, 0, 0.24) 48px 74px,
-            rgba(255, 255, 255, 0) 74px 96px
+            rgba(255, 255, 255, 0) 26px 44px,
+            rgba(115, 58, 0, 0.3) 44px 86px,
+            rgba(255, 255, 255, 0) 86px 108px
         );
     mix-blend-mode: soft-light;
 }
 
 .login-weave--horizontal span:nth-child(1) {
-    bottom: 170px;
+    bottom: 180px;
     left: 0;
-    right: 78px;
+    right: 95px;
     animation-delay: -1.3s;
 }
 
 .login-weave--horizontal span:nth-child(2) {
-    bottom: 144px;
-    left: 34px;
-    right: 52px;
+    bottom: 162px;
+    left: 18px;
+    right: 72px;
     opacity: 0.76;
     animation-delay: -3.2s;
 }
 
 .login-weave--horizontal span:nth-child(3) {
-    bottom: 118px;
-    left: 74px;
-    right: 26px;
+    bottom: 144px;
+    left: 36px;
+    right: 54px;
     animation-delay: -0.6s;
 }
 
 .login-weave--horizontal span:nth-child(4) {
-    bottom: 92px;
-    left: 116px;
-    right: 0;
+    bottom: 126px;
+    left: 54px;
+    right: 36px;
     opacity: 0.86;
     animation-delay: -4.5s;
+}
+
+.login-weave--horizontal span:nth-child(5) {
+    bottom: 108px;
+    left: 72px;
+    right: 18px;
+    opacity: 0.72;
+    animation-delay: -2.4s;
+}
+
+.login-weave--horizontal span:nth-child(6) {
+    bottom: 90px;
+    left: 90px;
+    right: 0;
+    opacity: 0.84;
+    animation-delay: -5.1s;
 }
 
 @keyframes weave-flow-down {

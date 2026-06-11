@@ -4,17 +4,25 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
+@use '../src_theme-colors' as theme-colors;
 
 html {
   height: 100%;
   @include mat.theme(
     (
       color: (
-        primary: mat.$magenta-palette,
-        tertiary: mat.$violet-palette,
+        primary: theme-colors.$primary-palette,
+        tertiary: theme-colors.$tertiary-palette,
       ),
       typography: Roboto,
       density: 0,
+    )
+  );
+
+  @include mat.theme-overrides(
+    (
+      primary: #3f177b,
+      on-primary: #ffffff,
     )
   );
 }
@@ -36,9 +44,53 @@ body {
   margin: 0;
   height: 100%;
 }
+
+.mat-mdc-snack-bar-container.error-snackbar {
+  --mdc-snackbar-container-color: #b3261e;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+  color: #ffffff;
+}
+
+.mat-mdc-snack-bar-container.error-snackbar .mdc-snackbar__surface {
+  background-color: #b3261e !important;
+  color: #ffffff !important;
+}
+
+.mat-mdc-snack-bar-container.error-snackbar .mat-mdc-snack-bar-label,
+.mat-mdc-snack-bar-container.error-snackbar .mdc-button__label {
+  color: #ffffff;
+}
+
+.add-new-loom-dialog-panel .mat-mdc-dialog-surface {
+  background-color: #ffffff;
+  border: 2px solid #3f177b;
+  border-radius: 10px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.add-new-loom-dialog-panel .mat-mdc-dialog-container {
+  --mat-dialog-container-shape: 10px;
+}
+
+.loom-action-dialog-panel .mat-mdc-dialog-surface {
+  background-color: #ffffff;
+  border: 2px solid #3f177b;
+  border-radius: 10px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.loom-action-dialog-panel .mat-mdc-dialog-container {
+  --mat-dialog-container-shape: 10px;
+}
+
 @font-face {
   font-family: 'Instrument Sans';
-  src: url('/fonts/instrument-sans/InstrumentSans-VariableFont_wdth,wght.ttf') format('truetype');
+  src: url('/fonts/Instrument_Sans/InstrumentSans-VariableFont_wdth,wght.ttf') format('truetype');
   font-weight: 400 700;
   font-style: normal;
   font-display: swap;
@@ -46,7 +98,7 @@ body {
 
 @font-face {
   font-family: 'Instrument Sans';
-  src: url('/fonts/instrument-sans/InstrumentSans-Italic-VariableFont_wdth,wght.ttf')
+  src: url('/fonts/Instrument_Sans/InstrumentSans-Italic-VariableFont_wdth,wght.ttf')
     format('truetype');
   font-weight: 400 700;
   font-style: italic;
@@ -71,4 +123,3 @@ app-root {
   display: block;
   min-height: 100%;
 }
-

@@ -19,11 +19,13 @@
 :host ::ng-deep .input-form .mdc-text-field__input {
   background-color: #f8f1ff;
   color: #3f177b;
+  font-size: 14px;
 }
 
 :host ::ng-deep .input-form .mat-mdc-floating-label,
 :host ::ng-deep .input-form .mdc-floating-label {
   color: #3f177b;
+  font-size: 14px;
 }
 
 :host ::ng-deep .input-form .mdc-text-field__input::placeholder {

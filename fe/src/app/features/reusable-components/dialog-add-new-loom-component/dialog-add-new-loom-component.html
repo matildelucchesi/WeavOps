@@ -1,0 +1,29 @@
+<div class="wrapper">
+    <div class="head">
+        <div class="head-title">
+            <img class="dialog-icon" src="/icon/loomicon-violet.png" width="30" height="30" alt="Add Loom Icon">
+            <p class="dialog-title">Aggiungi Nuovo Telaio</p>
+        </div>
+        <button class="close-button"(click)="close()">
+            Annulla
+        </button>
+    </div>
+    <div class="body">
+        <div style="display: flex; justify-content: center; width: 100%; margin-top: 10px;">
+            <form class="add-loom-form">
+            <app-input-component
+                inputId="serialNumber"
+                label="Numero Seriale"
+                type="text"
+                width="350px"
+                height="30px"
+                [value]="serialNumber"
+                (valueChange)="serialNumber = $event"
+            ></app-input-component>
+            </form>
+        </div>
+        <div style="display: flex; justify-content: flex-end; width: 100%; margin-top: 5px;">
+            <button type="submit" class="submit-button" (click)="addNewLoom()">Aggiungi</button>
+        </div>
+    </div>
+</div>

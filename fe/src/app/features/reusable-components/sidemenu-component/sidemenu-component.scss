@@ -1,0 +1,16 @@
+.wrapper{
+    display: grid;
+    background-color: #3f177b;
+    box-sizing: border-box;
+    min-height: 100dvh;
+    width: 100px;
+    justify-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+img{
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}

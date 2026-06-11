@@ -1,4 +1,4 @@
 <mat-form-field class="input-form" [style.width]="width" [style.height]="height" appearance="outline">
     <mat-label> {{ label }} </mat-label>
-    <input class="input-field" matInput [required]="true" [(ngModel)]="value" minlength="5">
+    <input class="input-field" matInput [id]="inputId" [required]="true" [(ngModel)]="value" [ngModelOptions]="{ standalone: true }" minlength="5" [type]="type" (ngModelChange)="valueChange.emit($event)">
 </mat-form-field>

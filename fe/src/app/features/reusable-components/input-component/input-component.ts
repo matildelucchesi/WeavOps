@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -15,9 +15,12 @@ import { MatInputModule } from "@angular/material/input";
   standalone: true,
 })
 export class InputComponent {
+  @Input() inputId: string = '';
   @Input() label: string = '';
   @Input() type: string = 'text';
   @Input() value: string = '';
   @Input() width: string = '450px';
   @Input() height: string = '80px';
+  
+  @Output() valueChange = new EventEmitter<string>();
 }

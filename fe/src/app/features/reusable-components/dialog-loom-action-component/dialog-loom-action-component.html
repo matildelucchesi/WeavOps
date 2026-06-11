@@ -1,0 +1,46 @@
+<div class="wrapper">
+    <div class="head">
+        <div>
+            <p class="dialog-title">Cosa vuoi fare?</p>
+            @if (loom) {
+                <p class="loom-reference">{{ 'Telaio ' + loom.serialNumber }}</p>
+            }
+        </div>
+        <button class="close-button" type="button" (click)="close()">
+            Annulla
+        </button>
+    </div>
+    <div class="body">
+        <div class="body-actions">
+            <div class="action">
+                <!-- CAMBIA STATO -->
+                <button class="action-button">
+                    <img ngSrc="/icon/change-state-icon.png" width="40" height="40" alt="Change State Icon">
+                </button>
+                <p class="action-button-label">Cambia Stato</p>
+            </div>
+            <div class="action">
+                <!-- VISUALIZZA LAVORAZIONE -->
+                <button class="action-button">
+                    <img ngSrc="/icon/work-icon.png" width="40" height="40" alt="Work Icon">
+                </button>
+                <p class="action-button-label">Visualizza Lavorazione</p>
+            </div>
+            <div class="action">
+                <!-- AGGIUNGI METRI -->
+                <button class="action-button">
+                    <img ngSrc="/icon/meters-icon.png" width="40" height="40" alt="Meters Icon">
+                </button>
+                <p class="action-button-label">Aggiungi Metri</p>
+            </div>
+        </div>
+        @if (modify) {
+            <div class="modify-section">
+                <button class="modify-button">
+                    <mat-icon class="material-icons-outlined" style="font-size: 23px; align-self: center;">edit</mat-icon>
+                    <span>Modifica Numero Seriale</span>
+                </button>
+            </div>
+        }
+    </div>
+</div>

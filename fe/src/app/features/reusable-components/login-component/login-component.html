@@ -1,13 +1,14 @@
 <div class="content">
     <div class="wrapper">
-    <app-input-component label="Username" type="text" width="300px" height="50px"></app-input-component>
-    <app-input-component label="Password" type="password" width="300px" height="50px"></app-input-component>
-    <div>
-        <p>
-        Password dimenticata?
-    </p>
-    <button mat-raised-button class="button-style">Accedi</button>
-    </div>
-    
+    <form class="login-form" (ngSubmit)="login()">
+        <app-input-component label="Username" type="text" width="270px" height="30px" [(value)]="username"></app-input-component>
+        <app-input-component label="Password" type="password" width="270px" height="30px" [(value)]="password"></app-input-component>
+        <div>
+            <p class="forgot-password">
+            Password dimenticata?
+            </p>
+            <button matButton="filled" type="submit" class="button-style" [disabled]="isLoading">Accedi</button>
+        </div>
+    </form>
 </div>
 </div>

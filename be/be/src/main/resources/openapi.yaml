@@ -1,0 +1,1259 @@
+openapi: 3.0.3
+info:
+  title: Demo API
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+security:
+- bearerAuth: []
+paths:
+  /looms:
+    get:
+      operationId: getLooms
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/loom"
+                type: array
+          description: Lista loom
+      summary: Recupera tutti i loom
+      tags:
+      - Loom
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Loom
+    post:
+      operationId: createLoom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/loom"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/loom"
+          description: Loom creato
+        "400":
+          description: Richiesta non valida
+      summary: Crea un loom
+      tags:
+      - Loom
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Loom
+  /looms/{id}:
+    delete:
+      operationId: deleteLoom
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Loom eliminato
+        "404":
+          description: Loom non trovato
+      summary: Elimina un loom
+      tags:
+      - Loom
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Loom
+    get:
+      operationId: getLoomById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/loom"
+          description: Loom trovato
+        "404":
+          description: Loom non trovato
+      summary: Recupera un loom tramite id
+      tags:
+      - Loom
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Loom
+    put:
+      operationId: updateLoom
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/loom"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/loom"
+          description: Loom aggiornato
+        "400":
+          description: Richiesta non valida
+        "404":
+          description: Loom non trovato
+      summary: Aggiorna un loom
+      tags:
+      - Loom
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Loom
+  /items:
+    get:
+      operationId: getItems
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/item"
+                type: array
+          description: Lista item
+      summary: Recupera tutti i item
+      tags:
+      - Item
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Item
+    post:
+      operationId: createItem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/item"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/item"
+          description: Item creato
+        "400":
+          description: Richiesta non valida
+      summary: Crea un item
+      tags:
+      - Item
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Item
+  /items/{id}:
+    delete:
+      operationId: deleteItem
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Item eliminato
+        "404":
+          description: Item non trovato
+      summary: Elimina un item
+      tags:
+      - Item
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Item
+    get:
+      operationId: getItemById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/item"
+          description: Item trovato
+        "404":
+          description: Item non trovato
+      summary: Recupera un item tramite ID
+      tags:
+      - Item
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Item
+    put:
+      operationId: updateItem
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/item"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/item"
+          description: Item aggiornato
+        "400":
+          description: Richiesta non valida
+        "404":
+          description: Item non trovato
+      summary: Aggiorna un item
+      tags:
+      - Item
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Item
+  /arrangements:
+    get:
+      operationId: getArrangements
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/arrangement"
+                type: array
+          description: Lista arrangement
+      summary: Recupera tutti i arrangement
+      tags:
+      - Arrangement
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Arrangement
+    post:
+      operationId: createArrangement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/arrangement"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/arrangement"
+          description: Arrangement creato
+        "400":
+          description: Richiesta non valida
+      summary: Crea un arrangement
+      tags:
+      - Arrangement
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Arrangement
+  /arrangements/{id}:
+    delete:
+      operationId: deleteArrangement
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Arrangement eliminato
+        "404":
+          description: Arrangement non trovato
+      summary: Elimina un arrangement
+      tags:
+      - Arrangement
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Arrangement
+    get:
+      operationId: getArrangementById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/arrangement"
+          description: Arrangement trovato
+        "404":
+          description: Arrangement non trovato
+      summary: Recupera un arrangement tramite ID
+      tags:
+      - Arrangement
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Arrangement
+    put:
+      operationId: updateArrangement
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/arrangement"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/arrangement"
+          description: Arrangement aggiornato
+        "400":
+          description: Richiesta non valida
+        "404":
+          description: Arrangement non trovato
+      summary: Aggiorna un arrangement
+      tags:
+      - Arrangement
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Arrangement
+  /referents:
+    get:
+      operationId: getReferents
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/referent"
+                type: array
+          description: Lista referenti
+      summary: Recupera tutti i referenti
+      tags:
+      - Referent
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Referent
+    post:
+      operationId: createReferent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/referent"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/referent"
+          description: Referent creato
+        "400":
+          description: Richiesta non valida
+      summary: Crea un referente
+      tags:
+      - Referent
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Referent
+  /referents/{id}:
+    delete:
+      operationId: deleteReferent
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Referent eliminato
+        "404":
+          description: Referent non trovato
+      summary: Elimina un referente
+      tags:
+      - Referent
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Referent
+    get:
+      operationId: getReferentById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/referent"
+          description: Referent trovato
+        "404":
+          description: Referent non trovato
+      summary: Recupera un referente tramite ID
+      tags:
+      - Referent
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Referent
+    put:
+      operationId: updateReferent
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/referent"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/referent"
+          description: Referent aggiornato
+        "400":
+          description: Richiesta non valida
+        "404":
+          description: Referent non trovato
+      summary: Aggiorna un referente
+      tags:
+      - Referent
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Referent
+  /processes:
+    get:
+      operationId: getProcesses
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/process"
+                type: array
+          description: Lista processi
+      summary: Recupera tutti i processi
+      tags:
+      - Process
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Process
+    post:
+      operationId: createProcess
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/process"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/process"
+          description: Process creato
+        "400":
+          description: Richiesta non valida
+      summary: Crea un processo
+      tags:
+      - Process
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Process
+  /processes/{id}:
+    delete:
+      operationId: deleteProcess
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Process eliminato
+        "404":
+          description: Process non trovato
+      summary: Elimina un processo
+      tags:
+      - Process
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Process
+    get:
+      operationId: getProcessById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/process"
+          description: Process trovato
+        "404":
+          description: Process non trovato
+      summary: Recupera un processo tramite ID
+      tags:
+      - Process
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Process
+    put:
+      operationId: updateProcess
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/process"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/process"
+          description: Process aggiornato
+        "400":
+          description: Richiesta non valida
+        "404":
+          description: Process non trovato
+      summary: Aggiorna un processo
+      tags:
+      - Process
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Process
+  /customers:
+    get:
+      operationId: getCustomers
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/customer"
+                type: array
+          description: Lista customer
+      summary: Recupera tutti i customer
+      tags:
+      - Customer
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Customer
+    post:
+      operationId: createCustomer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/customer"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customer"
+          description: Customer creato
+        "400":
+          description: Richiesta non valida
+      summary: Crea un customer
+      tags:
+      - Customer
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Customer
+  /customers/{id}:
+    delete:
+      operationId: deleteCustomer
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Customer eliminato
+        "404":
+          description: Customer non trovato
+      summary: Elimina un customer
+      tags:
+      - Customer
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Customer
+    get:
+      operationId: getCustomerById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customer"
+          description: Customer trovato
+        "404":
+          description: Customer non trovato
+      summary: Recupera un customer tramite ID
+      tags:
+      - Customer
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Customer
+    put:
+      operationId: updateCustomer
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/customer"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customer"
+          description: Customer aggiornato
+        "400":
+          description: Richiesta non valida
+        "404":
+          description: Customer non trovato
+      summary: Aggiorna un customer
+      tags:
+      - Customer
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Customer
+  /users:
+    get:
+      operationId: getUsers
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/user"
+                type: array
+          description: Lista utenti
+      summary: Recupera tutti gli utenti
+      tags:
+      - User
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: User
+    post:
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/user"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+          description: Utente creato
+        "400":
+          description: Richiesta non valida
+      summary: Crea un utente
+      tags:
+      - User
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: User
+  /users/{id}:
+    delete:
+      operationId: deleteUser
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Utente eliminato
+        "404":
+          description: Utente non trovato
+      summary: Elimina un utente
+      tags:
+      - User
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: User
+    get:
+      operationId: getUserById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+          description: Utente trovato
+        "404":
+          description: Utente non trovato
+      summary: Recupera un utente tramite id
+      tags:
+      - User
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: User
+    put:
+      operationId: updateUser
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/user"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+          description: Utente aggiornato
+        "400":
+          description: Richiesta non valida
+        "404":
+          description: Utente non trovato
+      summary: Aggiorna un utente
+      tags:
+      - User
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: User
+  /auth/login:
+    post:
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/login_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/login_200_response"
+          description: Login eseguito correttamente
+        "400":
+          description: Richiesta non valida
+        "401":
+          description: Credenziali non valide
+      security: []
+      summary: Effettua il login utente
+      tags:
+      - Auth
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Auth
+components:
+  schemas:
+    loom:
+      example:
+        serialNumber: serialNumber
+        id: id
+        status: WORKING
+      properties:
+        id:
+          description: Identificativo MongoDB generato dal server
+          readOnly: true
+          type: string
+        serialNumber:
+          type: string
+        status:
+          enum:
+          - WORKING
+          - STOPPED
+          - MAINTENANCE
+          type: string
+      required:
+      - serialNumber
+      - status
+      type: object
+    item:
+      example:
+        arrangement:
+          itemName: itemName
+          reedHight: 1.4658129
+          warpLenght: 5.962134
+          piecesCount: 5.637377
+          reedCount: 0.8008281904610115
+          warpEndCount: 7.0614014
+          pieceLenght: 2.302136
+          hitsPerDm: 9.301444243932576
+          id: id
+          reedCM: 6.027456183070403
+          deliveryDate: 2000-01-23T04:56:07.000+00:00
+        metersRun: 2.027123023002322
+        expectedEndDate: 2000-01-23T04:56:07.000+00:00
+        endDate: 2000-01-23T04:56:07.000+00:00
+        totalMeters: 3.616076749251911
+        processing:
+        - efficiency: 7.386281948385884
+          metersRun: 1.0246457001441578
+          expectedEndDate: 2000-01-23T04:56:07.000+00:00
+          endDate: 2000-01-23T04:56:07.000+00:00
+          totalMeters: 1.2315135367772556
+          loomId: loomId
+          metersToGo: 1.4894159098541704
+          id: id
+          speed: 4.145608029883936
+          startDate: 2000-01-23T04:56:07.000+00:00
+        - efficiency: 7.386281948385884
+          metersRun: 1.0246457001441578
+          expectedEndDate: 2000-01-23T04:56:07.000+00:00
+          endDate: 2000-01-23T04:56:07.000+00:00
+          totalMeters: 1.2315135367772556
+          loomId: loomId
+          metersToGo: 1.4894159098541704
+          id: id
+          speed: 4.145608029883936
+          startDate: 2000-01-23T04:56:07.000+00:00
+        id: id
+        state: INITIALIZED
+        startDate: 2000-01-23T04:56:07.000+00:00
+        customer:
+          note: note
+          referents:
+          - firstName: firstName
+            lastName: lastName
+            phoneNumber: phoneNumber
+            id: id
+            email: email
+          - firstName: firstName
+            lastName: lastName
+            phoneNumber: phoneNumber
+            id: id
+            email: email
+          name: name
+          id: id
+          items:
+          - null
+          - null
+          email: email
+      properties:
+        id:
+          description: Identificativo MongoDB generato dal server
+          readOnly: true
+          type: string
+        arrangement:
+          $ref: "#/components/schemas/arrangement"
+        state:
+          enum:
+          - INITIALIZED
+          - RUNNING
+          - COMPLETED
+          - ABANDONED
+          type: string
+        customer:
+          $ref: "#/components/schemas/customer"
+        totalMeters:
+          type: number
+        metersRun:
+          type: number
+        processing:
+          items:
+            $ref: "#/components/schemas/process"
+          type: array
+        expectedEndDate:
+          format: date-time
+          type: string
+        endDate:
+          format: date-time
+          type: string
+        startDate:
+          format: date-time
+          type: string
+      required:
+      - arrangement
+      - customer
+      type: object
+    arrangement:
+      example:
+        itemName: itemName
+        reedHight: 1.4658129
+        warpLenght: 5.962134
+        piecesCount: 5.637377
+        reedCount: 0.8008281904610115
+        warpEndCount: 7.0614014
+        pieceLenght: 2.302136
+        hitsPerDm: 9.301444243932576
+        id: id
+        reedCM: 6.027456183070403
+        deliveryDate: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          description: Identificativo MongoDB generato dal server
+          readOnly: true
+          type: string
+        itemName:
+          type: string
+        reedCount:
+          description: Numero di denti del pettine - quanti denti ci sono per unità
+            di misura
+          type: number
+        reedCM:
+          description: Numero di centimetri del pettine
+          type: number
+        reedHight:
+          format: float
+          type: number
+        warpLenght:
+          description: Lunghezza del filo di ordito in metri
+          format: float
+          type: number
+        piecesCount:
+          description: Numero di pezze che devono essere prodotte
+          format: float
+          type: number
+        pieceLenght:
+          description: Lunghezza di ogni pezza in metri
+          format: float
+          type: number
+        warpEndCount:
+          description: Numero fili ordito
+          format: float
+          type: number
+        hitsPerDm:
+          type: number
+        deliveryDate:
+          format: date-time
+          type: string
+      required:
+      - hitsPerDm
+      - itemName
+      - pieceLenght
+      - piecesCount
+      - reedCM
+      - reedCount
+      - reedHight
+      - warpEndCount
+      - warpLenght
+      type: object
+    referent:
+      example:
+        firstName: firstName
+        lastName: lastName
+        phoneNumber: phoneNumber
+        id: id
+        email: email
+      properties:
+        id:
+          description: Identificativo MongoDB generato dal server
+          readOnly: true
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phoneNumber:
+          type: string
+        email:
+          type: string
+      required:
+      - firstName
+      - lastName
+      type: object
+    process:
+      example:
+        efficiency: 7.386281948385884
+        metersRun: 1.0246457001441578
+        expectedEndDate: 2000-01-23T04:56:07.000+00:00
+        endDate: 2000-01-23T04:56:07.000+00:00
+        totalMeters: 1.2315135367772556
+        loomId: loomId
+        metersToGo: 1.4894159098541704
+        id: id
+        speed: 4.145608029883936
+        startDate: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          description: Identificativo MongoDB generato dal server
+          readOnly: true
+          type: string
+        speed:
+          type: number
+        efficiency:
+          type: number
+        totalMeters:
+          type: number
+        metersRun:
+          type: number
+        metersToGo:
+          type: number
+        startDate:
+          format: date-time
+          type: string
+        endDate:
+          format: date-time
+          type: string
+        expectedEndDate:
+          format: date-time
+          type: string
+        loomId:
+          type: string
+      required:
+      - efficiency
+      - loomId
+      - metersRun
+      - metersToGo
+      - speed
+      - startDate
+      - totalMeters
+      type: object
+    customer:
+      example:
+        note: note
+        referents:
+        - firstName: firstName
+          lastName: lastName
+          phoneNumber: phoneNumber
+          id: id
+          email: email
+        - firstName: firstName
+          lastName: lastName
+          phoneNumber: phoneNumber
+          id: id
+          email: email
+        name: name
+        id: id
+        items:
+        - null
+        - null
+        email: email
+      properties:
+        id:
+          description: Identificativo MongoDB generato dal server
+          readOnly: true
+          type: string
+        name:
+          type: string
+        referents:
+          items:
+            $ref: "#/components/schemas/referent"
+          type: array
+        items:
+          items:
+            $ref: "#/components/schemas/item"
+          type: array
+        note:
+          type: string
+        email:
+          type: string
+      required:
+      - email
+      - name
+      type: object
+    user:
+      example:
+        firstName: firstName
+        lastName: lastName
+        password: password
+        id: id
+        email: email
+        username: username
+      properties:
+        id:
+          description: Identificativo MongoDB generato dal server
+          readOnly: true
+          type: string
+        username:
+          type: string
+        password:
+          format: password
+          type: string
+          writeOnly: true
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          format: email
+          type: string
+      required:
+      - password
+      - username
+      type: object
+    login_request:
+      properties:
+        username:
+          type: string
+        password:
+          format: password
+          type: string
+      required:
+      - password
+      - username
+      type: object
+    login_200_response:
+      example:
+        tokenType: Bearer
+        user:
+          firstName: firstName
+          lastName: lastName
+          password: password
+          id: id
+          email: email
+          username: username
+        token: token
+      properties:
+        token:
+          description: Token di autenticazione da usare nelle richieste successive
+          type: string
+        tokenType:
+          example: Bearer
+          type: string
+        user:
+          $ref: "#/components/schemas/user"
+      required:
+      - token
+      type: object
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http

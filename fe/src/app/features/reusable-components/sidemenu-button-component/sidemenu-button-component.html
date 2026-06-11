@@ -1,0 +1,9 @@
+<button [routerLink]="route || null" [class.is-active]="isActiveRoute(route)" type="button">
+    <ng-container *ngIf="isImage(icon); else matIcon">
+        <img class="sidemenu-icon" [src]="icon" [alt]="label + ' icon'" />
+    </ng-container>
+    <ng-template #matIcon>
+        <mat-icon>{{ icon }}</mat-icon>
+    </ng-template>
+    {{ label }}
+</button>

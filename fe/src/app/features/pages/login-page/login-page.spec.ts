@@ -8,7 +8,7 @@ describe('LoginPage', () => {
     }).compileComponents();
   });
 
-  it('renders four vertical and four horizontal animated weave lines', () => {
+  it('renders six vertical and six horizontal animated weave lines', () => {
     const fixture = TestBed.createComponent(LoginPage);
     fixture.detectChanges();
 
@@ -16,8 +16,8 @@ describe('LoginPage', () => {
     const verticalLayer = compiled.querySelector('.login-weave--vertical');
     const horizontalLayer = compiled.querySelector('.login-weave--horizontal');
 
-    expect(verticalLayer?.querySelectorAll('span').length).toBe(4);
-    expect(horizontalLayer?.querySelectorAll('span').length).toBe(4);
+    expect(verticalLayer?.querySelectorAll('span').length).toBe(6);
+    expect(horizontalLayer?.querySelectorAll('span').length).toBe(6);
   });
 
   it('staggers the vertical weave line starts with the horizontal spacing step', () => {
@@ -31,9 +31,11 @@ describe('LoginPage', () => {
 
     expect(verticalLines.map((line) => getComputedStyle(line).top)).toEqual([
       '0px',
-      '26px',
-      '52px',
-      '78px',
+      '18px',
+      '36px',
+      '54px',
+      '72px',
+      '90px',
     ]);
   });
 
@@ -47,9 +49,11 @@ describe('LoginPage', () => {
     );
 
     expect(verticalLines.map((line) => getComputedStyle(line).bottom)).toEqual([
-      '78px',
-      '52px',
-      '26px',
+      '90px',
+      '72px',
+      '54px',
+      '36px',
+      '18px',
       '0px',
     ]);
   });
@@ -75,9 +79,11 @@ describe('LoginPage', () => {
 
     expect(horizontalLines.map((line) => getComputedStyle(line).bottom)).toEqual([
       '170px',
-      '144px',
-      '118px',
-      '92px',
+      '152px',
+      '134px',
+      '116px',
+      '98px',
+      '80px',
     ]);
   });
 
@@ -103,9 +109,11 @@ describe('LoginPage', () => {
     );
 
     expect(horizontalLines.map((line) => getComputedStyle(line).right)).toEqual([
-      '78px',
-      '52px',
-      '26px',
+      '90px',
+      '72px',
+      '54px',
+      '36px',
+      '18px',
       '0px',
     ]);
   });
@@ -122,5 +130,17 @@ describe('LoginPage', () => {
     expect(horizontalLine && getComputedStyle(horizontalLine).height).toBe('4px');
     expect(verticalLine && getComputedStyle(verticalLine).borderRadius).toBe('999px');
     expect(horizontalLine && getComputedStyle(horizontalLine).borderRadius).toBe('999px');
+  });
+
+  it('animates the weave threads slowly', () => {
+    const fixture = TestBed.createComponent(LoginPage);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const verticalLine = compiled.querySelector<HTMLElement>('.login-weave--vertical span');
+    const horizontalLine = compiled.querySelector<HTMLElement>('.login-weave--horizontal span');
+
+    expect(verticalLine && getComputedStyle(verticalLine).animationDuration).toBe('8s');
+    expect(horizontalLine && getComputedStyle(horizontalLine).animationDuration).toBe('9s');
   });
 });
