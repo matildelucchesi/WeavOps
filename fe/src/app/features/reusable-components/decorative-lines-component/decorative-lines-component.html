@@ -1,0 +1,15 @@
+<div class="decorative-lines" aria-hidden="true">
+  @for (position of horizontalPositions; track $index) {
+    <span
+      [class]="'line line-horizontal ' + getHorizontalColorClass($index)"
+      [attr.style]="'--line-y: ' + position"
+    ></span>
+  }
+
+  @for (position of verticalPositions; track $index) {
+    <span
+      [class]="'line line-vertical ' + getVerticalColorClass($index)"
+      [attr.style]="'--line-x: ' + position"
+    ></span>
+  }
+</div>

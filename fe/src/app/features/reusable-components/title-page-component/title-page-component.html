@@ -1,0 +1,23 @@
+<div class="title">
+    <img style="margin-top: -25px;" src="/images/logo.png" width="65" height="65" alt="Logo Icon">
+    <div class="title-wrapper">
+      <h1>{{ title }}</h1>
+      @if (iconName) {
+        <mat-icon
+          class="title-material-icon"
+          [style.font-size]="imageWidthStyle"
+          [style.width]="imageWidthStyle"
+          [style.height]="imageHeightStyle"
+          [style.line-height]="imageHeightStyle"
+        >{{ iconName }}</mat-icon>
+      } @else if (imageLink) {
+        <img
+          class="title-icon"
+          [src]="imageLink"
+          [alt]="imageAlt"
+          [style.width]="imageWidthStyle"
+          [style.height]="imageHeightStyle"
+        >
+      }
+    </div>
+</div>

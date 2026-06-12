@@ -27,6 +27,10 @@ public class LoomService {
         return repository.findById(id);
     }
 
+    public Optional<LoomEntity> findBySerialNumber(String serialNumber){
+        return repository.findBySerialNumber(serialNumber);
+    }
+
     public Optional<LoomEntity> update(String id, LoomEntity entity){
         if (!repository.existsById(id)) {
             return Optional.empty();

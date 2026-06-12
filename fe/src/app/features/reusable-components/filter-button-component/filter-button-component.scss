@@ -1,0 +1,20 @@
+button{
+    background: #3F177B;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    align-items: center;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    height: 35px;
+    gap: 5px;
+}
+
+button:hover{
+    background: #3F177B;
+    opacity: 0.9;
+    cursor: pointer;
+}

@@ -1,0 +1,24 @@
+.title{
+    display: flex;
+    align-items: center;
+    z-index: 1;
+}
+
+.title-wrapper{
+    display: flex; 
+    align-items: center; 
+    margin-left: -27px;
+    gap: 5px;
+}
+
+.title-icon{
+    display: block;
+    object-fit: contain;
+}
+
+.title-material-icon{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #3F177B;
+}

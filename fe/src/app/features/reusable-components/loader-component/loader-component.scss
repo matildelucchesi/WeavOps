@@ -1,0 +1,79 @@
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: rgba(35, 2, 66, 0.677);
+}
+
+.loader-box {
+  width: 240px;
+  height: 190px;
+  display: grid;
+  place-items: center;
+  //border: 2px solid #3f177b;
+  //border-radius: 10px;
+  //background: #ffffff;
+  box-sizing: border-box;
+  //box-shadow: 0 10px 26px rgba(63, 23, 123, 0.14);
+}
+
+.logo-wrapper {
+  position: relative;
+  width: 220px;
+  height: 170px;
+}
+
+.main-logo {
+  position: absolute;
+  left: 22px;
+  top: 10px;
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+}
+
+.bubble {
+  position: absolute;
+  left: 95px;
+  top: -25px;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  animation-name: bubble-rise;
+  animation-duration: 1.4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  transform-origin: center;
+}
+
+.bubble-large {
+  width: 60px;
+  height: 60px;
+  animation-delay: 0s;
+}
+
+.bubble-small {
+  left: 143px;
+  top: -2px;
+  width: 40px;
+  height: 40px;
+  animation-delay: 0.3s;
+}
+
+@keyframes bubble-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.62);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-48px) scale(1);
+  }
+}

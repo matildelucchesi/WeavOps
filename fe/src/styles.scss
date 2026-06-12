@@ -27,6 +27,27 @@ html {
   );
 }
 
+h1{
+  color: #3F177B;
+  font-size: 30px;
+  align-self: start;
+}
+
+h2{
+  color: #3F177B;
+  font-size: 24px;
+}
+
+h3{
+  color: #3F177B;
+  font-size: 20px;
+}
+
+hr{
+  height: 0.5px;
+  background-color: #3F177B;
+}
+
 body {
   // Default the application to a light color theme. This can be changed to
   // `dark` to enable the dark color theme, or to `light dark` to defer to the
@@ -46,14 +67,14 @@ body {
 }
 
 .mat-mdc-snack-bar-container.error-snackbar {
-  --mdc-snackbar-container-color: #b3261e;
+  --mdc-snackbar-container-color: #d90000;
   --mdc-snackbar-supporting-text-color: #ffffff;
   --mat-snack-bar-button-color: #ffffff;
   color: #ffffff;
 }
 
 .mat-mdc-snack-bar-container.error-snackbar .mdc-snackbar__surface {
-  background-color: #b3261e !important;
+  background-color: #d90000 !important;
   color: #ffffff !important;
 }
 

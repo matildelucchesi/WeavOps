@@ -1,0 +1,136 @@
+:host{
+    position: absolute;
+    inset: calc(-1 * var(--page-content-padding, 30px));
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    --thread-size: 10px;
+}
+
+.decorative-lines{
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.line{
+    position: absolute;
+    display: block;
+    opacity: 0.92;
+    border-radius: 999px;
+    background: transparent;
+    overflow: hidden;
+}
+
+.line::before,
+.line::after{
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+}
+
+.line::before{
+    background: var(--thread-pattern);
+    filter: drop-shadow(0 1px 2px var(--line-glow));
+}
+
+.line::after{
+    opacity: 0.55;
+    background: var(--thread-highlight);
+    mix-blend-mode: screen;
+}
+
+.line-orange{
+    --line-color: #F78701;
+    --line-shadow: rgba(154, 72, 0, 0.28);
+    --line-glow: rgba(247, 135, 1, 0.38);
+}
+
+.line-light-orange{
+    --line-color: #f788019e;
+    --line-shadow: rgba(154, 72, 0, 0.2);
+    --line-glow: rgba(247, 135, 1, 0.38);
+}
+
+.line-yellow{
+    --line-color: #FFE46D;
+    --line-shadow: rgba(154, 112, 0, 0.22);
+    --line-glow: rgba(255, 228, 109, 0.45);
+}
+
+.line-light-yellow{
+    --line-color: #ffe46daa;
+    --line-shadow: rgba(154, 112, 0, 0.16);
+    --line-glow: rgba(255, 228, 109, 0.45);
+}
+
+.line-horizontal{
+    top: var(--line-y);
+    left: 0;
+    width: 100%;
+    height: var(--thread-size);
+    --thread-pattern:
+        linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 2px,
+            var(--line-shadow) 2px,
+            var(--line-color) 3px,
+            var(--line-color) 5px,
+            rgba(255, 255, 255, 0.45) 6px,
+            var(--line-color) 7px,
+            var(--line-shadow) 8px,
+            transparent 9px,
+            transparent 100%
+        ),
+        repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.24) 0 6px,
+            transparent 6px 14px,
+            rgba(0, 0, 0, 0.08) 14px 18px,
+            transparent 18px 28px
+        );
+    --thread-highlight:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 18px,
+            rgba(255, 255, 255, 0.55) 18px 20px,
+            transparent 20px 36px
+        );
+}
+
+.line-vertical{
+    top: 0;
+    left: var(--line-x);
+    width: var(--thread-size);
+    height: 100%;
+    --thread-pattern:
+        linear-gradient(
+            to right,
+            transparent 0,
+            transparent 2px,
+            var(--line-shadow) 2px,
+            var(--line-color) 3px,
+            var(--line-color) 5px,
+            rgba(255, 255, 255, 0.45) 6px,
+            var(--line-color) 7px,
+            var(--line-shadow) 8px,
+            transparent 9px,
+            transparent 100%
+        ),
+        repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.24) 0 6px,
+            transparent 6px 14px,
+            rgba(0, 0, 0, 0.08) 14px 18px,
+            transparent 18px 28px
+        );
+    --thread-highlight:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 18px,
+            rgba(255, 255, 255, 0.55) 18px 20px,
+            transparent 20px 36px
+        );
+}

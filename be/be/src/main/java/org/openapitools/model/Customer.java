@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("customer")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-10T16:33:28.608747+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-12T15:53:38.999858900+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class Customer {
 
   private @Nullable String id;

@@ -1,1 +1,14 @@
-<p>loom-page works!</p>
+<app-decorative-lines-component
+  [verticalPositions]="['54%', '55%', '83%', '86%', '50%', '16%', '15%']"
+  [horizontalPositions]="['11%', '17%', '53%', '56%', '94%']">
+</app-decorative-lines-component>
+
+<app-title-page-component  
+  title="Telai"
+  imageLink="/icon/loomicon-violet.png"
+  [imageWidth]="50"
+  [imageHeight]="50"></app-title-page-component>
+
+<div class="content">
+  <app-table-component [columns]="['Column 1', 'Column 2', 'Column 3']" [rows]="[['Data 1', 'Data 2', 'Data 3']]"></app-table-component>
+</div>

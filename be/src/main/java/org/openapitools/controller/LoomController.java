@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class LoomController implements LoomsApi {
+
+    private static final String DUPLICATE_SERIAL_NUMBER_MESSAGE = "Telaio con numero seriale già esistente";
 
     private final LoomService service;
     private final LoomMapper mapper;
@@ -38,9 +41,15 @@ public class LoomController implements LoomsApi {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public ResponseEntity<Loom> createLoom(@Valid @RequestBody Loom loom) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mapper.toDto(service.save(mapper.toEntity(loom))));
+        if(service.findBySerialNumber(loom.getSerialNumber()).isPresent()){
+            return (ResponseEntity<Loom>) (ResponseEntity<?>) ResponseEntity.badRequest()
+                    .body(Map.of("message", DUPLICATE_SERIAL_NUMBER_MESSAGE));
+        }else {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(mapper.toDto(service.save(mapper.toEntity(loom))));
+        }
     }
 
     @Override

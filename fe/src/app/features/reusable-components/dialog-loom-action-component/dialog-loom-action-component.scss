@@ -76,8 +76,10 @@
 
 .body{
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     align-items: center;
-    justify-content: space-around;
+    justify-content: stretch;
+    justify-items: stretch;
     width: 100%;
     height: 100%;
     background-color: #F8F1FF;
@@ -139,4 +141,141 @@
 
 .modify-button:hover{
     background-color: #e9e0ff;
+}
+
+.change-state-section{
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    justify-self: stretch;
+    width: 100%;
+    gap: 15px;
+}
+
+.options{
+    display: grid;
+    width: 100%;
+    gap: 10px;
+    justify-items: center;
+}
+
+.state-option{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+}
+
+.state-option-button{
+    cursor: pointer;
+    border-radius: 10px;
+    width: 100%;
+    height: 40px;
+    background-color: #FFFF;
+    border:#3F177B 1.5px solid;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-weight: 800;
+    font-family: 'Instrument Sans', sans-serif;
+    color: #3F177B;
+}
+
+.state-option-button:hover:not(:focus):not(:active){
+    background-color: #e9e0ff;
+}
+
+.state-option-button:focus,
+.state-option-button:active,
+.state-option-button.selected{
+    background-color: #3F177B;
+    color: white;
+    outline: none;
+}
+
+.confirm-button{
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    width: 100px;
+    height: 30px;
+    background-color: #F78701;
+    color: white;
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+    justify-self: end;
+}
+
+.confirm-button:hover{
+    background-color: #F78701;
+    opacity: 0.8;
+}
+
+.meters-form-field{
+    width: 100%;
+    margin: 0;
+    --mdc-outlined-text-field-outline-color: #3F177B;
+    --mdc-outlined-text-field-hover-outline-color: #3F177B;
+    --mdc-outlined-text-field-focus-outline-color: #3F177B;
+    --mdc-outlined-text-field-label-text-color: #3F177B;
+    --mdc-outlined-text-field-hover-label-text-color: #3F177B;
+    --mdc-outlined-text-field-focus-label-text-color: #3F177B;
+    --mdc-outlined-text-field-input-text-color: #3F177B;
+}
+
+.meters-input-field{
+    color: #3F177B;
+    font-size: 11px;
+    font-family: 'Instrument Sans', sans-serif;
+}
+
+:host ::ng-deep .meters-form-field .mat-mdc-text-field-wrapper,
+:host ::ng-deep .meters-form-field .mdc-text-field--outlined,
+:host ::ng-deep .meters-form-field .mat-mdc-form-field-flex {
+    background-color: #FFFF;
+    border-radius: 10px;
+}
+
+:host ::ng-deep .meters-form-field .mat-mdc-floating-label,
+:host ::ng-deep .meters-form-field .mdc-floating-label,
+:host ::ng-deep .meters-form-field .mdc-text-field__input {
+    color: #3F177B;
+}
+
+:host ::ng-deep .meters-form-field .mat-mdc-floating-label,
+:host ::ng-deep .meters-form-field .mdc-floating-label {
+    font-size: 13px;
+}
+
+:host ::ng-deep .meters-form-field .mdc-text-field__input {
+    font-size: 13px;
+}
+
+:host ::ng-deep .meters-form-field .mdc-notched-outline__leading,
+:host ::ng-deep .meters-form-field .mdc-notched-outline__notch,
+:host ::ng-deep .meters-form-field .mdc-notched-outline__trailing {
+    border-color: #3F177B;
+}
+
+:host ::ng-deep .meters-form-field .mat-mdc-form-field-subscript-wrapper {
+    margin: 0;
+    padding: 0;
+}
+
+.meters-input{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+}
+
+.meters-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+    justify-self: center;
+    width: 90%;
+    padding: 15px;
 }

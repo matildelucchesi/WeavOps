@@ -5,6 +5,7 @@ import { LoomFacadeService } from '../../../services/loom-facade.service';
 import { InputComponent } from '../input-component/input-component';
 import { Loom } from '../../../api';
 import { MatDialogRef } from '@angular/material/dialog';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-dialog-add-new-loom-component',
@@ -47,9 +48,10 @@ export class DialogAddNewLoomComponent {
         });
         this.serialNumber = '';
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         console.error('Error creating loom:', err);
-        this.snackBar.open('Errore durante la creazione del telaio', 'Chiudi', {
+        const errorMessage = err.error?.message ?? 'Errore durante la creazione del telaio';
+        this.snackBar.open(errorMessage, 'Chiudi', {
           duration: 4000,
           horizontalPosition: 'end',
           verticalPosition: 'bottom',

@@ -1,0 +1,26 @@
+<app-decorative-lines-component
+  [verticalPositions]="['24%', '25%', '43%', '75%','91%', '94%', '92%']"
+  [horizontalPositions]="['2%','15%', '17%', '30%', '53%', '56%', '94%']">
+</app-decorative-lines-component>
+
+<div class="title-wrapper">
+  <app-title-page-component
+  title="Clienti"
+  iconName="group"
+  [imageWidth]="40"
+  [imageHeight]="40">
+</app-title-page-component>
+</div>
+
+<div class="body">
+  <div class="button-wrapper">
+    <app-filter-button-component></app-filter-button-component>
+    <app-add-button-component (click)="goToAddCustomerPage()"></app-add-button-component>
+  </div>
+  <div>
+    <app-table-component
+    [columns]="columns"
+    [rows]="rows()">
+    </app-table-component>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+.button-wrapper {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.body{
+    width: 90%;
+    justify-self: center;
+}
+
+:host{
+    position: relative;
+    display: block;
+    isolation: isolate;
+}
+
+app-decorative-lines-component{
+    z-index: 0;
+}
+
+.title-wrapper,
+.body{
+    position: relative;
+    z-index: 1;
+}

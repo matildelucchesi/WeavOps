@@ -1,0 +1,20 @@
+button{
+    background: #FFFF;
+    color: #3F177B;
+    border: 1.5px solid #3F177B;
+    border-radius: 10px;
+    padding: 8px 16px;
+    align-items: center;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    height: 35px;
+    display: flex;
+    gap: 5px;
+}
+
+button:hover{
+    background: #7b5aac;
+    cursor: pointer;
+    color: #F8F1FF;
+}

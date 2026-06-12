@@ -1,25 +1,13 @@
-<div class="decorative-lines" aria-hidden="true">
-  <span class="line line-light-orange line-horizontal line-horizontal-1"></span>
-  <span class="line line-yellow line-horizontal line-horizontal-2"></span>
-  <span class="line line-orange line-horizontal line-horizontal-3"></span>
-  <span class="line line-yellow line-horizontal line-horizontal-4"></span>
-  <span class="line line-yellow line-vertical line-vertical-1"></span>
-  <span class="line line-orange line-vertical line-vertical-5"></span>
-  <span class="line line-orange line-vertical line-vertical-2"></span>
-  <span class="line line-light-yellow line-vertical line-vertical-3"></span>
-  <span class="line line-light-orange line-vertical line-vertical-4"></span>
-  <span class="line line-light-orange line-vertical line-vertical-6"></span>
-  <span class="line line-light-yellow line-vertical line-vertical-7"></span>
-</div>
+<app-decorative-lines-component></app-decorative-lines-component>
 
 <div class="title">
-  <h1 style="font-size: 30px; align-self: start;">Benvenuto in</h1>
+  <h1 style="text-shadow: 0 3px 1px rgba(108, 83, 145, 0.844);">Benvenuto in</h1>
   <h1 class="weavops">WeavOps</h1>
 </div>
 <div class="content">
   <div class="looms">
     <div style="display: grid; width: 80%; justify-self: center;">
-      <p>I tuoi telai</p>
+      <h2>I tuoi telai</h2>
       <div class="loom-wrapper">
         <div class="loom-section">
         @if(loomList().length > 0) {
@@ -27,10 +15,6 @@
             <app-loom-card-component [loom]="loom" (click)="openLoomActions(loom)"></app-loom-card-component>
           }
         } 
-        <!--
-        @else {
-          <p class="no-loom">Nessun hai ancora inserito un telaio.</p>
-        }-->
         </div>
         <div class="button-section">
           <button mat-icon-button class="button-style" (click)="openNewLoomDialog()">

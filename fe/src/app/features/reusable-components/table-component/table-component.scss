@@ -1,0 +1,194 @@
+.table-wrapper{
+    width: 100%;
+}
+
+table{
+    width: 100%;
+    border-radius: 10px 10px 0px 0px;
+    border-top: 1.5px solid #3F177B;
+    border-left: 1.5px solid #3F177B;
+    border-right: 1.5px solid #3F177B;
+    border-bottom: 0.5px solid #3F177B;
+    background: white;
+    justify-self: center;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+thead{
+    background: #F8F1FF;
+    color: #3F177B;
+    font-weight: 500;
+    width: 100%;
+    border-bottom: 1.5px solid #3F177B;
+    border-radius: 10px 10px 0px 0px;
+    box-sizing: border-box;
+}
+
+tr{
+    box-sizing: border-box;
+}
+
+tbody{
+    width: 100%;
+    border-radius: 0px 0px 10px 10px;
+    box-sizing: border-box;
+}
+
+th,
+td{
+    padding: 10px;
+    box-sizing: border-box;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th{
+    border-bottom: 1.5px solid #3F177B;
+}
+
+td{
+    color: #3F177B;
+}
+
+.actions-header,
+.actions-cell{
+    text-align: right;
+    white-space: nowrap;
+}
+
+.actions-wrapper{
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.action-button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    border: 1px solid #3F177B;
+    border-radius: 8px;
+    padding: 0 8px;
+    background-color: #FFFF;
+    color: #3F177B;
+    cursor: pointer;
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 700;
+}
+
+.action-button:hover:not(:disabled){
+    background-color: #F8F1FF;
+}
+
+.action-button:disabled{
+    cursor: default;
+    opacity: 0.45;
+}
+
+.action-button mat-icon{
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+}
+
+.pagination-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 18px;
+    padding: 10px;
+    color: #3F177B;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    border-left: 1.5px solid #3F177B;    
+    border-right: 1.5px solid #3F177B;    
+    border-bottom: 1.5px solid #3F177B;
+    border-radius: 0px 0px 10px 10px;
+    background: #F8F1FF;
+}
+
+.page-size-control{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.page-size-control select{
+    height: 30px;
+    border: 1.5px solid #3F177B;
+    border-radius: 8px;
+    padding: 0 8px;
+    background: #FFFF;
+    color: #3F177B;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.pagination-info{
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.pagination-actions{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 1.5px solid #3F177B;
+    border-radius: 10px;
+    padding: 0;
+    background: #FFFF;
+    color: #3F177B;
+    cursor: pointer;
+}
+
+.pagination-button:hover:not(:disabled){
+    background: #F8F1FF;
+}
+
+.pagination-button:disabled{
+    cursor: default;
+    opacity: 0.45;
+}
+
+.pagination-button mat-icon{
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+}
+
+.page-counter{
+    min-width: 46px;
+    text-align: center;
+    font-weight: 600;
+}
+
+@media (max-width: 700px){
+    .pagination-wrapper{
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+td{
+    border-bottom: 1px solid #3F177B;
+}

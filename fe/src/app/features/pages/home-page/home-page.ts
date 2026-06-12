@@ -7,13 +7,14 @@ import { LoomCardComponent } from "../../reusable-components/loom-card-component
 import { DialogLoomActionComponent } from '../../reusable-components/dialog-loom-action-component/dialog-loom-action-component';
 import { DialogAddNewLoomComponent } from '../../reusable-components/dialog-add-new-loom-component/dialog-add-new-loom-component';
 import { LoomFacadeService } from '../../../services/loom-facade.service';
+import { DecorativeLinesComponent } from "../../reusable-components/decorative-lines-component/decorative-lines-component";
 
 @Component({
-  selector: 'app-home-page',
   imports: [
     MatIconButton,
     MatIcon,
     LoomCardComponent,
+    DecorativeLinesComponent,
 ],
   standalone: true,
   templateUrl: './home-page.html',
@@ -42,12 +43,17 @@ export class HomePage implements OnInit {
   }
 
   openLoomActions(loom: Loom): void {
-    this.dialog.open(DialogLoomActionComponent, {
+    const dialogRef = this.dialog.open(DialogLoomActionComponent, {
       panelClass: 'loom-action-dialog-panel',
       data: {
         loom,
         modify: false,
       },
+    });
+    dialogRef.afterClosed().subscribe((updated) => {
+      if (updated) {
+        this.loadLoomList();
+      }
     });
   }
 

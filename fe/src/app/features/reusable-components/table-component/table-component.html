@@ -1,0 +1,88 @@
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        @for(col of columns; track col){
+          <th>{{ getColumnHeader(col) }}</th>
+        }
+        @if (actions.length > 0) {
+          <th class="actions-header">{{ actionColumnHeader }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for(row of paginatedRows; track row; let rowIndex = $index){
+        <tr>
+          @for(col of columns; track col; let columnIndex = $index){
+            <td>{{ getCellValue(row, col, columnIndex) }}</td>
+          }
+          @if (actions.length > 0) {
+            <td class="actions-cell">
+              <div class="actions-wrapper">
+                @for(action of actions; track action.id){
+                  @if (isActionVisible(action, row)) {
+                    <button
+                      class="action-button"
+                      type="button"
+                      [disabled]="isActionDisabled(action, row)"
+                      [attr.aria-label]="action.label"
+                      [title]="action.label"
+                      (click)="emitActionClick(action, row, rowIndex)"
+                    >
+                      @if (action.icon) {
+                        <mat-icon>{{ action.icon }}</mat-icon>
+                      } @else {
+                        <span>{{ action.label }}</span>
+                      }
+                    </button>
+                  }
+                }
+              </div>
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (shouldShowPagination) {
+    <div class="pagination-wrapper">
+      <label class="page-size-control">
+        <span>Elementi per pagina</span>
+        <select [value]="pageSize" (change)="onPageSizeChange($event)">
+          @for(option of pageSizeOptions; track option){
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+      </label>
+
+      <div class="pagination-info">
+        {{ firstVisibleItem }}-{{ lastVisibleItem }} di {{ totalRows }}
+      </div>
+
+      <div class="pagination-actions">
+        <button
+          class="pagination-button"
+          type="button"
+          [disabled]="isPreviousPageDisabled"
+          aria-label="Pagina precedente"
+          title="Pagina precedente"
+          (click)="goToPreviousPage()"
+        >
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span class="page-counter">{{ currentPage }} / {{ totalPages }}</span>
+        <button
+          class="pagination-button"
+          type="button"
+          [disabled]="isNextPageDisabled"
+          aria-label="Pagina successiva"
+          title="Pagina successiva"
+          (click)="goToNextPage()"
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+  }
+</div>
