@@ -1,6 +1,6 @@
 button{
-    background: #3F177B;
-    color: white;
+    background: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
     border: none;
     border-radius: 10px;
     padding: 8px 16px;
@@ -14,7 +14,7 @@ button{
 }
 
 button:hover{
-    background: #3F177B;
+    background: var(--weavops-color-primary);
     opacity: 0.9;
     cursor: pointer;
 }

@@ -7,7 +7,7 @@
     display: grid;
     grid-template-columns: 1fr;
     justify-self: center;
-    background-color: #FFFF;
+    background-color: var(--weavops-color-surface);
     padding: 20px;
     box-sizing: border-box;
     width: 450px;
@@ -27,14 +27,14 @@
 .dialog-title{
     font-size: 20px;
     font-weight: 600;
-    color: #3F177B;
+    color: var(--weavops-color-primary);
     margin: 0;
 }
 
 .loom-reference{
     font-size: 14px;
     font-weight: 700;
-    color: #F78701;
+    color: var(--weavops-color-accent);
     margin: 4px 0 0;
 }
 
@@ -53,12 +53,12 @@
     border-radius: 10px;
     width: 90px;
     height: 90px;
-    background-color: #FFFF;
-    border:#3F177B 1px solid;
+    background-color: var(--weavops-color-surface);
+    border: var(--weavops-color-primary) 1px solid;
 }
 
 .action-button:hover{
-    background-color: #7b5aac;
+    background-color: var(--weavops-color-primary-hover);
     opacity: 0.8;
 }
 
@@ -69,7 +69,7 @@
 .action-button-label{
     font-size: 15px;
     font-weight: 800;
-    color: #3F177B;
+    color: var(--weavops-color-primary);
     margin-top: 10px;
     text-align: center;
 }
@@ -82,9 +82,9 @@
     justify-items: stretch;
     width: 100%;
     height: 100%;
-    background-color: #F8F1FF;
+    background-color: var(--weavops-color-surface-muted);
     border-radius: 10px;
-    border: 1.5px solid #3F177B;
+    border: 1.5px solid var(--weavops-color-primary);
     padding: 15px;
     box-sizing: border-box;
 }
@@ -103,14 +103,14 @@
     border-radius: 10px;
     width: 100px;
     height: 30px;
-    background-color: #3F177B;
-    color: white;
+    background-color: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
     font-family: 'Instrument Sans', sans-serif;
     font-weight: 600;
 }
 
 .close-button:hover{
-    background-color: #3F177B;
+    background-color: var(--weavops-color-primary);
     opacity: 0.8;
 }
 
@@ -126,21 +126,21 @@
     cursor: pointer;
     border-radius: 10px;
     width: fit-content;
-    border:#3F177B 1px solid;
+    border: var(--weavops-color-primary) 1px solid;
     display: flex;
     font-size: 14px;
     font-weight: 800;
     align-items: center;
     font-family: 'Instrument Sans', sans-serif;
     gap: 5px;
-    background-color: #F8F1FF;
+    background-color: var(--weavops-color-surface-muted);
     padding: 8px 12px;
     box-sizing: border-box;
-    color: #3F177B;
+    color: var(--weavops-color-primary);
 }
 
 .modify-button:hover{
-    background-color: #e9e0ff;
+    background-color: var(--weavops-color-primary-soft);
 }
 
 .change-state-section{
@@ -171,25 +171,25 @@
     border-radius: 10px;
     width: 100%;
     height: 40px;
-    background-color: #FFFF;
-    border:#3F177B 1.5px solid;
+    background-color: var(--weavops-color-surface);
+    border: var(--weavops-color-primary) 1.5px solid;
     padding: 8px 12px;
     box-sizing: border-box;
     font-size: 14px;
     font-weight: 800;
     font-family: 'Instrument Sans', sans-serif;
-    color: #3F177B;
+    color: var(--weavops-color-primary);
 }
 
 .state-option-button:hover:not(:focus):not(:active){
-    background-color: #e9e0ff;
+    background-color: var(--weavops-color-primary-soft);
 }
 
 .state-option-button:focus,
 .state-option-button:active,
 .state-option-button.selected{
-    background-color: #3F177B;
-    color: white;
+    background-color: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
     outline: none;
 }
 
@@ -199,32 +199,32 @@
     border-radius: 10px;
     width: 100px;
     height: 30px;
-    background-color: #F78701;
-    color: white;
+    background-color: var(--weavops-color-accent);
+    color: var(--weavops-color-surface);
     font-family: 'Instrument Sans', sans-serif;
     font-weight: 600;
     justify-self: end;
 }
 
 .confirm-button:hover{
-    background-color: #F78701;
+    background-color: var(--weavops-color-accent);
     opacity: 0.8;
 }
 
 .meters-form-field{
     width: 100%;
     margin: 0;
-    --mdc-outlined-text-field-outline-color: #3F177B;
-    --mdc-outlined-text-field-hover-outline-color: #3F177B;
-    --mdc-outlined-text-field-focus-outline-color: #3F177B;
-    --mdc-outlined-text-field-label-text-color: #3F177B;
-    --mdc-outlined-text-field-hover-label-text-color: #3F177B;
-    --mdc-outlined-text-field-focus-label-text-color: #3F177B;
-    --mdc-outlined-text-field-input-text-color: #3F177B;
+    --mdc-outlined-text-field-outline-color: var(--weavops-color-primary);
+    --mdc-outlined-text-field-hover-outline-color: var(--weavops-color-primary);
+    --mdc-outlined-text-field-focus-outline-color: var(--weavops-color-primary);
+    --mdc-outlined-text-field-label-text-color: var(--weavops-color-primary);
+    --mdc-outlined-text-field-hover-label-text-color: var(--weavops-color-primary);
+    --mdc-outlined-text-field-focus-label-text-color: var(--weavops-color-primary);
+    --mdc-outlined-text-field-input-text-color: var(--weavops-color-primary);
 }
 
 .meters-input-field{
-    color: #3F177B;
+    color: var(--weavops-color-primary);
     font-size: 11px;
     font-family: 'Instrument Sans', sans-serif;
 }
@@ -232,14 +232,14 @@
 :host ::ng-deep .meters-form-field .mat-mdc-text-field-wrapper,
 :host ::ng-deep .meters-form-field .mdc-text-field--outlined,
 :host ::ng-deep .meters-form-field .mat-mdc-form-field-flex {
-    background-color: #FFFF;
+    background-color: var(--weavops-color-surface);
     border-radius: 10px;
 }
 
 :host ::ng-deep .meters-form-field .mat-mdc-floating-label,
 :host ::ng-deep .meters-form-field .mdc-floating-label,
 :host ::ng-deep .meters-form-field .mdc-text-field__input {
-    color: #3F177B;
+    color: var(--weavops-color-primary);
 }
 
 :host ::ng-deep .meters-form-field .mat-mdc-floating-label,
@@ -254,7 +254,7 @@
 :host ::ng-deep .meters-form-field .mdc-notched-outline__leading,
 :host ::ng-deep .meters-form-field .mdc-notched-outline__notch,
 :host ::ng-deep .meters-form-field .mdc-notched-outline__trailing {
-    border-color: #3F177B;
+    border-color: var(--weavops-color-primary);
 }
 
 :host ::ng-deep .meters-form-field .mat-mdc-form-field-subscript-wrapper {

@@ -3,7 +3,7 @@
 }
 
 .wrapper{
-    background-color: #FFFF;
+    background-color: var(--weavops-color-surface);
     display: grid;
     padding: 20px;
     width: 450px;
@@ -35,7 +35,7 @@
 .dialog-title{
     font-size: 20px;
     font-weight: 600;
-    color: #3F177B;
+    color: var(--weavops-color-primary);
     margin: 0;
 }
 
@@ -45,14 +45,14 @@
     border-radius: 10px;
     width: 100px;
     height: 30px;
-    background-color: #3F177B;
-    color: white;
+    background-color: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
     font-family: 'Instrument Sans', sans-serif;
     font-weight: 600;
 }
 
 .close-button:hover{
-    background-color: #3F177B;
+    background-color: var(--weavops-color-primary);
     opacity: 0.8;
 }
 
@@ -81,8 +81,8 @@
     border-radius: 10px;
     width: 100px;
     height: 30px;
-    background-color: #F78701;
-    color: white;
+    background-color: var(--weavops-color-accent);
+    color: var(--weavops-color-surface);
     font-family: 'Instrument Sans', sans-serif;
     font-weight: 600;
     justify-self: end;
@@ -90,6 +90,6 @@
 }
 
 .submit-button:hover{
-    background-color: #F78701;
+    background-color: var(--weavops-color-accent);
     opacity: 0.8;
 }

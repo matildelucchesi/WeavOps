@@ -6,8 +6,58 @@
 @use '@angular/material' as mat;
 @use '../src_theme-colors' as theme-colors;
 
+$weavops-color-primary: #3f177b;
+$weavops-color-primary-hover: #7b5aac;
+$weavops-color-primary-soft: #e9e0ff;
+$weavops-color-surface: #ffffff;
+$weavops-color-surface-muted: #f8f1ff;
+$weavops-color-accent: #f78701;
+$weavops-color-accent-alpha: #f788019e;
+$weavops-color-accent-dark: #c76300;
+$weavops-color-accent-strong: #c26300;
+$weavops-color-accent-deep: #a95100;
+$weavops-color-accent-light: #ffb35c;
+$weavops-color-accent-lighter: #ffb65c;
+$weavops-color-warning: #ffe46d;
+$weavops-color-warning-alpha: #ffe46daa;
+$weavops-color-danger: #d90000;
+$weavops-color-danger-bright: #ff0000;
+$weavops-color-black: #000000;
+
 html {
   height: 100%;
+  --weavops-color-primary: #{$weavops-color-primary};
+  --weavops-color-primary-hover: #{$weavops-color-primary-hover};
+  --weavops-color-primary-soft: #{$weavops-color-primary-soft};
+  --weavops-color-surface: #{$weavops-color-surface};
+  --weavops-color-surface-muted: #{$weavops-color-surface-muted};
+  --weavops-color-accent: #{$weavops-color-accent};
+  --weavops-color-accent-alpha: #{$weavops-color-accent-alpha};
+  --weavops-color-accent-dark: #{$weavops-color-accent-dark};
+  --weavops-color-accent-strong: #{$weavops-color-accent-strong};
+  --weavops-color-accent-deep: #{$weavops-color-accent-deep};
+  --weavops-color-accent-light: #{$weavops-color-accent-light};
+  --weavops-color-accent-lighter: #{$weavops-color-accent-lighter};
+  --weavops-color-warning: #{$weavops-color-warning};
+  --weavops-color-warning-alpha: #{$weavops-color-warning-alpha};
+  --weavops-color-danger: #{$weavops-color-danger};
+  --weavops-color-danger-bright: #{$weavops-color-danger-bright};
+  --weavops-color-black: #{$weavops-color-black};
+  --weavops-rgb-primary: 63 23 123;
+  --weavops-rgb-primary-shadow: 108 83 145;
+  --weavops-rgb-accent: 247 135 1;
+  --weavops-rgb-accent-shadow: 154 72 0;
+  --weavops-rgb-accent-yellow-shadow: 154 112 0;
+  --weavops-rgb-accent-deep-shadow: 115 58 0;
+  --weavops-rgb-accent-inset-shadow: 138 69 0;
+  --weavops-rgb-accent-card-shadow: 120 61 0;
+  --weavops-rgb-accent-thread-shadow: 165 82 0;
+  --weavops-rgb-warning: 255 228 109;
+  --weavops-rgb-warning-shadow: 255 196 34;
+  --weavops-rgb-loader-backdrop: 35 2 66;
+  --weavops-rgb-white: 255 255 255;
+  --weavops-rgb-black: 0 0 0;
+
   @include mat.theme(
     (
       color: (
@@ -21,31 +71,31 @@ html {
 
   @include mat.theme-overrides(
     (
-      primary: #3f177b,
-      on-primary: #ffffff,
+      primary: $weavops-color-primary,
+      on-primary: $weavops-color-surface,
     )
   );
 }
 
 h1{
-  color: #3F177B;
+  color: var(--weavops-color-primary);
   font-size: 30px;
   align-self: start;
 }
 
 h2{
-  color: #3F177B;
+  color: var(--weavops-color-primary);
   font-size: 24px;
 }
 
 h3{
-  color: #3F177B;
+  color: var(--weavops-color-primary);
   font-size: 20px;
 }
 
 hr{
   height: 0.5px;
-  background-color: #3F177B;
+  background-color: var(--weavops-color-primary);
 }
 
 body {
@@ -67,27 +117,44 @@ body {
 }
 
 .mat-mdc-snack-bar-container.error-snackbar {
-  --mdc-snackbar-container-color: #d90000;
-  --mdc-snackbar-supporting-text-color: #ffffff;
-  --mat-snack-bar-button-color: #ffffff;
-  color: #ffffff;
+  --mdc-snackbar-container-color: var(--weavops-color-danger);
+  --mdc-snackbar-supporting-text-color: var(--weavops-color-surface);
+  --mat-snack-bar-button-color: var(--weavops-color-surface);
+  color: var(--weavops-color-surface);
 }
 
 .mat-mdc-snack-bar-container.error-snackbar .mdc-snackbar__surface {
-  background-color: #d90000 !important;
-  color: #ffffff !important;
+  background-color: var(--weavops-color-danger) !important;
+  color: var(--weavops-color-surface) !important;
 }
 
 .mat-mdc-snack-bar-container.error-snackbar .mat-mdc-snack-bar-label,
 .mat-mdc-snack-bar-container.error-snackbar .mdc-button__label {
-  color: #ffffff;
+  color: var(--weavops-color-surface);
+}
+
+.mat-mdc-snack-bar-container.auth-snackbar {
+  --mdc-snackbar-container-color: var(--weavops-color-primary);
+  --mdc-snackbar-supporting-text-color: var(--weavops-color-surface);
+  --mat-snack-bar-button-color: var(--weavops-color-surface);
+  color: var(--weavops-color-surface);
+}
+
+.mat-mdc-snack-bar-container.auth-snackbar .mdc-snackbar__surface {
+  background-color: var(--weavops-color-primary) !important;
+  color: var(--weavops-color-surface) !important;
+}
+
+.mat-mdc-snack-bar-container.auth-snackbar .mat-mdc-snack-bar-label,
+.mat-mdc-snack-bar-container.auth-snackbar .mdc-button__label {
+  color: var(--weavops-color-surface);
 }
 
 .add-new-loom-dialog-panel .mat-mdc-dialog-surface {
-  background-color: #ffffff;
-  border: 2px solid #3f177b;
+  background-color: var(--weavops-color-surface);
+  border: 2px solid var(--weavops-color-primary);
   border-radius: 10px;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 4px rgb(var(--weavops-rgb-black) / 0.25);
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -97,10 +164,10 @@ body {
 }
 
 .loom-action-dialog-panel .mat-mdc-dialog-surface {
-  background-color: #ffffff;
-  border: 2px solid #3f177b;
+  background-color: var(--weavops-color-surface);
+  border: 2px solid var(--weavops-color-primary);
   border-radius: 10px;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 4px rgb(var(--weavops-rgb-black) / 0.25);
   box-sizing: border-box;
   overflow: hidden;
 }

@@ -5,11 +5,11 @@
 table{
     width: 100%;
     border-radius: 10px 10px 0px 0px;
-    border-top: 1.5px solid #3F177B;
-    border-left: 1.5px solid #3F177B;
-    border-right: 1.5px solid #3F177B;
-    border-bottom: 0.5px solid #3F177B;
-    background: white;
+    border-top: 1.5px solid var(--weavops-color-primary);
+    border-left: 1.5px solid var(--weavops-color-primary);
+    border-right: 1.5px solid var(--weavops-color-primary);
+    border-bottom: 0.5px solid var(--weavops-color-primary);
+    background: var(--weavops-color-surface);
     justify-self: center;
     table-layout: fixed;
     border-collapse: separate;
@@ -19,11 +19,11 @@ table{
 }
 
 thead{
-    background: #F8F1FF;
-    color: #3F177B;
+    background: var(--weavops-color-surface-muted);
+    color: var(--weavops-color-primary);
     font-weight: 500;
     width: 100%;
-    border-bottom: 1.5px solid #3F177B;
+    border-bottom: 1.5px solid var(--weavops-color-primary);
     border-radius: 10px 10px 0px 0px;
     box-sizing: border-box;
 }
@@ -47,11 +47,12 @@ td{
 }
 
 th{
-    border-bottom: 1.5px solid #3F177B;
+    border-bottom: 1.5px solid var(--weavops-color-primary);
 }
 
 td{
-    color: #3F177B;
+    color: var(--weavops-color-primary);
+    white-space: pre-line;
 }
 
 .actions-header,
@@ -68,23 +69,24 @@ td{
 }
 
 .action-button{
+    --action-icon-color: var(--weavops-color-primary);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-width: 32px;
     height: 32px;
-    border: 1px solid #3F177B;
-    border-radius: 8px;
-    padding: 0 8px;
-    background-color: #FFFF;
-    color: #3F177B;
+    border: 0px;
+    background-color: var(--weavops-color-surface);
+    color: var(--action-icon-color);
     cursor: pointer;
     font-family: 'Instrument Sans', sans-serif;
     font-weight: 700;
+    font-size: 12px;
+    transition: color 0.2s ease;
 }
 
 .action-button:hover:not(:disabled){
-    background-color: #F8F1FF;
+    color: color-mix(in srgb, var(--action-icon-color) 70%, var(--weavops-color-surface));
 }
 
 .action-button:disabled{
@@ -93,10 +95,11 @@ td{
 }
 
 .action-button mat-icon{
-    width: 18px;
-    height: 18px;
-    font-size: 18px;
-    line-height: 18px;
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+    line-height: 24px;
+    color: inherit;
 }
 
 .pagination-wrapper{
@@ -105,14 +108,14 @@ td{
     justify-content: flex-end;
     gap: 18px;
     padding: 10px;
-    color: #3F177B;
+    color: var(--weavops-color-primary);
     font-family: 'Instrument Sans', sans-serif;
     font-size: 12px;
-    border-left: 1.5px solid #3F177B;    
-    border-right: 1.5px solid #3F177B;    
-    border-bottom: 1.5px solid #3F177B;
+    border-left: 1.5px solid var(--weavops-color-primary);
+    border-right: 1.5px solid var(--weavops-color-primary);
+    border-bottom: 1.5px solid var(--weavops-color-primary);
     border-radius: 0px 0px 10px 10px;
-    background: #F8F1FF;
+    background: var(--weavops-color-surface-muted);
 }
 
 .page-size-control{
@@ -124,11 +127,11 @@ td{
 
 .page-size-control select{
     height: 30px;
-    border: 1.5px solid #3F177B;
+    border: 1.5px solid var(--weavops-color-primary);
     border-radius: 8px;
     padding: 0 8px;
-    background: #FFFF;
-    color: #3F177B;
+    background: var(--weavops-color-surface);
+    color: var(--weavops-color-primary);
     font-family: 'Instrument Sans', sans-serif;
     font-size: 12px;
     cursor: pointer;
@@ -151,16 +154,16 @@ td{
     justify-content: center;
     width: 30px;
     height: 30px;
-    border: 1.5px solid #3F177B;
+    border: 1.5px solid var(--weavops-color-primary);
     border-radius: 10px;
     padding: 0;
-    background: #FFFF;
-    color: #3F177B;
+    background: var(--weavops-color-surface);
+    color: var(--weavops-color-primary);
     cursor: pointer;
 }
 
 .pagination-button:hover:not(:disabled){
-    background: #F8F1FF;
+    background: var(--weavops-color-surface-muted);
 }
 
 .pagination-button:disabled{
@@ -190,5 +193,5 @@ td{
 }
 
 td{
-    border-bottom: 1px solid #3F177B;
+    border-bottom: 1px solid var(--weavops-color-primary);
 }

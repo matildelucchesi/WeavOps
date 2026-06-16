@@ -32,13 +32,13 @@ export class CustomerTableService {
     return referents
       .map((referent) => `${referent.firstName} ${referent.lastName}`.trim())
       .filter(Boolean)
-      .join(', ');
+      .join('\n');
   }
 
   private formatPhoneNumbers(referents: Referent[]): string {
     return referents
       .map((referent) => referent.phoneNumber)
       .filter((phoneNumber): phoneNumber is string => Boolean(phoneNumber))
-      .join(', ');
+      .join('\n');
   }
 }

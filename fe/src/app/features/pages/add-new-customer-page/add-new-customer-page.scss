@@ -30,15 +30,15 @@ app-decorative-lines-component{
 .data{
     display: grid;
     width: 100%;
-    border: 1.5px solid #3F177B;
+    border: 1.5px solid var(--weavops-color-primary);
     border-radius: 10px;
     padding: 16px;
     box-sizing: border-box;
-    background: #F8F1FF;
+    background: var(--weavops-color-surface-muted);
 }
 
 input{
-    border: 1.5px solid #3F177B;
+    border: 1.5px solid var(--weavops-color-primary);
     border-radius: 10px;
     padding: 8px 16px;
     font-family: 'Instrument Sans', sans-serif;
@@ -100,7 +100,7 @@ input{
     display: flex;
     font-family: 'Instrument Sans', sans-serif;
     font-size: 15px;
-    color: #3F177B;
+    color: var(--weavops-color-primary);
     font-weight: 700;
     align-self: center;
 }
@@ -110,7 +110,7 @@ input{
 }
 
 .textarea{
-    border: 1.5px solid #3F177B;
+    border: 1.5px solid var(--weavops-color-primary);
     border-radius: 10px;
     padding: 8px 16px;
     font-family: 'Instrument Sans', sans-serif;

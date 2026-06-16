@@ -20,7 +20,10 @@
   <div>
     <app-table-component
     [columns]="columns"
-    [rows]="rows()">
+    [rows]="rows()"
+    [actions]="actions"
+    actionColumnHeader="Azioni"
+    (actionClick)="onTableAction($event)">
     </app-table-component>
   </div>
 </div>

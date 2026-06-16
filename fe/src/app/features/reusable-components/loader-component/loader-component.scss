@@ -4,7 +4,7 @@
   z-index: 1000;
   display: grid;
   place-items: center;
-  background: rgba(35, 2, 66, 0.677);
+  background: rgb(var(--weavops-rgb-loader-backdrop) / 0.677);
 }
 
 .loader-box {
@@ -12,11 +12,11 @@
   height: 190px;
   display: grid;
   place-items: center;
-  //border: 2px solid #3f177b;
+  //border: 2px solid var(--weavops-color-primary);
   //border-radius: 10px;
-  //background: #ffffff;
+  //background: var(--weavops-color-surface);
   box-sizing: border-box;
-  //box-shadow: 0 10px 26px rgba(63, 23, 123, 0.14);
+  //box-shadow: 0 10px 26px rgb(var(--weavops-rgb-primary) / 0.14);
 }
 
 .logo-wrapper {

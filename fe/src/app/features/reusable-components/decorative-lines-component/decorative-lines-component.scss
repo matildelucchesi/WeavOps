@@ -42,27 +42,27 @@
 }
 
 .line-orange{
-    --line-color: #F78701;
-    --line-shadow: rgba(154, 72, 0, 0.28);
-    --line-glow: rgba(247, 135, 1, 0.38);
+    --line-color: var(--weavops-color-accent);
+    --line-shadow: rgb(var(--weavops-rgb-accent-shadow) / 0.28);
+    --line-glow: rgb(var(--weavops-rgb-accent) / 0.38);
 }
 
 .line-light-orange{
-    --line-color: #f788019e;
-    --line-shadow: rgba(154, 72, 0, 0.2);
-    --line-glow: rgba(247, 135, 1, 0.38);
+    --line-color: var(--weavops-color-accent-alpha);
+    --line-shadow: rgb(var(--weavops-rgb-accent-shadow) / 0.2);
+    --line-glow: rgb(var(--weavops-rgb-accent) / 0.38);
 }
 
 .line-yellow{
-    --line-color: #FFE46D;
-    --line-shadow: rgba(154, 112, 0, 0.22);
-    --line-glow: rgba(255, 228, 109, 0.45);
+    --line-color: var(--weavops-color-warning);
+    --line-shadow: rgb(var(--weavops-rgb-accent-yellow-shadow) / 0.22);
+    --line-glow: rgb(var(--weavops-rgb-warning) / 0.45);
 }
 
 .line-light-yellow{
-    --line-color: #ffe46daa;
-    --line-shadow: rgba(154, 112, 0, 0.16);
-    --line-glow: rgba(255, 228, 109, 0.45);
+    --line-color: var(--weavops-color-warning-alpha);
+    --line-shadow: rgb(var(--weavops-rgb-accent-yellow-shadow) / 0.16);
+    --line-glow: rgb(var(--weavops-rgb-warning) / 0.45);
 }
 
 .line-horizontal{
@@ -78,7 +78,7 @@
             var(--line-shadow) 2px,
             var(--line-color) 3px,
             var(--line-color) 5px,
-            rgba(255, 255, 255, 0.45) 6px,
+            rgb(var(--weavops-rgb-white) / 0.45) 6px,
             var(--line-color) 7px,
             var(--line-shadow) 8px,
             transparent 9px,
@@ -86,16 +86,16 @@
         ),
         repeating-linear-gradient(
             90deg,
-            rgba(255, 255, 255, 0.24) 0 6px,
+            rgb(var(--weavops-rgb-white) / 0.24) 0 6px,
             transparent 6px 14px,
-            rgba(0, 0, 0, 0.08) 14px 18px,
+            rgb(var(--weavops-rgb-black) / 0.08) 14px 18px,
             transparent 18px 28px
         );
     --thread-highlight:
         repeating-linear-gradient(
             90deg,
             transparent 0 18px,
-            rgba(255, 255, 255, 0.55) 18px 20px,
+            rgb(var(--weavops-rgb-white) / 0.55) 18px 20px,
             transparent 20px 36px
         );
 }
@@ -113,7 +113,7 @@
             var(--line-shadow) 2px,
             var(--line-color) 3px,
             var(--line-color) 5px,
-            rgba(255, 255, 255, 0.45) 6px,
+            rgb(var(--weavops-rgb-white) / 0.45) 6px,
             var(--line-color) 7px,
             var(--line-shadow) 8px,
             transparent 9px,
@@ -121,16 +121,16 @@
         ),
         repeating-linear-gradient(
             0deg,
-            rgba(255, 255, 255, 0.24) 0 6px,
+            rgb(var(--weavops-rgb-white) / 0.24) 0 6px,
             transparent 6px 14px,
-            rgba(0, 0, 0, 0.08) 14px 18px,
+            rgb(var(--weavops-rgb-black) / 0.08) 14px 18px,
             transparent 18px 28px
         );
     --thread-highlight:
         repeating-linear-gradient(
             0deg,
             transparent 0 18px,
-            rgba(255, 255, 255, 0.55) 18px 20px,
+            rgb(var(--weavops-rgb-white) / 0.55) 18px 20px,
             transparent 20px 36px
         );
 }

@@ -4,7 +4,7 @@
     isolation: isolate;
     overflow: hidden;
     min-height: 100vh;
-    background-color: #F8F1FF;
+    background-color: var(--weavops-color-surface-muted);
     width: 100vw;
 }
 
@@ -12,13 +12,13 @@
     position: relative;
     justify-self: center;
     z-index: 1000000;
-    background-color: #F8F1FF;
+    background-color: var(--weavops-color-surface-muted);
     margin: 0;
     width: fit-content;
 }
 
 :host ::ng-deep body {
-    background-color: #F8F1FF;
+    background-color: var(--weavops-color-surface-muted);
 }
 
 .logo {
@@ -48,9 +48,9 @@ img{
     border-radius: 999px;
     overflow: hidden;
     box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.38) inset,
-        0 -1px 0 rgba(138, 69, 0, 0.2) inset,
-        0 2px 4px rgba(120, 61, 0, 0.14);
+        0 1px 0 rgb(var(--weavops-rgb-white) / 0.38) inset,
+        0 -1px 0 rgb(var(--weavops-rgb-accent-inset-shadow) / 0.2) inset,
+        0 2px 4px rgb(var(--weavops-rgb-accent-card-shadow) / 0.14);
 }
 
 .login-weave span::after {
@@ -75,26 +75,26 @@ img{
     background:
         repeating-linear-gradient(
             180deg,
-            rgba(255, 255, 255, 0.28) 0 8px,
-            rgba(255, 255, 255, 0) 8px 15px,
-            rgba(165, 82, 0, 0.28) 15px 30px,
-            rgba(255, 255, 255, 0) 30px 38px
+            rgb(var(--weavops-rgb-white) / 0.28) 0 8px,
+            rgb(var(--weavops-rgb-white) / 0) 8px 15px,
+            rgb(var(--weavops-rgb-accent-thread-shadow) / 0.28) 15px 30px,
+            rgb(var(--weavops-rgb-white) / 0) 30px 38px
         ),
         linear-gradient(
             90deg,
-            #c76300 0%,
-            #F78701 28%,
-            #ffb65c 52%,
-            #F78701 78%,
-            #a95100 100%
+            var(--weavops-color-accent-dark) 0%,
+            var(--weavops-color-accent) 28%,
+            var(--weavops-color-accent-lighter) 52%,
+            var(--weavops-color-accent) 78%,
+            var(--weavops-color-accent-deep) 100%
         ),
         repeating-linear-gradient(
             180deg,
-            #F78701 0 28%,
-            #ffb35c 28% 43%,
-            #F78701 43% 56%,
-            #c26300 56% 84%,
-            #F78701 84% 100%
+            var(--weavops-color-accent) 0 28%,
+            var(--weavops-color-accent-light) 28% 43%,
+            var(--weavops-color-accent) 43% 56%,
+            var(--weavops-color-accent-strong) 56% 84%,
+            var(--weavops-color-accent) 84% 100%
         );
     background-size: 100% 240px;
     background-blend-mode: screen, normal, normal;
@@ -108,10 +108,10 @@ img{
     background:
         repeating-linear-gradient(
             180deg,
-            rgba(255, 255, 255, 0.36) 0 18px,
-            rgba(255, 255, 255, 0) 18px 32px,
-            rgba(115, 58, 0, 0.3) 32px 62px,
-            rgba(255, 255, 255, 0) 62px 78px
+            rgb(var(--weavops-rgb-white) / 0.36) 0 18px,
+            rgb(var(--weavops-rgb-white) / 0) 18px 32px,
+            rgb(var(--weavops-rgb-accent-deep-shadow) / 0.3) 32px 62px,
+            rgb(var(--weavops-rgb-white) / 0) 62px 78px
         );
     mix-blend-mode: soft-light;
 }
@@ -175,26 +175,26 @@ img{
     background:
         repeating-linear-gradient(
             90deg,
-            rgba(255, 255, 255, 0.28) 0 10px,
-            rgba(255, 255, 255, 0) 10px 18px,
-            rgba(165, 82, 0, 0.28) 18px 36px,
-            rgba(255, 255, 255, 0) 36px 46px
+            rgb(var(--weavops-rgb-white) / 0.28) 0 10px,
+            rgb(var(--weavops-rgb-white) / 0) 10px 18px,
+            rgb(var(--weavops-rgb-accent-thread-shadow) / 0.28) 18px 36px,
+            rgb(var(--weavops-rgb-white) / 0) 36px 46px
         ),
         linear-gradient(
             180deg,
-            #c76300 0%,
-            #F78701 32%,
-            #ffb65c 55%,
-            #F78701 78%,
-            #a95100 100%
+            var(--weavops-color-accent-dark) 0%,
+            var(--weavops-color-accent) 32%,
+            var(--weavops-color-accent-lighter) 55%,
+            var(--weavops-color-accent) 78%,
+            var(--weavops-color-accent-deep) 100%
         ),
         repeating-linear-gradient(
             90deg,
-            #F78701 0 24%,
-            #ffb35c 24% 36%,
-            #F78701 36% 50%,
-            #c26300 50% 82%,
-            #F78701 82% 100%
+            var(--weavops-color-accent) 0 24%,
+            var(--weavops-color-accent-light) 24% 36%,
+            var(--weavops-color-accent) 36% 50%,
+            var(--weavops-color-accent-strong) 50% 82%,
+            var(--weavops-color-accent) 82% 100%
         );
     background-size: 360px 100%;
     background-blend-mode: screen, normal, normal;
@@ -208,10 +208,10 @@ img{
     background:
         repeating-linear-gradient(
             90deg,
-            rgba(255, 255, 255, 0.34) 0 26px,
-            rgba(255, 255, 255, 0) 26px 44px,
-            rgba(115, 58, 0, 0.3) 44px 86px,
-            rgba(255, 255, 255, 0) 86px 108px
+            rgb(var(--weavops-rgb-white) / 0.34) 0 26px,
+            rgb(var(--weavops-rgb-white) / 0) 26px 44px,
+            rgb(var(--weavops-rgb-accent-deep-shadow) / 0.3) 44px 86px,
+            rgb(var(--weavops-rgb-white) / 0) 86px 108px
         );
     mix-blend-mode: soft-light;
 }

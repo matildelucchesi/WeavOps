@@ -11,6 +11,7 @@ export interface TableAction<T = any> {
   id: string;
   label: string;
   icon?: string;
+  iconColor?: string;
   visible?: boolean | ((row: T) => boolean);
   disabled?: boolean | ((row: T) => boolean);
 }
@@ -33,6 +34,7 @@ export class TableComponent {
   @Input() columns: Array<string | TableColumn> = [];
   @Input() actions: TableAction[] = [];
   @Input() actionColumnHeader: string = 'Azioni';
+  @Input() actionIconColor: string = 'var(--weavops-color-primary)';
   @Input() pageSizeOptions: number[] = [10, 15, 20, 50];
   @Input() showPagination: boolean = true;
   @Input()
@@ -121,6 +123,10 @@ export class TableComponent {
   public emitActionClick(action: TableAction, row: any, rowIndex: number): void {
     const absoluteRowIndex = (this.currentPage - 1) * this.pageSize + rowIndex;
     this.actionClick.emit({ action, row, rowIndex: absoluteRowIndex });
+  }
+
+  public getActionIconColor(action: TableAction): string {
+    return action.iconColor ?? this.actionIconColor;
   }
 
   public goToPreviousPage(): void {

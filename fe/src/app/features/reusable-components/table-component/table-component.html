@@ -27,10 +27,13 @@
                       [disabled]="isActionDisabled(action, row)"
                       [attr.aria-label]="action.label"
                       [title]="action.label"
+                      [style.--action-icon-color]="getActionIconColor(action)"
                       (click)="emitActionClick(action, row, rowIndex)"
                     >
                       @if (action.icon) {
-                        <mat-icon>{{ action.icon }}</mat-icon>
+                        <mat-icon>
+                          {{ action.icon }}
+                        </mat-icon>
                       } @else {
                         <span>{{ action.label }}</span>
                       }

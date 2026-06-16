@@ -12,7 +12,7 @@
 }
 
 :host:focus-visible{
-    outline: 2px solid #3F177B;
+    outline: 2px solid var(--weavops-color-primary);
     outline-offset: 3px;
 }
 
@@ -20,12 +20,12 @@
     font-size: 15px;
     font-weight: 700;
     margin-top: 10px;
-    color: black;
+    color: var(--weavops-color-black);
 }
 
 .loom-status{
     font-size: 13px;
-    color: black;
+    color: var(--weavops-color-black);
 }
 
 .loom-image{
