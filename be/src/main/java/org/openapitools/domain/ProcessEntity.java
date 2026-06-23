@@ -3,7 +3,7 @@ package org.openapitools.domain;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 @Document(collection = "processes")
 public class ProcessEntity {
@@ -15,9 +15,9 @@ public class ProcessEntity {
     private Integer totalMeters;
     private Integer metersRun;
     private Integer metersToGo;
-    private OffsetDateTime startDate;
-    private OffsetDateTime endDate;
-    private OffsetDateTime expectedEndDate;
+    private Instant startDate;
+    private Instant endDate;
+    private Instant expectedEndDate;
     private String loomId;
 
     //getter & setter
@@ -70,27 +70,27 @@ public class ProcessEntity {
         this.metersToGo = metersToGo;
     }
 
-    public OffsetDateTime getStartDate() {
+    public Instant getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(OffsetDateTime startDate) {
+    public void setStartDate(Instant startDate) {
         this.startDate = startDate;
     }
 
-    public OffsetDateTime getEndDate() {
+    public Instant getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(OffsetDateTime endDate) {
+    public void setEndDate(Instant endDate) {
         this.endDate = endDate;
     }
 
-    public OffsetDateTime getExpectedEndDate() {
+    public Instant getExpectedEndDate() {
         return expectedEndDate;
     }
 
-    public void setExpectedEndDate(OffsetDateTime expectedEndDate) {
+    public void setExpectedEndDate(Instant expectedEndDate) {
         this.expectedEndDate = expectedEndDate;
     }
 

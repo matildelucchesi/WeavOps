@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("deleteMultiLooms_200_response")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T11:33:13.963197700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T15:06:56.078342900+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class DeleteMultiLooms200Response {
 
   private @Nullable Integer deletedCount;

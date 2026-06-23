@@ -5,12 +5,13 @@
  */
 package org.openapitools.api;
 
-import org.openapitools.domain.ItemEntity;
 import org.openapitools.model.CreateItemWithArrangementRequest;
 import org.openapitools.model.DeleteMultiItems200Response;
 import org.openapitools.model.Item;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,20 +19,23 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
-
+import jakarta.validation.constraints.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T11:33:13.963197700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T15:06:56.078342900+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Item", description = "the Item API")
 public interface ItemsApi {
@@ -89,10 +93,10 @@ public interface ItemsApi {
     /**
      * POST /items/with-arrangement : Crea item con disposizione e customerName
      *
-     * @param createItemWithArrangementRequest (required)
+     * @param createItemWithArrangementRequest  (required)
      * @return Item creato (status code 201)
-     * or Richiesta non valida (status code 400)
-     * or Customer non trovato (status code 404)
+     *         or Richiesta non valida (status code 400)
+     *         or Customer non trovato (status code 404)
      */
     @Operation(
         operationId = "createItemWithArrangement",
@@ -115,7 +119,7 @@ public interface ItemsApi {
         produces = { "application/json" },
         consumes = { "application/json" }
     )
-    default ResponseEntity<ItemEntity> createItemWithArrangement(
+    default ResponseEntity<Item> createItemWithArrangement(
         @Parameter(name = "CreateItemWithArrangementRequest", description = "", required = true) @Valid @RequestBody CreateItemWithArrangementRequest createItemWithArrangementRequest
     ) {
         getRequest().ifPresent(request -> {

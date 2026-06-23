@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -111,7 +113,7 @@ public class ItemService {
         arrangement.setPiecesCount(arrangementRequest.getPiecesCount());
         arrangement.setPieceLenght(arrangementRequest.getPieceLength());
         arrangement.setHitsPerDm(arrangementRequest.getHitsPerDm());
-        arrangement.setDeliveryDate(arrangementRequest.getDeliveryDate());
+        arrangement.setDeliveryDate(toInstant(arrangementRequest.getDeliveryDate()));
 
         ArrangementEntity savedArrangement = arrangementService.save(arrangement);
 
@@ -124,6 +126,10 @@ public class ItemService {
         item.setTotalMeters(Math.round(totalMeters));
 
         return repository.save(item);
+    }
+
+    private Instant toInstant(OffsetDateTime value) {
+        return value == null ? null : value.toInstant();
     }
 
 }

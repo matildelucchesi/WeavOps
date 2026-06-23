@@ -7,6 +7,9 @@ import org.openapitools.model.Item;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @Component
 public class ItemMapper {
@@ -54,9 +57,9 @@ public class ItemMapper {
         if (entity.getProcessing() != null) {
             dto.setProcessing(entity.getProcessing().stream().map(processMapper::toDto).toList());
         }
-        dto.setExpectedEndDate(entity.getExpectedEndDate());
-        dto.setEndDate(entity.getEndDate());
-        dto.setStartDate(entity.getStartDate());
+        dto.setExpectedEndDate(toOffsetDateTime(entity.getExpectedEndDate()));
+        dto.setEndDate(toOffsetDateTime(entity.getEndDate()));
+        dto.setStartDate(toOffsetDateTime(entity.getStartDate()));
         return dto;
     }
 
@@ -77,9 +80,9 @@ public class ItemMapper {
         if (dto.getProcessing() != null) {
             entity.setProcessing(dto.getProcessing().stream().map(processMapper::toEntity).toList());
         }
-        entity.setExpectedEndDate(dto.getExpectedEndDate());
-        entity.setEndDate(dto.getEndDate());
-        entity.setStartDate(dto.getStartDate());
+        entity.setExpectedEndDate(toInstant(dto.getExpectedEndDate()));
+        entity.setEndDate(toInstant(dto.getEndDate()));
+        entity.setStartDate(toInstant(dto.getStartDate()));
         return entity;
     }
 
@@ -121,5 +124,13 @@ public class ItemMapper {
 
     private Integer toInteger(BigDecimal value) {
         return value == null ? null : value.intValue();
+    }
+
+    private OffsetDateTime toOffsetDateTime(Instant value) {
+        return value == null ? null : OffsetDateTime.ofInstant(value, ZoneOffset.UTC);
+    }
+
+    private Instant toInstant(OffsetDateTime value) {
+        return value == null ? null : value.toInstant();
     }
 }

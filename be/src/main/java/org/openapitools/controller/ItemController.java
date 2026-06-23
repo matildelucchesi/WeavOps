@@ -69,10 +69,11 @@ public class ItemController implements ItemsApi {
     }
 
     @Override
-    public ResponseEntity<ItemEntity> createItemWithArrangement(
+    public ResponseEntity<Item> createItemWithArrangement(
             @Valid @RequestBody CreateItemWithArrangementRequest request
     ) {
         ItemEntity createdItem = service.createWithArrangement(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdItem);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(mapper.toDto(createdItem));
     }
 }

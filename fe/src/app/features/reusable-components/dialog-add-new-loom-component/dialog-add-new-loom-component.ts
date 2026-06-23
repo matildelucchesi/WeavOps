@@ -43,8 +43,10 @@ export class DialogAddNewLoomComponent {
     const loom: Loom = {
       serialNumber: '',
       status: Loom.StatusEnum.Stopped,
+      isAssigned: false,
     };
     loom.serialNumber = this.serialNumber;
+    loom.isAssigned = false;
     this.loomService.create(loom).subscribe({
       next: () => {
         console.log('Loom created successfully');

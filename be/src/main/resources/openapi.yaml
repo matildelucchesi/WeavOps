@@ -1001,6 +1001,7 @@ components:
     loom:
       example:
         serialNumber: serialNumber
+        isAssigned: false
         id: id
         status: WORKING
       properties:
@@ -1010,6 +1011,9 @@ components:
           type: string
         serialNumber:
           type: string
+        isAssigned:
+          default: false
+          type: boolean
         status:
           enum:
           - WORKING

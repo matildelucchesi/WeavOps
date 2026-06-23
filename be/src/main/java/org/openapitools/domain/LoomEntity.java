@@ -13,8 +13,18 @@ public class LoomEntity {
     private String serialNumber;
 
     private Loom.StatusEnum status;
+    private boolean isAssigned;
 
     //getter & setter
+
+
+    public boolean isAssigned() {
+        return isAssigned;
+    }
+
+    public void setAssigned(boolean assigned) {
+        isAssigned = assigned;
+    }
 
     public String getId() {
         return id;

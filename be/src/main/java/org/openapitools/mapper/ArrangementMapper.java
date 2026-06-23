@@ -4,6 +4,10 @@ import org.openapitools.domain.ArrangementEntity;
 import org.openapitools.model.Arrangement;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+
 @Component
 public class ArrangementMapper {
 
@@ -23,7 +27,7 @@ public class ArrangementMapper {
         dto.setPieceLength(entity.getPieceLenght());
         dto.setWarpEndCount(entity.getWarpEndCount());
         dto.setHitsPerDm(entity.getHitsPerDm());
-        dto.setDeliveryDate(entity.getDeliveryDate());
+        dto.setDeliveryDate(toOffsetDateTime(entity.getDeliveryDate()));
         return dto;
     }
 
@@ -43,7 +47,15 @@ public class ArrangementMapper {
         entity.setPieceLenght(dto.getPieceLength());
         entity.setWarpEndCount(dto.getWarpEndCount());
         entity.setHitsPerDm(dto.getHitsPerDm());
-        entity.setDeliveryDate(dto.getDeliveryDate());
+        entity.setDeliveryDate(toInstant(dto.getDeliveryDate()));
         return entity;
+    }
+
+    private OffsetDateTime toOffsetDateTime(Instant value) {
+        return value == null ? null : OffsetDateTime.ofInstant(value, ZoneOffset.UTC);
+    }
+
+    private Instant toInstant(OffsetDateTime value) {
+        return value == null ? null : value.toInstant();
     }
 }

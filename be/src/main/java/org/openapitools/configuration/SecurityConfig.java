@@ -2,6 +2,7 @@ package org.openapitools.configuration;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.openapitools.security.JwtAuthenticationFilter;
+import org.openapitools.service.TokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,7 +23,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            JwtAuthenticationFilter jwtAuthenticationFilter
+            TokenService tokenService
     ) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -47,7 +48,7 @@ public class SecurityConfig {
                         (request, response, authException) ->
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
                 ))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

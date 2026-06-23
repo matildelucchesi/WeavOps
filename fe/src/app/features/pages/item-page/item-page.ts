@@ -14,13 +14,16 @@ import { ItemTableRow } from '../../../table/table-row-interface/item-table-row'
 import { ItemFacadeService } from '../../../services/item-facade.service';
 import { ItemTableService } from '../../../table/table-service/item-table.service';
 import type { FilterValues } from '../../reusable-components/filter-button-component/filter-button-component';
+import { WhitePanel } from "../../reusable-components/white-panel/white-panel";
+import { Item } from '../../../api';
 
 @Component({
   selector: 'app-item-page',
   imports: [
     TitlePageComponent,
     DecorativeLinesComponent,
-    TableComponent
+    TableComponent,
+    WhitePanel
 ],
   templateUrl: './item-page.html',
   styleUrl: './item-page.scss',
@@ -31,11 +34,47 @@ export class ItemPage implements OnInit {
   private readonly itemService = inject(ItemFacadeService);
 
   public columns: TableColumn<ItemTableRow>[] = [
-   // { header: 'Nome', value: (row) => row.arrangement.itemName },
-    { header: 'Stato', value: (row) => row.item.state },
-    //{ header: 'Cliente', value: (row) => row.customer.name },
+    { header: 'Nome', value: (row) => row.arrangement?.itemName },
+    {
+      header: 'Stato',
+      field: 'state',
+      chip: {
+        defaultStyle: {
+          width: '132px',
+          minWidth: '132px',
+          height: '28px',
+        },
+        styles: {
+          [Item.StateEnum.Running]: {
+            label: 'In produzione',
+            backgroundColor: 'var(--weavops-color-primary-soft)',
+            color: 'var(--weavops-color-primary)',
+            borderColor: 'var(--weavops-color-primary)',
+          },
+          [Item.StateEnum.Abandoned]: {
+            label: 'Abbandonato',
+            backgroundColor: 'var(--weavops-color-grey)',
+            color: 'var(--weavops-color-grey-dark)',
+            borderColor: 'var(--weavops-color-grey-dark)',
+          },
+          [Item.StateEnum.Initialized]: {
+            label: 'Inizializzato',
+            backgroundColor: 'var(--weavops-color-accent-lighter)',
+            color: 'var(--weavops-color-accent-deep)',
+            borderColor: 'var(--weavops-color-accent-deep)',
+          },
+          [Item.StateEnum.Completed]: {
+            label: 'Completato',
+            backgroundColor: 'var(--weavops-color-success-soft)',
+            color: 'var(--weavops-color-success)',
+            borderColor: 'var(--weavops-color-success)',
+          },
+        },
+      },
+    },
+    { header: 'Cliente', value: (row) => row.customer?.name },
     { header: 'Percentuale Completamento', value: (row) => this.getCompletionPercentage(row) },
-    { header: 'Data di completamento prevista', value: (row) => row.item.expectedEndDate },
+    { header: 'Data di completamento prevista', value: (row) => this.formatDate(row.arrangement?.deliveryDate) },
   ];
 
   public readonly rows = signal<ItemTableRow[]>([]);
@@ -62,10 +101,10 @@ export class ItemPage implements OnInit {
 
   public actions: TableAction<ItemTableRow>[] = [
       {
-        id: 'history',
-        label: 'Visualizza lavorazione',
-        imageIcon: '/icon/work-icon-violet.png',
-        imageAlt: 'Cronologia articoli',
+        id: 'details',
+        label: 'Visualizza dati',
+        icon: 'visibility',
+        imageAlt: 'Visualizza dati',
       },
       {
         id: 'edit',
@@ -80,7 +119,7 @@ export class ItemPage implements OnInit {
         iconColor: 'var(--weavops-color-danger-bright)',
         deleteItem: (row) => this.deleteItem(row),
         deleteItems: (rows) => this.deleteItems(rows),
-        //deleteItemName: (row) => row.item.arrangement.itemName,
+        deleteItemName: (row) => row.arrangement?.itemName,
         deleteSuccessMessage: 'Articolo eliminato con successo',
         deleteErrorMessage: "Errore durante l'eliminazione dell'articolo",
       }
@@ -180,17 +219,41 @@ export class ItemPage implements OnInit {
     return `${Math.round(percentage)}%`;
   }
 
+  private formatDate(value: string | undefined): string {
+    if (!value) {
+      return '';
+    }
+
+    const datePart = value.split('T')[0];
+    const dateParts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(datePart);
+
+    if (dateParts) {
+      return `${dateParts[3]}/${dateParts[2]}/${dateParts[1]}`;
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
+    return new Intl.DateTimeFormat('it-IT', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    }).format(date);
+  }
+
   private getFilterValue(row: ItemTableRow, field: string): string {
-    /*switch (field) {
+    switch (field) {
       case 'itemName':
-        return row.item.arrangement?.itemName ?? '';
+        return row.arrangement?.itemName ?? '';
       case 'state':
-        return row.item.state ?? '';
+        return row.state ?? '';
       case 'customerName':
-        return row.item.customer?.name ?? '';
+        return row.customer?.name ?? '';
       default:
         return '';
-    }*/
-   return '';
+    }
   }
 }

@@ -16,6 +16,7 @@ public class LoomMapper {
         dto.setId(entity.getId());
         dto.setSerialNumber(entity.getSerialNumber());
         dto.setStatus(entity.getStatus());
+        dto.setIsAssigned(entity.isAssigned());
         return dto;
     }
 
@@ -28,6 +29,7 @@ public class LoomMapper {
         entity.setId(dto.getId());
         entity.setSerialNumber(dto.getSerialNumber());
         entity.setStatus(dto.getStatus());
+        entity.setAssigned(dto.getIsAssigned() != null ? dto.getIsAssigned() : false);
         return entity;
     }
 }

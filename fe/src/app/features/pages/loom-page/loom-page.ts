@@ -30,7 +30,6 @@ import { Loom } from '../../../api';
     DecorativeLinesComponent,
     LoaderComponent,
     WhitePanel,
-    WhitePanel
 ],
   standalone: true,
   templateUrl: './loom-page.html',

@@ -22,12 +22,14 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("loom")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T11:33:13.963197700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T15:06:56.078342900+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class Loom {
 
   private @Nullable String id;
 
   private String serialNumber;
+
+  private Boolean isAssigned = false;
 
   /**
    * Gets or Sets status
@@ -122,6 +124,27 @@ public class Loom {
     this.serialNumber = serialNumber;
   }
 
+  public Loom isAssigned(Boolean isAssigned) {
+    this.isAssigned = isAssigned;
+    return this;
+  }
+
+  /**
+   * Get isAssigned
+   * @return isAssigned
+   */
+  
+  @Schema(name = "isAssigned", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("isAssigned")
+  public Boolean getIsAssigned() {
+    return isAssigned;
+  }
+
+  @JsonProperty("isAssigned")
+  public void setIsAssigned(Boolean isAssigned) {
+    this.isAssigned = isAssigned;
+  }
+
   public Loom status(StatusEnum status) {
     this.status = status;
     return this;
@@ -154,12 +177,13 @@ public class Loom {
     Loom loom = (Loom) o;
     return Objects.equals(this.id, loom.id) &&
         Objects.equals(this.serialNumber, loom.serialNumber) &&
+        Objects.equals(this.isAssigned, loom.isAssigned) &&
         Objects.equals(this.status, loom.status);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, serialNumber, status);
+    return Objects.hash(id, serialNumber, isAssigned, status);
   }
 
   @Override
@@ -168,6 +192,7 @@ public class Loom {
     sb.append("class Loom {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    serialNumber: ").append(toIndentedString(serialNumber)).append("\n");
+    sb.append("    isAssigned: ").append(toIndentedString(isAssigned)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("}");
     return sb.toString();

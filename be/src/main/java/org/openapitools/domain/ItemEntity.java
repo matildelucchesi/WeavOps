@@ -4,7 +4,7 @@ import org.openapitools.model.Item;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +20,9 @@ public class ItemEntity {
     private Integer totalMeters;
     private Integer metersRun;
     private List<ProcessEntity> processing = new ArrayList<>();
-    private OffsetDateTime expectedEndDate;
-    private OffsetDateTime endDate;
-    private OffsetDateTime startDate;
+    private Instant expectedEndDate;
+    private Instant endDate;
+    private Instant startDate;
 
     //getter & setter
 
@@ -82,27 +82,27 @@ public class ItemEntity {
         this.processing = processing;
     }
 
-    public OffsetDateTime getExpectedEndDate() {
+    public Instant getExpectedEndDate() {
         return expectedEndDate;
     }
 
-    public void setExpectedEndDate(OffsetDateTime expectedEndDate) {
+    public void setExpectedEndDate(Instant expectedEndDate) {
         this.expectedEndDate = expectedEndDate;
     }
 
-    public OffsetDateTime getStartDate() {
+    public Instant getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(OffsetDateTime startDate) {
+    public void setStartDate(Instant startDate) {
         this.startDate = startDate;
     }
 
-    public OffsetDateTime getEndDate() {
+    public Instant getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(OffsetDateTime endDate) {
+    public void setEndDate(Instant endDate) {
         this.endDate = endDate;
     }
 }

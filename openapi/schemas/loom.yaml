@@ -11,6 +11,9 @@ properties:
     readOnly: true
   serialNumber:
     type: string
+  isAssigned:
+    type: boolean
+    default: false
 
   status:
     type: string

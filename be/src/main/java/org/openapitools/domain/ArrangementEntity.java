@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 @Document(collection = "arrangements")
 public class ArrangementEntity {
@@ -21,7 +21,7 @@ public class ArrangementEntity {
     private Float pieceLenght;
     private Float warpEndCount;
     private BigDecimal hitsPerDm;
-    private OffsetDateTime deliveryDate;
+    private Instant deliveryDate;
 
     //getter & setter
 
@@ -105,11 +105,11 @@ public class ArrangementEntity {
         this.hitsPerDm = hitsPerDm;
     }
 
-    public OffsetDateTime getDeliveryDate() {
+    public Instant getDeliveryDate() {
         return deliveryDate;
     }
 
-    public void setDeliveryDate(OffsetDateTime deliveryDate) {
+    public void setDeliveryDate(Instant deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
 }

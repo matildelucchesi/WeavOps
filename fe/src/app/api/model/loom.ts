@@ -15,6 +15,7 @@ export interface Loom {
      */
     readonly id?: string;
     serialNumber: string;
+    isAssigned?: boolean;
     status: Loom.StatusEnum;
 }
 export namespace Loom {

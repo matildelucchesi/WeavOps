@@ -49,8 +49,12 @@
                 </div>
                 <div class="action">
                     <!-- VISUALIZZA LAVORAZIONE -->
-                    <button class="action-button">
-                        <img ngSrc="/icon/work-icon-violet.png" width="40" height="40" alt="Work Icon">
+                        <button class="action-button" [disabled]="!loom?.isAssigned">
+                            @if (this.loom?.isAssigned == true) {
+                                <img ngSrc="/icon/work-icon-violet.png" width="40" height="40" alt="Work Icon">
+                            }@else {
+                                <img ngSrc="/icon/work-icon-grey.png" width="40" height="40" alt="Work Icon">
+                            }
                     </button>
                     <p class="action-button-label">Visualizza Lavorazione</p>
                 </div>
