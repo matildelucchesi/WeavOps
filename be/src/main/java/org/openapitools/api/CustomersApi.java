@@ -6,6 +6,7 @@
 package org.openapitools.api;
 
 import org.openapitools.model.Customer;
+import org.openapitools.model.DeleteMultiCustomers200Response;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-04T12:00:32.094310100+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T11:33:13.963197700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Customer", description = "the Customer API")
 public interface CustomersApi {
@@ -76,7 +77,7 @@ public interface CustomersApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" }";
+                    String exampleString = "{ \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"email\" : \"email\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -119,6 +120,49 @@ public interface CustomersApi {
     }
 
 
+    String PATH_DELETE_MULTI_CUSTOMERS = "/customers/delete-multi";
+    /**
+     * POST /customers/delete-multi : Elimina più clienti contemporaneamente
+     *
+     * @param requestBody  (required)
+     * @return ok (status code 200)
+     */
+    @Operation(
+        operationId = "deleteMultiCustomers",
+        summary = "Elimina più clienti contemporaneamente",
+        tags = { "Customer" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "ok", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = DeleteMultiCustomers200Response.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = CustomersApi.PATH_DELETE_MULTI_CUSTOMERS,
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    default ResponseEntity<DeleteMultiCustomers200Response> deleteMultiCustomers(
+        @Parameter(name = "request_body", description = "", required = true) @Valid @RequestBody List<String> requestBody
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"deletedCount\" : 0 }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
     String PATH_GET_CUSTOMER_BY_ID = "/customers/{id}";
     /**
      * GET /customers/{id} : Recupera un customer tramite ID
@@ -152,7 +196,7 @@ public interface CustomersApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" }";
+                    String exampleString = "{ \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"email\" : \"email\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -193,7 +237,7 @@ public interface CustomersApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" }, { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } ]";
+                    String exampleString = "[ { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"email\" : \"email\" }, { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"email\" : \"email\" } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -242,7 +286,7 @@ public interface CustomersApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" }";
+                    String exampleString = "{ \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"email\" : \"email\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

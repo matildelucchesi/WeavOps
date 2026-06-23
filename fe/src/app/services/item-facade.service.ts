@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Item, ItemService as ItemApiService } from '../api';
+import { CreateItemWithArrangementRequest, Item, ItemService as ItemApiService } from '../api';
 
 @Injectable({
   providedIn: 'root',
@@ -26,4 +26,13 @@ export class ItemFacadeService {
   remove(id: string) {
     return this.itemApi.deleteItem({ id });
   }
+
+  deleteMultiItems(requestBody: Array<string>) {
+    return this.itemApi.deleteMultiItems({ requestBody });
+  }
+
+  createItemWithArrangement(createItemWithArrangementRequest: CreateItemWithArrangementRequest) {
+    return this.itemApi.createItemWithArrangement({ createItemWithArrangementRequest });
+  }
+
 }

@@ -1,3 +1,7 @@
+.filter-wrapper{
+    display: inline-flex;
+}
+
 button{
     background: var(--weavops-color-primary);
     color: var(--weavops-color-surface);
@@ -13,8 +17,60 @@ button{
     gap: 5px;
 }
 
+.button-icon{
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+}
+
 button:hover{
     background: var(--weavops-color-primary);
     opacity: 0.9;
     cursor: pointer;
+}
+
+.filter-dialog-wrapper{
+    display: grid;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 1000;
+    transform: translate(-50%, -50%);
+    width: fit-content;
+    max-width: calc(100vw - 48px);
+    background: var(--weavops-color-surface);
+    padding: 20px;
+    align-items: center;
+    border: 2px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    justify-content: center;
+    box-shadow: 0 4px 4px rgb(var(--weavops-rgb-black) / 0.25);
+    box-sizing: border-box;
+}
+
+.filter-title{
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--weavops-color-primary);
+    margin: 0;
+}
+
+.filter-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.filter-header-title{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.footer{
+    display: flex;
+    justify-content: flex-end;
 }

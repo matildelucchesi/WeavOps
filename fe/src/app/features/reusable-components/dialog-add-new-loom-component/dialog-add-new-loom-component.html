@@ -4,7 +4,7 @@
             <img class="dialog-icon" src="/icon/loomicon-violet.png" width="30" height="30" alt="Add Loom Icon">
             <p class="dialog-title">Aggiungi Nuovo Telaio</p>
         </div>
-        <button class="close-button"(click)="close()">
+        <button class="close-button" [disabled]="isSaving" (click)="close()">
             Annulla
         </button>
     </div>
@@ -23,7 +23,7 @@
             </form>
         </div>
         <div style="display: flex; justify-content: flex-end; width: 100%; margin-top: 5px;">
-            <button type="submit" class="submit-button" (click)="addNewLoom()">Aggiungi</button>
+            <button type="submit" class="submit-button" [disabled]="isSaving" (click)="addNewLoom()">Aggiungi</button>
         </div>
     </div>
 </div>

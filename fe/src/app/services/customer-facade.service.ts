@@ -26,4 +26,8 @@ export class CustomerFacadeService {
   remove(id: string) {
     return this.customerApi.deleteCustomer({ id });
   }
+
+  deleteMultiCustomers(requestBody: Array<string>) {
+    return this.customerApi.deleteMultiCustomers({ requestBody });
+  }
 }

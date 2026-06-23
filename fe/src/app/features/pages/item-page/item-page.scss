@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  position: relative;
+  z-index: 0;
+  min-height: calc(100dvh - 60px);
+  isolation: isolate;
+  --page-content-padding: 30px;
+}
+
+app-title-page-component,
+.body {
+  position: relative;
+  z-index: 1;
+}
+
+.body {
+  width: 95%;
+  justify-self: center;
+}

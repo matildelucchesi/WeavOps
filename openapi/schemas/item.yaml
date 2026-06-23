@@ -9,8 +9,8 @@ properties:
     type: string
     description: Identificativo MongoDB generato dal server
     readOnly: true
-  arrangement:
-    $ref: './arrangement.yaml'
+  arrangementId:
+    type: string
   state:
     type: string
     enum:
@@ -18,8 +18,8 @@ properties:
       - RUNNING
       - COMPLETED
       - ABANDONED
-  customer:
-    $ref: './customer.yaml'
+  customerId:
+    type: string
   totalMeters:
     type: number
   metersRun:

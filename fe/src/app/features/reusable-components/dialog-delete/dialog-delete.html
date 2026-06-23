@@ -1,0 +1,22 @@
+<div class="wrapper">
+  @if (isDeleting) {
+    <app-loader-component [ariaLabel]="'Eliminazione in corso'"></app-loader-component>
+  }
+
+    <div class="head">
+        <div class="head-title">
+      <p class="dialog-title">{{ title }}</p>
+    </div>
+  </div>
+    <div class="body">
+    <p class="dialog-message">{{ message }}</p>
+    <div class="actions">
+      <button class="cancel-button" type="button" [disabled]="isDeleting" (click)="close()">
+        {{ cancelLabel }}
+        </button>
+      <button class="confirm-button" type="button" [disabled]="isDeleting" (click)="confirm()">
+        {{ confirmLabel }}
+        </button>
+    </div>
+</div>
+</div>

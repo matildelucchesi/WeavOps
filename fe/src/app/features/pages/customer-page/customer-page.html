@@ -13,17 +13,17 @@
 </div>
 
 <div class="body">
-  <div class="button-wrapper">
-    <app-filter-button-component></app-filter-button-component>
-    <app-add-button-component (click)="goToAddCustomerPage()"></app-add-button-component>
-  </div>
   <div>
     <app-table-component
     [columns]="columns"
     [rows]="rows()"
     [actions]="actions"
-    actionColumnHeader="Azioni"
-    (actionClick)="onTableAction($event)">
+    [addButton]="addButton"
+    [filterButton]="filterButton"
+    actionColumnHeader=""
+    (actionClick)="onTableAction($event)"
+    (bulkActionClick)="onTableBulkAction($event)"
+    (filterSelected)="onFilterSelected($event)">
     </app-table-component>
   </div>
 </div>

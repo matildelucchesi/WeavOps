@@ -35,6 +35,32 @@
       '400':
         description: Richiesta non valida
 
+/items/delete-multi:
+  post:
+    tags:
+      - Item
+    summary: Elimina più articoli contemporaneamente
+    operationId: deleteMultiItems
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+    responses:
+      '200':
+        description: ok
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deletedCount:
+                  type: integer
+                  description: Numero di articoli eliminati
+
 /items/{id}:
   get:
     summary: Recupera un item tramite ID
@@ -102,3 +128,27 @@
         description: Item eliminato
       '404':
         description: Item non trovato
+
+/items/with-arrangement:
+  post:
+    summary: Crea item con disposizione e customerName
+    operationId: createItemWithArrangement
+    tags:
+      - Item
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/create-item-with-arrangement-request.yaml'
+    responses:
+      '201':
+        description: Item creato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/item.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Customer non trovato

@@ -27,12 +27,19 @@ export class DialogAddNewLoomComponent {
   private readonly dialogRef = inject(MatDialogRef<DialogAddNewLoomComponent>, { optional: true });
 
   public serialNumber: string = '';
+  public isSaving: boolean = false;
 
   public updateSerialNumber(value: string): void {
     this.serialNumber = value;
   }
 
   public addNewLoom(): void {
+    if (this.isSaving) {
+      return;
+    }
+
+    this.isSaving = true;
+
     const loom: Loom = {
       serialNumber: '',
       status: Loom.StatusEnum.Stopped,
@@ -47,8 +54,10 @@ export class DialogAddNewLoomComponent {
           verticalPosition: 'bottom',
         });
         this.serialNumber = '';
+        this.dialogRef?.close(true);
       },
       error: (err: HttpErrorResponse) => {
+        this.isSaving = false;
         console.error('Error creating loom:', err);
         const errorMessage = err.error?.message ?? 'Errore durante la creazione del telaio';
         this.snackBar.open(errorMessage, 'Chiudi', {
@@ -59,11 +68,14 @@ export class DialogAddNewLoomComponent {
         });
       },
     });
-    this.close();
   }
 
   public close(): void {
-    this.dialogRef?.close();
+    if (this.isSaving) {
+      return;
+    }
+
+    this.dialogRef?.close(false);
   }
 
 }

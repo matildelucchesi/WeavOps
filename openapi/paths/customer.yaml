@@ -35,6 +35,32 @@
       '400':
         description: Richiesta non valida
 
+/customers/delete-multi:
+  post:
+    tags:
+      - Customer
+    summary: Elimina più clienti contemporaneamente
+    operationId: deleteMultiCustomers
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+    responses:
+      '200':
+        description: ok
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deletedCount:
+                  type: integer
+                  description: Numero di clienti eliminati
+
 /customers/{id}:
   get:
     summary: Recupera un customer tramite ID

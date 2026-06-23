@@ -20,6 +20,8 @@ export class CustomerTableService {
     const referents = customer.referents ?? [];
 
     return {
+      id: customer.id,
+      customer,
       name: customer.name,
       email: customer.email,
       referent: this.formatReferents(referents),

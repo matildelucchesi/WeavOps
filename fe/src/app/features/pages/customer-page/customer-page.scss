@@ -1,11 +1,5 @@
-.button-wrapper {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-}
-
 .body{
-    width: 90%;
+    width: 95%;
     justify-self: center;
 }
 
@@ -13,10 +7,6 @@
     position: relative;
     display: block;
     isolation: isolate;
-}
-
-app-decorative-lines-component{
-    z-index: 0;
 }
 
 .title-wrapper,

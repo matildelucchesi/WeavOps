@@ -185,6 +185,11 @@
     background-color: var(--weavops-color-primary-soft);
 }
 
+.state-option-button.current-state{
+    background-color: var(--weavops-color-primary-soft);
+    border-color: var(--weavops-color-accent);
+}
+
 .state-option-button:focus,
 .state-option-button:active,
 .state-option-button.selected{
@@ -211,7 +216,8 @@
     opacity: 0.8;
 }
 
-.meters-form-field{
+.meters-form-field,
+.serial-number-form-field{
     width: 100%;
     margin: 0;
     --mdc-outlined-text-field-outline-color: var(--weavops-color-primary);
@@ -223,46 +229,61 @@
     --mdc-outlined-text-field-input-text-color: var(--weavops-color-primary);
 }
 
-.meters-input-field{
+.meters-input-field,
+.serial-number-input-field{
     color: var(--weavops-color-primary);
-    font-size: 11px;
+    font-size: 13px;
     font-family: 'Instrument Sans', sans-serif;
 }
 
 :host ::ng-deep .meters-form-field .mat-mdc-text-field-wrapper,
 :host ::ng-deep .meters-form-field .mdc-text-field--outlined,
-:host ::ng-deep .meters-form-field .mat-mdc-form-field-flex {
+:host ::ng-deep .meters-form-field .mat-mdc-form-field-flex,
+:host ::ng-deep .serial-number-form-field .mat-mdc-text-field-wrapper,
+:host ::ng-deep .serial-number-form-field .mdc-text-field--outlined,
+:host ::ng-deep .serial-number-form-field .mat-mdc-form-field-flex {
     background-color: var(--weavops-color-surface);
     border-radius: 10px;
 }
 
 :host ::ng-deep .meters-form-field .mat-mdc-floating-label,
 :host ::ng-deep .meters-form-field .mdc-floating-label,
-:host ::ng-deep .meters-form-field .mdc-text-field__input {
+:host ::ng-deep .meters-form-field .mdc-text-field__input,
+:host ::ng-deep .serial-number-form-field .mat-mdc-floating-label,
+:host ::ng-deep .serial-number-form-field .mdc-floating-label,
+:host ::ng-deep .serial-number-form-field .mdc-text-field__input {
     color: var(--weavops-color-primary);
 }
 
 :host ::ng-deep .meters-form-field .mat-mdc-floating-label,
-:host ::ng-deep .meters-form-field .mdc-floating-label {
+:host ::ng-deep .meters-form-field .mdc-floating-label,
+:host ::ng-deep .serial-number-form-field .mat-mdc-floating-label,
+:host ::ng-deep .serial-number-form-field .mdc-floating-label {
     font-size: 13px;
 }
 
-:host ::ng-deep .meters-form-field .mdc-text-field__input {
+:host ::ng-deep .meters-form-field .mdc-text-field__input,
+:host ::ng-deep .serial-number-form-field .mdc-text-field__input {
     font-size: 13px;
 }
 
 :host ::ng-deep .meters-form-field .mdc-notched-outline__leading,
 :host ::ng-deep .meters-form-field .mdc-notched-outline__notch,
-:host ::ng-deep .meters-form-field .mdc-notched-outline__trailing {
+:host ::ng-deep .meters-form-field .mdc-notched-outline__trailing,
+:host ::ng-deep .serial-number-form-field .mdc-notched-outline__leading,
+:host ::ng-deep .serial-number-form-field .mdc-notched-outline__notch,
+:host ::ng-deep .serial-number-form-field .mdc-notched-outline__trailing {
     border-color: var(--weavops-color-primary);
 }
 
-:host ::ng-deep .meters-form-field .mat-mdc-form-field-subscript-wrapper {
+:host ::ng-deep .meters-form-field .mat-mdc-form-field-subscript-wrapper,
+:host ::ng-deep .serial-number-form-field .mat-mdc-form-field-subscript-wrapper {
     margin: 0;
     padding: 0;
 }
 
-.meters-input{
+.meters-input,
+.serial-number-input{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -270,7 +291,8 @@
     width: 100%;
 }
 
-.meters-section{
+.meters-section,
+.serial-number-section{
     display: flex;
     flex-direction: column;
     align-items: center;

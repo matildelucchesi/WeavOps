@@ -7,6 +7,7 @@ import { Loom } from '../../../api';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { LoomFacadeService } from '../../../services/loom-facade.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 export interface DialogLoomActionData {
   loom?: Loom;
@@ -21,6 +22,7 @@ export interface DialogLoomActionData {
     MatIconModule,
     MatInputModule,
     MatFormFieldModule,
+    MatSnackBarModule,
 ],
   standalone: true,
   templateUrl: './dialog-loom-action-component.html',
@@ -30,13 +32,16 @@ export class DialogLoomActionComponent {
   private readonly dialogRef = inject(MatDialogRef<DialogLoomActionComponent>, { optional: true });
   private readonly dialogData = inject<DialogLoomActionData | null>(MAT_DIALOG_DATA, { optional: true });
   private loomService = inject(LoomFacadeService);
+  private snackBar = inject(MatSnackBar);
 
   readonly loom = this.dialogData?.loom ?? null;
   public readonly loomStatus = Loom.StatusEnum;
 
   public change: boolean = false;
   public meters: boolean = false;
+  public serialNumberChange: boolean = false;
   public loomState: Loom.StatusEnum = this.loom?.status ?? Loom.StatusEnum.Stopped;
+  public serialNumber: string = this.loom?.serialNumber ?? '';
 
   @Input() modify: boolean = this.dialogData?.modify ?? false;
 
@@ -45,20 +50,41 @@ export class DialogLoomActionComponent {
   }
 
   openChangeState(): void {
+    this.loomState = this.loom?.status ?? Loom.StatusEnum.Stopped;
+    this.meters = false;
+    this.serialNumberChange = false;
     this.change = true;
   }
 
+  openChangeSerialNumber(): void {
+    this.serialNumber = this.loom?.serialNumber ?? '';
+    this.change = false;
+    this.meters = false;
+    this.serialNumberChange = true;
+  }
+
+  public isCurrentState(state: Loom.StatusEnum): boolean {
+    return this.loom?.status === state;
+  }
+
   openMeters(): void {
+    this.change = false;
+    this.serialNumberChange = false;
     this.meters = true;
   }
 
   goBack(): void {
     this.change = false;
     this.meters = false;
+    this.serialNumberChange = false;
   }
 
   setLoomState(state: Loom.StatusEnum): void {
     this.loomState = state;
+  }
+
+  setSerialNumber(event: Event): void {
+    this.serialNumber = (event.target as HTMLInputElement).value;
   }
 
   changeLoomState(): void {
@@ -85,6 +111,80 @@ export class DialogLoomActionComponent {
       error: (err) => {
         console.error('Error updating loom state:', err);
       }
+    });
+  }
+
+  changeSerialNumber(): void {
+    if (!this.loom) {
+      console.error('Loom data is missing');
+      return;
+    }
+
+    if (!this.loom.id) {
+      console.error('Loom id is missing');
+      return;
+    }
+
+    const serialNumber = this.serialNumber.trim();
+
+    if (!serialNumber) {
+      console.error('Serial number is empty');
+      return;
+    }
+
+    this.loomService.getAll().subscribe({
+      next: (looms) => {
+        const hasDuplicateSerialNumber = looms.some((loom) =>
+          loom.id !== this.loom?.id &&
+          this.normalizeSerialNumber(loom.serialNumber) === this.normalizeSerialNumber(serialNumber)
+        );
+
+        if (hasDuplicateSerialNumber) {
+          this.showErrorSnackbar('Numero seriale già presente');
+          return;
+        }
+
+        this.updateLoomSerialNumber(serialNumber);
+      },
+      error: (err) => {
+        console.error('Error checking loom serial number:', err);
+        this.showErrorSnackbar('Errore durante il controllo del numero seriale');
+      }
+    });
+  }
+
+  private updateLoomSerialNumber(serialNumber: string): void {
+    if (!this.loom?.id) {
+      return;
+    }
+
+    const updatedLoom: Loom = {
+      ...this.loom,
+      serialNumber,
+    };
+
+    this.loomService.update(this.loom.id, updatedLoom).subscribe({
+      next: () => {
+        console.log('Loom serial number updated successfully');
+        this.dialogRef?.close(true);
+      },
+      error: (err) => {
+        console.error('Error updating loom serial number:', err);
+        this.showErrorSnackbar('Errore durante la modifica del numero seriale');
+      }
+    });
+  }
+
+  private normalizeSerialNumber(serialNumber: string | undefined): string {
+    return (serialNumber ?? '').trim().toLowerCase();
+  }
+
+  private showErrorSnackbar(message: string): void {
+    this.snackBar.open(message, 'Chiudi', {
+      duration: 4000,
+      horizontalPosition: 'end',
+      verticalPosition: 'bottom',
+      panelClass: ['error-snackbar'],
     });
   }
 }

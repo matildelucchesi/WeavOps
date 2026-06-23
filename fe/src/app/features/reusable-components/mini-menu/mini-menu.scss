@@ -1,0 +1,21 @@
+.wrapper{
+    border: 2px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    background-color: var(--weavops-color-primary-soft);
+}
+
+.menu-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.button-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}

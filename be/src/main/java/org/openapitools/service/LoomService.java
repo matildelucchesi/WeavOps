@@ -1,10 +1,14 @@
 package org.openapitools.service;
 
+import org.openapitools.domain.CustomerEntity;
 import org.openapitools.domain.LoomEntity;
 import org.openapitools.repository.LoomRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -49,6 +53,30 @@ public class LoomService {
 
     public boolean existsById(String id){
         return repository.existsById(id);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteByIds(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return 0;
+        }
+
+        List<String> sanitizedIds = ids.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(id -> !id.isEmpty())
+                .distinct()
+                .toList();
+
+        if (sanitizedIds.isEmpty()) {
+            return 0;
+        }
+
+        List<LoomEntity> looms = new ArrayList<>();
+        repository.findAllById(sanitizedIds).forEach(looms::add);
+        repository.deleteAll(looms);
+
+        return looms.size();
     }
 }
 

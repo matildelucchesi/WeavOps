@@ -1,7 +1,7 @@
 export * from './arrangement.service';
 import { ArrangementService } from './arrangement.service';
-export * from './authController.service';
-import { AuthControllerService } from './authController.service';
+export * from './auth.service';
+import { AuthService } from './auth.service';
 export * from './customer.service';
 import { CustomerService } from './customer.service';
 export * from './item.service';
@@ -14,4 +14,4 @@ export * from './referent.service';
 import { ReferentService } from './referent.service';
 export * from './user.service';
 import { UserService } from './user.service';
-export const APIS = [ArrangementService, AuthControllerService, CustomerService, ItemService, LoomService, ProcessService, ReferentService, UserService];
+export const APIS = [ArrangementService, AuthService, CustomerService, ItemService, LoomService, ProcessService, ReferentService, UserService];

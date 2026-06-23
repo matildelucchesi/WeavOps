@@ -1,6 +1,51 @@
-<div>
-    <button mat-button class="filter-button">
-        <mat-icon style="font-size: 20px; width: 20px; height: 20px;">search</mat-icon>
-        Filtri
+<div class="filter-wrapper">
+    <button
+        type="button"
+        class="filter-button"
+        [attr.aria-expanded]="isPanelOpen"
+        [attr.aria-label]="ariaLabel || label"
+        (click)="togglePanel()">
+        <mat-icon class="button-icon">{{ icon }}</mat-icon>
+        <span>{{ label }}</span>
     </button>
+
+    @if (isPanelOpen && filters.length > 0) {
+        <div class="filter-dialog-wrapper">
+            <div class="filter-panel">
+            <div class="filter-header">
+                <div class="filter-header-title">
+                    <mat-icon class="filter-icon" style="font-size: 20px; width: 20px; height: 20px;">search</mat-icon>
+                <p class="filter-title">Filtri</p>
+                </div>
+                <app-button-general-action-component
+                [label]="'Annulla'"
+                [className]="'close-button'"
+                (click)="closePanel()">
+            </app-button-general-action-component>
+                
+            </div>
+            @for (filter of filters; track filter.id) {
+                <app-input-component
+                    [inputId]="filter.id"
+                    [label]="filter.label"
+                    [value]="getFilterValue(filter.id)"
+                    [width]="'450px'"
+                    [height]="'70px'"
+                    [required]="false"
+                    [minLength]="null"
+                    (valueChange)="setFilterValue(filter.id, $event)">
+                </app-input-component>
+            }
+            <div class="footer">
+                <app-button-general-action-component
+                [label]="'Filtra'"
+                [className]="'save-button'"
+                (click)="applyFilters()">
+            </app-button-general-action-component>
+            </div>
+            
+            </div>
+        </div>
+    }
+
 </div>

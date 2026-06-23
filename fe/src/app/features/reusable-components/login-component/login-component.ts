@@ -3,7 +3,7 @@ import { InputComponent } from "../input-component/input-component";
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { AuthControllerService } from '../../../api';
+import { AuthService } from '../../../api';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 
@@ -21,7 +21,7 @@ import { finalize } from 'rxjs';
 })
 export class LoginComponent {
 
-  private authApi = inject(AuthControllerService);
+  private authApi = inject(AuthService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
 
@@ -52,7 +52,7 @@ export class LoginComponent {
         password,
       },
     }, 'body', false, {
-      httpHeaderAccept: 'application/json' as '*/*',
+      httpHeaderAccept: 'application/json',
     }).pipe(
       finalize(() => {
         this.isLoading = false;

@@ -2,6 +2,78 @@
     width: 100%;
 }
 
+.table-toolbar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.table-toolbar + table{
+    margin-top: 10px;
+}
+
+.table-toolbar-left,
+.table-toolbar-right{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.table-toolbar-right{
+    margin-left: auto;
+}
+
+.bulk-delete-button{
+    min-width: 96px;
+    height: 32px;
+    border: none;
+    border-radius: 10px;
+    padding: 0 16px;
+    background-color: var(--weavops-color-danger);
+    color: var(--weavops-color-surface);
+    cursor: pointer;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.bulk-delete-button:hover{
+    background-color: color-mix(in srgb, var(--weavops-color-danger) 82%, var(--weavops-color-surface));
+}
+
+.clear-filters-button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-width: 126px;
+    height: 35px;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    padding: 0 12px;
+    background-color: var(--weavops-color-surface);
+    color: var(--weavops-color-primary);
+    cursor: pointer;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.clear-filters-button:hover{
+    background-color: var(--weavops-color-primary-soft);
+}
+
+.clear-filters-button mat-icon{
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+}
+
 table{
     width: 100%;
     border-radius: 10px 10px 0px 0px;
@@ -55,10 +127,116 @@ td{
     white-space: pre-line;
 }
 
+.table-chip{
+    --chip-background-color: var(--weavops-color-primary-soft);
+    --chip-text-color: var(--weavops-color-primary);
+    --chip-border-color: var(--chip-text-color);
+    --chip-width: auto;
+    --chip-min-width: 104px;
+    --chip-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--chip-width);
+    min-width: var(--chip-min-width);
+    min-height: var(--chip-height);
+    border: 1.5px solid var(--chip-border-color);
+    border-radius: 999px;
+    padding: 3px 12px;
+    box-sizing: border-box;
+    background-color: var(--chip-background-color);
+    color: var(--chip-text-color);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+}
+
 .actions-header,
 .actions-cell{
     text-align: right;
     white-space: nowrap;
+}
+
+.selection-header-cell,
+.selection-cell{
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.row-selection-checkbox{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin: 0 auto;
+    accent-color: var(--weavops-color-primary);
+    cursor: pointer;
+    --mat-checkbox-selected-focus-state-layer-opacity: 0;
+    --mat-checkbox-selected-hover-state-layer-opacity: 0;
+    --mat-checkbox-unselected-hover-state-layer-opacity: 0;
+    --mat-checkbox-selected-pressed-state-layer-opacity: 0;
+    --mat-checkbox-unselected-focus-state-layer-opacity: 0;
+    --mat-checkbox-unselected-pressed-state-layer-opacity: 0;
+}
+
+.row-selection-checkbox:disabled{
+    cursor: default;
+}
+
+:host ::ng-deep .row-selection-checkbox .mdc-form-field{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+:host ::ng-deep .row-selection-checkbox .mdc-checkbox{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+}
+
+:host ::ng-deep .row-selection-checkbox .mdc-checkbox__background{
+    top: 3px;
+    left: 3px;
+}
+
+:host ::ng-deep .row-selection-checkbox .mat-mdc-checkbox-touch-target{
+    width: 24px;
+    height: 24px;
+}
+
+:host ::ng-deep .row-selection-checkbox .mdc-checkbox__ripple,
+:host ::ng-deep .row-selection-checkbox .mdc-checkbox__ripple::before,
+:host ::ng-deep .row-selection-checkbox .mdc-checkbox__ripple::after,
+:host ::ng-deep .row-selection-checkbox .mat-mdc-checkbox-ripple,
+:host ::ng-deep .row-selection-checkbox .mat-mdc-focus-indicator,
+:host ::ng-deep .row-selection-checkbox .mat-mdc-focus-indicator::before,
+:host ::ng-deep .row-selection-checkbox .mat-ripple-element{
+    background-color: transparent;
+    box-shadow: none;
+    opacity: 0;
+}
+
+:host ::ng-deep .row-selection-checkbox .mdc-checkbox__native-control:focus ~ .mdc-checkbox__ripple,
+:host ::ng-deep .row-selection-checkbox .mdc-checkbox__native-control:checked ~ .mdc-checkbox__ripple,
+:host ::ng-deep .row-selection-checkbox .mdc-checkbox__native-control:indeterminate ~ .mdc-checkbox__ripple{
+    background-color: transparent;
+    box-shadow: none;
+    opacity: 0;
 }
 
 .actions-wrapper{
@@ -100,6 +278,17 @@ td{
     font-size: 24px;
     line-height: 24px;
     color: inherit;
+}
+
+.action-image-icon{
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    transition: opacity 0.2s ease;
+}
+
+.action-button:hover:not(:disabled) .action-image-icon{
+    opacity: 0.7;
 }
 
 .pagination-wrapper{

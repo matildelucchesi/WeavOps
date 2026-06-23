@@ -1,8 +1,9 @@
 package org.openapitools.controller;
 
 import org.openapitools.api.ItemsApi;
+import org.openapitools.domain.ItemEntity;
 import org.openapitools.mapper.ItemMapper;
-import org.openapitools.model.Item;
+import org.openapitools.model.*;
 import org.openapitools.service.ItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,5 +57,22 @@ public class ItemController implements ItemsApi {
         return service.deleteById(id)
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
+    }
+
+    @Override
+    public ResponseEntity<DeleteMultiItems200Response> deleteMultiItems(
+            @Valid @RequestBody List<String> requestBody
+    ) {
+        int deletedCount = service.deleteByIds(requestBody);
+
+        return ResponseEntity.ok(new DeleteMultiItems200Response().deletedCount(deletedCount));
+    }
+
+    @Override
+    public ResponseEntity<ItemEntity> createItemWithArrangement(
+            @Valid @RequestBody CreateItemWithArrangementRequest request
+    ) {
+        ItemEntity createdItem = service.createWithArrangement(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdItem);
     }
 }

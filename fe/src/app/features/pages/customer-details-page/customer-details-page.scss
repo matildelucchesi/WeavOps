@@ -4,10 +4,6 @@
     isolation: isolate;
 }
 
-app-decorative-lines-component{
-    z-index: 0;
-}
-
 .title-wrapper,
 .body{
     position: relative;
@@ -45,6 +41,26 @@ input{
     font-size: 12px;
     font-weight: 400;
     width: 200px;
+}
+
+input.input-invalid,
+textarea.input-invalid{
+    border-color: var(--weavops-color-danger);
+    outline-color: var(--weavops-color-danger);
+}
+
+.field-with-error{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.validation-error{
+    color: var(--weavops-color-danger);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.25;
 }
 
 .form-group{
@@ -122,6 +138,28 @@ input{
     box-sizing: border-box;
     resize: vertical;
     margin-bottom: 20px;
+}
+
+.note-footer{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: -12px;
+    margin-bottom: 20px;
+}
+
+.note-counter{
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.note-counter.is-over-limit{
+    color: var(--weavops-color-danger);
 }
 
 .button-wrapper{

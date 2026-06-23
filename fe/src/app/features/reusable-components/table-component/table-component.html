@@ -1,7 +1,58 @@
 <div class="table-wrapper">
+  @if (shouldShowTableToolbar) {
+    <div class="table-toolbar">
+      <div class="table-toolbar-left">
+        @if (shouldShowFilterButton) {
+          <app-filter-button-component
+            #filterButtonComponent
+            [label]="filterButtonLabel"
+            [icon]="filterButtonIcon"
+            [ariaLabel]="filterButtonAriaLabel"
+            [filters]="filterOptions"
+            (filterSelected)="handleFilterSelected($event)">
+          </app-filter-button-component>
+
+          @if (hasActiveFilters) {
+            <button class="clear-filters-button" type="button" (click)="clearFilters(filterButtonComponent)">
+              <mat-icon>close</mat-icon>
+              <span>Rimuovi filtri</span>
+            </button>
+          }
+        }
+      </div>
+
+      <div class="table-toolbar-right">
+        @if (shouldShowBulkDeleteButton) {
+          <button class="bulk-delete-button" type="button" (click)="handleSelectedRowsDelete()">
+            Elimina
+          </button>
+        }
+
+        @if (shouldShowAddButton) {
+          <app-add-button-component
+            [ariaLabel]="addButtonAriaLabel"
+            (buttonClick)="handleAddButtonClick()">
+          </app-add-button-component>
+        }
+      </div>
+    </div>
+  }
+
   <table>
     <thead>
       <tr>
+        @if (enableMultiSelection) {
+          <th class="selection-header-cell">
+            <mat-checkbox
+              class="row-selection-checkbox"
+              aria-label="Seleziona o deseleziona tutte le righe"
+              [checked]="areAllRowsSelected"
+              [indeterminate]="isSelectionIndeterminate"
+              [disabled]="totalRows === 0"
+              (change)="toggleAllRowsSelection($event.checked)"
+            ></mat-checkbox>
+          </th>
+        }
         @for(col of columns; track col){
           <th>{{ getColumnHeader(col) }}</th>
         }
@@ -13,8 +64,33 @@
     <tbody>
       @for(row of paginatedRows; track row; let rowIndex = $index){
         <tr>
+          @if (enableMultiSelection) {
+            <td class="selection-cell">
+              <mat-checkbox
+                class="row-selection-checkbox"
+                [checked]="isRowSelected(row)"
+                [attr.aria-label]="'Seleziona riga ' + (rowIndex + 1)"
+                (change)="toggleRowSelection(row, $event.checked)"
+              ></mat-checkbox>
+            </td>
+          }
           @for(col of columns; track col; let columnIndex = $index){
-            <td>{{ getCellValue(row, col, columnIndex) }}</td>
+            <td>
+              @if (isChipColumn(col)) {
+                <span
+                  class="table-chip"
+                  [style.--chip-background-color]="getChipBackgroundColor(row, col, columnIndex)"
+                  [style.--chip-text-color]="getChipTextColor(row, col, columnIndex)"
+                  [style.--chip-border-color]="getChipBorderColor(row, col, columnIndex)"
+                  [style.--chip-width]="getChipWidth(row, col, columnIndex)"
+                  [style.--chip-min-width]="getChipMinWidth(row, col, columnIndex)"
+                  [style.--chip-height]="getChipHeight(row, col, columnIndex)">
+                  {{ getChipLabel(row, col, columnIndex) }}
+                </span>
+              } @else {
+                {{ getCellValue(row, col, columnIndex) }}
+              }
+            </td>
           }
           @if (actions.length > 0) {
             <td class="actions-cell">
@@ -26,11 +102,19 @@
                       type="button"
                       [disabled]="isActionDisabled(action, row)"
                       [attr.aria-label]="action.label"
-                      [title]="action.label"
+                      [matTooltip]="action.label"
+                      matTooltipPosition="above"
+                      matTooltipClass="weavops-action-tooltip"
                       [style.--action-icon-color]="getActionIconColor(action)"
-                      (click)="emitActionClick(action, row, rowIndex)"
+                      (click)="handleActionClick(action, row, rowIndex)"
                     >
-                      @if (action.icon) {
+                      @if (action.imageIcon) {
+                        <img
+                          class="action-image-icon"
+                          [src]="action.imageIcon"
+                          [alt]="action.imageAlt ?? action.label"
+                        >
+                      } @else if (action.icon) {
                         <mat-icon>
                           {{ action.icon }}
                         </mat-icon>

@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("arrangement")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-04T12:00:32.094310100+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T11:33:13.963197700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class Arrangement {
 
   private @Nullable String id;
@@ -35,13 +35,13 @@ public class Arrangement {
 
   private BigDecimal reedCM;
 
-  private Float reedHight;
+  private @Nullable Float reedHeight;
 
-  private Float warpLenght;
+  private @Nullable Float warpLength;
 
   private Float piecesCount;
 
-  private Float pieceLenght;
+  private @Nullable Float pieceLength;
 
   private Float warpEndCount;
 
@@ -57,14 +57,11 @@ public class Arrangement {
   /**
    * Constructor with only required parameters
    */
-  public Arrangement(String itemName, BigDecimal reedCount, BigDecimal reedCM, Float reedHight, Float warpLenght, Float piecesCount, Float pieceLenght, Float warpEndCount, BigDecimal hitsPerDm) {
+  public Arrangement(String itemName, BigDecimal reedCount, BigDecimal reedCM, Float piecesCount, Float warpEndCount, BigDecimal hitsPerDm) {
     this.itemName = itemName;
     this.reedCount = reedCount;
     this.reedCM = reedCM;
-    this.reedHight = reedHight;
-    this.warpLenght = warpLenght;
     this.piecesCount = piecesCount;
-    this.pieceLenght = pieceLenght;
     this.warpEndCount = warpEndCount;
     this.hitsPerDm = hitsPerDm;
   }
@@ -153,46 +150,46 @@ public class Arrangement {
     this.reedCM = reedCM;
   }
 
-  public Arrangement reedHight(Float reedHight) {
-    this.reedHight = reedHight;
+  public Arrangement reedHeight(@Nullable Float reedHeight) {
+    this.reedHeight = reedHeight;
     return this;
   }
 
   /**
-   * Get reedHight
-   * @return reedHight
+   * Get reedHeight
+   * @return reedHeight
    */
-  @NotNull 
-  @Schema(name = "reedHight", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("reedHight")
-  public Float getReedHight() {
-    return reedHight;
+  
+  @Schema(name = "reedHeight", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("reedHeight")
+  public @Nullable Float getReedHeight() {
+    return reedHeight;
   }
 
-  @JsonProperty("reedHight")
-  public void setReedHight(Float reedHight) {
-    this.reedHight = reedHight;
+  @JsonProperty("reedHeight")
+  public void setReedHeight(@Nullable Float reedHeight) {
+    this.reedHeight = reedHeight;
   }
 
-  public Arrangement warpLenght(Float warpLenght) {
-    this.warpLenght = warpLenght;
+  public Arrangement warpLength(@Nullable Float warpLength) {
+    this.warpLength = warpLength;
     return this;
   }
 
   /**
    * Lunghezza del filo di ordito in metri
-   * @return warpLenght
+   * @return warpLength
    */
-  @NotNull 
-  @Schema(name = "warpLenght", description = "Lunghezza del filo di ordito in metri", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("warpLenght")
-  public Float getWarpLenght() {
-    return warpLenght;
+  
+  @Schema(name = "warpLength", description = "Lunghezza del filo di ordito in metri", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("warpLength")
+  public @Nullable Float getWarpLength() {
+    return warpLength;
   }
 
-  @JsonProperty("warpLenght")
-  public void setWarpLenght(Float warpLenght) {
-    this.warpLenght = warpLenght;
+  @JsonProperty("warpLength")
+  public void setWarpLength(@Nullable Float warpLength) {
+    this.warpLength = warpLength;
   }
 
   public Arrangement piecesCount(Float piecesCount) {
@@ -216,25 +213,25 @@ public class Arrangement {
     this.piecesCount = piecesCount;
   }
 
-  public Arrangement pieceLenght(Float pieceLenght) {
-    this.pieceLenght = pieceLenght;
+  public Arrangement pieceLength(@Nullable Float pieceLength) {
+    this.pieceLength = pieceLength;
     return this;
   }
 
   /**
    * Lunghezza di ogni pezza in metri
-   * @return pieceLenght
+   * @return pieceLength
    */
-  @NotNull 
-  @Schema(name = "pieceLenght", description = "Lunghezza di ogni pezza in metri", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("pieceLenght")
-  public Float getPieceLenght() {
-    return pieceLenght;
+  
+  @Schema(name = "pieceLength", description = "Lunghezza di ogni pezza in metri", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("pieceLength")
+  public @Nullable Float getPieceLength() {
+    return pieceLength;
   }
 
-  @JsonProperty("pieceLenght")
-  public void setPieceLenght(Float pieceLenght) {
-    this.pieceLenght = pieceLenght;
+  @JsonProperty("pieceLength")
+  public void setPieceLength(@Nullable Float pieceLength) {
+    this.pieceLength = pieceLength;
   }
 
   public Arrangement warpEndCount(Float warpEndCount) {
@@ -264,11 +261,11 @@ public class Arrangement {
   }
 
   /**
-   * Get hitsPerDm
+   * Numero di colpi per decimetro
    * @return hitsPerDm
    */
   @NotNull @Valid 
-  @Schema(name = "hitsPerDm", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "hitsPerDm", description = "Numero di colpi per decimetro", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("hitsPerDm")
   public BigDecimal getHitsPerDm() {
     return hitsPerDm;
@@ -313,10 +310,10 @@ public class Arrangement {
         Objects.equals(this.itemName, arrangement.itemName) &&
         Objects.equals(this.reedCount, arrangement.reedCount) &&
         Objects.equals(this.reedCM, arrangement.reedCM) &&
-        Objects.equals(this.reedHight, arrangement.reedHight) &&
-        Objects.equals(this.warpLenght, arrangement.warpLenght) &&
+        Objects.equals(this.reedHeight, arrangement.reedHeight) &&
+        Objects.equals(this.warpLength, arrangement.warpLength) &&
         Objects.equals(this.piecesCount, arrangement.piecesCount) &&
-        Objects.equals(this.pieceLenght, arrangement.pieceLenght) &&
+        Objects.equals(this.pieceLength, arrangement.pieceLength) &&
         Objects.equals(this.warpEndCount, arrangement.warpEndCount) &&
         Objects.equals(this.hitsPerDm, arrangement.hitsPerDm) &&
         Objects.equals(this.deliveryDate, arrangement.deliveryDate);
@@ -324,7 +321,7 @@ public class Arrangement {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, itemName, reedCount, reedCM, reedHight, warpLenght, piecesCount, pieceLenght, warpEndCount, hitsPerDm, deliveryDate);
+    return Objects.hash(id, itemName, reedCount, reedCM, reedHeight, warpLength, piecesCount, pieceLength, warpEndCount, hitsPerDm, deliveryDate);
   }
 
   @Override
@@ -335,10 +332,10 @@ public class Arrangement {
     sb.append("    itemName: ").append(toIndentedString(itemName)).append("\n");
     sb.append("    reedCount: ").append(toIndentedString(reedCount)).append("\n");
     sb.append("    reedCM: ").append(toIndentedString(reedCM)).append("\n");
-    sb.append("    reedHight: ").append(toIndentedString(reedHight)).append("\n");
-    sb.append("    warpLenght: ").append(toIndentedString(warpLenght)).append("\n");
+    sb.append("    reedHeight: ").append(toIndentedString(reedHeight)).append("\n");
+    sb.append("    warpLength: ").append(toIndentedString(warpLength)).append("\n");
     sb.append("    piecesCount: ").append(toIndentedString(piecesCount)).append("\n");
-    sb.append("    pieceLenght: ").append(toIndentedString(pieceLenght)).append("\n");
+    sb.append("    pieceLength: ").append(toIndentedString(pieceLength)).append("\n");
     sb.append("    warpEndCount: ").append(toIndentedString(warpEndCount)).append("\n");
     sb.append("    hitsPerDm: ").append(toIndentedString(hitsPerDm)).append("\n");
     sb.append("    deliveryDate: ").append(toIndentedString(deliveryDate)).append("\n");

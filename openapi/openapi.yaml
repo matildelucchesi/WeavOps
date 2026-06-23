@@ -13,12 +13,18 @@ security:
 paths:
   /looms:
     $ref: './paths/loom.yaml#/~1looms'
+  /looms/delete-multi:
+    $ref: './paths/loom.yaml#/~1looms~1delete-multi'
   /looms/{id}:
     $ref: './paths/loom.yaml#/~1looms~1{id}'
   /items:
     $ref: './paths/item.yaml#/~1items'
+  /items/delete-multi:
+    $ref: './paths/item.yaml#/~1items~1delete-multi'
   /items/{id}:
     $ref: './paths/item.yaml#/~1items~1{id}'
+  /items/with-arrangement:
+    $ref: './paths/item.yaml#/~1items~1with-arrangement'
   /arrangements:
     $ref: './paths/arrangement.yaml#/~1arrangements'
   /arrangements/{id}:
@@ -33,6 +39,8 @@ paths:
     $ref: './paths/process.yaml#/~1processes~1{id}'
   /customers:
     $ref: './paths/customer.yaml#/~1customers'
+  /customers/delete-multi:
+    $ref: './paths/customer.yaml#/~1customers~1delete-multi'
   /customers/{id}:
     $ref: './paths/customer.yaml#/~1customers~1{id}'
   /users:

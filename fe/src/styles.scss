@@ -20,9 +20,14 @@ $weavops-color-accent-light: #ffb35c;
 $weavops-color-accent-lighter: #ffb65c;
 $weavops-color-warning: #ffe46d;
 $weavops-color-warning-alpha: #ffe46daa;
+$weavops-color-success: #168a4a;
+$weavops-color-success-soft: #e0f6e9;
 $weavops-color-danger: #d90000;
 $weavops-color-danger-bright: #ff0000;
+$weavops-color-danger-soft: #ffe1e1;
 $weavops-color-black: #000000;
+$weavops-color-grey: #b1b1b1;
+$weavops-color-grey-dark: #404040;
 
 html {
   height: 100%;
@@ -40,9 +45,14 @@ html {
   --weavops-color-accent-lighter: #{$weavops-color-accent-lighter};
   --weavops-color-warning: #{$weavops-color-warning};
   --weavops-color-warning-alpha: #{$weavops-color-warning-alpha};
+  --weavops-color-success: #{$weavops-color-success};
+  --weavops-color-success-soft: #{$weavops-color-success-soft};
   --weavops-color-danger: #{$weavops-color-danger};
   --weavops-color-danger-bright: #{$weavops-color-danger-bright};
+  --weavops-color-danger-soft: #{$weavops-color-danger-soft};
   --weavops-color-black: #{$weavops-color-black};
+  --weavops-color-grey: #{$weavops-color-grey};
+  --weavops-color-grey-dark: #{$weavops-color-grey-dark};
   --weavops-rgb-primary: 63 23 123;
   --weavops-rgb-primary-shadow: 108 83 145;
   --weavops-rgb-accent: 247 135 1;
@@ -174,6 +184,42 @@ body {
 
 .loom-action-dialog-panel .mat-mdc-dialog-container {
   --mat-dialog-container-shape: 10px;
+}
+
+.delete-dialog-panel .mat-mdc-dialog-surface {
+  background-color: var(--weavops-color-surface);
+  border: 2px solid var(--weavops-color-primary);
+  border-radius: 10px;
+  box-shadow: 0 4px 4px rgb(var(--weavops-rgb-black) / 0.25);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.delete-dialog-panel .mat-mdc-dialog-container {
+  --mat-dialog-container-shape: 10px;
+}
+
+.filter-dialog-panel .mat-mdc-dialog-surface {
+  background-color: var(--weavops-color-surface);
+  border: 2px solid var(--weavops-color-primary);
+  border-radius: 10px;
+  box-shadow: 0 4px 4px rgb(var(--weavops-rgb-black) / 0.25);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.filter-dialog-panel .mat-mdc-dialog-container {
+  --mat-dialog-container-shape: 10px;
+}
+
+.weavops-action-tooltip .mdc-tooltip__surface {
+  background-color: gray;
+  color: var(--weavops-color-surface);
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 4px 8px;
 }
 
 @font-face {

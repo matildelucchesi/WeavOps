@@ -44,10 +44,10 @@ public class ItemMapper {
 
         Item dto = new Item();
         dto.setId(entity.getId());
-        dto.setArrangement(arrangementMapper.toDto(entity.getArrangement()));
+        dto.setArrangementId(entity.getArrangementId());
         dto.setState(entity.getState());
         if (includeCustomer) {
-            dto.setCustomer(toCustomerDtoWithoutItems(entity.getCustomer()));
+            dto.setCustomerId(entity.getCustomerId());
         }
         dto.setTotalMeters(toBigDecimal(entity.getTotalMeters()));
         dto.setMetersRun(toBigDecimal(entity.getMetersRun()));
@@ -67,10 +67,10 @@ public class ItemMapper {
 
         ItemEntity entity = new ItemEntity();
         entity.setId(dto.getId());
-        entity.setArrangement(arrangementMapper.toEntity(dto.getArrangement()));
+        entity.setArrangementId(dto.getArrangementId());
         entity.setState(dto.getState());
         if (includeCustomer) {
-            entity.setCustomer(toCustomerEntityWithoutItems(dto.getCustomer()));
+            entity.setCustomerId(dto.getCustomerId());
         }
         entity.setTotalMeters(toInteger(dto.getTotalMeters()));
         entity.setMetersRun(toInteger(dto.getMetersRun()));

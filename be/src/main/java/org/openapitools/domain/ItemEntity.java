@@ -14,9 +14,9 @@ public class ItemEntity {
     @Id
     private String id;
 
-    private ArrangementEntity arrangement;
+    private String arrangementId;
     private Item.StateEnum state;
-    private CustomerEntity customer;
+    private String customerId;
     private Integer totalMeters;
     private Integer metersRun;
     private List<ProcessEntity> processing = new ArrayList<>();
@@ -26,12 +26,20 @@ public class ItemEntity {
 
     //getter & setter
 
-    public ArrangementEntity getArrangement() {
-        return arrangement;
+    public String getArrangementId() {
+        return arrangementId;
     }
 
-    public void setArrangement(ArrangementEntity arrangement) {
-        this.arrangement = arrangement;
+    public void setArrangementId(String arrangementId) {
+        this.arrangementId = arrangementId;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
     public String getId() {
@@ -56,14 +64,6 @@ public class ItemEntity {
 
     public void setTotalMeters(Integer totalMeters) {
         this.totalMeters = totalMeters;
-    }
-
-    public CustomerEntity getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(CustomerEntity customer) {
-        this.customer = customer;
     }
 
     public Integer getMetersRun() {

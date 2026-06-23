@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
-import { AuthControllerService } from '../../../api';
+import { AuthService } from '../../../api';
 import { LoginComponent } from './login-component';
 
 describe('LoginComponent', () => {
@@ -25,7 +25,7 @@ describe('LoginComponent', () => {
     await TestBed.configureTestingModule({
       imports: [LoginComponent],
       providers: [
-        { provide: AuthControllerService, useValue: authApi },
+        { provide: AuthService, useValue: authApi },
         { provide: Router, useValue: router },
         { provide: MatSnackBar, useValue: snackBar },
       ],

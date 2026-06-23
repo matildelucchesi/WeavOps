@@ -51,6 +51,32 @@ paths:
       - application/json
       x-tags:
       - tag: Loom
+  /looms/delete-multi:
+    post:
+      operationId: deleteMultiLooms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: string
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/deleteMultiLooms_200_response"
+          description: ok
+      summary: Elimina più telai contemporaneamente
+      tags:
+      - Loom
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Loom
   /looms/{id}:
     delete:
       operationId: deleteLoom
@@ -173,6 +199,32 @@ paths:
       - application/json
       x-tags:
       - tag: Item
+  /items/delete-multi:
+    post:
+      operationId: deleteMultiItems
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: string
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/deleteMultiItems_200_response"
+          description: ok
+      summary: Elimina più articoli contemporaneamente
+      tags:
+      - Item
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Item
   /items/{id}:
     delete:
       operationId: deleteItem
@@ -244,6 +296,34 @@ paths:
         "404":
           description: Item non trovato
       summary: Aggiorna un item
+      tags:
+      - Item
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Item
+  /items/with-arrangement:
+    post:
+      operationId: createItemWithArrangement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/create-item-with-arrangement-request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/item"
+          description: Item creato
+        "400":
+          description: Richiesta non valida
+        "404":
+          description: Customer non trovato
+      summary: Crea item con disposizione e customerName
       tags:
       - Item
       x-content-type: application/json
@@ -661,6 +741,32 @@ paths:
       - application/json
       x-tags:
       - tag: Customer
+  /customers/delete-multi:
+    post:
+      operationId: deleteMultiCustomers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: string
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/deleteMultiCustomers_200_response"
+          description: ok
+      summary: Elimina più clienti contemporaneamente
+      tags:
+      - Customer
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Customer
   /customers/{id}:
     delete:
       operationId: deleteCustomer
@@ -916,72 +1022,43 @@ components:
       type: object
     item:
       example:
-        arrangement:
-          itemName: itemName
-          reedHight: 1.4658129
-          warpLenght: 5.962134
-          piecesCount: 5.637377
-          reedCount: 0.8008281904610115
-          warpEndCount: 7.0614014
-          pieceLenght: 2.302136
-          hitsPerDm: 9.301444243932576
-          id: id
-          reedCM: 6.027456183070403
-          deliveryDate: 2000-01-23T04:56:07.000+00:00
-        metersRun: 2.027123023002322
+        arrangementId: arrangementId
+        metersRun: 6.027456183070403
         expectedEndDate: 2000-01-23T04:56:07.000+00:00
         endDate: 2000-01-23T04:56:07.000+00:00
-        totalMeters: 3.616076749251911
+        totalMeters: 0.8008281904610115
+        customerId: customerId
         processing:
-        - efficiency: 7.386281948385884
-          metersRun: 1.0246457001441578
+        - efficiency: 5.962133916683182
+          metersRun: 2.3021358869347655
           expectedEndDate: 2000-01-23T04:56:07.000+00:00
           endDate: 2000-01-23T04:56:07.000+00:00
-          totalMeters: 1.2315135367772556
+          totalMeters: 5.637376656633329
           loomId: loomId
-          metersToGo: 1.4894159098541704
+          metersToGo: 7.061401241503109
           id: id
-          speed: 4.145608029883936
+          speed: 1.4658129805029452
           startDate: 2000-01-23T04:56:07.000+00:00
-        - efficiency: 7.386281948385884
-          metersRun: 1.0246457001441578
+        - efficiency: 5.962133916683182
+          metersRun: 2.3021358869347655
           expectedEndDate: 2000-01-23T04:56:07.000+00:00
           endDate: 2000-01-23T04:56:07.000+00:00
-          totalMeters: 1.2315135367772556
+          totalMeters: 5.637376656633329
           loomId: loomId
-          metersToGo: 1.4894159098541704
+          metersToGo: 7.061401241503109
           id: id
-          speed: 4.145608029883936
+          speed: 1.4658129805029452
           startDate: 2000-01-23T04:56:07.000+00:00
         id: id
         state: INITIALIZED
         startDate: 2000-01-23T04:56:07.000+00:00
-        customer:
-          note: note
-          referents:
-          - firstName: firstName
-            lastName: lastName
-            phoneNumber: phoneNumber
-            id: id
-            email: email
-          - firstName: firstName
-            lastName: lastName
-            phoneNumber: phoneNumber
-            id: id
-            email: email
-          name: name
-          id: id
-          items:
-          - null
-          - null
-          email: email
       properties:
         id:
           description: Identificativo MongoDB generato dal server
           readOnly: true
           type: string
-        arrangement:
-          $ref: "#/components/schemas/arrangement"
+        arrangementId:
+          type: string
         state:
           enum:
           - INITIALIZED
@@ -989,8 +1066,8 @@ components:
           - COMPLETED
           - ABANDONED
           type: string
-        customer:
-          $ref: "#/components/schemas/customer"
+        customerId:
+          type: string
         totalMeters:
           type: number
         metersRun:
@@ -1012,19 +1089,31 @@ components:
       - arrangement
       - customer
       type: object
+    create-item-with-arrangement-request:
+      properties:
+        customerName:
+          description: Nome esatto del customer da associare all'item.
+          minLength: 1
+          type: string
+        arrangement:
+          $ref: "#/components/schemas/arrangement"
+      required:
+      - arrangement
+      - customerName
+      type: object
     arrangement:
       example:
         itemName: itemName
-        reedHight: 1.4658129
-        warpLenght: 5.962134
         piecesCount: 5.637377
         reedCount: 0.8008281904610115
         warpEndCount: 7.0614014
-        pieceLenght: 2.302136
         hitsPerDm: 9.301444243932576
+        warpLength: 5.962134
         id: id
         reedCM: 6.027456183070403
         deliveryDate: 2000-01-23T04:56:07.000+00:00
+        reedHeight: 1.4658129
+        pieceLength: 2.302136
       properties:
         id:
           description: Identificativo MongoDB generato dal server
@@ -1039,10 +1128,10 @@ components:
         reedCM:
           description: Numero di centimetri del pettine
           type: number
-        reedHight:
+        reedHeight:
           format: float
           type: number
-        warpLenght:
+        warpLength:
           description: Lunghezza del filo di ordito in metri
           format: float
           type: number
@@ -1050,7 +1139,7 @@ components:
           description: Numero di pezze che devono essere prodotte
           format: float
           type: number
-        pieceLenght:
+        pieceLength:
           description: Lunghezza di ogni pezza in metri
           format: float
           type: number
@@ -1059,6 +1148,7 @@ components:
           format: float
           type: number
         hitsPerDm:
+          description: Numero di colpi per decimetro
           type: number
         deliveryDate:
           format: date-time
@@ -1100,15 +1190,15 @@ components:
       type: object
     process:
       example:
-        efficiency: 7.386281948385884
-        metersRun: 1.0246457001441578
+        efficiency: 5.962133916683182
+        metersRun: 2.3021358869347655
         expectedEndDate: 2000-01-23T04:56:07.000+00:00
         endDate: 2000-01-23T04:56:07.000+00:00
-        totalMeters: 1.2315135367772556
+        totalMeters: 5.637376656633329
         loomId: loomId
-        metersToGo: 1.4894159098541704
+        metersToGo: 7.061401241503109
         id: id
-        speed: 4.145608029883936
+        speed: 1.4658129805029452
         startDate: 2000-01-23T04:56:07.000+00:00
       properties:
         id:
@@ -1162,8 +1252,66 @@ components:
         name: name
         id: id
         items:
-        - null
-        - null
+        - arrangementId: arrangementId
+          metersRun: 6.027456183070403
+          expectedEndDate: 2000-01-23T04:56:07.000+00:00
+          endDate: 2000-01-23T04:56:07.000+00:00
+          totalMeters: 0.8008281904610115
+          customerId: customerId
+          processing:
+          - efficiency: 5.962133916683182
+            metersRun: 2.3021358869347655
+            expectedEndDate: 2000-01-23T04:56:07.000+00:00
+            endDate: 2000-01-23T04:56:07.000+00:00
+            totalMeters: 5.637376656633329
+            loomId: loomId
+            metersToGo: 7.061401241503109
+            id: id
+            speed: 1.4658129805029452
+            startDate: 2000-01-23T04:56:07.000+00:00
+          - efficiency: 5.962133916683182
+            metersRun: 2.3021358869347655
+            expectedEndDate: 2000-01-23T04:56:07.000+00:00
+            endDate: 2000-01-23T04:56:07.000+00:00
+            totalMeters: 5.637376656633329
+            loomId: loomId
+            metersToGo: 7.061401241503109
+            id: id
+            speed: 1.4658129805029452
+            startDate: 2000-01-23T04:56:07.000+00:00
+          id: id
+          state: INITIALIZED
+          startDate: 2000-01-23T04:56:07.000+00:00
+        - arrangementId: arrangementId
+          metersRun: 6.027456183070403
+          expectedEndDate: 2000-01-23T04:56:07.000+00:00
+          endDate: 2000-01-23T04:56:07.000+00:00
+          totalMeters: 0.8008281904610115
+          customerId: customerId
+          processing:
+          - efficiency: 5.962133916683182
+            metersRun: 2.3021358869347655
+            expectedEndDate: 2000-01-23T04:56:07.000+00:00
+            endDate: 2000-01-23T04:56:07.000+00:00
+            totalMeters: 5.637376656633329
+            loomId: loomId
+            metersToGo: 7.061401241503109
+            id: id
+            speed: 1.4658129805029452
+            startDate: 2000-01-23T04:56:07.000+00:00
+          - efficiency: 5.962133916683182
+            metersRun: 2.3021358869347655
+            expectedEndDate: 2000-01-23T04:56:07.000+00:00
+            endDate: 2000-01-23T04:56:07.000+00:00
+            totalMeters: 5.637376656633329
+            loomId: loomId
+            metersToGo: 7.061401241503109
+            id: id
+            speed: 1.4658129805029452
+            startDate: 2000-01-23T04:56:07.000+00:00
+          id: id
+          state: INITIALIZED
+          startDate: 2000-01-23T04:56:07.000+00:00
         email: email
       properties:
         id:
@@ -1217,6 +1365,30 @@ components:
       required:
       - password
       - username
+      type: object
+    deleteMultiLooms_200_response:
+      example:
+        deletedCount: 0
+      properties:
+        deletedCount:
+          description: Numero di telai eliminati
+          type: integer
+      type: object
+    deleteMultiItems_200_response:
+      example:
+        deletedCount: 0
+      properties:
+        deletedCount:
+          description: Numero di articoli eliminati
+          type: integer
+      type: object
+    deleteMultiCustomers_200_response:
+      example:
+        deletedCount: 0
+      properties:
+        deletedCount:
+          description: Numero di clienti eliminati
+          type: integer
       type: object
     login_request:
       properties:

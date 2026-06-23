@@ -17,10 +17,10 @@ public class ArrangementMapper {
         dto.setItemName(entity.getItemName());
         dto.setReedCount(entity.getReedCount());
         dto.setReedCM(entity.getReedCM());
-        dto.setReedHight(entity.getReedHight());
-        dto.setWarpLenght(entity.getWarpLenght());
+        dto.setReedHeight(entity.getReedHight());
+        dto.setWarpLength(entity.getWarpLenght());
         dto.setPiecesCount(entity.getPiecesCount());
-        dto.setPieceLenght(entity.getPieceLenght());
+        dto.setPieceLength(entity.getPieceLenght());
         dto.setWarpEndCount(entity.getWarpEndCount());
         dto.setHitsPerDm(entity.getHitsPerDm());
         dto.setDeliveryDate(entity.getDeliveryDate());
@@ -37,10 +37,10 @@ public class ArrangementMapper {
         entity.setItemName(dto.getItemName());
         entity.setReedCount(dto.getReedCount());
         entity.setReedCM(dto.getReedCM());
-        entity.setReedHight(dto.getReedHight());
-        entity.setWarpLenght(dto.getWarpLenght());
+        entity.setReedHight(dto.getReedHeight());
+        entity.setWarpLenght(dto.getWarpLength());
         entity.setPiecesCount(dto.getPiecesCount());
-        entity.setPieceLenght(dto.getPieceLenght());
+        entity.setPieceLenght(dto.getPieceLength());
         entity.setWarpEndCount(dto.getWarpEndCount());
         entity.setHitsPerDm(dto.getHitsPerDm());
         entity.setDeliveryDate(dto.getDeliveryDate());

@@ -20,6 +20,7 @@ export class SidemenuButtonComponent {
   @Input() icon: string = '';
   @Input() label: string = '';
   @Input() route: string | null = null;
+  @Input() activeRoutes: string[] = [];
 
   isImage(icon: string){
     if(!icon) return false;
@@ -27,8 +28,16 @@ export class SidemenuButtonComponent {
   }
 
   isActiveRoute(route: string | null): boolean {
-    if(!route) return false;
-    return this.router.url === route;
+    const routesToMatch = [route, ...this.activeRoutes].filter((route): route is string => !!route);
+
+    return routesToMatch.some((routeToMatch) =>
+      this.router.isActive(routeToMatch, {
+        paths: 'exact',
+        queryParams: 'ignored',
+        fragment: 'ignored',
+        matrixParams: 'ignored',
+      }),
+    );
   }
 
 }

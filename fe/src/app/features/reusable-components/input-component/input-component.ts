@@ -21,6 +21,8 @@ export class InputComponent {
   @Input() value: string = '';
   @Input() width: string = '450px';
   @Input() height: string = '80px';
+  @Input() required: boolean = true;
+  @Input() minLength: number | null = 5;
   
   @Output() valueChange = new EventEmitter<string>();
 }

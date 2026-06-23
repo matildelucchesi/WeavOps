@@ -11,8 +11,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.openapitools.model.Arrangement;
-import org.openapitools.model.Customer;
 import org.openapitools.model.Process;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
@@ -31,12 +29,12 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("item")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-04T12:00:32.094310100+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T11:33:13.963197700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class Item {
 
   private @Nullable String id;
 
-  private Arrangement arrangement;
+  private @Nullable String arrangementId;
 
   /**
    * Gets or Sets state
@@ -79,7 +77,7 @@ public class Item {
 
   private @Nullable StateEnum state;
 
-  private Customer customer;
+  private @Nullable String customerId;
 
   private @Nullable BigDecimal totalMeters;
 
@@ -96,18 +94,6 @@ public class Item {
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private @Nullable OffsetDateTime startDate;
-
-  public Item() {
-    super();
-  }
-
-  /**
-   * Constructor with only required parameters
-   */
-  public Item(Arrangement arrangement, Customer customer) {
-    this.arrangement = arrangement;
-    this.customer = customer;
-  }
 
   public Item id(@Nullable String id) {
     this.id = id;
@@ -130,25 +116,25 @@ public class Item {
     this.id = id;
   }
 
-  public Item arrangement(Arrangement arrangement) {
-    this.arrangement = arrangement;
+  public Item arrangementId(@Nullable String arrangementId) {
+    this.arrangementId = arrangementId;
     return this;
   }
 
   /**
-   * Get arrangement
-   * @return arrangement
+   * Get arrangementId
+   * @return arrangementId
    */
-  @NotNull @Valid 
-  @Schema(name = "arrangement", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("arrangement")
-  public Arrangement getArrangement() {
-    return arrangement;
+  
+  @Schema(name = "arrangementId", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("arrangementId")
+  public @Nullable String getArrangementId() {
+    return arrangementId;
   }
 
-  @JsonProperty("arrangement")
-  public void setArrangement(Arrangement arrangement) {
-    this.arrangement = arrangement;
+  @JsonProperty("arrangementId")
+  public void setArrangementId(@Nullable String arrangementId) {
+    this.arrangementId = arrangementId;
   }
 
   public Item state(@Nullable StateEnum state) {
@@ -172,25 +158,25 @@ public class Item {
     this.state = state;
   }
 
-  public Item customer(Customer customer) {
-    this.customer = customer;
+  public Item customerId(@Nullable String customerId) {
+    this.customerId = customerId;
     return this;
   }
 
   /**
-   * Get customer
-   * @return customer
+   * Get customerId
+   * @return customerId
    */
-  @NotNull @Valid 
-  @Schema(name = "customer", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("customer")
-  public Customer getCustomer() {
-    return customer;
+  
+  @Schema(name = "customerId", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("customerId")
+  public @Nullable String getCustomerId() {
+    return customerId;
   }
 
-  @JsonProperty("customer")
-  public void setCustomer(Customer customer) {
-    this.customer = customer;
+  @JsonProperty("customerId")
+  public void setCustomerId(@Nullable String customerId) {
+    this.customerId = customerId;
   }
 
   public Item totalMeters(@Nullable BigDecimal totalMeters) {
@@ -337,9 +323,9 @@ public class Item {
     }
     Item item = (Item) o;
     return Objects.equals(this.id, item.id) &&
-        Objects.equals(this.arrangement, item.arrangement) &&
+        Objects.equals(this.arrangementId, item.arrangementId) &&
         Objects.equals(this.state, item.state) &&
-        Objects.equals(this.customer, item.customer) &&
+        Objects.equals(this.customerId, item.customerId) &&
         Objects.equals(this.totalMeters, item.totalMeters) &&
         Objects.equals(this.metersRun, item.metersRun) &&
         Objects.equals(this.processing, item.processing) &&
@@ -350,7 +336,7 @@ public class Item {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, arrangement, state, customer, totalMeters, metersRun, processing, expectedEndDate, endDate, startDate);
+    return Objects.hash(id, arrangementId, state, customerId, totalMeters, metersRun, processing, expectedEndDate, endDate, startDate);
   }
 
   @Override
@@ -358,9 +344,9 @@ public class Item {
     StringBuilder sb = new StringBuilder();
     sb.append("class Item {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    arrangement: ").append(toIndentedString(arrangement)).append("\n");
+    sb.append("    arrangementId: ").append(toIndentedString(arrangementId)).append("\n");
     sb.append("    state: ").append(toIndentedString(state)).append("\n");
-    sb.append("    customer: ").append(toIndentedString(customer)).append("\n");
+    sb.append("    customerId: ").append(toIndentedString(customerId)).append("\n");
     sb.append("    totalMeters: ").append(toIndentedString(totalMeters)).append("\n");
     sb.append("    metersRun: ").append(toIndentedString(metersRun)).append("\n");
     sb.append("    processing: ").append(toIndentedString(processing)).append("\n");

@@ -10,8 +10,11 @@
 import { User } from './user';
 
 
-export interface LoginResponse { 
-    token?: string;
+export interface Login200Response { 
+    /**
+     * Token di autenticazione da usare nelle richieste successive
+     */
+    token: string;
     tokenType?: string;
     user?: User;
 }

@@ -1,0 +1,17 @@
+<div class="wrapper">
+    <div class="content">
+        <div class="header">
+            <mat-icon
+                class="header-icon"
+                [class.material-symbols-outlined]="iconFontSet === 'material-symbols-outlined'"
+                [fontSet]="iconFontSet"
+                [style.--symbol-fill]="iconFill">
+                {{ iconName }}
+            </mat-icon>
+            <h3 class="header-title">Attenzione</h3>
+        </div>
+        <div class="text">
+            {{ text }}
+        </div>
+    </div>
+</div>

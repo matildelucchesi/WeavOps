@@ -1,5 +1,6 @@
 .wrapper{
     display: grid;
+    position: relative;
     background-color: var(--weavops-color-primary);
     box-sizing: border-box;
     min-height: 100dvh;
@@ -9,8 +10,33 @@
     padding: 15px;
 }
 
-img{
+.logo-wrapper{
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.logo-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.logo{
     width: 100px;
     height: 100px;
     object-fit: contain;
+}
+
+.mini-menu-wrapper{
+    position: absolute;
+    left: calc(100% + 12px);
+    bottom: 8px;
+    z-index: 20;
 }

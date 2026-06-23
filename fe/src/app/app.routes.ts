@@ -6,7 +6,9 @@ import { HomePage } from './features/pages/home-page/home-page';
 import { authGuard } from './guards/auth.guard';
 import { ItemPage } from './features/pages/item-page/item-page';
 import { CustomerPage } from './features/pages/customer-page/customer-page';
-import { AddNewCustomerPage } from './features/pages/add-new-customer-page/add-new-customer-page';
+import { CustomerDetailsPage } from './features/pages/customer-details-page/customer-details-page';
+import { CustomerItemsHistoryPage } from './features/pages/customer-items-history-page/customer-items-history-page';
+import { ItemAddNewPage } from './features/pages/item-add-new-page/item-add-new-page';
 
 
 export const routes: Routes = [
@@ -33,12 +35,24 @@ export const routes: Routes = [
         component: ItemPage,
       },
       {
+        path: 'aggiungi-articolo',
+        component: ItemAddNewPage,
+      },
+      {
         path: 'clienti',
         component: CustomerPage,
       },
       {
         path: 'aggiungi-cliente',
-        component: AddNewCustomerPage,
+        component: CustomerDetailsPage,
+      },
+      {
+        path: 'cronologia-articoli',
+        component: CustomerItemsHistoryPage,
+      },
+      {
+        path: 'modifica-cliente',
+        component: CustomerDetailsPage,
       },
       {
         path: '',

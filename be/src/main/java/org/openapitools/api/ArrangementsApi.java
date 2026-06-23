@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-04T12:00:32.094310100+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T11:33:13.963197700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Arrangement", description = "the Arrangement API")
 public interface ArrangementsApi {
@@ -76,7 +76,7 @@ public interface ArrangementsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    String exampleString = "{ \"itemName\" : \"itemName\", \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"hitsPerDm\" : 9.301444243932576, \"warpLength\" : 5.962134, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\", \"reedHeight\" : 1.4658129, \"pieceLength\" : 2.302136 }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -152,7 +152,7 @@ public interface ArrangementsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    String exampleString = "{ \"itemName\" : \"itemName\", \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"hitsPerDm\" : 9.301444243932576, \"warpLength\" : 5.962134, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\", \"reedHeight\" : 1.4658129, \"pieceLength\" : 2.302136 }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -193,7 +193,7 @@ public interface ArrangementsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
+                    String exampleString = "[ { \"itemName\" : \"itemName\", \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"hitsPerDm\" : 9.301444243932576, \"warpLength\" : 5.962134, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\", \"reedHeight\" : 1.4658129, \"pieceLength\" : 2.302136 }, { \"itemName\" : \"itemName\", \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"hitsPerDm\" : 9.301444243932576, \"warpLength\" : 5.962134, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\", \"reedHeight\" : 1.4658129, \"pieceLength\" : 2.302136 } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -242,7 +242,7 @@ public interface ArrangementsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    String exampleString = "{ \"itemName\" : \"itemName\", \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"hitsPerDm\" : 9.301444243932576, \"warpLength\" : 5.962134, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\", \"reedHeight\" : 1.4658129, \"pieceLength\" : 2.302136 }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

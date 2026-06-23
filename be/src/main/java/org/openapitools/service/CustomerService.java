@@ -84,6 +84,10 @@ public class CustomerService {
         return repository.findById(id);
     }
 
+    public Optional<CustomerEntity> findByName(String name){
+        return repository.findByName(name);
+    }
+
     public Optional<CustomerEntity> update(String id, CustomerEntity entity){
         if (!repository.existsById(id)) {
             return Optional.empty();
@@ -98,6 +102,30 @@ public class CustomerService {
         }
         repository.deleteById(id);
         return true;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteByIds(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return 0;
+        }
+
+        List<String> sanitizedIds = ids.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(id -> !id.isEmpty())
+                .distinct()
+                .toList();
+
+        if (sanitizedIds.isEmpty()) {
+            return 0;
+        }
+
+        List<CustomerEntity> customers = new ArrayList<>();
+        repository.findAllById(sanitizedIds).forEach(customers::add);
+        repository.deleteAll(customers);
+
+        return customers.size();
     }
 
     public boolean existsById(String id){

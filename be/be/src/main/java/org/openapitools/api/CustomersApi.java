@@ -6,6 +6,7 @@
 package org.openapitools.api;
 
 import org.openapitools.model.Customer;
+import org.openapitools.model.DeleteMultiCustomers200Response;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-12T15:53:38.999858900+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-19T15:48:41.653649400+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Customer", description = "the Customer API")
 public interface CustomersApi {
@@ -114,6 +115,49 @@ public interface CustomersApi {
     default ResponseEntity<Void> deleteCustomer(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
     ) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    String PATH_DELETE_MULTI_CUSTOMERS = "/customers/delete-multi";
+    /**
+     * POST /customers/delete-multi : Elimina più clienti contemporaneamente
+     *
+     * @param requestBody  (required)
+     * @return ok (status code 200)
+     */
+    @Operation(
+        operationId = "deleteMultiCustomers",
+        summary = "Elimina più clienti contemporaneamente",
+        tags = { "Customer" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "ok", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = DeleteMultiCustomers200Response.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = CustomersApi.PATH_DELETE_MULTI_CUSTOMERS,
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    default ResponseEntity<DeleteMultiCustomers200Response> deleteMultiCustomers(
+        @Parameter(name = "request_body", description = "", required = true) @Valid @RequestBody List<String> requestBody
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"deletedCount\" : 0 }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }

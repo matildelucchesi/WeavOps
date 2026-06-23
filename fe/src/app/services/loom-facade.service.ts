@@ -26,4 +26,8 @@ export class LoomFacadeService {
   remove(id: string) {
     return this.loomApi.deleteLoom({ id });
   }
+
+  deleteMultiLooms(requestBody: Array<string>) {
+    return this.loomApi.deleteMultiLooms({ requestBody });
+  }
 }

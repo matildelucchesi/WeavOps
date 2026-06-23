@@ -1,0 +1,13 @@
+type: object
+
+required:
+  - customerName
+  - arrangement
+
+properties:
+  customerName:
+    type: string
+    minLength: 1
+    description: Nome esatto del customer da associare all'item.
+  arrangement:
+    $ref: './arrangement.yaml'

@@ -51,6 +51,32 @@ paths:
       - application/json
       x-tags:
       - tag: Loom
+  /looms/delete-multi:
+    post:
+      operationId: deleteMultiLooms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: string
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/deleteMultiLooms_200_response"
+          description: ok
+      summary: Elimina più telai contemporaneamente
+      tags:
+      - Loom
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Loom
   /looms/{id}:
     delete:
       operationId: deleteLoom
@@ -661,6 +687,32 @@ paths:
       - application/json
       x-tags:
       - tag: Customer
+  /customers/delete-multi:
+    post:
+      operationId: deleteMultiCustomers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: string
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/deleteMultiCustomers_200_response"
+          description: ok
+      summary: Elimina più clienti contemporaneamente
+      tags:
+      - Customer
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Customer
   /customers/{id}:
     delete:
       operationId: deleteCustomer
@@ -1217,6 +1269,22 @@ components:
       required:
       - password
       - username
+      type: object
+    deleteMultiLooms_200_response:
+      example:
+        deletedCount: 0
+      properties:
+        deletedCount:
+          description: Numero di telai eliminati
+          type: integer
+      type: object
+    deleteMultiCustomers_200_response:
+      example:
+        deletedCount: 0
+      properties:
+        deletedCount:
+          description: Numero di clienti eliminati
+          type: integer
       type: object
     login_request:
       properties:

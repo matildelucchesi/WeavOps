@@ -5,6 +5,7 @@
  */
 package org.openapitools.api;
 
+import org.openapitools.model.DeleteMultiLooms200Response;
 import org.openapitools.model.Loom;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-12T15:53:38.999858900+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-19T15:48:41.653649400+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Loom", description = "the Loom API")
 public interface LoomsApi {
@@ -114,6 +115,49 @@ public interface LoomsApi {
     default ResponseEntity<Void> deleteLoom(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
     ) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    String PATH_DELETE_MULTI_LOOMS = "/looms/delete-multi";
+    /**
+     * POST /looms/delete-multi : Elimina più telai contemporaneamente
+     *
+     * @param requestBody  (required)
+     * @return ok (status code 200)
+     */
+    @Operation(
+        operationId = "deleteMultiLooms",
+        summary = "Elimina più telai contemporaneamente",
+        tags = { "Loom" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "ok", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = DeleteMultiLooms200Response.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = LoomsApi.PATH_DELETE_MULTI_LOOMS,
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    default ResponseEntity<DeleteMultiLooms200Response> deleteMultiLooms(
+        @Parameter(name = "request_body", description = "", required = true) @Valid @RequestBody List<String> requestBody
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"deletedCount\" : 0 }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }

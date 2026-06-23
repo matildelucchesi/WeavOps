@@ -7,9 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Customer } from './customer';
 import { Process } from './process';
-import { Arrangement } from './arrangement';
 
 
 export interface Item { 
@@ -17,9 +15,9 @@ export interface Item {
      * Identificativo MongoDB generato dal server
      */
     readonly id?: string;
-    arrangement: Arrangement;
+    arrangementId?: string;
     state?: Item.StateEnum;
-    customer: Customer;
+    customerId?: string;
     totalMeters?: number;
     metersRun?: number;
     processing?: Array<Process>;

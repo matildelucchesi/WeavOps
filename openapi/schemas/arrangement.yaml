@@ -24,11 +24,11 @@ properties:
   reedCM:
     type: number
     description: Numero di centimetri del pettine
-  reedHight:
+  reedHeight:
     type: number
     format: float
     decription: Altezza del pettine in centimetri - altezza del tessuto
-  warpLenght:
+  warpLength:
     type: number
     format: float
     description: Lunghezza del filo di ordito in metri
@@ -36,7 +36,7 @@ properties:
     type: number
     format: float
     description: Numero di pezze che devono essere prodotte
-  pieceLenght:
+  pieceLength:
     type: number
     format: float
     description: Lunghezza di ogni pezza in metri
@@ -46,7 +46,7 @@ properties:
     description: Numero fili ordito
   hitsPerDm:
     type: number
-    desription: Numero di colpi per decimetro
+    description: Numero di colpi per decimetro
   deliveryDate:
     type: string
     format: date-time

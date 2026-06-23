@@ -1,7 +1,8 @@
 :host{
+    display: block;
     position: absolute;
     inset: calc(-1 * var(--page-content-padding, 30px));
-    z-index: 0;
+    z-index: -1;
     overflow: hidden;
     pointer-events: none;
     --thread-size: 10px;

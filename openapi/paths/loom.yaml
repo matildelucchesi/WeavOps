@@ -35,6 +35,32 @@
       '400':
         description: Richiesta non valida
 
+/looms/delete-multi:
+  post:
+    tags:
+      - Loom
+    summary: Elimina più telai contemporaneamente
+    operationId: deleteMultiLooms
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+    responses:
+      '200':
+        description: ok
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deletedCount:
+                  type: integer
+                  description: Numero di telai eliminati
+
 /looms/{id}:
   get:
     summary: Recupera un loom tramite id

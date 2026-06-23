@@ -1,13 +1,196 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { TitlePageComponent } from "../../reusable-components/title-page-component/title-page-component";
+import { DecorativeLinesComponent } from "../../reusable-components/decorative-lines-component/decorative-lines-component";
+import {
+  TableAction,
+  TableActionClick,
+  TableAddButtonConfig,
+  TableBulkActionClick,
+  TableColumn,
+  TableComponent,
+  TableFilterButtonConfig,
+} from "../../reusable-components/table-component/table-component";
+import { ItemTableRow } from '../../../table/table-row-interface/item-table-row';
+import { ItemFacadeService } from '../../../services/item-facade.service';
+import { ItemTableService } from '../../../table/table-service/item-table.service';
+import type { FilterValues } from '../../reusable-components/filter-button-component/filter-button-component';
 
 @Component({
   selector: 'app-item-page',
   imports: [
-    TitlePageComponent
+    TitlePageComponent,
+    DecorativeLinesComponent,
+    TableComponent
 ],
   templateUrl: './item-page.html',
   styleUrl: './item-page.scss',
   standalone: true,
 })
-export class ItemPage {}
+export class ItemPage implements OnInit {
+  private readonly itemTableService = inject(ItemTableService);
+  private readonly itemService = inject(ItemFacadeService);
+
+  public columns: TableColumn<ItemTableRow>[] = [
+   // { header: 'Nome', value: (row) => row.arrangement.itemName },
+    { header: 'Stato', value: (row) => row.item.state },
+    //{ header: 'Cliente', value: (row) => row.customer.name },
+    { header: 'Percentuale Completamento', value: (row) => this.getCompletionPercentage(row) },
+    { header: 'Data di completamento prevista', value: (row) => row.item.expectedEndDate },
+  ];
+
+  public readonly rows = signal<ItemTableRow[]>([]);
+  public readonly isRefreshingLooms = signal<boolean>(false);
+  private readonly allRows = signal<ItemTableRow[]>([]);
+
+  public readonly addButton: TableAddButtonConfig = {
+      label: 'Aggiungi Nuovo',
+      icon: 'add',
+      ariaLabel: 'Aggiungi articolo',
+      route: '/aggiungi-articolo',
+  };
+
+  public readonly filterButton: TableFilterButtonConfig = {
+      label: 'Filtri',
+      icon: 'search',
+      ariaLabel: 'Filtri articolo',
+      filters: [
+        { id: 'itemName', label: 'Nome' },
+        { id: 'state', label: 'Stato' },
+        { id: 'customerName', label: 'Cliente' },
+      ],
+};
+
+  public actions: TableAction<ItemTableRow>[] = [
+      {
+        id: 'history',
+        label: 'Visualizza lavorazione',
+        imageIcon: '/icon/work-icon-violet.png',
+        imageAlt: 'Cronologia articoli',
+      },
+      {
+        id: 'edit',
+        label: 'Modifica',
+        icon: 'edit',
+        iconColor: 'var(--weavops-color-accent)',
+      },
+      {
+        id: 'delete',
+        label: 'Elimina',
+        icon: 'delete',
+        iconColor: 'var(--weavops-color-danger-bright)',
+        deleteItem: (row) => this.deleteItem(row),
+        deleteItems: (rows) => this.deleteItems(rows),
+        //deleteItemName: (row) => row.item.arrangement.itemName,
+        deleteSuccessMessage: 'Articolo eliminato con successo',
+        deleteErrorMessage: "Errore durante l'eliminazione dell'articolo",
+      }
+    ];
+
+  ngOnInit(): void {
+    this.loadItemRows();
+  }
+
+  public loadItemRows(): void {
+    this.itemTableService.getRows().subscribe({
+      next: (rows) => {
+        this.allRows.set(rows);
+        this.rows.set(rows);
+      },
+      error: (err) => {
+        console.error('Error loading items:', err);
+        this.allRows.set([]);
+        this.rows.set([]);
+      },
+    });
+  }
+
+  public onTableAction(event: TableActionClick<ItemTableRow>): void {
+    switch (event.action.id) {
+      case 'history':
+        console.log('Visualizza lavorazione in corso per articolo', event.row);
+        break;
+      case 'edit':
+        console.log('Modifica articolo', event.row);
+        break;
+      case 'delete':
+        this.loadItemRows();
+        console.log('Elimina articolo', event.row);
+        break;
+    }
+  }
+
+  public onTableBulkAction(event: TableBulkActionClick<ItemTableRow>): void {
+    if (event.action.id !== 'delete') {
+      return;
+    }
+
+    this.loadItemRows();
+    console.log('Elimina articoli selezionati', event.rows);
+  }
+
+  public onFilterSelected(filters: FilterValues): void {
+    const activeFilters = Object.entries(filters)
+      .map(([field, value]) => [field, value.trim().toLowerCase()] as const)
+      .filter(([, value]) => value.length > 0);
+
+    if (activeFilters.length === 0) {
+      this.rows.set(this.allRows());
+      return;
+    }
+
+    const filteredRows = this.allRows().filter((row) =>
+      activeFilters.every(([field, value]) =>
+        this.getFilterValue(row, field).toLowerCase().includes(value)
+      )
+    );
+
+    this.rows.set(filteredRows);
+  }
+
+  private deleteItem(row: ItemTableRow) {
+      return this.itemService.remove(this.getItemId(row));
+    }
+
+    private deleteItems(rows: ItemTableRow[]) {
+      const itemIds = rows.map((row) => this.getItemId(row));
+  
+      return this.itemService.deleteMultiItems(itemIds);
+    }
+
+  private getItemId(row: ItemTableRow): string {
+      const itemId = row.item.id ?? row.id;
+
+      if (!itemId) {
+        throw new Error('Impossibile eliminare l\'articolo: id mancante');
+      }
+
+      return itemId;
+    }
+
+  private getCompletionPercentage(row: ItemTableRow): string {
+    const totalMeters = row.item.totalMeters;
+    const metersRun = row.item.metersRun;
+
+    if (!totalMeters || totalMeters <= 0 || metersRun === undefined || metersRun === null) {
+      return '';
+    }
+
+    const percentage = Math.min(Math.max((metersRun / totalMeters) * 100, 0), 100);
+
+    return `${Math.round(percentage)}%`;
+  }
+
+  private getFilterValue(row: ItemTableRow, field: string): string {
+    /*switch (field) {
+      case 'itemName':
+        return row.item.arrangement?.itemName ?? '';
+      case 'state':
+        return row.item.state ?? '';
+      case 'customerName':
+        return row.item.customer?.name ?? '';
+      default:
+        return '';
+    }*/
+   return '';
+  }
+}

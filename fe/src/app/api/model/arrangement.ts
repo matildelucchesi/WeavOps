@@ -23,11 +23,11 @@ export interface Arrangement {
      * Numero di centimetri del pettine
      */
     reedCM: number;
-    reedHight: number;
+    reedHeight?: number;
     /**
      * Lunghezza del filo di ordito in metri
      */
-    warpLenght: number;
+    warpLength?: number;
     /**
      * Numero di pezze che devono essere prodotte
      */
@@ -35,11 +35,14 @@ export interface Arrangement {
     /**
      * Lunghezza di ogni pezza in metri
      */
-    pieceLenght: number;
+    pieceLength?: number;
     /**
      * Numero fili ordito
      */
     warpEndCount: number;
+    /**
+     * Numero di colpi per decimetro
+     */
     hitsPerDm: number;
     deliveryDate?: string;
 }

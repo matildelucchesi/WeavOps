@@ -5,11 +5,12 @@
  */
 package org.openapitools.api;
 
+import org.openapitools.domain.ItemEntity;
+import org.openapitools.model.CreateItemWithArrangementRequest;
+import org.openapitools.model.DeleteMultiItems200Response;
 import org.openapitools.model.Item;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,23 +18,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-04T12:00:32.094310100+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T11:33:13.963197700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Item", description = "the Item API")
 public interface ItemsApi {
@@ -76,7 +74,54 @@ public interface ItemsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } }";
+                    String exampleString = "{ \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    String PATH_CREATE_ITEM_WITH_ARRANGEMENT = "/items/with-arrangement";
+    /**
+     * POST /items/with-arrangement : Crea item con disposizione e customerName
+     *
+     * @param createItemWithArrangementRequest (required)
+     * @return Item creato (status code 201)
+     * or Richiesta non valida (status code 400)
+     * or Customer non trovato (status code 404)
+     */
+    @Operation(
+        operationId = "createItemWithArrangement",
+        summary = "Crea item con disposizione e customerName",
+        tags = { "Item" },
+        responses = {
+            @ApiResponse(responseCode = "201", description = "Item creato", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+            @ApiResponse(responseCode = "404", description = "Customer non trovato")
+        },
+        security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = ItemsApi.PATH_CREATE_ITEM_WITH_ARRANGEMENT,
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    default ResponseEntity<ItemEntity> createItemWithArrangement(
+        @Parameter(name = "CreateItemWithArrangementRequest", description = "", required = true) @Valid @RequestBody CreateItemWithArrangementRequest createItemWithArrangementRequest
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -119,6 +164,49 @@ public interface ItemsApi {
     }
 
 
+    String PATH_DELETE_MULTI_ITEMS = "/items/delete-multi";
+    /**
+     * POST /items/delete-multi : Elimina più articoli contemporaneamente
+     *
+     * @param requestBody  (required)
+     * @return ok (status code 200)
+     */
+    @Operation(
+        operationId = "deleteMultiItems",
+        summary = "Elimina più articoli contemporaneamente",
+        tags = { "Item" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "ok", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = DeleteMultiItems200Response.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = ItemsApi.PATH_DELETE_MULTI_ITEMS,
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    default ResponseEntity<DeleteMultiItems200Response> deleteMultiItems(
+        @Parameter(name = "request_body", description = "", required = true) @Valid @RequestBody List<String> requestBody
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"deletedCount\" : 0 }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
     String PATH_GET_ITEM_BY_ID = "/items/{id}";
     /**
      * GET /items/{id} : Recupera un item tramite ID
@@ -152,7 +240,7 @@ public interface ItemsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } }";
+                    String exampleString = "{ \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -193,7 +281,7 @@ public interface ItemsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } }, { \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } } ]";
+                    String exampleString = "[ { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -242,7 +330,7 @@ public interface ItemsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } }";
+                    String exampleString = "{ \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

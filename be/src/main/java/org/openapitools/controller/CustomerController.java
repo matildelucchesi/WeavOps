@@ -3,6 +3,7 @@ package org.openapitools.controller;
 import org.openapitools.api.CustomersApi;
 import org.openapitools.mapper.CustomerMapper;
 import org.openapitools.model.Customer;
+import org.openapitools.model.DeleteMultiCustomers200Response;
 import org.openapitools.service.CustomerSaveException;
 import org.openapitools.service.CustomerService;
 import org.springframework.http.HttpStatus;
@@ -65,5 +66,14 @@ public class CustomerController implements CustomersApi {
         return service.deleteById(id)
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
+    }
+
+    @Override
+    public ResponseEntity<DeleteMultiCustomers200Response> deleteMultiCustomers(
+            @Valid @RequestBody List<String> requestBody
+    ) {
+        int deletedCount = service.deleteByIds(requestBody);
+
+        return ResponseEntity.ok(new DeleteMultiCustomers200Response().deletedCount(deletedCount));
     }
 }
