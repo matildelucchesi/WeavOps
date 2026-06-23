@@ -9,13 +9,13 @@ import { ItemTableRow } from '../table-row-interface/item-table-row';
 @Injectable({
   providedIn: 'root',
 })
-export class ItemTableService {
+export class ItemNotArchivedTableService {
   private readonly itemService = inject(ItemFacadeService);
   private readonly arrangementService = inject(ArrangementFacadeService);
   private readonly customerService = inject(CustomerFacadeService);
 
   public getRows(): Observable<ItemTableRow[]> {
-    return this.itemService.getAll().pipe(
+    return this.itemService.getItemsNotArchived().pipe(
       switchMap((items) => {
         if (items.length === 0) {
           return of([]);

@@ -121,6 +121,7 @@ public class ItemService {
         item.setArrangementId(savedArrangement.getId());
         item.setCustomerId(customer.getId());
         item.setState(Item.StateEnum.INITIALIZED);
+        item.setIsArchived(false);
 
         float totalMeters = arrangementRequest.getPiecesCount() * arrangementRequest.getPieceLength();
         item.setTotalMeters(Math.round(totalMeters));
@@ -130,6 +131,14 @@ public class ItemService {
 
     private Instant toInstant(OffsetDateTime value) {
         return value == null ? null : value.toInstant();
+    }
+
+    public List<ItemEntity> findAllArchived() {
+        return repository.findAllArchived();
+    }
+
+    public List<ItemEntity> findAllNotArchived() {
+        return repository.findAllNotArchived();
     }
 
 }

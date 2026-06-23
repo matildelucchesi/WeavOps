@@ -49,8 +49,12 @@
                 </div>
                 <div class="action">
                     <!-- VISUALIZZA LAVORAZIONE -->
-                        <button class="action-button" [disabled]="!loom?.isAssigned">
-                            @if (this.loom?.isAssigned == true) {
+                        <button
+                            class="action-button"
+                            type="button"
+                            [disabled]="isLoomArrangementActionDisabled()"
+                            [attr.aria-disabled]="isLoomArrangementActionDisabled()">
+                            @if (!isLoomArrangementActionDisabled()) {
                                 <img ngSrc="/icon/work-icon-violet.png" width="40" height="40" alt="Work Icon">
                             }@else {
                                 <img ngSrc="/icon/work-icon-grey.png" width="40" height="40" alt="Work Icon">

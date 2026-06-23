@@ -76,4 +76,14 @@ public class ItemController implements ItemsApi {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(mapper.toDto(createdItem));
     }
+
+    @Override
+    public ResponseEntity<List<Item>> getItemsArchived() {
+        return ResponseEntity.ok(service.findAllArchived().stream().map(mapper::toDto).toList());
+    }
+
+    @Override
+    public  ResponseEntity<List<Item>> getItemsNotArchived() {
+        return ResponseEntity.ok(service.findAllNotArchived().stream().map(mapper::toDto).toList());
+    }
 }

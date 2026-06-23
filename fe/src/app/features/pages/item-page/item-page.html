@@ -33,7 +33,19 @@
 
 
 <div class="body">
+  <div>
+    <app-table-component
+    [columns]="columns"
+    [rows]="archivedRows()"
+    [actions]="actions"
+    [addButton]="addButton"
+    [filterButton]="filterButton"
+    actionColumnHeader=""
+    (actionClick)="onTableAction($event)"
+    (bulkActionClick)="onTableBulkAction($event)"
+    (filterSelected)="onArchivedFilterSelected($event)">
+    </app-table-component>
+  </div>
+  
   <app-white-panel [title]="'Nota Bene'" [text]="'Con la Riabilitazione dell’Articolo si intende il ripristino inmodo tale che possa essere iniziata una nuova produzione dello stesso articolo. Sarà necessario controllare se i dati inseriti sono corretti, nella pagina relativa alle Anagrafiche Articoli.'"></app-white-panel> 
 </div>
-
-

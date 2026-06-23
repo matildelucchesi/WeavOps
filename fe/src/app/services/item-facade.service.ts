@@ -35,4 +35,12 @@ export class ItemFacadeService {
     return this.itemApi.createItemWithArrangement({ createItemWithArrangementRequest });
   }
 
+  getItemsArchived() {
+    return this.itemApi.getItemsArchived();
+  }
+
+  getItemsNotArchived() {
+    return this.itemApi.getItemsNotArchived();
+  }
+
 }

@@ -29,6 +29,23 @@
     </app-table-component>
   </div>
 
-  <app-white-panel [text]="'Per poter assegnare una LAVORAZIONE al telaio è necessario farlo dalla pagina di Anagrafiche Articoli.'"></app-white-panel> 
-  <app-white-panel [iconName]="'category'" [title]="'Legenda'" [text]="'Per poter assegnare un ARTICOLO al telaio è necessario farlo dalla pagina di Anagrafiche Articoli.'"></app-white-panel>
+  <app-white-panel [text]="'Se il <i>Visualizza Lavorazione in corso</i> è disabilitato, significa che non è ancora stata assegnata una lavorazione al telaio. <br>Per poter assegnare una LAVORAZIONE al telaio è necessario farlo dalla pagina di Anagrafiche Articoli.'"></app-white-panel> 
+  <app-white-panel [iconName]="'category'" [title]="'Legenda'">
+    <div class="loom-legend">
+      <div class="loom-legend-row">
+        <span class="loom-legend-chip loom-legend-chip-working">In lavorazione</span>
+        <span class="loom-legend-description">Il telaio sta lavorando un articolo.</span>
+      </div>
+
+      <div class="loom-legend-row">
+        <span class="loom-legend-chip loom-legend-chip-maintenance">Manutenzione</span>
+        <span class="loom-legend-description">Il telaio è in manutenzione.</span>
+      </div>
+
+      <div class="loom-legend-row">
+        <span class="loom-legend-chip loom-legend-chip-stopped">Fermo</span>
+        <span class="loom-legend-description">Il telaio è disponibile o non sta lavorando.</span>
+      </div>
+    </div>
+  </app-white-panel>
 </div>

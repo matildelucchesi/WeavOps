@@ -23,8 +23,18 @@ public class ItemEntity {
     private Instant expectedEndDate;
     private Instant endDate;
     private Instant startDate;
+    private Boolean isArchived;
 
     //getter & setter
+
+
+    public Boolean getIsArchived() {
+        return isArchived;
+    }
+
+    public void setIsArchived(Boolean archived) {
+        isArchived = archived;
+    }
 
     public String getArrangementId() {
         return arrangementId;

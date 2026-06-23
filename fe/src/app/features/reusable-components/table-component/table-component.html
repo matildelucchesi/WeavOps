@@ -108,10 +108,10 @@
                       [style.--action-icon-color]="getActionIconColor(action)"
                       (click)="handleActionClick(action, row, rowIndex)"
                     >
-                      @if (action.imageIcon) {
+                      @if (getActionImageIcon(action, row)) {
                         <img
                           class="action-image-icon"
-                          [src]="action.imageIcon"
+                          [src]="getActionImageIcon(action, row)"
                           [alt]="action.imageAlt ?? action.label"
                         >
                       } @else if (action.icon) {

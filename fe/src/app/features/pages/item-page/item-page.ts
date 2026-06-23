@@ -12,7 +12,8 @@ import {
 } from "../../reusable-components/table-component/table-component";
 import { ItemTableRow } from '../../../table/table-row-interface/item-table-row';
 import { ItemFacadeService } from '../../../services/item-facade.service';
-import { ItemTableService } from '../../../table/table-service/item-table.service';
+import { ItemNotArchivedTableService } from '../../../table/table-service/item-not-archived-table.service';
+import { ItemArchivedTableService } from '../../../table/table-service/item-archived-table.service';
 import type { FilterValues } from '../../reusable-components/filter-button-component/filter-button-component';
 import { WhitePanel } from "../../reusable-components/white-panel/white-panel";
 import { Item } from '../../../api';
@@ -30,7 +31,8 @@ import { Item } from '../../../api';
   standalone: true,
 })
 export class ItemPage implements OnInit {
-  private readonly itemTableService = inject(ItemTableService);
+  private readonly itemNotArchivedTableService = inject(ItemNotArchivedTableService);
+  private readonly itemArchivedTableService = inject(ItemArchivedTableService);
   private readonly itemService = inject(ItemFacadeService);
 
   public columns: TableColumn<ItemTableRow>[] = [
@@ -78,8 +80,10 @@ export class ItemPage implements OnInit {
   ];
 
   public readonly rows = signal<ItemTableRow[]>([]);
+  public readonly archivedRows = signal<ItemTableRow[]>([]);
   public readonly isRefreshingLooms = signal<boolean>(false);
   private readonly allRows = signal<ItemTableRow[]>([]);
+  private readonly allArchivedRows = signal<ItemTableRow[]>([]);
 
   public readonly addButton: TableAddButtonConfig = {
       label: 'Aggiungi Nuovo',
@@ -113,6 +117,12 @@ export class ItemPage implements OnInit {
         iconColor: 'var(--weavops-color-accent)',
       },
       {
+        id: 'invoice',
+        label: 'Fattura',
+        icon: 'receipt_long',
+        iconColor: 'var(--weavops-color-primary)',
+      },
+      {
         id: 'delete',
         label: 'Elimina',
         icon: 'delete',
@@ -127,10 +137,11 @@ export class ItemPage implements OnInit {
 
   ngOnInit(): void {
     this.loadItemRows();
+    this.loadArchivedItemRows();
   }
 
   public loadItemRows(): void {
-    this.itemTableService.getRows().subscribe({
+    this.itemNotArchivedTableService.getRows().subscribe({
       next: (rows) => {
         this.allRows.set(rows);
         this.rows.set(rows);
@@ -139,6 +150,20 @@ export class ItemPage implements OnInit {
         console.error('Error loading items:', err);
         this.allRows.set([]);
         this.rows.set([]);
+      },
+    });
+  }
+
+  public loadArchivedItemRows(): void {
+    this.itemArchivedTableService.getRows().subscribe({
+      next: (rows) => {
+        this.allArchivedRows.set(rows);
+        this.archivedRows.set(rows);
+      },
+      error: (err) => {
+        console.error('Error loading archived items:', err);
+        this.allArchivedRows.set([]);
+        this.archivedRows.set([]);
       },
     });
   }
@@ -153,6 +178,7 @@ export class ItemPage implements OnInit {
         break;
       case 'delete':
         this.loadItemRows();
+        this.loadArchivedItemRows();
         console.log('Elimina articolo', event.row);
         break;
     }
@@ -164,6 +190,7 @@ export class ItemPage implements OnInit {
     }
 
     this.loadItemRows();
+    this.loadArchivedItemRows();
     console.log('Elimina articoli selezionati', event.rows);
   }
 
@@ -184,6 +211,25 @@ export class ItemPage implements OnInit {
     );
 
     this.rows.set(filteredRows);
+  }
+
+  public onArchivedFilterSelected(filters: FilterValues): void {
+    const activeFilters = Object.entries(filters)
+      .map(([field, value]) => [field, value.trim().toLowerCase()] as const)
+      .filter(([, value]) => value.length > 0);
+
+    if (activeFilters.length === 0) {
+      this.archivedRows.set(this.allArchivedRows());
+      return;
+    }
+
+    const filteredRows = this.allArchivedRows().filter((row) =>
+      activeFilters.every(([field, value]) =>
+        this.getFilterValue(row, field).toLowerCase().includes(value)
+      )
+    );
+
+    this.archivedRows.set(filteredRows);
   }
 
   private deleteItem(row: ItemTableRow) {

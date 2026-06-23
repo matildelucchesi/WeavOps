@@ -9,6 +9,8 @@
 $weavops-color-primary: #3f177b;
 $weavops-color-primary-hover: #7b5aac;
 $weavops-color-primary-soft: #e9e0ff;
+$weavops-color-blue: #0007fe;
+$weavops-color-blue-soft: #aebcff;
 $weavops-color-surface: #ffffff;
 $weavops-color-surface-muted: #f8f1ff;
 $weavops-color-accent: #f78701;
@@ -23,10 +25,10 @@ $weavops-color-warning-alpha: #ffe46daa;
 $weavops-color-success: #168a4a;
 $weavops-color-success-soft: #e0f6e9;
 $weavops-color-danger: #d90000;
-$weavops-color-danger-bright: #ff0000;
+$weavops-color-danger-bright: #dd0000;
 $weavops-color-danger-soft: #ffe1e1;
 $weavops-color-black: #000000;
-$weavops-color-grey: #b1b1b1;
+$weavops-color-grey: #c7c5c5;
 $weavops-color-grey-dark: #404040;
 
 html {
@@ -53,6 +55,8 @@ html {
   --weavops-color-black: #{$weavops-color-black};
   --weavops-color-grey: #{$weavops-color-grey};
   --weavops-color-grey-dark: #{$weavops-color-grey-dark};
+  --weavops-color-blue: #{$weavops-color-blue};
+  --weavops-color-blue-soft: #{$weavops-color-blue-soft};
   --weavops-rgb-primary: 63 23 123;
   --weavops-rgb-primary-shadow: 108 83 145;
   --weavops-rgb-accent: 247 135 1;

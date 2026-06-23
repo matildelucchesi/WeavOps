@@ -331,6 +331,44 @@ paths:
       - application/json
       x-tags:
       - tag: Item
+  /items/items-not-archived:
+    get:
+      operationId: getItemsNotArchived
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/item"
+                type: array
+          description: Lista item non archiviati
+      summary: Recupera tutti i item non archiviati
+      tags:
+      - Item
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Item
+  /items/items-archived:
+    get:
+      operationId: getItemsArchived
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/item"
+                type: array
+          description: Lista item archiviati
+      summary: Recupera tutti i item archiviati
+      tags:
+      - Item
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Item
   /arrangements:
     get:
       operationId: getArrangements
@@ -1030,6 +1068,7 @@ components:
         metersRun: 6.027456183070403
         expectedEndDate: 2000-01-23T04:56:07.000+00:00
         endDate: 2000-01-23T04:56:07.000+00:00
+        isArchived: false
         totalMeters: 0.8008281904610115
         customerId: customerId
         processing:
@@ -1089,6 +1128,9 @@ components:
         startDate:
           format: date-time
           type: string
+        isArchived:
+          default: false
+          type: boolean
       required:
       - arrangement
       - customer
@@ -1260,6 +1302,7 @@ components:
           metersRun: 6.027456183070403
           expectedEndDate: 2000-01-23T04:56:07.000+00:00
           endDate: 2000-01-23T04:56:07.000+00:00
+          isArchived: false
           totalMeters: 0.8008281904610115
           customerId: customerId
           processing:
@@ -1290,6 +1333,7 @@ components:
           metersRun: 6.027456183070403
           expectedEndDate: 2000-01-23T04:56:07.000+00:00
           endDate: 2000-01-23T04:56:07.000+00:00
+          isArchived: false
           totalMeters: 0.8008281904610115
           customerId: customerId
           processing:

@@ -37,3 +37,6 @@ properties:
   startDate:
     type: string
     format: date-time
+  isArchived:
+    type: boolean
+    default: false

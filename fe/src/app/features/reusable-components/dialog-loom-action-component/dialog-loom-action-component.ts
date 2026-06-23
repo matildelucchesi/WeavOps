@@ -73,6 +73,10 @@ export class DialogLoomActionComponent {
     this.meters = true;
   }
 
+  isLoomArrangementActionDisabled(): boolean {
+    return this.loom?.isAssigned === false;
+  }
+
   goBack(): void {
     this.change = false;
     this.meters = false;

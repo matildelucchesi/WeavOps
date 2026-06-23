@@ -58,9 +58,9 @@ export class LoomPage implements OnInit, OnDestroy {
         styles: {
           [Loom.StatusEnum.Working]: {
             label: 'In lavorazione',
-            backgroundColor: 'var(--weavops-color-primary-soft)',
-            color: 'var(--weavops-color-primary)',
-            borderColor: 'var(--weavops-color-primary)',
+            backgroundColor: 'var(--weavops-color-blue-soft)',
+            color: 'var(--weavops-color-blue)',
+            borderColor: 'var(--weavops-color-blue)',
           },
           [Loom.StatusEnum.Stopped]: {
             label: 'Fermo',
@@ -99,22 +99,24 @@ export class LoomPage implements OnInit, OnDestroy {
 
   public actions: TableAction<LoomTableRow>[] = [
     {
-      id: 'arrangement',
+      id: 'production',
       label: 'Visualizza lavorazione in corso',
-      imageIcon: '/icon/work-icon-violet.png',
+      imageIcon: (row) => row.loom.isAssigned === false
+        ? '/icon/work-icon-grey.png'
+        : '/icon/work-icon-violet.png',
       imageAlt: 'Cronologia articoli',
     },
     {
       id: 'edit',
       label: 'Modifica',
       icon: 'edit',
-      iconColor: 'var(--weavops-color-accent)',
+      iconColor: 'var(--weavops-color-primary)',
     },
     {
       id: 'delete',
       label: 'Elimina',
       icon: 'delete',
-      iconColor: 'var(--weavops-color-danger-bright)',
+      iconColor: 'var(--weavops-color-primary)',
       deleteItem: (row) => this.deleteLoom(row),
       deleteItems: (rows) => this.deleteLooms(rows),
       deleteItemName: (row) => row.serialNumber,

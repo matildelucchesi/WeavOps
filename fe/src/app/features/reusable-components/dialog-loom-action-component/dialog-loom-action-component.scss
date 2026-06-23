@@ -57,13 +57,20 @@
     border: var(--weavops-color-primary) 1px solid;
 }
 
-.action-button:hover{
+.action-button:hover:not(:disabled){
     background-color: var(--weavops-color-primary-hover);
     opacity: 0.8;
 }
 
-.action-button:hover img{
+.action-button:hover:not(:disabled) img{
     filter: brightness(0) invert(1);
+}
+
+.action-button:disabled{
+    cursor: not-allowed;
+    border-color: var(--weavops-color-grey-dark);
+    background-color: var(--weavops-color-surface);
+    opacity: 0.75;
 }
 
 .action-button-label{

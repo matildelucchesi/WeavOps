@@ -152,3 +152,35 @@
         description: Richiesta non valida
       '404':
         description: Customer non trovato
+
+/items/items-not-archived:
+  get:
+    summary: Recupera tutti i item non archiviati
+    operationId: getItemsNotArchived
+    tags:
+      - Item
+    responses:
+      '200':
+        description: Lista item non archiviati
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/item.yaml'
+
+/items/items-archived:
+  get:
+    summary: Recupera tutti i item archiviati
+    operationId: getItemsArchived
+    tags:
+      - Item
+    responses:
+      '200':
+        description: Lista item archiviati
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/item.yaml'

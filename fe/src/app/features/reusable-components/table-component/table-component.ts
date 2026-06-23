@@ -37,7 +37,7 @@ export interface TableAction<T = any> {
   id: string;
   label: string;
   icon?: string;
-  imageIcon?: string;
+  imageIcon?: string | ((row: T) => string | undefined);
   imageAlt?: string;
   iconColor?: string;
   visible?: boolean | ((row: T) => boolean);
@@ -420,6 +420,14 @@ export class TableComponent {
 
   public getActionIconColor(action: TableAction): string {
     return action.iconColor ?? this.actionIconColor;
+  }
+
+  public getActionImageIcon(action: TableAction, row: any): string | undefined {
+    if (typeof action.imageIcon === 'function') {
+      return action.imageIcon(row);
+    }
+
+    return action.imageIcon;
   }
 
   public goToPreviousPage(): void {
