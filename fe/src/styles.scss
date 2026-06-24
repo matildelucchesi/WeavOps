@@ -9,8 +9,8 @@
 $weavops-color-primary: #3f177b;
 $weavops-color-primary-hover: #7b5aac;
 $weavops-color-primary-soft: #e9e0ff;
-$weavops-color-blue: #0007fe;
-$weavops-color-blue-soft: #aebcff;
+$weavops-color-blue: #1e40af;
+$weavops-color-blue-soft: #dbeafe;
 $weavops-color-surface: #ffffff;
 $weavops-color-surface-muted: #f8f1ff;
 $weavops-color-accent: #f78701;
@@ -19,16 +19,16 @@ $weavops-color-accent-dark: #c76300;
 $weavops-color-accent-strong: #c26300;
 $weavops-color-accent-deep: #a95100;
 $weavops-color-accent-light: #ffb35c;
-$weavops-color-accent-lighter: #ffb65c;
+$weavops-color-accent-lighter: #fcd8ab;
 $weavops-color-warning: #ffe46d;
 $weavops-color-warning-alpha: #ffe46daa;
-$weavops-color-success: #168a4a;
-$weavops-color-success-soft: #e0f6e9;
+$weavops-color-success: #065f46;
+$weavops-color-success-soft: #d1fae5;
 $weavops-color-danger: #d90000;
 $weavops-color-danger-bright: #dd0000;
 $weavops-color-danger-soft: #ffe1e1;
 $weavops-color-black: #000000;
-$weavops-color-grey: #c7c5c5;
+$weavops-color-grey: #e4dfdf;
 $weavops-color-grey-dark: #404040;
 
 html {
@@ -187,6 +187,18 @@ body {
 }
 
 .loom-action-dialog-panel .mat-mdc-dialog-container {
+  --mat-dialog-container-shape: 10px;
+}
+
+.assign-loom-dialog-panel .mat-mdc-dialog-surface {
+  background-color: var(--weavops-color-surface);
+  border-radius: 10px;
+  box-shadow: 0 4px 4px rgb(var(--weavops-rgb-black) / 0.25);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.assign-loom-dialog-panel .mat-mdc-dialog-container {
   --mat-dialog-container-shape: 10px;
 }
 

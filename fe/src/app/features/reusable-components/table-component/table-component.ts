@@ -170,7 +170,18 @@ export class TableComponent {
   }
 
   public get shouldShowPagination(): boolean {
-    return this.showPagination && this.totalRows > 0;
+    return this.showPagination;
+  }
+
+  public get shouldShowEmptyState(): boolean {
+    return this.totalRows === 0;
+  }
+
+  public get emptyStateColumnSpan(): number {
+    const selectionColumnCount = this.enableMultiSelection ? 1 : 0;
+    const actionsColumnCount = this.actions.length > 0 ? 1 : 0;
+
+    return Math.max(1, this.columns.length + selectionColumnCount + actionsColumnCount);
   }
 
   public get isPreviousPageDisabled(): boolean {
@@ -419,7 +430,15 @@ export class TableComponent {
   }
 
   public getActionIconColor(action: TableAction): string {
-    return action.iconColor ?? this.actionIconColor;
+    return this.actionIconColor;
+  }
+
+  public isEditAction(action: TableAction): boolean {
+    return action.id === 'edit';
+  }
+
+  public isDeleteAction(action: TableAction): boolean {
+    return action.id === 'delete';
   }
 
   public getActionImageIcon(action: TableAction, row: any): string | undefined {

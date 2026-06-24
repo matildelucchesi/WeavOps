@@ -100,6 +100,8 @@
                     <button
                       class="action-button"
                       type="button"
+                      [class.action-button--edit]="isEditAction(action)"
+                      [class.action-button--delete]="isDeleteAction(action)"
                       [disabled]="isActionDisabled(action, row)"
                       [attr.aria-label]="action.label"
                       [matTooltip]="action.label"
@@ -127,6 +129,13 @@
               </div>
             </td>
           }
+        </tr>
+      }
+      @if (shouldShowEmptyState) {
+        <tr class="empty-state-row">
+          <td class="empty-state-cell" [attr.colspan]="emptyStateColumnSpan">
+            Non sono presenti ancora elementi
+          </td>
         </tr>
       }
     </tbody>

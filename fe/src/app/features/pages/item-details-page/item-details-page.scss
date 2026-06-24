@@ -1,0 +1,227 @@
+.button-wrapper{
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.body{
+    display: grid;
+    gap: 20px;
+    width: 100%;
+}
+
+.content-wrapper{
+    display: grid;
+    gap: 20px;
+    padding: 20px;
+    background-color: var(--weavops-color-primary-soft);
+    border-radius: 10px;
+    border: 1.5px solid var(--weavops-color-primary);
+}
+
+.section-title{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.button-style{
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+    display: flex;
+}
+
+.button-style:hover{
+    background-color: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.form-group{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.validation-error{
+    color: var(--weavops-color-danger);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+input{
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    width: 200px;
+}
+
+.date-picker-field{
+    width: 234px;
+    font-family: 'Instrument Sans', sans-serif;
+    background: white;
+}
+
+
+:host ::ng-deep .date-picker-field .mat-mdc-text-field-wrapper{
+    height: 34px;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    padding: 0 8px 0 16px;
+    background: transparent;
+}
+
+:host ::ng-deep .date-picker-field .mdc-notched-outline{
+    display: none;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-form-field-flex{
+    height: 100%;
+    align-items: center;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-form-field-infix{
+    min-height: 0;
+    padding: 0;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-input-element{
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    width: 100%;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-icon-button{
+    width: 28px;
+    height: 28px;
+    padding: 2px;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-form-field-subscript-wrapper{
+    display: none;
+}
+
+.column{
+    display: grid;
+    gap: 20px;
+}
+
+.reed-input{
+    width: 30px;
+}
+
+.reed-group{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.input-with-unit{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.data-form{
+    padding: 20px;
+}
+
+.item-data{
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+select{
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    width: 234px;
+    background: var(--weavops-color-surface);
+    color: var(--weavops-color-primary);
+}
+
+.input-readonly,
+input[readonly],
+select:disabled{
+    background: var(--weavops-color-surface-muted);
+    color: var(--weavops-color-primary);
+    cursor: default;
+    opacity: 0.85;
+}
+
+.process-table-wrapper{
+    width: 100%;
+    overflow-x: auto;
+}
+
+.process-table{
+    width: 100%;
+    min-width: 900px;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    border-spacing: 0;
+    background: var(--weavops-color-surface);
+}
+
+.process-table th,
+.process-table td{
+    padding: 8px;
+    border-bottom: 1px solid var(--weavops-color-primary);
+    color: var(--weavops-color-primary);
+    text-align: left;
+}
+
+.process-table th{
+    background: var(--weavops-color-surface-muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.process-table tbody tr:last-child td{
+    border-bottom: 0;
+}
+
+.table-input{
+    width: 110px;
+    box-sizing: border-box;
+}
+
+.empty-state{
+    margin: 0;
+    padding: 14px;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    background: var(--weavops-color-surface);
+    color: var(--weavops-color-primary);
+    font-weight: 600;
+    text-align: center;
+}

@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { TitlePageComponent } from "../../reusable-components/title-page-component/title-page-component";
 import { DecorativeLinesComponent } from "../../reusable-components/decorative-lines-component/decorative-lines-component";
 import {
@@ -34,6 +35,7 @@ export class ItemPage implements OnInit {
   private readonly itemNotArchivedTableService = inject(ItemNotArchivedTableService);
   private readonly itemArchivedTableService = inject(ItemArchivedTableService);
   private readonly itemService = inject(ItemFacadeService);
+  private readonly router = inject(Router);
 
   public columns: TableColumn<ItemTableRow>[] = [
     { header: 'Nome', value: (row) => row.arrangement?.itemName },
@@ -49,9 +51,9 @@ export class ItemPage implements OnInit {
         styles: {
           [Item.StateEnum.Running]: {
             label: 'In produzione',
-            backgroundColor: 'var(--weavops-color-primary-soft)',
-            color: 'var(--weavops-color-primary)',
-            borderColor: 'var(--weavops-color-primary)',
+            backgroundColor: 'var(--weavops-color-blue-soft)',
+            color: 'var(--weavops-color-blue)',
+            borderColor: 'var(--weavops-color-blue)',
           },
           [Item.StateEnum.Abandoned]: {
             label: 'Abbandonato',
@@ -111,12 +113,6 @@ export class ItemPage implements OnInit {
         imageAlt: 'Visualizza dati',
       },
       {
-        id: 'edit',
-        label: 'Modifica',
-        icon: 'edit',
-        iconColor: 'var(--weavops-color-accent)',
-      },
-      {
         id: 'invoice',
         label: 'Fattura',
         icon: 'receipt_long',
@@ -170,8 +166,9 @@ export class ItemPage implements OnInit {
 
   public onTableAction(event: TableActionClick<ItemTableRow>): void {
     switch (event.action.id) {
-      case 'history':
-        console.log('Visualizza lavorazione in corso per articolo', event.row);
+      case 'details':
+        this.gotoItemDetailsPage(event.row);
+        console.log('Visualizza dettagliarticolo', event.row);
         break;
       case 'edit':
         console.log('Modifica articolo', event.row);
@@ -182,6 +179,23 @@ export class ItemPage implements OnInit {
         console.log('Elimina articolo', event.row);
         break;
     }
+  }
+
+  public gotoItemDetailsPage(row: ItemTableRow): void {
+    const itemId = row.item.id ?? row.id;
+
+    if (!itemId) {
+      console.error('Impossibile visualizzare i dettagli dell\'articolo: id mancante', row);
+      return;
+    }
+
+    this.router.navigate(['/dettaglio-articolo'], {
+      queryParams: { id: itemId },
+      state: {
+        item: row.item,
+        arrangement: row.arrangement,
+      },
+    });
   }
 
   public onTableBulkAction(event: TableBulkActionClick<ItemTableRow>): void {

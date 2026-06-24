@@ -1,0 +1,125 @@
+.wrapper,
+:host {
+    display: block;
+}
+
+.wrapper{
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-self: center;
+    background-color: var(--weavops-color-surface);
+    padding: 20px;
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 10px;
+    border: 2px solid var(--weavops-color-primary);
+}
+
+.head{
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.content{
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    height: 370px;
+    border: 2px var(--weavops-color-primary) solid;
+    border-radius: 10px;
+    background-color: var(--weavops-color-primary-soft);
+}
+
+.content-loader{
+    position: relative;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+}
+
+:host ::ng-deep .content-loader .loader-overlay{
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    background: var(--weavops-color-primary-soft);
+}
+
+.empty-state{
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 20px;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.pagination-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+}
+
+.pagination-button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    padding: 0;
+    background: var(--weavops-color-surface);
+    color: var(--weavops-color-primary);
+    cursor: pointer;
+}
+
+.pagination-button:hover:not(:disabled){
+    background: var(--weavops-color-surface-muted);
+}
+
+.pagination-button:disabled{
+    cursor: default;
+    opacity: 0.45;
+}
+
+.pagination-button mat-icon{
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+}
+
+.page-counter{
+    min-width: 46px;
+    text-align: center;
+    font-weight: 600;
+}
+
+@media (max-width: 760px){
+    .content{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: repeat(3, minmax(0, 1fr));
+        height: 448px;
+    }
+}
+
+@media (max-width: 520px){
+    .content{
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(6, minmax(0, 1fr));
+        height: 910px;
+    }
+}

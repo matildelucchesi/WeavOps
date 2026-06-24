@@ -1,0 +1,45 @@
+<div class="wrapper">
+    <div class="head">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <img class="loom-icon" src="/icon/loomicon-violet.png" width="40" height="40" alt="Loom Icon">
+            <h2>Assegna Telaio</h2>
+        </div>
+       <app-button-general-action-component [label]="'Annulla'" [className]="'close-button'" (click)="onCloseDialog()"></app-button-general-action-component>
+    </div>
+    <div class="content">
+        @if (isLoadingLooms()) {
+            <div class="content-loader">
+                <app-loader-component [ariaLabel]="'Caricamento telai in corso'"></app-loader-component>
+            </div>
+        } @else {
+            @for (loom of paginatedLooms; track loom.id ?? $index) {
+                <app-loom-card-component [loom]="loom" [isDialogMode]="true"></app-loom-card-component>
+            } @empty {
+                <p class="empty-state">Non sono presenti telai disponibili</p>
+            }
+        }
+    </div>
+    @if (shouldShowPagination) {
+        <div class="pagination-wrapper">
+            <button
+                class="pagination-button"
+                type="button"
+                [disabled]="isPreviousPageDisabled"
+                aria-label="Pagina precedente"
+                title="Pagina precedente"
+                (click)="goToPreviousPage()">
+                <mat-icon>chevron_left</mat-icon>
+            </button>
+            <span class="page-counter">{{ currentPage() }} / {{ totalPages }}</span>
+            <button
+                class="pagination-button"
+                type="button"
+                [disabled]="isNextPageDisabled"
+                aria-label="Pagina successiva"
+                title="Pagina successiva"
+                (click)="goToNextPage()">
+                <mat-icon>chevron_right</mat-icon>
+            </button>
+        </div>
+    }
+</div>

@@ -127,6 +127,13 @@ td{
     white-space: pre-line;
 }
 
+.empty-state-cell{
+    height: 72px;
+    text-align: center;
+    font-weight: 600;
+    white-space: normal;
+}
+
 .table-chip{
     --chip-background-color: var(--weavops-color-primary-soft);
     --chip-text-color: var(--weavops-color-primary);
@@ -265,6 +272,14 @@ td{
 
 .action-button:hover:not(:disabled){
     color: color-mix(in srgb, var(--action-icon-color) 70%, var(--weavops-color-surface));
+}
+
+.action-button--edit:hover:not(:disabled){
+    color: var(--weavops-color-accent);
+}
+
+.action-button--delete:hover:not(:disabled){
+    color: var(--weavops-color-danger);
 }
 
 .action-button:disabled{

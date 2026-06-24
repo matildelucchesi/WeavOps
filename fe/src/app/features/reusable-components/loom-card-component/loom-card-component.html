@@ -5,7 +5,13 @@
     <div>
     <img ngSrc="{{ icon }}" alt="Loom Image" class="loom-image" width="45" height="45">
     </div>
-    <div>
+    @if(isDialogMode) {
+        <div>
+            <app-button-general-action-component [label]="'Assegna'" [className]="'save-button'"></app-button-general-action-component>
+        </div>
+    } @else {
+        <div>
         <p class="loom-status">{{ statusLabel }}</p>
     </div>
+    }
 </div>

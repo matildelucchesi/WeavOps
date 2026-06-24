@@ -4,7 +4,7 @@
 />
 
 <app-title-page-component  
-  title="Dettagli Articolo"
+  [title]="pageTitle"
   imageLink="/icon/itemicon-violet.png"
   imageAlt="Icona articoli"
   [imageWidth]="35"
@@ -12,7 +12,352 @@
 />
 
 <div class="body">
+  <div class="button-wrapper">
+    <app-exit-button-component></app-exit-button-component>
+  </div>
+  <div class="content-wrapper">
+    <div class="button-wrapper">
+      <button type="button" class="button-style" (click)="toggleEditMode()">
+          <mat-icon style="font-size: 20px; align-content: center;">{{ editButtonIcon }}</mat-icon>
+          {{ editButtonLabel }}
+      </button>
+    </div>
+    
+    <div class="arrangement-data">
+      <div class="section-title">
+        <img class="arrangement-icon" src="/icon/arrangement-icon.png" width="30" height="30" alt="Arrangement Icon">
+        <h2>Dati Disposizione</h2>
+      </div>
 
+      @if (arrangementData; as arrangement) {
+        <form class="data-form">
+          <div class="item-data">
+            <div class="column">
+              <div class="form-group">
+                <label for="itemName">Nome Articolo</label>
+                <input
+                  type="text"
+                  id="itemName"
+                  name="itemName"
+                  [(ngModel)]="arrangement.itemName"
+                  [readonly]="!isEditEnabled"
+                  [class.input-readonly]="!isEditEnabled">
+              </div>
+              <div class="form-group">
+                <label for="piecesCount">Numero Pezze</label>
+                <input
+                  type="number"
+                  id="piecesCount"
+                  name="piecesCount"
+                  [(ngModel)]="arrangement.piecesCount"
+                  [readonly]="!isEditEnabled"
+                  [class.input-readonly]="!isEditEnabled">
+              </div>
+              <div class="form-group">
+                <label for="pieceLength">Lunghezza Pezza (m)</label>
+                <input
+                  type="number"
+                  id="pieceLength"
+                  name="pieceLength"
+                  [(ngModel)]="arrangement.pieceLength"
+                  [readonly]="!isEditEnabled"
+                  [class.input-readonly]="!isEditEnabled">
+              </div>
+              <div class="form-group">
+                <label for="hitsPerDm">Numero Colpi (per dm)</label>
+                <input
+                  type="number"
+                  id="hitsPerDm"
+                  name="hitsPerDm"
+                  [(ngModel)]="arrangement.hitsPerDm"
+                  [readonly]="!isEditEnabled"
+                  [class.input-readonly]="!isEditEnabled">
+              </div>
+            </div>
 
-    <app-white-panel [title]="'Attenzione'" [text]="'Se viene contrassegnata la produzione come TERMINATA, allora l’Articolo verrà inserito nella lista degli Articoli TERMINATI e saranno liberati immediatamente tutti i Telai. è possibile riabilitare l’Articolo per la produzione spuntando la casella Riabilita dalla Lista degli articoli TERMINATI.'"></app-white-panel>
+            <div class="column">
+              <div class="reed-group">
+                <div class="form-group">
+                  <label for="reedCount">Misura Pettine</label>
+                  <div class="input-with-unit">
+                    <input
+                      type="number"
+                      class="reed-input"
+                      id="reedCount"
+                      name="reedCount"
+                      [(ngModel)]="arrangement.reedCount"
+                      [readonly]="!isEditEnabled"
+                      [class.input-readonly]="!isEditEnabled">
+                    in
+                    <input
+                      type="number"
+                      class="reed-input"
+                      id="reedCM"
+                      name="reedCM"
+                      [(ngModel)]="arrangement.reedCM"
+                      [readonly]="!isEditEnabled"
+                      [class.input-readonly]="!isEditEnabled">
+                    cm
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="reedHeight">Altezza pettine (m)</label>
+                <input
+                  type="number"
+                  id="reedHeight"
+                  name="reedHeight"
+                  [(ngModel)]="arrangement.reedHeight"
+                  [readonly]="!isEditEnabled"
+                  [class.input-readonly]="!isEditEnabled">
+              </div>
+              <div class="form-group">
+                <label for="warpLength">Lunghezza ordito (m)</label>
+                <input
+                  type="number"
+                  id="warpLength"
+                  name="warpLength"
+                  [(ngModel)]="arrangement.warpLength"
+                  [readonly]="!isEditEnabled"
+                  [class.input-readonly]="!isEditEnabled">
+              </div>
+              <div class="form-group">
+                <label for="warpEndCount">Numero fili ordito</label>
+                <input
+                  type="number"
+                  id="warpEndCount"
+                  name="warpEndCount"
+                  [(ngModel)]="arrangement.warpEndCount"
+                  [readonly]="!isEditEnabled"
+                  [class.input-readonly]="!isEditEnabled">
+              </div>
+            </div>
+
+            <div class="column">
+              <div class="form-group">
+                <label for="deliveryDate">Data di consegna</label>
+                <input
+                  type="text"
+                  id="deliveryDate"
+                  name="deliveryDate"
+                  [(ngModel)]="arrangement.deliveryDate"
+                  [readonly]="!isEditEnabled"
+                  [class.input-readonly]="!isEditEnabled">
+              </div>
+            </div>
+          </div>
+          <div class="button-wrapper">
+            <button type="button" class="button-style" (click)="exportArrangementData()">
+              <mat-icon
+                class="material-symbols-outlined"
+                fontSet="material-symbols-outlined"
+                style="font-size: 20px; align-content: center;">
+                file_export
+              </mat-icon>
+            Esporta Disposizione
+          </button>
+        </div>
+        </form>
+        
+      } @else {
+        <p class="empty-state">Dati disposizione non disponibili</p>
+                  }
+          </div>
+    <div class="production-data">
+        <div class="section-title">
+          <img class="work-icon" src="/icon/work-icon-violet.png" width="30" height="30" alt="Work Icon">
+          <h2>Dati Produzione</h2>
+        </div>
+        @if (itemData; as item) {
+          <form class="data-form">
+            <div class="item-data">
+              <div class="column">
+                <div class="form-group">
+                  <label for="totalMeters">Metri Totali</label>
+                  <input
+                    type="number"
+                    id="totalMeters"
+                    name="totalMeters"
+                    [(ngModel)]="item.totalMeters"
+                    [readonly]="!isEditEnabled"
+                    [class.input-readonly]="!isEditEnabled">
+                </div>
+                <div class="form-group">
+                  <label for="metersRun">Metri Totali Prodotti</label>
+                  <input
+                    type="number"
+                    id="metersRun"
+                    name="metersRun"
+                    [(ngModel)]="item.metersRun"
+                    [readonly]="!isEditEnabled"
+                    [class.input-readonly]="!isEditEnabled">
+                </div>
+                <div class="form-group">
+                  <label for="metersToGo">Metri Mancanti</label>
+                  <input
+                    type="number"
+                    id="metersToGo"
+                    name="metersToGo"
+                    [value]="getMetersToGo()"
+                    [readonly]="true"
+                    [class.input-readonly]="true">
+                </div>
+              </div>
+              <div class="column">
+                <div class="form-group">
+                  <label for="startDate">Data Inizio Lavorazione</label>
+                  <input
+                    type="text"
+                    id="startDate"
+                    name="startDate"
+                    [(ngModel)]="item.startDate"
+                    [readonly]="!isEditEnabled"
+                    [class.input-readonly]="!isEditEnabled">
+                </div>
+                <div class="form-group">
+                  <label for="expectedEndDate">Data Fine Lavorazione Prevista</label>
+                  <input
+                    type="text"
+                    id="expectedEndDate"
+                    name="expectedEndDate"
+                    [(ngModel)]="item.expectedEndDate"
+                    [readonly]="!isEditEnabled"
+                    [class.input-readonly]="!isEditEnabled">
+                </div>
+              </div>
+              <div class="column">
+                <div class="form-group">
+                  <label for="percentage">Percentuale Completamento</label>
+                  <input
+                    type="number"
+                    id="percentage"
+                    name="percentage"
+                    [value]="getPercentage()"
+                    [readonly]="true"
+                    [class.input-readonly]="true">
+              </div>
+            </div>
+            </div>
+          </form>
+        } @else {
+          <p class="empty-state">Dati produzione non disponibili</p>
+        }
+    </div>
+    <div class="production-table">
+      <div class="section-title">
+        <img class="loom-icon" src="/icon/loomicon-violet.png" width="40" height="40" alt="Loom Icon">
+        <h2>Telai previsti per la Lavorazione</h2>
+      </div>
+      <div class="button-wrapper">
+        <button
+        type="button"
+        class="button-style"
+        (click)="openAssignLoomDialog()">
+        <mat-icon style="font-size: 20px; align-content: center;">add</mat-icon>
+        Aggiungi Telaio
+      </button>
+      </div>
+      
+      @if (hasProductionRows) {
+        <div class="process-table-wrapper">
+          <table class="process-table">
+            <thead>
+              <tr>
+                <th>Telaio</th>
+                <th>Velocità</th>
+                <th>Efficienza</th>
+                <th>Metri totali</th>
+                <th>Metri prodotti</th>
+                <th>Metri mancanti</th>
+                <th>Inizio</th>
+                <th>Fine prevista</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (process of productionRows; track process.id ?? process.loomId; let processIndex = $index) {
+                <tr>
+                  <td>
+                    <input
+                      class="table-input"
+                      type="text"
+                      [name]="'loomId-' + processIndex"
+                      [(ngModel)]="process.loomId"
+                      [readonly]="!isEditEnabled"
+                      [class.input-readonly]="!isEditEnabled">
+                  </td>
+                  <td>
+                    <input
+                      class="table-input"
+                      type="number"
+                      [name]="'speed-' + processIndex"
+                      [(ngModel)]="process.speed"
+                      [readonly]="!isEditEnabled"
+                      [class.input-readonly]="!isEditEnabled">
+                  </td>
+                  <td>
+                    <input
+                      class="table-input"
+                      type="number"
+                      [name]="'efficiency-' + processIndex"
+                      [(ngModel)]="process.efficiency"
+                      [readonly]="!isEditEnabled"
+                      [class.input-readonly]="!isEditEnabled">
+                  </td>
+                  <td>
+                    <input
+                      class="table-input"
+                      type="number"
+                      [name]="'totalMeters-' + processIndex"
+                      [(ngModel)]="process.totalMeters"
+                      [readonly]="!isEditEnabled"
+                      [class.input-readonly]="!isEditEnabled">
+                  </td>
+                  <td>
+                    <input
+                      class="table-input"
+                      type="number"
+                      [name]="'metersRun-' + processIndex"
+                      [(ngModel)]="process.metersRun"
+                      [readonly]="!isEditEnabled"
+                      [class.input-readonly]="!isEditEnabled">
+                  </td>
+                  <td>
+                    <input
+                      class="table-input"
+                      type="number"
+                      [name]="'metersToGo-' + processIndex"
+                      [(ngModel)]="process.metersToGo"
+                      [readonly]="!isEditEnabled"
+                      [class.input-readonly]="!isEditEnabled">
+                  </td>
+                  <td>
+                    <input
+                      class="table-input"
+                      type="text"
+                      [name]="'processStartDate-' + processIndex"
+                      [(ngModel)]="process.startDate"
+                      [readonly]="!isEditEnabled"
+                      [class.input-readonly]="!isEditEnabled">
+                  </td>
+                  <td>
+                    <input
+                      class="table-input"
+                      type="text"
+                      [name]="'processExpectedEndDate-' + processIndex"
+                      [(ngModel)]="process.expectedEndDate"
+                      [readonly]="!isEditEnabled"
+                      [class.input-readonly]="!isEditEnabled">
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="empty-state">Non sono presenti telai previsti</p>
+      }
+    </div>
+  </div>
+
+  <app-white-panel [title]="'Attenzione'" [text]="'Se viene contrassegnata la produzione come TERMINATA, allora l’Articolo verrà inserito nella lista degli Articoli TERMINATI e saranno liberati immediatamente tutti i Telai. è possibile riabilitare l’Articolo per la produzione spuntando la casella Riabilita dalla Lista degli articoli TERMINATI.'"></app-white-panel>
 </div>

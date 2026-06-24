@@ -9,6 +9,7 @@ import { CustomerPage } from './features/pages/customer-page/customer-page';
 import { CustomerDetailsPage } from './features/pages/customer-details-page/customer-details-page';
 import { CustomerItemsHistoryPage } from './features/pages/customer-items-history-page/customer-items-history-page';
 import { ItemAddNewPage } from './features/pages/item-add-new-page/item-add-new-page';
+import { ItemDetailsPage } from './features/pages/item-details-page/item-details-page';
 
 
 export const routes: Routes = [
@@ -37,6 +38,10 @@ export const routes: Routes = [
       {
         path: 'aggiungi-articolo',
         component: ItemAddNewPage,
+      },
+      {
+        path: 'dettaglio-articolo',
+        component: ItemDetailsPage,
       },
       {
         path: 'clienti',

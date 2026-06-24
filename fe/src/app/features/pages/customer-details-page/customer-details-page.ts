@@ -27,7 +27,6 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
   private readonly loaderDurationMs: number = 1200;
   private readonly saveTimeoutMs: number = 15000;
   private readonly navigationService = inject(Router);
-  private readonly referentService = inject(ReferentFacadeService);
   private readonly customerService = inject(CustomerFacadeService);
   private readonly route = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
