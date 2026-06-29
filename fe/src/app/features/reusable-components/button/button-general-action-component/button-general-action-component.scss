@@ -1,0 +1,73 @@
+.close-button{
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    width: 100px;
+    height: 30px;
+    background-color: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+}
+
+.close-button:hover{
+    background-color: var(--weavops-color-primary);
+    opacity: 0.8;
+}
+
+.save-button{
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    width: 100px;
+    height: 30px;
+    background-color: var(--weavops-color-accent);
+    color: var(--weavops-color-surface);
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+}
+
+.save-button:hover{
+    background-color: var(--weavops-color-accent);
+    opacity: 0.8;
+}
+
+.cancel-button{
+    --mdc-filled-button-container-color: #fff3cd;
+    --mdc-filled-button-label-text-color: #856404;
+    --mat-filled-button-state-layer-color: #856404;
+    cursor: pointer;
+    border: 1.5px solid #856404;
+    border-radius: 10px;
+    width: 100px;
+    height: 30px;
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+}
+
+.cancel-button:hover{
+    --mdc-filled-button-container-color: #ffeeba;
+    background-color: #ffeeba !important;
+}
+
+.confirm-button{
+    --mdc-filled-button-container-color: #856404;
+    --mdc-filled-button-label-text-color: #fff3cd;
+    --mat-filled-button-state-layer-color: #fff3cd;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    width: 100px;
+    height: 30px;
+    background-color: #856404 !important;
+    color: #fff3cd !important;
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+}
+
+.confirm-button:hover{
+    --mdc-filled-button-container-color: #6f5603;
+    background-color: #6f5603 !important;
+}

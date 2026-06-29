@@ -15,9 +15,10 @@ import { ItemTableRow } from '../../../table/table-row-interface/item-table-row'
 import { ItemFacadeService } from '../../../services/item-facade.service';
 import { ItemNotArchivedTableService } from '../../../table/table-service/item-not-archived-table.service';
 import { ItemArchivedTableService } from '../../../table/table-service/item-archived-table.service';
-import type { FilterValues } from '../../reusable-components/filter-button-component/filter-button-component';
+import type { FilterValues } from '../../reusable-components/button/filter-button-component/filter-button-component';
 import { WhitePanel } from "../../reusable-components/white-panel/white-panel";
 import { Item } from '../../../api';
+import { MatIcon } from "@angular/material/icon";
 
 @Component({
   selector: 'app-item-page',
@@ -25,7 +26,8 @@ import { Item } from '../../../api';
     TitlePageComponent,
     DecorativeLinesComponent,
     TableComponent,
-    WhitePanel
+    WhitePanel,
+    MatIcon
 ],
   templateUrl: './item-page.html',
   styleUrl: './item-page.scss',

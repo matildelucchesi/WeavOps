@@ -11,6 +11,10 @@
   [imageHeight]="35"
 />
 
+@if (isSaving()) {
+  <app-loader-component [ariaLabel]="'Salvataggio articolo in corso'"></app-loader-component>
+}
+
 <div class="body">
   <div class="button-wrapper">
     <app-exit-button-component />
@@ -49,15 +53,37 @@
           </div>
           <div class="form-group">
             <label for="customerName">Cliente</label>
+            <div class="customer-autocomplete-field">
               <input
                       type="text"
                       id="customerName"
                       name="customerName"
                       [(ngModel)]="customerName"
-                      #itemModel="ngModel"
+                      (ngModelChange)="filterCustomers($event)"
+                      [matAutocomplete]="customerAutocomplete"
+                      #customerAutocompleteTrigger="matAutocompleteTrigger"
+                      #customerModel="ngModel"
                       required
-                      [class.input-invalid]="shouldShowControlError(itemModel)">
-                  @if (shouldShowControlError(itemModel)) {
+                      autocomplete="off"
+                      [class.input-invalid]="shouldShowControlError(customerModel)">
+                  <button
+                    type="button"
+                    class="customer-select-toggle"
+                    aria-label="Mostra clienti"
+                    [disabled]="isSaving() || isRequestPending"
+                    (mousedown)="$event.preventDefault()"
+                    (click)="customerAutocompleteTrigger.openPanel()">
+                    <mat-icon>arrow_drop_down</mat-icon>
+                  </button>
+            </div>
+                  <mat-autocomplete
+                    #customerAutocomplete="matAutocomplete"
+                    (optionSelected)="selectCustomer($event.option.value)">
+                    @for (customer of filteredCustomers(); track customer.id ?? customer.name) {
+                      <mat-option class="option" [value]="customer.name">{{ customer.name }}</mat-option>
+                    }
+                  </mat-autocomplete>
+                  @if (shouldShowControlError(customerModel)) {
                       <mat-error class="validation-error">
                           Il nome cliente è obbligatorio
                       </mat-error>

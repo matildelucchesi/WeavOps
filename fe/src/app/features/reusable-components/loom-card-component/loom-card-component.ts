@@ -1,8 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { Loom } from '../../../api';
-import { AddButtonComponent } from "../add-button-component/add-button-component";
-import { ButtonGeneralActionComponent } from "../button-general-action-component/button-general-action-component";
+import { AddButtonComponent } from "../button/add-button-component/add-button-component";
+import { ButtonGeneralActionComponent } from "../button/button-general-action-component/button-general-action-component";
 
 @Component({
   selector: 'app-loom-card-component',
@@ -46,4 +46,12 @@ export class LoomCardComponent {
         return '/icon/loomicon-stopped.png';
     }
   }
+  
+  @Output() assign = new EventEmitter<Loom>();
+
+  public onAssignClick(): void {
+    if (this.loom) {
+      this.assign.emit(this.loom);
+  }
+}
 }

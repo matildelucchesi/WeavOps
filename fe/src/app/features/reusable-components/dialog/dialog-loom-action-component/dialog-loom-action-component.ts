@@ -3,10 +3,10 @@ import { NgOptimizedImage } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Loom } from '../../../api';
+import { Loom } from '../../../../api';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { LoomFacadeService } from '../../../services/loom-facade.service';
+import { LoomFacadeService } from '../../../../services/loom-facade.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 export interface DialogLoomActionData {

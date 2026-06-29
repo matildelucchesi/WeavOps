@@ -1,18 +1,18 @@
 import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { LoomFacadeService } from '../../../services/loom-facade.service';
-import { InputComponent } from '../input-component/input-component';
-import { Loom } from '../../../api';
+import { LoomFacadeService } from '../../../../services/loom-facade.service';
+import { Loom } from '../../../../api';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-dialog-add-new-loom-component',
   imports: [
+    FormsModule,
     MatButtonModule,
     MatSnackBarModule,
-    InputComponent
   ],
   standalone: true,
   templateUrl: './dialog-add-new-loom-component.html',

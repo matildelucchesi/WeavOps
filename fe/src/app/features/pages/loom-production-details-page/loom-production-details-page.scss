@@ -1,0 +1,130 @@
+.body{
+    display: grid;
+    gap: 20px;
+    width: 100%;
+}
+
+.content-wrapper{
+    display: grid;
+    background-color: var(--weavops-color-primary-soft);
+    border-radius: 10px;
+    border: 1.5px solid var(--weavops-color-primary);
+}
+
+.text-pattern{
+    height: 74px;
+    background-image: url("/images/tex-tile_04.png") !important;
+    background-repeat: repeat;
+    background-size: 90px 90px;
+    border-radius: 10px;
+}
+
+.text-pattern-inverse{
+    height: 74px;
+    background-image: url("/images/tex-tile_04.png") !important;
+    background-repeat: repeat;
+    background-size: 90px 90px;
+    border-radius: 10px;
+    position: relative;
+    transform: rotate(180deg);
+    z-index: 0;
+}
+
+.content-padding{
+    padding: 0px 20px 20px;
+}
+
+.button-style{
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+    display: flex;
+}
+
+.button-wrapper{
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.chip{
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    margin-right: 12px;
+}
+
+.chip-status{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 132px;
+    min-height: 28px;
+    border: 2px solid var(--chip-border-color);
+    border-radius: 999px;
+    padding: 3px 12px;
+    box-sizing: border-box;
+    background-color: var(--chip-background-color);
+    color: var(--chip-text-color);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    margin-left: 20px;
+}
+
+.chip-status-working{
+    --chip-background-color: var(--weavops-color-blue-soft);
+    --chip-text-color: var(--weavops-color-blue);
+    --chip-border-color: var(--weavops-color-blue);
+}
+
+.chip-status-stopped{
+    --chip-background-color: var(--weavops-color-grey);
+    --chip-text-color: var(--weavops-color-grey-dark);
+    --chip-border-color: var(--weavops-color-grey-dark);
+}
+
+.chip-status-maintenance{
+    --chip-background-color: var(--weavops-color-accent-lighter);
+    --chip-text-color: var(--weavops-color-accent-deep);
+    --chip-border-color: var(--weavops-color-accent-deep);
+}
+
+.chip-status-empty{
+    --chip-background-color: var(--weavops-color-surface);
+    --chip-text-color: var(--weavops-color-primary);
+    --chip-border-color: var(--weavops-color-primary);
+}
+
+.button-margin{
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
+.button-style:hover{
+    background-color: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.section-title{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

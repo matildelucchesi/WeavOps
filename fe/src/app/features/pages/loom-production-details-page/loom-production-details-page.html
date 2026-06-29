@@ -1,0 +1,121 @@
+<app-decorative-lines-component
+  [verticalPositions]="['54%', '55%', '83%', '86%', '50%', '16%', '15%']"
+  [horizontalPositions]="['11%', '17%', '53%', '56%', '94%']">
+</app-decorative-lines-component>
+
+<app-title-page-component
+  [title]="pageTitle()"
+  imageLink="/icon/loomicon-violet.png"
+  [imageWidth]="50"
+  [imageHeight]="50">
+</app-title-page-component>
+
+<div class="body">
+  <div class="button-wrapper">
+    <app-exit-button-component></app-exit-button-component>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="text-pattern">
+      <div class="header">
+        <div class="chip">
+          <span [class]="'chip-status ' + statusChipClass()">{{ statusLabel() }}</span>
+        </div>
+        <button type="button" class="button-style button-margin" (click)="toggleEditMode()">
+          <mat-icon style="font-size: 20px; align-content: center;">{{ editButtonIcon }}</mat-icon>
+          {{ editButtonLabel }}
+        </button>
+      </div>
+    </div>
+
+    <div class="content-padding">
+      <div class="production-data">
+        <div class="section-title">
+          <img class="arrangement-icon" src="/icon/work-icon-violet.png" width="30" height="30" alt="Arrangement Icon">
+          <h2>Produzione attualmente in corso</h2>
+        </div>
+
+        @if (process()) {
+          <div class="data">
+            <div class="column">
+              <h3>Dettagli Articolo</h3>
+              <div class="form-group">
+                <label for="itemName">Nome Articolo</label>
+                <input type="text" id="itemName" name="itemName" [value]="arrangement()?.itemName ?? ''" [readonly]="!isEditEnabled">
+              </div>
+              <div class="form-group">
+                <label for="hitsPerDm">Numero Colpi (per dm)</label>
+                <input type="number" id="hitsPerDm" name="hitsPerDm" [value]="arrangement()?.hitsPerDm ?? ''" [readonly]="!isEditEnabled">
+              </div>
+              <div class="reed-group">
+                <div class="form-group">
+                  <label for="reedCount">Misura Pettine</label>
+                  <div class="input-with-unit">
+                    <input type="number" class="reed-input" id="reedCount" name="reedCount" [value]="arrangement()?.reedCount ?? ''" [readonly]="!isEditEnabled">
+                    in
+                    <input type="number" class="reed-input" id="reedCM" name="reedCM" [value]="arrangement()?.reedCM ?? ''" [readonly]="!isEditEnabled">
+                    cm
+                  </div>
+                </div>
+              </div>
+
+              <h3>Parametri Operativi</h3>
+              <div class="form-group">
+                <label for="speed">Velocita (colpi/dm)</label>
+                <input type="number" id="speed" name="speed" [value]="process()?.speed ?? ''" [readonly]="!isEditEnabled">
+              </div>
+              <div class="form-group">
+                <label for="efficiency">Rendimento (%)</label>
+                <input type="number" id="efficiency" name="efficiency" [value]="process()?.efficiency ?? ''" [readonly]="!isEditEnabled">
+              </div>
+            </div>
+
+            <div class="column">
+              <h3>Dettagli Produzione</h3>
+              <div class="form-group">
+                <label for="totalMeters">Metri Totali</label>
+                <input type="number" id="totalMeters" name="totalMeters" [value]="item()?.totalMeters ?? ''" [readonly]="!isEditEnabled">
+              </div>
+              <div class="form-group">
+                <label for="metersRun">Metri Prodotti</label>
+                <input type="number" id="metersRun" name="metersRun" [value]="item()?.metersRun ?? ''" [readonly]="!isEditEnabled">
+              </div>
+              <div class="form-group">
+                <label for="completionPercentage">Percentuale Completamento</label>
+                <input type="number" id="completionPercentage" name="completionPercentage" [value]="percentage() ?? ''" [readonly]="!isEditEnabled">
+              </div>
+            </div>
+
+            <div class="column">
+              <h3>Date</h3>
+              <div class="form-group">
+                <label for="startDate">Data Inizio</label>
+                <input type="text" id="startDate" name="startDate" [value]="formatDate(process()?.startDate)" [readonly]="!isEditEnabled">
+              </div>
+              <div class="form-group">
+                <label for="expectedEndDate">Data Fine Prevista</label>
+                <input type="text" id="expectedEndDate" name="expectedEndDate" [value]="formatDate(process()?.expectedEndDate)" [readonly]="!isEditEnabled">
+              </div>
+              <div class="form-group">
+                <label for="actualEndDate">Data Consegna Articolo</label>
+                <input type="text" id="actualEndDate" name="actualEndDate" [value]="formatDate(arrangement()?.deliveryDate)" [readonly]="!isEditEnabled">
+              </div>
+            </div>
+          </div>
+        } @else {
+          <p class="no-data-message">Nessun processo di produzione in corso per questo telaio.</p>
+        }
+      </div>
+    </div>
+  </div>
+  <app-title-page-component  
+  title="Produzioni in attesa di essere avviate"
+  iconName= "'pause_circle'"
+  [imageWidth]="35"
+  [imageHeight]="35"></app-title-page-component>
+
+  <app-table-component
+    actionColumnHeader="">
+    </app-table-component>
+  
+</div>

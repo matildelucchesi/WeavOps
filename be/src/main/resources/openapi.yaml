@@ -1040,6 +1040,7 @@ components:
       example:
         serialNumber: serialNumber
         isAssigned: false
+        actualItemId: actualItemId
         id: id
         status: WORKING
       properties:
@@ -1052,6 +1053,8 @@ components:
         isAssigned:
           default: false
           type: boolean
+        actualItemId:
+          type: string
         status:
           enum:
           - WORKING
@@ -1075,21 +1078,35 @@ components:
         - efficiency: 5.962133916683182
           metersRun: 2.3021358869347655
           expectedEndDate: 2000-01-23T04:56:07.000+00:00
+          loom:
+            serialNumber: serialNumber
+            isAssigned: false
+            actualItemId: actualItemId
+            id: id
+            status: WORKING
           endDate: 2000-01-23T04:56:07.000+00:00
           totalMeters: 5.637376656633329
-          loomId: loomId
+          days: 9.301444
           metersToGo: 7.061401241503109
           id: id
+          itemHitsPerDm: 3.616076749251911
           speed: 1.4658129805029452
           startDate: 2000-01-23T04:56:07.000+00:00
         - efficiency: 5.962133916683182
           metersRun: 2.3021358869347655
           expectedEndDate: 2000-01-23T04:56:07.000+00:00
+          loom:
+            serialNumber: serialNumber
+            isAssigned: false
+            actualItemId: actualItemId
+            id: id
+            status: WORKING
           endDate: 2000-01-23T04:56:07.000+00:00
           totalMeters: 5.637376656633329
-          loomId: loomId
+          days: 9.301444
           metersToGo: 7.061401241503109
           id: id
+          itemHitsPerDm: 3.616076749251911
           speed: 1.4658129805029452
           startDate: 2000-01-23T04:56:07.000+00:00
         id: id
@@ -1239,11 +1256,18 @@ components:
         efficiency: 5.962133916683182
         metersRun: 2.3021358869347655
         expectedEndDate: 2000-01-23T04:56:07.000+00:00
+        loom:
+          serialNumber: serialNumber
+          isAssigned: false
+          actualItemId: actualItemId
+          id: id
+          status: WORKING
         endDate: 2000-01-23T04:56:07.000+00:00
         totalMeters: 5.637376656633329
-        loomId: loomId
+        days: 9.301444
         metersToGo: 7.061401241503109
         id: id
+        itemHitsPerDm: 3.616076749251911
         speed: 1.4658129805029452
         startDate: 2000-01-23T04:56:07.000+00:00
       properties:
@@ -1267,11 +1291,16 @@ components:
         endDate:
           format: date-time
           type: string
+        days:
+          format: float
+          type: number
         expectedEndDate:
           format: date-time
           type: string
-        loomId:
-          type: string
+        loom:
+          $ref: "#/components/schemas/loom"
+        itemHitsPerDm:
+          type: number
       required:
       - efficiency
       - loomId
@@ -1309,21 +1338,35 @@ components:
           - efficiency: 5.962133916683182
             metersRun: 2.3021358869347655
             expectedEndDate: 2000-01-23T04:56:07.000+00:00
+            loom:
+              serialNumber: serialNumber
+              isAssigned: false
+              actualItemId: actualItemId
+              id: id
+              status: WORKING
             endDate: 2000-01-23T04:56:07.000+00:00
             totalMeters: 5.637376656633329
-            loomId: loomId
+            days: 9.301444
             metersToGo: 7.061401241503109
             id: id
+            itemHitsPerDm: 3.616076749251911
             speed: 1.4658129805029452
             startDate: 2000-01-23T04:56:07.000+00:00
           - efficiency: 5.962133916683182
             metersRun: 2.3021358869347655
             expectedEndDate: 2000-01-23T04:56:07.000+00:00
+            loom:
+              serialNumber: serialNumber
+              isAssigned: false
+              actualItemId: actualItemId
+              id: id
+              status: WORKING
             endDate: 2000-01-23T04:56:07.000+00:00
             totalMeters: 5.637376656633329
-            loomId: loomId
+            days: 9.301444
             metersToGo: 7.061401241503109
             id: id
+            itemHitsPerDm: 3.616076749251911
             speed: 1.4658129805029452
             startDate: 2000-01-23T04:56:07.000+00:00
           id: id
@@ -1340,21 +1383,35 @@ components:
           - efficiency: 5.962133916683182
             metersRun: 2.3021358869347655
             expectedEndDate: 2000-01-23T04:56:07.000+00:00
+            loom:
+              serialNumber: serialNumber
+              isAssigned: false
+              actualItemId: actualItemId
+              id: id
+              status: WORKING
             endDate: 2000-01-23T04:56:07.000+00:00
             totalMeters: 5.637376656633329
-            loomId: loomId
+            days: 9.301444
             metersToGo: 7.061401241503109
             id: id
+            itemHitsPerDm: 3.616076749251911
             speed: 1.4658129805029452
             startDate: 2000-01-23T04:56:07.000+00:00
           - efficiency: 5.962133916683182
             metersRun: 2.3021358869347655
             expectedEndDate: 2000-01-23T04:56:07.000+00:00
+            loom:
+              serialNumber: serialNumber
+              isAssigned: false
+              actualItemId: actualItemId
+              id: id
+              status: WORKING
             endDate: 2000-01-23T04:56:07.000+00:00
             totalMeters: 5.637376656633329
-            loomId: loomId
+            days: 9.301444
             metersToGo: 7.061401241503109
             id: id
+            itemHitsPerDm: 3.616076749251911
             speed: 1.4658129805029452
             startDate: 2000-01-23T04:56:07.000+00:00
           id: id

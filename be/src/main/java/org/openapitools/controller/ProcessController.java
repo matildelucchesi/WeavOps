@@ -1,6 +1,7 @@
 package org.openapitools.controller;
 
 import org.openapitools.api.ProcessesApi;
+import org.openapitools.domain.ProcessEntity;
 import org.openapitools.mapper.ProcessMapper;
 import org.openapitools.model.Process;
 import org.openapitools.service.ProcessService;
@@ -39,13 +40,25 @@ public class ProcessController implements ProcessesApi {
 
     @Override
     public ResponseEntity<Process> createProcess(@Valid @RequestBody Process process) {
+        ProcessEntity entity = mapper.toEntity(process);
+        entity.setDays(service.calculateDays(entity));
+        process.setDays(entity.getDays());
+        process.setExpectedEndDate(service.calculateExpectedEndDate(entity));
+        entity = mapper.toEntity(process);
+
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mapper.toDto(service.save(mapper.toEntity(process))));
+                .body(mapper.toDto(service.save(entity)));
     }
 
     @Override
     public ResponseEntity<Process> updateProcess(@PathVariable("id") String id, @Valid @RequestBody Process process) {
-        return service.update(id, mapper.toEntity(process))
+        ProcessEntity entity = mapper.toEntity(process);
+        entity.setDays(service.calculateDays(entity));
+        process.setDays(entity.getDays());
+        process.setExpectedEndDate(service.calculateExpectedEndDate(entity));
+        entity = mapper.toEntity(process);
+
+        return service.update(id, entity)
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

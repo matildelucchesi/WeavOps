@@ -15,5 +15,75 @@ app-title-page-component,
 
 .body {
   width: 95%;
+  gap: 20px;
+  display: grid;
   justify-self: center;
 }
+
+.item-legend{
+    display: grid;
+    gap: 10px;
+}
+
+.item-legend-row{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.item-legend-chip{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 132px;
+    min-width: 132px;
+    min-height: 28px;
+    border: 1.5px solid var(--legend-chip-border-color);
+    border-radius: 999px;
+    padding: 3px 12px;
+    box-sizing: border-box;
+    background-color: var(--legend-chip-background-color);
+    color: var(--legend-chip-text-color);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.item-legend-chip-production{
+    --legend-chip-background-color: var(--weavops-color-blue-soft);
+    --legend-chip-text-color: var(--weavops-color-blue);
+    --legend-chip-border-color: var(--weavops-color-blue);
+}
+
+.item-legend-chip-completed{
+    --legend-chip-background-color: var(--weavops-color-success-soft);
+    --legend-chip-text-color: var(--weavops-color-success);
+    --legend-chip-border-color: var(--weavops-color-success);
+}
+
+
+.item-legend-chip-stopped{
+    --legend-chip-background-color: var(--weavops-color-grey);
+    --legend-chip-text-color: var(--weavops-color-grey-dark);
+    --legend-chip-border-color: var(--weavops-color-grey-dark);
+}
+
+.item-legend-chip-initialized{
+    --legend-chip-background-color: var(--weavops-color-accent-lighter);
+    --legend-chip-text-color: var(--weavops-color-accent-deep);
+    --legend-chip-border-color: var(--weavops-color-accent-deep);
+}
+
+.item-legend-description{
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    align-items: center;
+    display: flex;
+    gap: 5px;
+}
+

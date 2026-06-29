@@ -7,7 +7,11 @@
     </div>
     @if(isDialogMode) {
         <div>
-            <app-button-general-action-component [label]="'Assegna'" [className]="'save-button'"></app-button-general-action-component>
+            <app-button-general-action-component
+                [label]="'Assegna'"
+                [className]="'save-button'"
+                (click)="onAssignClick()">
+</app-button-general-action-component>
         </div>
     } @else {
         <div>

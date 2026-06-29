@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatIcon } from "@angular/material/icon";
-import { InputComponent } from "../input-component/input-component";
+import { InputComponent } from "../../input-component/input-component";
 import { ButtonGeneralActionComponent } from "../button-general-action-component/button-general-action-component";
 
 export interface FilterOption {

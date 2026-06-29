@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T17:29:03.911191800+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-29T16:01:23.408857700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Process", description = "the Process API")
 public interface ProcessesApi {
@@ -76,7 +76,7 @@ public interface ProcessesApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    String exampleString = "{ \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"actualItemId\" : \"actualItemId\", \"id\" : \"id\", \"status\" : \"WORKING\" }, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"days\" : 9.301444, \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"itemHitsPerDm\" : 3.616076749251911, \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -152,7 +152,7 @@ public interface ProcessesApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    String exampleString = "{ \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"actualItemId\" : \"actualItemId\", \"id\" : \"id\", \"status\" : \"WORKING\" }, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"days\" : 9.301444, \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"itemHitsPerDm\" : 3.616076749251911, \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -193,7 +193,7 @@ public interface ProcessesApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
+                    String exampleString = "[ { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"actualItemId\" : \"actualItemId\", \"id\" : \"id\", \"status\" : \"WORKING\" }, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"days\" : 9.301444, \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"itemHitsPerDm\" : 3.616076749251911, \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"actualItemId\" : \"actualItemId\", \"id\" : \"id\", \"status\" : \"WORKING\" }, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"days\" : 9.301444, \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"itemHitsPerDm\" : 3.616076749251911, \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -242,7 +242,7 @@ public interface ProcessesApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"loomId\" : \"loomId\", \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    String exampleString = "{ \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"actualItemId\" : \"actualItemId\", \"id\" : \"id\", \"status\" : \"WORKING\" }, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 5.637376656633329, \"days\" : 9.301444, \"metersToGo\" : 7.061401241503109, \"id\" : \"id\", \"itemHitsPerDm\" : 3.616076749251911, \"speed\" : 1.4658129805029452, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

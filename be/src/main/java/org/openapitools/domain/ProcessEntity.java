@@ -1,8 +1,10 @@
 package org.openapitools.domain;
 
+import org.openapitools.model.Loom;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Document(collection = "processes")
@@ -18,9 +20,34 @@ public class ProcessEntity {
     private Instant startDate;
     private Instant endDate;
     private Instant expectedEndDate;
-    private String loomId;
+    private Float days;
+    private Loom loom;
+    private Integer itemHitsPerDm;
 
     //getter & setter
+    public Integer getItemHitsPerDm() {
+        return itemHitsPerDm;
+    }
+
+    public void setItemHitsPerDm(Integer itemHitsPerDm) {
+        this.itemHitsPerDm = itemHitsPerDm;
+    }
+
+    public Float getDays() {
+        return days;
+    }
+
+    public void setDays(Float days) {
+        this.days = days;
+    }
+
+    public Loom getLoom() {
+        return loom;
+    }
+
+    public void setLoom(Loom loom) {
+        this.loom = loom;
+    }
 
     public String getId() {
         return id;
@@ -94,11 +121,4 @@ public class ProcessEntity {
         this.expectedEndDate = expectedEndDate;
     }
 
-    public String getLoomId() {
-        return loomId;
-    }
-
-    public void setLoomId(String loomId) {
-        this.loomId = loomId;
-    }
 }

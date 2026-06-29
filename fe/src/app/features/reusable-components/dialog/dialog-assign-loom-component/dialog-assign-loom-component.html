@@ -1,0 +1,138 @@
+<div class="wrapper">
+    <div class="head">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <img class="loom-icon" src="/icon/loomicon-violet.png" width="40" height="40" alt="Loom Icon">
+            @if (!isProcessing()) {
+                <h2>Assegna Telaio</h2>
+            } @else {
+                <h2>Inserisci dati Produzione</h2>
+            }
+        </div>
+        @if (!isProcessing()) {
+            <app-button-general-action-component
+                [label]="'Annulla'"
+                [className]="'close-button'"
+                (click)="onCloseDialog()">
+            </app-button-general-action-component>
+        } @else {
+            <app-button-general-action-component
+                [label]="'Indietro'"
+                [className]="'close-button'"
+                (click)="turnBack()">
+            </app-button-general-action-component>
+        }
+    </div>
+
+    <div class="content">
+        @if (!isProcessing()) {
+            @if (isLoadingLooms()) {
+                <div class="content-loader">
+                    <app-loader-component [ariaLabel]="'Caricamento telai in corso'"></app-loader-component>
+                </div>
+            } @else {
+                @for (loom of paginatedLooms; track loom.id ?? $index) {
+                    <app-loom-card-component
+                        [loom]="loom"
+                        [isDialogMode]="true"
+                        (assign)="onAssignLoom($event)">
+                    </app-loom-card-component>
+                } @empty {
+                    <p class="empty-state">Non sono presenti telai disponibili</p>
+                }
+            }
+        } @else {
+            <form class="data-form" #processForm="ngForm" novalidate>
+                <div class="process-data">
+                    <div class="column">
+                        <div class="form-group">
+                            <label for="totalMeters">Metri Totali</label>
+                            <input
+                                type="number"
+                                id="totalMeters"
+                                name="totalMeters"
+                                min="0"
+                                required
+                                [(ngModel)]="process.totalMeters">
+                        </div>
+                        <div class="form-group">
+                            <label for="speed">Velocità (Colpi/Minuto)</label>
+                            <input
+                                type="number"
+                                id="speed"
+                                name="speed"
+                                min="0"
+                                required
+                                [(ngModel)]="process.speed">
+                            @if(process.speed < 250){
+                                <mat-error class="validation-error">
+                                    La velocità minima consentita è di 250 colpi/minuto.
+                                </mat-error>
+                            }
+                            
+                        </div>
+                        <div class="form-group">
+                            <label for="efficiency">Resa (%)</label>
+                            <input
+                                type="number"
+                                id="efficiency"
+                                name="efficiency"
+                                min="0"
+                                required
+                                [(ngModel)]="process.efficiency">
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="form-group">
+                            <label for="startDate">Data Inizio Lavorazione</label>
+                            <input
+                                class="date-input"
+                                type="datetime-local"
+                                id="startDate"
+                                name="startDate"
+                                required
+                                [(ngModel)]="process.startDate">
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="button-wrapper">
+                <app-button-general-action-component
+                    [label]="'Conferma'"
+                    [className]="'save-button'"
+                    (click)="onConfirmProcess(processForm)">
+                </app-button-general-action-component>
+            </div>
+
+            @if (isSavingProcess) {
+                <div class="content-loader">
+                    <app-loader-component [ariaLabel]="'Creazione processo in corso'"></app-loader-component>
+                </div>
+            }
+        }
+    </div>
+
+    @if (!isProcessing() && shouldShowPagination) {
+        <div class="pagination-wrapper">
+            <button
+                class="pagination-button"
+                type="button"
+                [disabled]="isPreviousPageDisabled"
+                aria-label="Pagina precedente"
+                title="Pagina precedente"
+                (click)="goToPreviousPage()">
+                <mat-icon>chevron_left</mat-icon>
+            </button>
+            <span class="page-counter">{{ currentPage() }} / {{ totalPages }}</span>
+            <button
+                class="pagination-button"
+                type="button"
+                [disabled]="isNextPageDisabled"
+                aria-label="Pagina successiva"
+                title="Pagina successiva"
+                (click)="goToNextPage()">
+                <mat-icon>chevron_right</mat-icon>
+            </button>
+        </div>
+    }
+</div>

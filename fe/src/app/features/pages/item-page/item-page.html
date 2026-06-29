@@ -38,7 +38,6 @@
     [columns]="columns"
     [rows]="archivedRows()"
     [actions]="actions"
-    [addButton]="addButton"
     [filterButton]="filterButton"
     actionColumnHeader=""
     (actionClick)="onTableAction($event)"
@@ -48,4 +47,29 @@
   </div>
   
   <app-white-panel style="display: flex;margin-top: 20px;" [title]="'Nota Bene'" [text]="'Con la Riabilitazione dell’Articolo si intende il ripristino inmodo tale che possa essere iniziata una nuova produzione dello stesso articolo. Sarà necessario controllare se i dati inseriti sono corretti, nella pagina relativa alle Anagrafiche Articoli.'"></app-white-panel> 
+
+  <app-white-panel [iconName]="'category'" [title]="'Legenda'">
+    <div class="item-legend">
+      <div class="item-legend-row">
+        <span class="item-legend-chip item-legend-chip-initialized">Inizializzato</span>
+        <span class="item-legend-description">L'articolo è stato inizializzato.</span>
+      </div>
+
+      <div class="item-legend-row">
+        <span class="item-legend-chip item-legend-chip-production">In produzione</span>
+        <span class="item-legend-description">L'articolo è in produzione. Clicca su <mat-icon>visibility</mat-icon> per vedere lo stato.</span>
+      </div>
+
+      <div class="item-legend-row">
+        <span class="item-legend-chip item-legend-chip-completed">Completato</span>
+        <span class="item-legend-description">La produzione dell'articolo è stata completata.</span>
+      </div>
+
+      <div class="item-legend-row">
+        <span class="item-legend-chip item-legend-chip-stopped">Abbandonato</span>
+        <span class="item-legend-description">L'articolo è stato abbandonato.</span>
+      </div>
+    </div>
+  </app-white-panel>
+
 </div>

@@ -4,8 +4,8 @@ import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Loom } from '../../../api';
 import { LoomCardComponent } from "../../reusable-components/loom-card-component/loom-card-component";
-import { DialogLoomActionComponent } from '../../reusable-components/dialog-loom-action-component/dialog-loom-action-component';
-import { DialogAddNewLoomComponent } from '../../reusable-components/dialog-add-new-loom-component/dialog-add-new-loom-component';
+import { DialogLoomActionComponent } from '../../reusable-components/dialog/dialog-loom-action-component/dialog-loom-action-component';
+import { DialogAddNewLoomComponent } from '../../reusable-components/dialog/dialog-add-new-loom-component/dialog-add-new-loom-component';
 import { LoomFacadeService } from '../../../services/loom-facade.service';
 import { DecorativeLinesComponent } from "../../reusable-components/decorative-lines-component/decorative-lines-component";
 

@@ -1,0 +1,29 @@
+<div class="wrapper">
+    <div class="head">
+        <div class="head-title">
+            <img class="dialog-icon" src="/icon/loomicon-violet.png" width="30" height="30" alt="Add Loom Icon">
+            <p class="dialog-title">Aggiungi Nuovo Telaio</p>
+        </div>
+        <button type="button" class="close-button" [disabled]="isSaving" (click)="close()">
+            Annulla
+        </button>
+    </div>
+    <div class="body">
+        <div style="display: flex; justify-content: center; width: 100%; margin-top: 10px;">
+            <form class="add-loom-form" (ngSubmit)="addNewLoom()">
+                <div class="form-group">
+                    <label for="serialNumber">Numero Seriale</label>
+                    <input
+                        type="text"
+                        id="serialNumber"
+                        name="serialNumber"
+                        [(ngModel)]="serialNumber"
+                        [disabled]="isSaving">
+                </div>
+                <div style="display: flex; justify-content: flex-end; width: 100%; margin-top: 5px;">
+                    <button type="submit" class="submit-button" [disabled]="isSaving">Aggiungi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

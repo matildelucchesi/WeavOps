@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("loom")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T17:29:03.911191800+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-29T16:01:23.408857700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class Loom {
 
   private @Nullable String id;
@@ -30,6 +30,8 @@ public class Loom {
   private String serialNumber;
 
   private Boolean isAssigned = false;
+
+  private @Nullable String actualItemId;
 
   /**
    * Gets or Sets status
@@ -145,6 +147,27 @@ public class Loom {
     this.isAssigned = isAssigned;
   }
 
+  public Loom actualItemId(@Nullable String actualItemId) {
+    this.actualItemId = actualItemId;
+    return this;
+  }
+
+  /**
+   * Get actualItemId
+   * @return actualItemId
+   */
+  
+  @Schema(name = "actualItemId", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("actualItemId")
+  public @Nullable String getActualItemId() {
+    return actualItemId;
+  }
+
+  @JsonProperty("actualItemId")
+  public void setActualItemId(@Nullable String actualItemId) {
+    this.actualItemId = actualItemId;
+  }
+
   public Loom status(StatusEnum status) {
     this.status = status;
     return this;
@@ -178,12 +201,13 @@ public class Loom {
     return Objects.equals(this.id, loom.id) &&
         Objects.equals(this.serialNumber, loom.serialNumber) &&
         Objects.equals(this.isAssigned, loom.isAssigned) &&
+        Objects.equals(this.actualItemId, loom.actualItemId) &&
         Objects.equals(this.status, loom.status);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, serialNumber, isAssigned, status);
+    return Objects.hash(id, serialNumber, isAssigned, actualItemId, status);
   }
 
   @Override
@@ -193,6 +217,7 @@ public class Loom {
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    serialNumber: ").append(toIndentedString(serialNumber)).append("\n");
     sb.append("    isAssigned: ").append(toIndentedString(isAssigned)).append("\n");
+    sb.append("    actualItemId: ").append(toIndentedString(actualItemId)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("}");
     return sb.toString();

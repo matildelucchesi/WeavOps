@@ -20,7 +20,7 @@ $weavops-color-accent-strong: #c26300;
 $weavops-color-accent-deep: #a95100;
 $weavops-color-accent-light: #ffb35c;
 $weavops-color-accent-lighter: #fcd8ab;
-$weavops-color-warning: #ffe46d;
+$weavops-color-warning: #ffc800;
 $weavops-color-warning-alpha: #ffe46daa;
 $weavops-color-success: #065f46;
 $weavops-color-success-soft: #d1fae5;
@@ -188,6 +188,23 @@ body {
 
 .loom-action-dialog-panel .mat-mdc-dialog-container {
   --mat-dialog-container-shape: 10px;
+}
+
+.loom-alert-dialog-panel,
+.loom-alert-dialog-panel .mat-mdc-dialog-container {
+  --mdc-dialog-container-color: transparent;
+  --mat-dialog-container-color: transparent;
+  --mat-dialog-container-shape: 10px;
+}
+
+.loom-alert-dialog-panel .mat-mdc-dialog-surface,
+.loom-alert-dialog-panel.mat-mdc-dialog-surface {
+  background-color: transparent !important;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 4px rgb(var(--weavops-rgb-black) / 0.25);
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .assign-loom-dialog-panel .mat-mdc-dialog-surface {

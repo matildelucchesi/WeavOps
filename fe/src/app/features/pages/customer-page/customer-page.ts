@@ -14,7 +14,7 @@ import {
   type TableFilterButtonConfig,
 } from '../../reusable-components/table-component/table-component';
 import { CustomerFacadeService } from '../../../services/customer-facade.service';
-import type { FilterValues } from '../../reusable-components/filter-button-component/filter-button-component';
+import type { FilterValues } from '../../reusable-components/button/filter-button-component/filter-button-component';
 
 @Component({
   selector: 'app-customer-page',

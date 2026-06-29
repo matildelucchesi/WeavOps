@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("arrangement")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T17:29:03.911191800+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-29T16:01:23.408857700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class Arrangement {
 
   private @Nullable String id;

@@ -2,7 +2,7 @@ import { Component, OnDestroy, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import type { Observable } from 'rxjs';
-import { LoaderComponent } from '../loader-component/loader-component';
+import { LoaderComponent } from '../../loader-component/loader-component';
 
 export interface DialogDeleteData<T = unknown> {
   title?: string;

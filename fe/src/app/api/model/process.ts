@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Loom } from './loom';
 
 
 export interface Process { 
@@ -21,7 +22,9 @@ export interface Process {
     metersToGo: number;
     startDate: string;
     endDate?: string;
+    days?: number;
     expectedEndDate?: string;
-    loomId: string;
+    loom?: Loom;
+    itemHitsPerDm?: number;
 }
 

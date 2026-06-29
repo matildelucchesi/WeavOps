@@ -56,6 +56,46 @@ input{
     width: 200px;
 }
 
+.customer-autocomplete-field{
+    position: relative;
+    width: 234px;
+}
+
+.customer-autocomplete-field input{
+    box-sizing: border-box;
+    padding-right: 38px;
+    width: 100%;
+}
+
+.customer-select-toggle{
+    align-items: center;
+    background: transparent;
+    border: 0;
+    color: var(--weavops-color-primary);
+    cursor: pointer;
+    display: flex;
+    height: 28px;
+    justify-content: center;
+    padding: 0;
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+}
+
+.customer-select-toggle:disabled{
+    cursor: default;
+    opacity: 0.5;
+}
+
+.customer-select-toggle mat-icon{
+    font-size: 22px;
+    height: 22px;
+    line-height: 22px;
+    width: 22px;
+}
+
 .date-picker-field{
     width: 234px;
     font-family: 'Instrument Sans', sans-serif;
@@ -123,4 +163,8 @@ input{
     display: flex;
     gap: 10px;
     align-items: center;
+}
+
+.option{
+    font-size: 14px;
 }

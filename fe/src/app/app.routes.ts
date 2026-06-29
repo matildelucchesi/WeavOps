@@ -32,6 +32,11 @@ export const routes: Routes = [
         component: LoomPage,
       },
       {
+        path: 'dettaglio-produzione/:id',
+        loadComponent: () => import('./features/pages/loom-production-details-page/loom-production-details-page')
+          .then((component) => component.LoomProductionDetailsPage),
+      },
+      {
         path: 'articoli',
         component: ItemPage,
       },

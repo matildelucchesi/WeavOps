@@ -15,10 +15,10 @@ import {
 } from '../../reusable-components/table-component/table-component';
 import { LoomFacadeService } from '../../../services/loom-facade.service';
 import { LoomTableService } from '../../../table/table-service/loom-table.service';
-import type { FilterValues } from '../../reusable-components/filter-button-component/filter-button-component';
-import { DialogAddNewLoomComponent } from '../../reusable-components/dialog-add-new-loom-component/dialog-add-new-loom-component';
+import type { FilterValues } from '../../reusable-components/button/filter-button-component/filter-button-component';
+import { DialogAddNewLoomComponent } from '../../reusable-components/dialog/dialog-add-new-loom-component/dialog-add-new-loom-component';
 import { LoaderComponent } from '../../reusable-components/loader-component/loader-component';
-import { DialogLoomActionComponent } from '../../reusable-components/dialog-loom-action-component/dialog-loom-action-component';
+import { DialogLoomActionComponent } from '../../reusable-components/dialog/dialog-loom-action-component/dialog-loom-action-component';
 import { WhitePanel } from "../../reusable-components/white-panel/white-panel";
 import { Loom } from '../../../api';
 
@@ -100,10 +100,8 @@ export class LoomPage implements OnInit, OnDestroy {
   public actions: TableAction<LoomTableRow>[] = [
     {
       id: 'production',
-      label: 'Visualizza lavorazione in corso',
-      imageIcon: (row) => row.loom.isAssigned === false
-        ? '/icon/work-icon-grey.png'
-        : '/icon/work-icon-violet.png',
+      label: 'Visualizza dettagli produzione',
+      imageIcon: '/icon/work-icon-violet.png',
       imageAlt: 'Cronologia articoli',
     },
     {
@@ -159,6 +157,10 @@ export class LoomPage implements OnInit, OnDestroy {
 
   public onTableAction(event: TableActionClick<LoomTableRow>): void {
     switch (event.action.id) {
+      case 'production':
+        this.goToProductionDetailsPage(event);
+        console.log('Visualizza dettagli produzione per telaio', event.row);
+        break;
       case 'history':
         //this.goToHistoryPage(event);
         console.log('Visualizza cronologia articoli per telaio', event.row);
@@ -280,5 +282,11 @@ export class LoomPage implements OnInit, OnDestroy {
           }
         });
     console.log(`Open dialog for action: ${action.id} on loom: ${row.serialNumber}`);
+  }
+
+  public goToProductionDetailsPage(event: TableActionClick<LoomTableRow>): void {
+    const loomId = this.getLoomId(event.row);
+    const url = `/dettaglio-produzione/${loomId}`;
+    window.location.href = url;
   }
 }

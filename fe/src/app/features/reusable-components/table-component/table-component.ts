@@ -4,10 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { AddButtonComponent } from '../add-button-component/add-button-component';
-import { DialogDelete } from '../dialog-delete/dialog-delete';
-import type { DialogDeleteData } from '../dialog-delete/dialog-delete';
-import { FilterButtonComponent, type FilterOption, type FilterValues } from '../filter-button-component/filter-button-component';
+import { AddButtonComponent } from '../button/add-button-component/add-button-component';
+import { DialogDelete } from '../dialog/dialog-delete/dialog-delete';
+import type { DialogDeleteData } from '../dialog/dialog-delete/dialog-delete';
+import { FilterButtonComponent, type FilterOption, type FilterValues } from '../button/filter-button-component/filter-button-component';
 import { forkJoin, type Observable } from 'rxjs';
 
 export interface TableColumn<T = any> {

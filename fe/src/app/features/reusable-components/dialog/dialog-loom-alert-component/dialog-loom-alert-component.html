@@ -1,0 +1,22 @@
+<div class="dialog-wrapper">
+    @if (isLoading) {
+        <div class="content-loader">
+            <app-loader-component [ariaLabel]="'Controllo stato telaio in corso'"></app-loader-component>
+        </div>
+    } @else {
+        <div class="head">
+            <mat-icon class="icon" aria-hidden="true">error</mat-icon>
+        </div>
+        <div class="body">
+            <p>{{ alertMessage }}</p>
+        </div>
+        <div class="actions">
+                <button class="cancel-button" type="button" (click)="onCloseDialog()">
+                    Annulla
+                </button>
+                <button class="confirm-button" type="button" (click)="onConfirm()">
+                    Procedi
+                </button>
+            </div>
+    }
+</div>

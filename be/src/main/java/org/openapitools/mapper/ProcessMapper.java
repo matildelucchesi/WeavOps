@@ -27,7 +27,9 @@ public class ProcessMapper {
         dto.setStartDate(toOffsetDateTime(entity.getStartDate()));
         dto.setEndDate(toOffsetDateTime(entity.getEndDate()));
         dto.setExpectedEndDate(toOffsetDateTime(entity.getExpectedEndDate()));
-        dto.setLoomId(entity.getLoomId());
+        dto.setLoom(entity.getLoom());
+        dto.setDays(entity.getDays());
+        dto.setItemHitsPerDm(toBigDecimal(entity.getItemHitsPerDm()));
         return dto;
     }
 
@@ -46,7 +48,9 @@ public class ProcessMapper {
         entity.setStartDate(toInstant(dto.getStartDate()));
         entity.setEndDate(toInstant(dto.getEndDate()));
         entity.setExpectedEndDate(toInstant(dto.getExpectedEndDate()));
-        entity.setLoomId(dto.getLoomId());
+        entity.setLoom(dto.getLoom());
+        entity.setDays(dto.getDays());
+        entity.setItemHitsPerDm(toInteger(dto.getItemHitsPerDm()));
         return entity;
     }
 

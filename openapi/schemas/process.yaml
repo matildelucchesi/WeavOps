@@ -30,8 +30,13 @@ properties:
   endDate:
     type: string
     format: date-time
+  days:
+    type: number
+    format: float
   expectedEndDate:
     type: string
     format: date-time
-  loomId:
-    type: string
+  loom:
+    $ref: './loom.yaml'
+  itemHitsPerDm:
+    type: number

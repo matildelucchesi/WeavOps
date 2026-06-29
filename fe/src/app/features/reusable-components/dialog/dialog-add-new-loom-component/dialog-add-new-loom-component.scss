@@ -10,6 +10,7 @@
     max-width: calc(100vw - 48px);
     box-sizing: border-box;
     border-radius: 8px;
+    gap: 20px;
 }
 
 
@@ -65,15 +66,39 @@
     height: 100%;
     padding: 15px;
     box-sizing: border-box;
+    border-radius: 10px;
+    border: 1.5px solid var(--weavops-color-primary);
+    background-color: var(--weavops-color-primary-soft);
 }
 
 .add-loom-form{
     display: grid;
     grid-template-columns: 1fr;
     align-items: center;
-    gap: 15px;
     width: 100%;
-    gap: 25px;
+}
+
+.form-group{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+input{
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    width: 350px;
+}
+
+input:disabled{
+    background: var(--weavops-color-surface-muted);
+    color: var(--weavops-color-primary);
+    cursor: default;
+    opacity: 0.85;
 }
 
 .submit-button{

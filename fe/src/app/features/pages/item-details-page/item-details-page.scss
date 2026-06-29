@@ -12,8 +12,6 @@
 
 .content-wrapper{
     display: grid;
-    gap: 20px;
-    padding: 20px;
     background-color: var(--weavops-color-primary-soft);
     border-radius: 10px;
     border: 1.5px solid var(--weavops-color-primary);
@@ -45,6 +43,53 @@
     display: flex;
 }
 
+.button-qr{
+    align-items: center;
+    align-self: end;
+    background: linear-gradient(129deg, var(--weavops-color-primary), var(--weavops-color-primary-hover));
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgb(var(--weavops-rgb-primary-shadow) / 0.22);
+    color: var(--weavops-color-surface);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    gap: 10px;
+    height: 80px;
+    justify-content: center;
+    padding: 14px;
+    text-align: left;
+    width: 100%;
+}
+
+.button-qr:disabled{
+    cursor: default;
+    opacity: 0.65;
+}
+
+.button-qr-copy{
+    display: grid;
+}
+
+.qr-mark{
+    align-items: center;
+    background: var(--weavops-color-surface);
+    border-radius: 8px;
+    color: var(--weavops-color-primary);
+    display: inline-flex;
+    height: 38px;
+    justify-content: center;
+    position: relative;
+    width: 38px;
+}
+
+.button-margin{
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
 .button-style:hover{
     background-color: var(--weavops-color-primary);
     color: var(--weavops-color-surface);
@@ -56,6 +101,8 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 100%;
+    height: 65px;
 }
 
 .validation-error{
@@ -76,62 +123,13 @@ input{
     width: 200px;
 }
 
-.date-picker-field{
-    width: 234px;
-    font-family: 'Instrument Sans', sans-serif;
-    background: white;
-}
-
-
-:host ::ng-deep .date-picker-field .mat-mdc-text-field-wrapper{
-    height: 34px;
-    border: 1.5px solid var(--weavops-color-primary);
-    border-radius: 10px;
-    padding: 0 8px 0 16px;
-    background: transparent;
-}
-
-:host ::ng-deep .date-picker-field .mdc-notched-outline{
-    display: none;
-}
-
-:host ::ng-deep .date-picker-field .mat-mdc-form-field-flex{
-    height: 100%;
-    align-items: center;
-}
-
-:host ::ng-deep .date-picker-field .mat-mdc-form-field-infix{
-    min-height: 0;
-    padding: 0;
-}
-
-:host ::ng-deep .date-picker-field .mat-mdc-input-element{
-    border: 0;
-    border-radius: 0;
-    padding: 0;
-    width: 100%;
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 400;
-}
-
-:host ::ng-deep .date-picker-field .mat-mdc-icon-button{
-    width: 28px;
-    height: 28px;
-    padding: 2px;
-}
-
-:host ::ng-deep .date-picker-field .mat-mdc-form-field-subscript-wrapper{
-    display: none;
-}
-
 .column{
     display: grid;
     gap: 20px;
 }
 
 .reed-input{
-    width: 30px;
+    width: 40px;
 }
 
 .reed-group{
@@ -178,43 +176,6 @@ select:disabled{
     opacity: 0.85;
 }
 
-.process-table-wrapper{
-    width: 100%;
-    overflow-x: auto;
-}
-
-.process-table{
-    width: 100%;
-    min-width: 900px;
-    border: 1.5px solid var(--weavops-color-primary);
-    border-radius: 10px;
-    border-spacing: 0;
-    background: var(--weavops-color-surface);
-}
-
-.process-table th,
-.process-table td{
-    padding: 8px;
-    border-bottom: 1px solid var(--weavops-color-primary);
-    color: var(--weavops-color-primary);
-    text-align: left;
-}
-
-.process-table th{
-    background: var(--weavops-color-surface-muted);
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.process-table tbody tr:last-child td{
-    border-bottom: 0;
-}
-
-.table-input{
-    width: 110px;
-    box-sizing: border-box;
-}
-
 .empty-state{
     margin: 0;
     padding: 14px;
@@ -225,3 +186,33 @@ select:disabled{
     font-weight: 600;
     text-align: center;
 }
+
+.production-table{
+    margin-bottom: -45px;
+    position: relative;
+    z-index: 1;
+}
+
+.text-pattern{
+    height: 74px;
+    background-image: url("/images/tex-tile_04.png") !important;
+    background-repeat: repeat;
+    background-size: 90px 90px;
+    border-radius: 10px;
+}
+
+.text-pattern-inverse{
+    height: 74px;
+    background-image: url("/images/tex-tile_04.png") !important;
+    background-repeat: repeat;
+    background-size: 90px 90px;
+    border-radius: 10px;
+    position: relative;
+    transform: rotate(180deg);
+    z-index: 0;
+}
+
+.content-padding{
+    padding: 0px 20px 20px;
+}
+

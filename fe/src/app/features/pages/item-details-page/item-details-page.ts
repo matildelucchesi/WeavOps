@@ -1,16 +1,28 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DecorativeLinesComponent } from '../../reusable-components/decorative-lines-component/decorative-lines-component';
 import { TitlePageComponent } from '../../reusable-components/title-page-component/title-page-component';
 import { WhitePanel } from '../../reusable-components/white-panel/white-panel';
-import { Arrangement, Item } from '../../../api';
+import { Arrangement, Item, Loom, Process } from '../../../api';
 import { ItemFacadeService } from '../../../services/item-facade.service';
 import { ArrangementFacadeService } from '../../../services/arrangement-facade.service';
-import { ExitButtonComponent } from "../../reusable-components/exit-button-component/exit-button-component";
+import { LoomFacadeService } from '../../../services/loom-facade.service';
+import { ExitButtonComponent } from "../../reusable-components/button/exit-button-component/exit-button-component";
 import { MatIcon } from "@angular/material/icon";
-import { DialogAssignLoomComponent } from "../../reusable-components/dialog-assign-loom-component/dialog-assign-loom-component";
+import { DialogAssignLoomComponent, type DialogAssignLoomData } from "../../reusable-components/dialog/dialog-assign-loom-component/dialog-assign-loom-component";
+import { DialogItemAlertState, type DialogItemAlertStateData, type DialogItemAlertStateResult } from "../../reusable-components/dialog/dialog-item-alert-state/dialog-item-alert-state";
 import { MatDialog } from '@angular/material/dialog';
+import { TableComponent, type TableColumn } from "../../reusable-components/table-component/table-component";
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
+interface ProcessTableRow {
+  loomName: string;
+  metersRun: string;
+  metersToGo: string;
+  days: string;
+  expectedEndDate: string;
+}
 
 @Component({
   selector: 'app-item-details-page',
@@ -20,42 +32,68 @@ import { MatDialog } from '@angular/material/dialog';
     WhitePanel,
     ExitButtonComponent,
     MatIcon,
-    FormsModule
-],
+    FormsModule,
+    TableComponent,
+    MatSnackBarModule,
+  ],
   standalone: true,
   templateUrl: './item-details-page.html',
   styleUrl: './item-details-page.scss',
 })
 export class ItemDetailsPage implements OnInit {
 
-  private item: Item | null = null;
-  private arrangement: Arrangement | null = null;
+  private readonly item = signal<Item | null>(null);
+  private readonly arrangement = signal<Arrangement | null>(null);
+  private readonly loomNamesById = signal<Record<string, string>>({});
   public itemName: string = '';
   public isEditEnabled: boolean = false;
+
+  public readonly processesColumns: TableColumn<ProcessTableRow>[] = [
+    { header: 'Nome Telaio', field: 'loomName' },
+    { header: 'Metri Fatti', field: 'metersRun' },
+    { header: 'Metri da Fare', field: 'metersToGo' },
+    { header: 'Tempo stimato', field: 'days' },
+    { header: 'Data di fine prevista', field: 'expectedEndDate' },
+  ];
+  public readonly rows = computed<ProcessTableRow[]>(() => this.productionRows.map((process) => ({
+    loomName: this.getProcessLoomName(process),
+    metersRun: this.formatTableMeters(process.metersRun),
+    metersToGo: this.formatTableMeters(process.metersToGo),
+    days: this.formatTableDays(process.days),
+    expectedEndDate: this.formatDate(process.expectedEndDate),
+  })));
   
   private readonly itemService = inject(ItemFacadeService);
   private readonly arrangementService = inject(ArrangementFacadeService);
+  private readonly loomService = inject(LoomFacadeService);
   private readonly route = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
 
   public get pageTitle(): string {
     return this.itemName ? `Dettagli ${this.itemName}` : 'Dettagli Articolo';
   }
 
   public get arrangementData(): Arrangement | null {
-    return this.arrangement;
+    return this.arrangement();
   }
 
   public get itemData(): Item | null {
-    return this.item;
+    return this.item();
   }
 
   public get productionRows() {
-    return this.item?.processing ?? [];
+    return this.item()?.processing ?? [];
   }
 
   public get hasProductionRows(): boolean {
     return this.productionRows.length > 0;
+  }
+
+  public get isTerminated(): boolean {
+    const state = this.item()?.state;
+
+    return state === Item.StateEnum.Completed || state === Item.StateEnum.Abandoned;
   }
 
   public get editButtonLabel(): string {
@@ -71,12 +109,14 @@ export class ItemDetailsPage implements OnInit {
   }
 
   public exportArrangementData(): void {
-    if (!this.arrangement) {
+    const arrangement = this.arrangement();
+
+    if (!arrangement) {
       return;
     }
 
-    const pdfContent = this.createArrangementPdf(this.arrangement);
-    const fileName = `disposizione-${this.getSafeFileName(this.arrangement.itemName)}.pdf`;
+    const pdfContent = this.createArrangementPdf(arrangement);
+    const fileName = `disposizione-${this.getSafeFileName(arrangement.itemName)}.pdf`;
     const pdfBlob = new Blob([pdfContent], { type: 'application/pdf' });
     const url = URL.createObjectURL(pdfBlob);
     const link = document.createElement('a');
@@ -94,6 +134,8 @@ export class ItemDetailsPage implements OnInit {
     const navigationItem = this.getNavigationItem();
     const navigationArrangement = this.getNavigationArrangement();
 
+    this.loadLoomNames();
+
     if (itemId) {
       const fallbackArrangement = this.isNavigationItemForId(navigationItem, itemId)
         ? navigationArrangement
@@ -103,11 +145,11 @@ export class ItemDetailsPage implements OnInit {
       return;
     }
 
-    this.item = navigationItem;
+    this.item.set(navigationItem);
 
-    if (this.item) {
+    if (navigationItem) {
       this.setArrangement(navigationArrangement);
-      this.loadArrangement(this.item.arrangementId);
+      this.loadArrangement(navigationItem.arrangementId);
     }
   }
 
@@ -115,7 +157,7 @@ export class ItemDetailsPage implements OnInit {
     this.setArrangement(fallbackArrangement);
 
     this.itemService.getById(itemId).subscribe((item) => {
-      this.item = item;
+      this.item.set(item);
       this.loadArrangement(item.arrangementId);
     });
   }
@@ -156,12 +198,26 @@ export class ItemDetailsPage implements OnInit {
     });
   }
 
+  private loadLoomNames(): void {
+    this.loomService.getAll().subscribe((looms) => {
+      const loomNamesById = looms.reduce<Record<string, string>>((accumulator, loom) => {
+        if (loom.id) {
+          accumulator[loom.id] = this.formatLoomName(loom);
+        }
+
+        return accumulator;
+      }, {});
+
+      this.loomNamesById.set(loomNamesById);
+    });
+  }
+
   private setArrangement(arrangement: Arrangement | null): void {
     if (!arrangement) {
       return;
     }
 
-    this.arrangement = arrangement;
+    this.arrangement.set(arrangement);
     this.itemName = arrangement.itemName;
   }
 
@@ -198,7 +254,11 @@ export class ItemDetailsPage implements OnInit {
       return value;
     }
 
-    return date.toLocaleDateString('it-IT');
+    return date.toLocaleDateString('it-IT', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
   }
 
   public formatNumber(value: number | undefined, suffix: string = ''): string {
@@ -383,28 +443,208 @@ export class ItemDetailsPage implements OnInit {
   }
 
   public getMetersToGo(): number | null {
-    if (!this.item || !this.item.totalMeters || !this.item.metersRun) {
+    const item = this.item();
+
+    if (!item || !item.totalMeters || !item.metersRun) {
       return null;
     }
 
-    return this.item.totalMeters - this.item.metersRun;
+    return item.totalMeters - item.metersRun;
   }
 
   public getPercentage(): number | null {
-    if (!this.item || !this.item.totalMeters || !this.item.metersRun) {
+    const item = this.item();
+
+    if (!item || !item.totalMeters || !item.metersRun) {
       return null;
     }
 
-    const percentage = (this.item.metersRun / this.item.totalMeters) * 100;
+    const percentage = (item.metersRun / item.totalMeters) * 100;
     return Math.round(percentage * 100) / 100; // Round to two decimal places
   }
 
   public openAssignLoomDialog(): void {
-    this.dialog.open(DialogAssignLoomComponent, {
-      panelClass: 'assign-loom-dialog-panel',
-      width: '720px',
-      maxWidth: 'calc(100vw - 48px)',
-      autoFocus: false,
+    const dialogRef = this.dialog.open<DialogAssignLoomComponent, DialogAssignLoomData, Process | false>(
+      DialogAssignLoomComponent,
+      {
+        panelClass: 'assign-loom-dialog-panel',
+        width: '720px',
+        maxWidth: 'calc(100vw - 48px)',
+        autoFocus: false,
+        data: {
+          arrangement: this.arrangementData,
+        },
+      },
+    );
+
+    dialogRef.afterClosed().subscribe((process) => {
+      if (!process) {
+        return;
+      }
+
+      this.addProcessToItem(process);
     });
+  }
+
+  public openTerminateProductionDialog(): void {
+    const currentItem = this.item();
+
+    if (!currentItem?.id) {
+      this.snackBar.open("Impossibile terminare la produzione: id dell'articolo mancante", 'Chiudi', {
+        duration: 4000,
+        horizontalPosition: 'end',
+        verticalPosition: 'bottom',
+      });
+      return;
+    }
+
+    const dialogRef = this.dialog.open<DialogItemAlertState, DialogItemAlertStateData, DialogItemAlertStateResult>(
+      DialogItemAlertState,
+      {
+        width: '520px',
+        maxWidth: 'calc(100vw - 48px)',
+        autoFocus: false,
+        data: {
+          item: currentItem,
+        },
+      },
+    );
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) {
+        return;
+      }
+
+      this.saveTerminatedItemState(currentItem, result);
+    });
+  }
+
+  private saveTerminatedItemState(currentItem: Item, state: Item.StateEnum): void {
+    if (!currentItem.id) {
+      return;
+    }
+
+    const updatedItem: Item = {
+      ...currentItem,
+      state,
+      isArchived: true,
+    };
+
+    this.itemService.update(currentItem.id, updatedItem).subscribe({
+      next: (item) => {
+        this.item.set(item);
+        this.snackBar.open('Stato articolo aggiornato con successo', 'Chiudi', {
+          duration: 4000,
+          horizontalPosition: 'end',
+          verticalPosition: 'bottom',
+        });
+      },
+      error: (error) => {
+        this.item.set(currentItem);
+        console.error("Errore durante l'aggiornamento dello stato dell'item:", error);
+        this.snackBar.open("Errore durante l'aggiornamento dello stato articolo", 'Chiudi', {
+          duration: 4000,
+          horizontalPosition: 'end',
+          verticalPosition: 'bottom',
+        });
+      },
+    });
+  }
+
+  private addProcessToItem(process: Process): void {
+    const currentItem = this.item();
+
+    if (!currentItem?.id) {
+      console.error("Impossibile assegnare il processo: id dell'item mancante");
+      return;
+    }
+
+    const updatedItem: Item = {
+      ...currentItem,
+      processing: [...(currentItem.processing ?? []), process],
+    };
+
+    this.item.set(updatedItem);
+
+    this.itemService.update(currentItem.id, updatedItem).subscribe({
+      next: (item) => {
+        this.item.set(item);
+        this.snackBar.open('Assegnazione avvenuta con successo', 'Chiudi', {
+          duration: 4000,
+          horizontalPosition: 'end',
+          verticalPosition: 'bottom',
+        });
+      },
+      error: (error) => {
+        this.item.set(currentItem);
+        console.error("Errore durante l'aggiornamento dell'item:", error);
+      },
+    });
+  }
+
+  private getProcessLoomName(process: Process): string {
+    if (process.loom) {
+      return this.formatLoomName(process.loom);
+    }
+
+    const legacyLoomId = (process as Process & { loomId?: string }).loomId;
+
+    if (legacyLoomId) {
+      return this.getLoomNameById(legacyLoomId);
+    }
+
+    return 'Telaio non disponibile';
+  }
+
+  private getLoomNameById(loomId: string | undefined): string {
+    if (!loomId) {
+      return '-';
+    }
+
+    return this.loomNamesById()[loomId] ?? 'Telaio non disponibile';
+  }
+
+  private formatLoomName(loom: Loom): string {
+    return `Telaio ${loom.serialNumber}`;
+  }
+
+  private formatTableMeters(value: number | undefined): string {
+    return this.formatNumber(value, ' m');
+  }
+
+  private formatTableDays(value: number | undefined): string {
+    if (value === undefined || value === null || !Number.isFinite(value)) {
+      return '-';
+    }
+
+    if (value <= 0) {
+      return '0 min';
+    }
+
+    const rawMinutes = value * 24 * 60;
+
+    if (rawMinutes < 1) {
+      return '< 1 min';
+    }
+
+    const totalMinutes = Math.round(rawMinutes);
+    const days = Math.floor(totalMinutes / (24 * 60));
+    const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
+    const minutes = totalMinutes % 60;
+    const parts: string[] = [];
+
+    if (days > 0) {
+      parts.push(`${days} ${days === 1 ? 'giorno' : 'giorni'}`);
+    }
+
+    if (hours > 0) {
+      parts.push(`${hours} ${hours === 1 ? 'ora' : 'ore'}`);
+    }
+
+    if (minutes > 0 || parts.length === 0) {
+      parts.push(`${minutes} min`);
+    }
+
+    return parts.join(' ');
   }
 }

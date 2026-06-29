@@ -14,9 +14,18 @@ public class LoomEntity {
 
     private Loom.StatusEnum status;
     private boolean isAssigned;
+    private String actualItemId;
 
     //getter & setter
 
+
+    public String getActualItemId() {
+        return actualItemId;
+    }
+
+    public void setActualItemId(String actualItemId) {
+        this.actualItemId = actualItemId;
+    }
 
     public boolean isAssigned() {
         return isAssigned;

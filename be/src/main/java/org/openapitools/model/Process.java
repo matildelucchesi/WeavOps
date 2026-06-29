@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import org.openapitools.model.Loom;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
@@ -24,7 +25,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("process")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-23T17:29:03.911191800+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-29T16:01:23.408857700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class Process {
 
   private @Nullable String id;
@@ -45,10 +46,14 @@ public class Process {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private @Nullable OffsetDateTime endDate;
 
+  private @Nullable Float days;
+
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private @Nullable OffsetDateTime expectedEndDate;
 
-  private String loomId;
+  private @Nullable Loom loom;
+
+  private @Nullable BigDecimal itemHitsPerDm;
 
   public Process() {
     super();
@@ -57,14 +62,13 @@ public class Process {
   /**
    * Constructor with only required parameters
    */
-  public Process(BigDecimal speed, BigDecimal efficiency, BigDecimal totalMeters, BigDecimal metersRun, BigDecimal metersToGo, OffsetDateTime startDate, String loomId) {
+  public Process(BigDecimal speed, BigDecimal efficiency, BigDecimal totalMeters, BigDecimal metersRun, BigDecimal metersToGo, OffsetDateTime startDate) {
     this.speed = speed;
     this.efficiency = efficiency;
     this.totalMeters = totalMeters;
     this.metersRun = metersRun;
     this.metersToGo = metersToGo;
     this.startDate = startDate;
-    this.loomId = loomId;
   }
 
   public Process id(@Nullable String id) {
@@ -235,6 +239,27 @@ public class Process {
     this.endDate = endDate;
   }
 
+  public Process days(@Nullable Float days) {
+    this.days = days;
+    return this;
+  }
+
+  /**
+   * Get days
+   * @return days
+   */
+  
+  @Schema(name = "days", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("days")
+  public @Nullable Float getDays() {
+    return days;
+  }
+
+  @JsonProperty("days")
+  public void setDays(@Nullable Float days) {
+    this.days = days;
+  }
+
   public Process expectedEndDate(@Nullable OffsetDateTime expectedEndDate) {
     this.expectedEndDate = expectedEndDate;
     return this;
@@ -256,25 +281,46 @@ public class Process {
     this.expectedEndDate = expectedEndDate;
   }
 
-  public Process loomId(String loomId) {
-    this.loomId = loomId;
+  public Process loom(@Nullable Loom loom) {
+    this.loom = loom;
     return this;
   }
 
   /**
-   * Get loomId
-   * @return loomId
+   * Get loom
+   * @return loom
    */
-  @NotNull 
-  @Schema(name = "loomId", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("loomId")
-  public String getLoomId() {
-    return loomId;
+  @Valid 
+  @Schema(name = "loom", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("loom")
+  public @Nullable Loom getLoom() {
+    return loom;
   }
 
-  @JsonProperty("loomId")
-  public void setLoomId(String loomId) {
-    this.loomId = loomId;
+  @JsonProperty("loom")
+  public void setLoom(@Nullable Loom loom) {
+    this.loom = loom;
+  }
+
+  public Process itemHitsPerDm(@Nullable BigDecimal itemHitsPerDm) {
+    this.itemHitsPerDm = itemHitsPerDm;
+    return this;
+  }
+
+  /**
+   * Get itemHitsPerDm
+   * @return itemHitsPerDm
+   */
+  @Valid 
+  @Schema(name = "itemHitsPerDm", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("itemHitsPerDm")
+  public @Nullable BigDecimal getItemHitsPerDm() {
+    return itemHitsPerDm;
+  }
+
+  @JsonProperty("itemHitsPerDm")
+  public void setItemHitsPerDm(@Nullable BigDecimal itemHitsPerDm) {
+    this.itemHitsPerDm = itemHitsPerDm;
   }
 
   @Override
@@ -294,13 +340,15 @@ public class Process {
         Objects.equals(this.metersToGo, process.metersToGo) &&
         Objects.equals(this.startDate, process.startDate) &&
         Objects.equals(this.endDate, process.endDate) &&
+        Objects.equals(this.days, process.days) &&
         Objects.equals(this.expectedEndDate, process.expectedEndDate) &&
-        Objects.equals(this.loomId, process.loomId);
+        Objects.equals(this.loom, process.loom) &&
+        Objects.equals(this.itemHitsPerDm, process.itemHitsPerDm);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, speed, efficiency, totalMeters, metersRun, metersToGo, startDate, endDate, expectedEndDate, loomId);
+    return Objects.hash(id, speed, efficiency, totalMeters, metersRun, metersToGo, startDate, endDate, days, expectedEndDate, loom, itemHitsPerDm);
   }
 
   @Override
@@ -315,8 +363,10 @@ public class Process {
     sb.append("    metersToGo: ").append(toIndentedString(metersToGo)).append("\n");
     sb.append("    startDate: ").append(toIndentedString(startDate)).append("\n");
     sb.append("    endDate: ").append(toIndentedString(endDate)).append("\n");
+    sb.append("    days: ").append(toIndentedString(days)).append("\n");
     sb.append("    expectedEndDate: ").append(toIndentedString(expectedEndDate)).append("\n");
-    sb.append("    loomId: ").append(toIndentedString(loomId)).append("\n");
+    sb.append("    loom: ").append(toIndentedString(loom)).append("\n");
+    sb.append("    itemHitsPerDm: ").append(toIndentedString(itemHitsPerDm)).append("\n");
     sb.append("}");
     return sb.toString();
   }
