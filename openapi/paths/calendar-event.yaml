@@ -1,0 +1,104 @@
+﻿/calendar-events:
+  get:
+    summary: Recupera tutti i calendar events
+    operationId: getCalendarEvents
+    tags:
+      - CalendarEvents
+    responses:
+      '200':
+        description: Lista calendar events
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/calendar-event.yaml'
+
+  post:
+    summary: Crea un calendar event
+    operationId: createCalendarEvent
+    tags:
+      - CalendarEvents
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/calendar-event.yaml'
+    responses:
+      '201':
+        description: Calendar Event creato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/calendar-event.yaml'
+      '400':
+        description: Richiesta non valida
+
+/calendar-events/{id}:
+  get:
+    summary: Recupera un calendar event tramite ID
+    operationId: getCalendarEventById
+    tags:
+      - CalendarEvents
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Calendar Event trovato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/calendar-event.yaml'
+      '404':
+        description: Calendar Event non trovato
+
+  put:
+    summary: Aggiorna un calendar event
+    operationId: updateCalendarEvent
+    tags:
+      - CalendarEvents
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/calendar-event.yaml'
+    responses:
+      '200':
+        description: Calendar Event aggiornato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/calendar-event.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Calendar Event non trovato
+
+  delete:
+    summary: Elimina un calendar event
+    operationId: deleteCalendarEvent
+    tags:
+      - CalendarEvents
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Calendar Event eliminato
+      '404':
+        description: Calendar Event non trovato

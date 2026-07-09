@@ -36,6 +36,9 @@ public class LoomItemAssignmentService {
     @Autowired
     private ProcessService processService;
 
+    @Autowired
+    private CalendarEventService calendarEventService;
+
     private final LoomItemAssignmentRepository repository;
 
     public LoomItemAssignmentService(LoomItemAssignmentRepository repository) {
@@ -147,10 +150,13 @@ public class LoomItemAssignmentService {
         processEntity.setExpectedEndDate(expectedEndDate != null ? expectedEndDate.toInstant() : null);
         processEntity.setLoom(loomMapper.toDto(loomEntity));
 
-        this.processService.save(processEntity);
-        itemEntity.getProcessing().set(processIndex, processEntity);
+        ProcessEntity savedProcess = this.processService.save(processEntity);
+        this.calendarEventService.createOrUpdateLoomExpectedEndDateEvent(entity, loomEntity, savedProcess);
+
+        itemEntity.getProcessing().set(processIndex, savedProcess);
         updateItemStartDateFromProcesses(itemEntity);
         updateItemExpectedEndDateFromAssignments(itemEntity, entity);
+        this.calendarEventService.createOrUpdateItemExpectedEndDateEvent(itemEntity);
 
         this.itemService.save(itemEntity);
         this.loomService.save(loomEntity);

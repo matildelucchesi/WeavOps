@@ -3,6 +3,7 @@ src/main/java/org/openapitools/RFC3339DateFormat.java
 src/main/java/org/openapitools/api/ApiUtil.java
 src/main/java/org/openapitools/api/ArrangementsApi.java
 src/main/java/org/openapitools/api/AuthApi.java
+src/main/java/org/openapitools/api/CalendarEventsApi.java
 src/main/java/org/openapitools/api/CustomersApi.java
 src/main/java/org/openapitools/api/ItemsApi.java
 src/main/java/org/openapitools/api/LoomItemAssignmentsApi.java
@@ -13,6 +14,7 @@ src/main/java/org/openapitools/api/UsersApi.java
 src/main/java/org/openapitools/configuration/HomeController.java
 src/main/java/org/openapitools/configuration/SpringDocConfiguration.java
 src/main/java/org/openapitools/model/Arrangement.java
+src/main/java/org/openapitools/model/CalendarEvent.java
 src/main/java/org/openapitools/model/CreateItemWithArrangementRequest.java
 src/main/java/org/openapitools/model/Customer.java
 src/main/java/org/openapitools/model/DeleteMultiCustomers200Response.java

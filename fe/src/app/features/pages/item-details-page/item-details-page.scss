@@ -205,6 +205,25 @@
     cursor: pointer;
 }
 
+.edit-actions{
+    gap: 10px;
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
+.cancel-edit-button{
+    background-color: var(--weavops-color-surface);
+    border: 1.5px solid var(--weavops-color-primary);
+    color: var(--weavops-color-primary);
+    margin-right: 20px;
+}
+
+.cancel-edit-button:hover{
+    background-color: var(--weavops-color-primary-soft);
+    color: var(--weavops-color-primary);
+    opacity: 1;
+}
+
 .form-group{
     display: flex;
     flex-direction: column;

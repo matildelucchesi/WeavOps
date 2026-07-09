@@ -67,6 +67,10 @@ paths:
     $ref: './paths/user.yaml#/~1users~1{id}'
   /auth/login:
     $ref: './paths/user.yaml#/~1auth~1login'
+  /calendar-events:
+    $ref: './paths/calendar-event.yaml#/~1calendar-events'
+  /calendar-events/{id}:
+    $ref: './paths/calendar-event.yaml#/~1calendar-events~1{id}'
 
 components:
   securitySchemes:

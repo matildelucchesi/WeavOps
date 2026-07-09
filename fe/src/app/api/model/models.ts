@@ -1,4 +1,5 @@
 export * from './arrangement';
+export * from './calendarEvent';
 export * from './createItemWithArrangementRequest';
 export * from './customer';
 export * from './deleteMultiCustomers200Response';

@@ -21,6 +21,9 @@ import { TableAction, TableActionClick, TableComponent, type TableColumn } from 
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoomItemAssignmentFacadeService } from '../../../services/loom-item-assignment-facade.service';
 import { DialogInformativeComponent, type DialogInformativeData } from '../../reusable-components/dialog/dialog-informative-component/dialog-informative-component';
+import { DialogAlertGeneric, type DialogAlertGenericData } from '../../reusable-components/dialog/dialog-alert-generic/dialog-alert-generic';
+import { forkJoin } from 'rxjs';
+import type { jsPDF as JsPdfDocument } from 'jspdf';
 
 interface ProcessTableRow {
   id: string;
@@ -34,6 +37,14 @@ interface ProcessTableRow {
   state: string;
   days: string;
   expectedEndDate: string;
+}
+
+interface ArrangementPdfSection {
+  assignment: LoomItemAssignment;
+  process: Process;
+  loomName: string;
+  qrUrl: string;
+  qrCodeDataUrl: string;
 }
 
 @Component({
@@ -201,25 +212,211 @@ export class ItemDetailsPage implements OnInit {
     this.isEditEnabled = !this.isEditEnabled;
   }
 
-  public exportArrangementData(): void {
+  public saveChanges(): void {
+    const currentItem = this.item();
+    const currentArrangement = this.arrangement();
+
+    if (!currentItem?.id || !currentArrangement?.id) {
+      this.snackBar.open("Impossibile salvare le modifiche: dati dell'articolo non completi", 'Chiudi', {
+        duration: 4000,
+        horizontalPosition: 'end',
+        verticalPosition: 'bottom',
+      });
+      return;
+    }
+
+    const dialogRef = this.dialog.open<
+      DialogAlertGeneric,
+      DialogAlertGenericData,
+      boolean
+    >(DialogAlertGeneric, {
+      panelClass: 'loom-alert-dialog-panel',
+      width: '520px',
+      maxWidth: 'calc(100vw - 48px)',
+      autoFocus: false,
+      data: {
+        text: 'Confermare le modifiche?',
+        subtext: "ATTENZIONE: prima di procedere assicurarsi che tutti i dati siano corretti.",
+        icon: 'save',
+        iconColor: 'var(--weavops-color-primary)',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+
+      this.persistChanges(currentItem, currentArrangement);
+    });
+  }
+
+  public cancelEditMode(): void {
+    this.isEditEnabled = false;
+
+    const currentItemId = this.item()?.id;
+
+    if (currentItemId) {
+      this.loadItem(currentItemId);
+    }
+  }
+
+  public onPiecesCountChange(arrangement: Arrangement, value: number | string | null): void {
+    const piecesCount = this.toFiniteNumber(value);
+    const updatedArrangement: Arrangement = {
+      ...arrangement,
+      piecesCount: piecesCount ?? 0,
+    };
+
+    this.setArrangement(updatedArrangement);
+    this.recalculateItemTotalMetersFromArrangement(updatedArrangement);
+  }
+
+  public onPieceLengthChange(arrangement: Arrangement, value: number | string | null): void {
+    const pieceLength = this.toFiniteNumber(value);
+    const updatedArrangement: Arrangement = {
+      ...arrangement,
+      pieceLength: pieceLength ?? undefined,
+    };
+
+    this.setArrangement(updatedArrangement);
+    this.recalculateItemTotalMetersFromArrangement(updatedArrangement);
+  }
+
+  public onItemTotalMetersChange(item: Item, value: number | string | null): void {
+    const totalMeters = this.toFiniteNumber(value);
+    const updatedItem: Item = {
+      ...(this.item() ?? item),
+      totalMeters: totalMeters ?? undefined,
+    };
+
+    this.item.set(updatedItem);
+
+    if (totalMeters !== null) {
+      this.updateRemainingMetersToAssignFromTotalMeters(totalMeters);
+    }
+  }
+
+  private persistChanges(currentItem: Item, currentArrangement: Arrangement): void {
+    if (!currentItem.id || !currentArrangement.id) {
+      return;
+    }
+
+    forkJoin({
+      item: this.itemService.update(currentItem.id, this.buildItemSavePayload(currentItem)),
+      arrangement: this.arrangementService.update(
+        currentArrangement.id,
+        this.buildArrangementSavePayload(currentArrangement),
+      ),
+    }).subscribe({
+      next: ({ item, arrangement }) => {
+        this.item.set(item);
+        this.setArrangement(arrangement);
+        this.loadRemainingMetersToAssign(item.id);
+        this.isEditEnabled = false;
+        this.snackBar.open('Modifiche salvate con successo', 'Chiudi', {
+          duration: 4000,
+          horizontalPosition: 'end',
+          verticalPosition: 'bottom',
+        });
+      },
+      error: (error) => {
+        console.error('Errore durante il salvataggio delle modifiche:', error);
+        this.snackBar.open('Errore durante il salvataggio delle modifiche', 'Chiudi', {
+          duration: 4000,
+          horizontalPosition: 'end',
+          verticalPosition: 'bottom',
+          panelClass: ['error-snackbar'],
+        });
+      },
+    });
+  }
+
+  private buildItemSavePayload(item: Item): Item {
+    return {
+      ...item,
+      startDate: this.normalizeDateTime(item.startDate),
+      expectedEndDate: this.normalizeDateTime(item.expectedEndDate),
+    };
+  }
+
+  private buildArrangementSavePayload(arrangement: Arrangement): Arrangement {
+    return {
+      ...arrangement,
+      deliveryDate: this.normalizeDateTime(arrangement.deliveryDate),
+    };
+  }
+
+  private normalizeDateTime(value: string | undefined): string | undefined {
+    const trimmedValue = value?.trim();
+
+    if (!trimmedValue || trimmedValue === '-') {
+      return undefined;
+    }
+
+    const italianDateMatch = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(trimmedValue);
+
+    if (!italianDateMatch) {
+      return trimmedValue;
+    }
+
+    const day = Number(italianDateMatch[1]);
+    const month = Number(italianDateMatch[2]);
+    const year = Number(italianDateMatch[3]);
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    if (
+      date.getUTCFullYear() !== year
+      || date.getUTCMonth() !== month - 1
+      || date.getUTCDate() !== day
+    ) {
+      return trimmedValue;
+    }
+
+    return date.toISOString();
+  }
+
+  public async exportArrangementData(): Promise<void> {
     const arrangement = this.arrangement();
 
     if (!arrangement) {
       return;
     }
 
-    const pdfContent = this.createArrangementPdf(arrangement);
-    const fileName = `disposizione-${this.getSafeFileName(arrangement.itemName)}.pdf`;
-    const pdfBlob = new Blob([pdfContent], { type: 'application/pdf' });
-    const url = URL.createObjectURL(pdfBlob);
-    const link = document.createElement('a');
+    try {
+      const [{ jsPDF }, QRCode] = await Promise.all([
+        import('jspdf'),
+        import('qrcode'),
+      ]);
+      const sections = await this.createArrangementPdfSections(QRCode);
 
-    link.href = url;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
+      if (sections.length === 0) {
+        this.snackBar.open('Nessun telaio associato a un processo esportabile', 'Chiudi', {
+          duration: 4000,
+          horizontalPosition: 'end',
+          verticalPosition: 'bottom',
+        });
+        return;
+      }
+
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+      const fileName = `disposizione-${this.getSafeFileName(arrangement.itemName)}.pdf`;
+
+      this.createArrangementPdf(pdf, arrangement, sections);
+      pdf.save(fileName);
+    } catch (error) {
+      console.error('Errore durante la generazione della disposizione:', error);
+      this.snackBar.open('Errore durante la generazione della disposizione', 'Chiudi', {
+        duration: 4000,
+        horizontalPosition: 'end',
+        verticalPosition: 'bottom',
+        panelClass: ['error-snackbar'],
+      });
+    }
   }
 
   ngOnInit(): void {
@@ -431,129 +628,198 @@ export class ItemDetailsPage implements OnInit {
     }
   }
 
-  private createArrangementPdf(arrangement: Arrangement): string {
-    const pageWidth = 595.28;
-    const pageHeight = 841.89;
+  private createArrangementPdf(
+    pdf: JsPdfDocument,
+    arrangement: Arrangement,
+    sections: ArrangementPdfSection[],
+  ): void {
+    const pages = this.chunkArray(sections, 4);
+
+    pages.forEach((pageSections, pageIndex) => {
+      if (pageIndex > 0) {
+        pdf.addPage();
+      }
+
+      this.drawArrangementPdfPage(pdf);
+      pageSections.forEach((section, sectionIndex) => {
+        this.drawArrangementPdfSection(pdf, arrangement, section, sectionIndex);
+      });
+    });
+  }
+
+  private async createArrangementPdfSections(
+    qrCode: typeof import('qrcode'),
+  ): Promise<ArrangementPdfSection[]> {
+    const sections = await Promise.all(
+      this.itemAssignments()
+        .filter((assignment) => this.isExportableArrangementAssignment(assignment))
+        .map(async (assignment): Promise<ArrangementPdfSection | null> => {
+          const process = this.getAssignmentProcess(assignment);
+
+          if (!assignment.loomId || !process) {
+            return null;
+          }
+
+          const qrUrl = this.createLoomProductionDetailsUrl(assignment.loomId);
+          const qrCodeDataUrl = await qrCode.toDataURL(qrUrl, {
+            errorCorrectionLevel: 'M',
+            margin: 1,
+            width: 220,
+            color: {
+              dark: '#3f177b',
+              light: '#ffffff',
+            },
+          });
+
+          return {
+            assignment,
+            process,
+            loomName: this.getAssignmentLoomName(assignment, process),
+            qrUrl,
+            qrCodeDataUrl,
+          };
+        }),
+    );
+
+    return sections.filter((section): section is ArrangementPdfSection => section !== null);
+  }
+
+  private isExportableArrangementAssignment(assignment: LoomItemAssignment): boolean {
+    return Boolean(assignment.loomId && assignment.processId)
+      && assignment.status !== LoomItemAssignment.StatusEnum.Completed
+      && assignment.status !== LoomItemAssignment.StatusEnum.Abandoned;
+  }
+
+  private drawArrangementPdfPage(pdf: JsPdfDocument): void {
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
     const halfWidth = pageWidth / 2;
     const halfHeight = pageHeight / 2;
-    const contentParts = [
-      '0.8 w',
-      `0 ${halfHeight} m ${pageWidth} ${halfHeight} l S`,
-      `${halfWidth} 0 m ${halfWidth} ${pageHeight} l S`,
-    ];
-    const rows = this.getArrangementPdfRows(arrangement);
-    const quadrants = [
-      { x: 0, y: halfHeight },
-      { x: halfWidth, y: halfHeight },
-      { x: 0, y: 0 },
-      { x: halfWidth, y: 0 },
-    ];
 
-    for (const quadrant of quadrants) {
-      contentParts.push(...this.createArrangementPdfQuadrant(rows, quadrant.x, quadrant.y, halfHeight));
-    }
-
-    return this.createPdfDocument(contentParts.join('\n'), pageWidth, pageHeight);
+    pdf.setDrawColor(63, 23, 123);
+    pdf.setLineWidth(0.25);
+    pdf.line(halfWidth, 0, halfWidth, pageHeight);
+    pdf.line(0, halfHeight, pageWidth, halfHeight);
   }
 
-  private createArrangementPdfQuadrant(
-    rows: string[],
-    left: number,
-    bottom: number,
-    quadrantHeight: number,
-  ): string[] {
-    const parts: string[] = [];
-    const x = left + 18;
-    let y = bottom + quadrantHeight - 28;
+  private drawArrangementPdfSection(
+    pdf: JsPdfDocument,
+    arrangement: Arrangement,
+    section: ArrangementPdfSection,
+    sectionIndex: number,
+  ): void {
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const quadrantWidth = pageWidth / 2;
+    const quadrantHeight = pageHeight / 2;
+    const left = sectionIndex % 2 === 0 ? 0 : quadrantWidth;
+    const top = sectionIndex < 2 ? 0 : quadrantHeight;
+    const margin = 7;
+    const contentLeft = left + margin;
+    const contentTop = top + margin;
+    const contentWidth = quadrantWidth - margin * 2;
+    const qrSize = 32;
+    const qrX = left + quadrantWidth - margin - qrSize;
+    const qrY = top + quadrantHeight - margin - qrSize - 6;
+    const rows = this.getArrangementPdfSectionRows(arrangement, section);
 
-    parts.push(this.createPdfTextCommand(x, y, 11, 'Dati Disposizione'));
-    y -= 20;
+    pdf.setDrawColor(63, 23, 123);
+    pdf.setLineWidth(0.35);
+    pdf.roundedRect(left + 4, top + 4, quadrantWidth - 8, quadrantHeight - 8, 2, 2);
+
+    pdf.setTextColor(63, 23, 123);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(10);
+    pdf.text('Dati Disposizione', contentLeft, contentTop + 3);
+
+    pdf.setFontSize(8.5);
+    pdf.text(section.loomName, left + quadrantWidth - margin, contentTop + 3, { align: 'right' });
+
+    pdf.setDrawColor(63, 23, 123);
+    pdf.setLineWidth(0.2);
+    pdf.line(contentLeft, contentTop + 7, left + quadrantWidth - margin, contentTop + 7);
+
+    this.drawPdfRows(pdf, rows, contentLeft, contentTop + 13, contentWidth, qrY - 5);
+
+    pdf.addImage(section.qrCodeDataUrl, 'PNG', qrX, qrY, qrSize, qrSize);
+
+    pdf.setTextColor(63, 23, 123);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(6.5);
+    pdf.text('Dettaglio lavorazione', qrX + qrSize / 2, qrY + qrSize + 4, { align: 'center' });
+
+    pdf.setTextColor(80, 80, 80);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(5.5);
+    pdf.text(this.truncatePdfText(section.qrUrl, 45), contentLeft, top + quadrantHeight - 7);
+  }
+
+  private drawPdfRows(
+    pdf: JsPdfDocument,
+    rows: string[],
+    x: number,
+    startY: number,
+    maxWidth: number,
+    maxY: number,
+  ): void {
+    let y = startY;
+
+    pdf.setTextColor(33, 33, 33);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(7.3);
 
     for (const row of rows) {
-      const lines = this.wrapPdfText(row);
+      const wrappedRows = pdf.splitTextToSize(row, maxWidth) as string[];
 
-      for (const line of lines) {
-        parts.push(this.createPdfTextCommand(x, y, 9, line));
-        y -= 12;
+      for (const wrappedRow of wrappedRows) {
+        if (y > maxY) {
+          return;
+        }
+
+        pdf.text(wrappedRow, x, y);
+        y += 4.2;
       }
 
-      y -= 3;
+      y += 1.1;
     }
-
-    return parts;
   }
 
-  private getArrangementPdfRows(arrangement: Arrangement): string[] {
+  private getArrangementPdfSectionRows(arrangement: Arrangement, section: ArrangementPdfSection): string[] {
+    const process = section.process;
+
     return [
-      `Nome articolo: ${this.formatPdfValue(arrangement.itemName)}`,
-      `Numero pezze: ${this.formatPdfValue(arrangement.piecesCount)}`,
-      `Lunghezza pezza: ${this.formatPdfValue(arrangement.pieceLength, 'm')}`,
-      `Numero colpi per dm: ${this.formatPdfValue(arrangement.hitsPerDm)}`,
-      `Misura pettine: ${this.formatPdfValue(arrangement.reedCount)} in ${this.formatPdfValue(arrangement.reedCM)} cm`,
-      `Altezza pettine: ${this.formatPdfValue(arrangement.reedHeight, 'm')}`,
-      `Lunghezza ordito: ${this.formatPdfValue(arrangement.warpLength, 'm')}`,
-      `Numero fili ordito: ${this.formatPdfValue(arrangement.warpEndCount)}`,
-      `Data di consegna: ${this.formatDate(arrangement.deliveryDate)}`,
+      `Articolo: ${this.formatPdfValue(arrangement.itemName)}`,
+      `Metri assegnati: ${this.formatPdfValue(process.totalMeters, 'm')}`,
+      `Lunghezza pezza: ${this.formatPdfValue(process.metersPerPiece, 'm')}`,
+      `Velocita: ${this.formatPdfValue(process.speed)}`,
+      `Efficienza: ${this.formatPdfValue(process.efficiency, '%')}`,
+      `Colpi per dm: ${this.formatPdfValue(arrangement.hitsPerDm)}`,
+      `Pettine: ${this.formatPdfValue(arrangement.reedCount)} in ${this.formatPdfValue(arrangement.reedCM)} cm`,
+      `Data consegna: ${this.formatDate(arrangement.deliveryDate)}`,
+      `Fine prevista: ${this.formatDate(process.expectedEndDate)}`,
     ];
   }
 
-  private createPdfDocument(content: string, pageWidth: number, pageHeight: number): string {
-    const encoder = new TextEncoder();
-    const objects = [
-      '<< /Type /Catalog /Pages 2 0 R >>',
-      '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
-      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>`,
-      '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
-      `<< /Length ${encoder.encode(content).length} >>\nstream\n${content}\nendstream`,
-    ];
-    const offsets: number[] = [];
-    let pdf = '%PDF-1.4\n';
-
-    objects.forEach((objectContent, index) => {
-      offsets.push(encoder.encode(pdf).length);
-      pdf += `${index + 1} 0 obj\n${objectContent}\nendobj\n`;
-    });
-
-    const xrefOffset = encoder.encode(pdf).length;
-    pdf += `xref\n0 ${objects.length + 1}\n`;
-    pdf += '0000000000 65535 f \n';
-    pdf += offsets
-      .map((offset) => `${offset.toString().padStart(10, '0')} 00000 n \n`)
-      .join('');
-    pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
-
-    return pdf;
+  private createLoomProductionDetailsUrl(loomId: string): string {
+    return new URL(`/dettaglio-produzione/${encodeURIComponent(loomId)}`, window.location.origin).toString();
   }
 
-  private createPdfTextCommand(x: number, y: number, fontSize: number, text: string): string {
-    return `BT /F1 ${fontSize} Tf ${x.toFixed(2)} ${y.toFixed(2)} Td (${this.escapePdfText(text)}) Tj ET`;
+  private chunkArray<T>(items: T[], chunkSize: number): T[][] {
+    const chunks: T[][] = [];
+
+    for (let index = 0; index < items.length; index += chunkSize) {
+      chunks.push(items.slice(index, index + chunkSize));
+    }
+
+    return chunks;
   }
 
-  private wrapPdfText(text: string, maxLength: number = 46): string[] {
-    const words = text.split(' ');
-    const lines: string[] = [];
-    let currentLine = '';
-
-    for (const word of words) {
-      const nextLine = currentLine ? `${currentLine} ${word}` : word;
-
-      if (nextLine.length <= maxLength) {
-        currentLine = nextLine;
-        continue;
-      }
-
-      if (currentLine) {
-        lines.push(currentLine);
-      }
-
-      currentLine = word;
+  private truncatePdfText(value: string, maxLength: number): string {
+    if (value.length <= maxLength) {
+      return value;
     }
 
-    if (currentLine) {
-      lines.push(currentLine);
-    }
-
-    return lines;
+    return `${value.slice(0, maxLength - 3)}...`;
   }
 
   private formatPdfValue(value: string | number | undefined, unit: string = ''): string {
@@ -563,17 +829,6 @@ export class ItemDetailsPage implements OnInit {
 
     return unit ? `${value} ${unit}` : `${value}`;
   }
-
-  private escapePdfText(value: string): string {
-    return value
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^\x20-\x7E]/g, '')
-      .replace(/\\/g, '\\\\')
-      .replace(/\(/g, '\\(')
-      .replace(/\)/g, '\\)');
-  }
-
   private getSafeFileName(value: string | undefined): string {
     const normalizedValue = value
       ?.normalize('NFD')
@@ -588,21 +843,21 @@ export class ItemDetailsPage implements OnInit {
   public getMetersToGo(): number | null {
     const item = this.item();
 
-    if (!item || !item.totalMeters || !item.metersRun) {
+    if (!item || item.totalMeters === undefined || item.totalMeters === null) {
       return null;
     }
 
-    return item.totalMeters - item.metersRun;
+    return Math.max(item.totalMeters - (item.metersRun ?? 0), 0);
   }
 
   public getPercentage(): number | null {
     const item = this.item();
 
-    if (!item || !item.totalMeters || !item.metersRun) {
+    if (!item || item.totalMeters === undefined || item.totalMeters === null || item.totalMeters <= 0) {
       return null;
     }
 
-    const percentage = (item.metersRun / item.totalMeters) * 100;
+    const percentage = ((item.metersRun ?? 0) / item.totalMeters) * 100;
     return Math.round(percentage * 100) / 100; // Round to two decimal places
   }
 
@@ -809,6 +1064,62 @@ export class ItemDetailsPage implements OnInit {
     return this.remainingMetersToAssign();
   }
 
+  private recalculateItemTotalMetersFromArrangement(arrangement: Arrangement): void {
+    const piecesCount = this.toFiniteNumber(arrangement.piecesCount);
+    const pieceLength = this.toFiniteNumber(arrangement.pieceLength);
+
+    if (piecesCount === null || pieceLength === null) {
+      return;
+    }
+
+    const totalMeters = Math.round(piecesCount * pieceLength);
+    const currentItem = this.item();
+
+    if (!currentItem) {
+      return;
+    }
+
+    this.item.set({
+      ...currentItem,
+      totalMeters,
+    });
+    this.updateRemainingMetersToAssignFromTotalMeters(totalMeters);
+  }
+
+  private updateRemainingMetersToAssignFromTotalMeters(totalMeters: number): void {
+    this.remainingMetersToAssign.set(Math.max(totalMeters - this.calculateAssignedMeters(), 0));
+  }
+
+  private calculateAssignedMeters(): number {
+    const processIds = new Set<string>();
+    let assignedMeters = 0;
+
+    for (const assignment of this.itemAssignments()) {
+      if (!assignment.processId || processIds.has(assignment.processId)) {
+        continue;
+      }
+
+      processIds.add(assignment.processId);
+      const process = this.getAssignmentProcess(assignment);
+
+      if (process?.totalMeters !== undefined && process.totalMeters !== null) {
+        assignedMeters += process.totalMeters;
+      }
+    }
+
+    return assignedMeters;
+  }
+
+  private toFiniteNumber(value: unknown): number | null {
+    if (value === undefined || value === null || value === '') {
+      return null;
+    }
+
+    const numericValue = Number(value);
+
+    return Number.isFinite(numericValue) ? numericValue : null;
+  }
+
   private isTemporaryProcessStartDate(value: string): boolean {
     const date = new Date(value);
     const temporaryDate = new Date(TEMPORARY_PROCESS_START_DATE);
@@ -948,6 +1259,23 @@ export class ItemDetailsPage implements OnInit {
     return row.state === 'In lavorazione'
       ? 'Produzione abbandonata con successo'
       : 'Assegnazione eliminata con successo';
+  }
+
+  public openSaveChangesDialog(): void {
+    const dialogRef = this.dialog.open<DialogInformativeComponent, DialogInformativeData>(DialogInformativeComponent, {
+      panelClass: 'informative-dialog-panel',
+      width: '520px',
+      maxWidth: 'calc(100vw - 48px)',
+      autoFocus: false,
+      data: {
+        title: 'Salvataggio modifiche',
+        message: 'Le modifiche apportate all\'articolo sono state salvate con successo.',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.isEditEnabled = false;
+    });
   }
 
 }

@@ -1,0 +1,44 @@
+type: object
+
+required:
+  - description
+  - date
+  - importance
+
+properties:
+  id:
+    type: string
+    description: Identificativo MongoDB generato dal server
+    readOnly: true
+  description:
+      type: string
+      description: Descrizione dell'evento
+  date:
+    type: string
+    format: date-time
+    description: Data e ora dell'evento
+  importance:
+      type: string
+      enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+  assignmentId:
+    type: string
+    description: Identificativo dell'assegnazione dell'evento
+  loomId:
+    type: string
+    description: Identificativo del loom associato all'evento
+  itemId:
+    type: string
+    description: Identificativo dell'item associato all'evento
+  processId:
+    type: string
+    description: Identificativo del processo associato all'evento
+  arrangementId:
+    type: string
+    description: Identificativo della disposizione associata all'evento
+  type:
+    type: string
+    description: Tipo di evento
+

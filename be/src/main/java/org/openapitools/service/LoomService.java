@@ -29,6 +29,9 @@ public class LoomService {
     @Autowired
     private ProcessService processService;
 
+    @Autowired
+    private CalendarEventService calendarEventService;
+
     private final LoomRepository repository;
 
     public LoomService(LoomRepository repository) {
@@ -143,7 +146,9 @@ public class LoomService {
 
         item.getProcessing().set(processIndex, savedProcess);
         item.setMetersRun(valueOrZero(item.getMetersRun()) + metersToAdd);
+        this.calendarEventService.createOrUpdateLoomExpectedEndDateEvent(assignmentEntity, loom.get(), savedProcess);
         updateItemExpectedEndDateFromAssignments(item, assignmentEntity);
+        this.calendarEventService.createOrUpdateItemExpectedEndDateEvent(item);
         this.itemService.save(item);
 
         return loom;

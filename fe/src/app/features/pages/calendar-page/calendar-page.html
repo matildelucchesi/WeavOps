@@ -1,19 +1,56 @@
+<app-decorative-lines-component
+  [verticalPositions]="['30%', '31%', '65%','81%', '84%', '82%']"
+  [horizontalPositions]="['10%', '11.5%', '30%', '53%', '56%', '94%']">
+</app-decorative-lines-component>
+
+<div class="title-wrapper">
+      <app-title-page-component
+        title="Calendario"
+        iconName="calendar_today"
+        [imageWidth]="30"
+        [imageHeight]="30">
+        </app-title-page-component>  
+</div>
+
 <section class="calendar-page" aria-labelledby="calendar-title">
   <div class="calendar-header">
-    <div>
-      <p class="calendar-eyebrow">Calendario</p>
-      <h1 id="calendar-title">{{ monthLabel }}</h1>
+    <div class="calendar-month-wrapper">
+      <h1 id="calendar-title" style="align-self: center">{{ monthLabel() }}</h1>
+      <div class="calendar-navigation" aria-label="Navigazione mesi">
+        <button
+          type="button"
+          class="calendar-nav-button calendar-nav-icon-button"
+          aria-label="Mostra mese precedente"
+          (click)="showPreviousMonth()">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <button
+          type="button"
+          class="calendar-today-button"
+          (click)="showTodayMonth()">
+          Oggi
+        </button>
+
+        <button
+          type="button"
+          class="calendar-nav-button calendar-nav-icon-button"
+          aria-label="Mostra mese successivo"
+          (click)="showNextMonth()">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
     </div>
   </div>
 
-  <div class="calendar-grid" role="grid" [attr.aria-label]="'Calendario ' + monthLabel">
+  <div class="calendar-grid" role="grid" [attr.aria-label]="'Calendario ' + monthLabel()">
     @for (weekDay of weekDays; track weekDay) {
       <div class="calendar-weekday" role="columnheader">
         {{ weekDay }}
       </div>
     }
 
-    @for (day of calendarDays; track day.ariaLabel) {
+    @for (day of calendarDays(); track day.ariaLabel) {
       <div
         class="calendar-day"
         role="gridcell"
@@ -21,34 +58,19 @@
         [class.calendar-day-today]="day.isToday"
         [attr.aria-label]="day.ariaLabel">
         <span class="calendar-day-number">{{ day.dayNumber }}</span>
+        @if (day.events.length > 0) {
+          <div class="calendar-events" aria-label="Eventi del giorno">
+            @for (event of day.events; track event.id ?? event.date + event.description + $index) {
+              <span
+                class="calendar-event-chip {{ getCalendarEventChipClass(event) }}"
+                [attr.title]="event.description">
+                {{ event.description }}
+              </span>
+            }
+          </div>
+        }
       </div>
     }
   </div>
 
-  <div class="calendar-navigation" aria-label="Navigazione mesi">
-    <button
-      type="button"
-      class="calendar-nav-button"
-      aria-label="Mostra mese precedente"
-      (click)="showPreviousMonth()">
-      <mat-icon>chevron_left</mat-icon>
-      <span>Mese precedente</span>
-    </button>
-
-    <button
-      type="button"
-      class="calendar-today-button"
-      (click)="showTodayMonth()">
-      Oggi
-    </button>
-
-    <button
-      type="button"
-      class="calendar-nav-button"
-      aria-label="Mostra mese successivo"
-      (click)="showNextMonth()">
-      <span>Mese successivo</span>
-      <mat-icon>chevron_right</mat-icon>
-    </button>
-  </div>
 </section>

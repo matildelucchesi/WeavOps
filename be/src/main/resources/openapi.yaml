@@ -1288,6 +1288,128 @@ paths:
       - application/json
       x-tags:
       - tag: Auth
+  /calendar-events:
+    get:
+      operationId: getCalendarEvents
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/calendar-event"
+                type: array
+          description: Lista calendar events
+      summary: Recupera tutti i calendar events
+      tags:
+      - CalendarEvents
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CalendarEvents
+    post:
+      operationId: createCalendarEvent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/calendar-event"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/calendar-event"
+          description: Calendar Event creato
+        "400":
+          description: Richiesta non valida
+      summary: Crea un calendar event
+      tags:
+      - CalendarEvents
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CalendarEvents
+  /calendar-events/{id}:
+    delete:
+      operationId: deleteCalendarEvent
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Calendar Event eliminato
+        "404":
+          description: Calendar Event non trovato
+      summary: Elimina un calendar event
+      tags:
+      - CalendarEvents
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CalendarEvents
+    get:
+      operationId: getCalendarEventById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/calendar-event"
+          description: Calendar Event trovato
+        "404":
+          description: Calendar Event non trovato
+      summary: Recupera un calendar event tramite ID
+      tags:
+      - CalendarEvents
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CalendarEvents
+    put:
+      operationId: updateCalendarEvent
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/calendar-event"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/calendar-event"
+          description: Calendar Event aggiornato
+        "400":
+          description: Richiesta non valida
+        "404":
+          description: Calendar Event non trovato
+      summary: Aggiorna un calendar event
+      tags:
+      - CalendarEvents
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CalendarEvents
 components:
   schemas:
     loom:
@@ -1769,6 +1891,59 @@ components:
       required:
       - password
       - username
+      type: object
+    calendar-event:
+      example:
+        date: 2000-01-23T04:56:07.000+00:00
+        arrangementId: arrangementId
+        itemId: itemId
+        processId: processId
+        importance: LOW
+        loomId: loomId
+        description: description
+        id: id
+        type: type
+        assignmentId: assignmentId
+      properties:
+        id:
+          description: Identificativo MongoDB generato dal server
+          readOnly: true
+          type: string
+        description:
+          description: Descrizione dell'evento
+          type: string
+        date:
+          description: Data e ora dell'evento
+          format: date-time
+          type: string
+        importance:
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+          type: string
+        assignmentId:
+          description: Identificativo dell'assegnazione dell'evento
+          type: string
+        loomId:
+          description: Identificativo del loom associato all'evento
+          type: string
+        itemId:
+          description: Identificativo dell'item associato all'evento
+          type: string
+        processId:
+          description: Identificativo del processo associato all'evento
+          type: string
+        arrangementId:
+          description: Identificativo della disposizione associata all'evento
+          type: string
+        type:
+          description: Tipo di evento
+          type: string
+      required:
+      - date
+      - description
+      - importance
       type: object
     deleteMultiLooms_200_response:
       example:

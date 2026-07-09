@@ -19,12 +19,25 @@
   <div class="content-wrapper">
     <div class="text-pattern">
       @if(!isTerminated){
-      <div class="button-wrapper">
-      <button type="button" class="button-style button-margin" (click)="toggleEditMode()">
-          <mat-icon style="font-size: 20px; align-content: center;">{{ editButtonIcon }}</mat-icon>
-          {{ editButtonLabel }}
-      </button>
-    </div>
+        @if(!isEditEnabled){
+          <div class="button-wrapper">
+            <button type="button" class="button-style button-margin" (click)="toggleEditMode()">
+                <mat-icon style="font-size: 20px; align-content: center;">{{ editButtonIcon }}</mat-icon>
+                {{ editButtonLabel }}
+            </button>
+          </div>
+        } @else {
+          <div class="button-wrapper edit-actions">
+            <button type="button" class="button-style" (click)="saveChanges()">
+              <mat-icon style="font-size: 20px; align-content: center;">save</mat-icon>
+              Salva Modifiche
+            </button>
+            <button type="button" class="button-style cancel-edit-button" (click)="cancelEditMode()">
+              <mat-icon style="font-size: 20px; align-content: center;">close</mat-icon>
+              Annulla
+            </button>
+          </div>
+        }
   } @else {
     <div class="button-wrapper">
       <div [class]="'item-status-message ' + itemStatusMessageClass">
@@ -61,7 +74,8 @@
                     type="number"
                     id="piecesCount"
                     name="piecesCount"
-                    [(ngModel)]="arrangement.piecesCount"
+                    [ngModel]="arrangement.piecesCount"
+                    (ngModelChange)="onPiecesCountChange(arrangement, $event)"
                     [readonly]="!isEditEnabled"
                     [class.input-readonly]="!isEditEnabled">
                 </div>
@@ -71,7 +85,8 @@
                     type="number"
                     id="pieceLength"
                     name="pieceLength"
-                    [(ngModel)]="arrangement.pieceLength"
+                    [ngModel]="arrangement.pieceLength"
+                    (ngModelChange)="onPieceLengthChange(arrangement, $event)"
                     [readonly]="!isEditEnabled"
                     [class.input-readonly]="!isEditEnabled">
                 </div>
@@ -158,6 +173,7 @@
                     [class.input-readonly]="!isEditEnabled">
                 </div>
                 <div class="form-group"></div>
+                @if(!isEditEnabled){
                 <div class="button-wrapper">
                   <button
                     type="button"
@@ -177,6 +193,7 @@
                     </span>
                   </button>
                 </div>
+              }
               </div>
             </div>
             
@@ -201,7 +218,8 @@
                       type="number"
                       id="totalMeters"
                       name="totalMeters"
-                      [(ngModel)]="item.totalMeters"
+                      [ngModel]="item.totalMeters"
+                      (ngModelChange)="onItemTotalMetersChange(item, $event)"
                       [readonly]="!isEditEnabled"
                       [class.input-readonly]="!isEditEnabled">
                   </div>
@@ -293,6 +311,7 @@
                 </div>
                 <div class="form-group">
                 </div>
+                @if(!isEditEnabled){
                 <div class="button-wrapper">
                   <button
                     type="button"
@@ -313,6 +332,7 @@
                     </span>
                   </button>
                 </div>
+              }
               </div>
               </div>
             </form>
@@ -324,7 +344,7 @@
           <img class="loom-icon" src="/icon/loomicon-violet.png" width="40" height="40" alt="Loom Icon">
           <h2>Processi di Produzione</h2>
         </div>
-        @if(!isTerminated && calculateRemainingMetersToAssign() > 0){
+        @if(calculateRemainingMetersToAssign() > 0){
         <div class="button-wrapper">
           <button
           type="button"
@@ -340,7 +360,7 @@
             [columns]="processesColumns"
             [rows]="rows()"
             [enableMultiSelection]="false"
-            [actions]="assignmentActions"
+            [actions]="isEditEnabled ? [] : assignmentActions"
             [actionColumnHeader]="''"
             (actionClick)="onTableAction($event)"
             [sortByCreationDate]="true">
