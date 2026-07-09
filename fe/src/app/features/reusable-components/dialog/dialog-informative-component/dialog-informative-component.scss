@@ -1,0 +1,51 @@
+:host{
+    display: block;
+}
+
+.wrapper{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: var(--weavops-color-surface);
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.icon{
+    font-size: 48px;
+    color: var(--weavops-color-primary);
+    margin-bottom: 16px;
+    width: 48px;
+    height: 48px;
+}
+
+.content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+}
+
+hr{
+    border: 0;
+    border-color: var(--weavops-color-primary);
+    height: 0.5px;
+    background-color: var(--weavops-color-primary);
+    color: var(--weavops-color-primary);
+    width: 95%;
+}
+
+.message{
+    font-size: 13px;
+    color: var(--weavops-color-primary);
+    margin-top: 16px;
+}
+
+.close{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}

@@ -14,8 +14,6 @@ properties:
   isAssigned:
     type: boolean
     default: false
-  actualItemId:
-    type: string
 
   status:
     type: string

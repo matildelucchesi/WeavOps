@@ -1,3 +1,5 @@
+@use '../dialog-alert' as dialogAlert;
+
 :host{
     display: block;
 }
@@ -68,19 +70,21 @@
 }
 
 .cancel-button{
-    background-color: var(--weavops-color-primary-soft);
-    border: 1px solid var(--weavops-color-primary);
-    color: var(--weavops-color-primary);
+    @include dialogAlert.cancel-button;
 }
 
 .confirm-button{
-    background-color: var(--weavops-color-primary);
+    background-color: var(--weavops-color-accent);
     color: var(--weavops-color-surface);
 }
 
 .cancel-button:hover,
 .confirm-button:hover{
     opacity: 0.8;
+}
+
+.cancel-button:hover{
+    @include dialogAlert.cancel-button-hover;
 }
 
 .cancel-button:disabled,

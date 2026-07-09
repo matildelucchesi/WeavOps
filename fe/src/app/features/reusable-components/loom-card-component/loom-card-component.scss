@@ -23,9 +23,46 @@
     color: var(--weavops-color-black);
 }
 
-.loom-status{
-    font-size: 13px;
-    color: var(--weavops-color-black);
+.loom-status-chip{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 63px;
+    height: 16px;
+    padding: 0 12px;
+    border: 1px solid var(--loom-status-chip-border-color);
+    border-radius: 999px;
+    background-color: var(--loom-status-chip-background-color);
+    color: var(--loom-status-chip-text-color);
+    font-size:10px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.loom-status-wrapper{
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.loom-status-chip-working{
+    --loom-status-chip-background-color: var(--weavops-color-blue-soft);
+    --loom-status-chip-text-color: var(--weavops-color-blue);
+    --loom-status-chip-border-color: var(--weavops-color-blue);
+}
+
+.loom-status-chip-stopped{
+    --loom-status-chip-background-color: var(--weavops-color-grey);
+    --loom-status-chip-text-color: var(--weavops-color-grey-dark);
+    --loom-status-chip-border-color: var(--weavops-color-grey-dark);
+}
+
+.loom-status-chip-maintenance{
+    --loom-status-chip-background-color: var(--weavops-color-accent-lighter);
+    --loom-status-chip-text-color: var(--weavops-color-accent-deep);
+    --loom-status-chip-border-color: var(--weavops-color-accent-deep);
 }
 
 .loom-image{
@@ -34,3 +71,15 @@
     object-fit: cover;
 }
 
+.loom-days{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 18px;
+    padding: 2px 8px;
+    color: black;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+}

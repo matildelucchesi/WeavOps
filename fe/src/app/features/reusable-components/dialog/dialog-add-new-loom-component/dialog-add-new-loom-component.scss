@@ -1,3 +1,5 @@
+@use '../dialog-alert' as dialogAlert;
+
 :host{
     display: block;
 }
@@ -56,6 +58,14 @@
 .close-button:hover{
     background-color: var(--weavops-color-primary);
     opacity: 0.8;
+}
+
+.close-button.cancel-button{
+    @include dialogAlert.cancel-button;
+}
+
+.close-button.cancel-button:hover{
+    @include dialogAlert.cancel-button-hover;
 }
 
 .body{

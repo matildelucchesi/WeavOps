@@ -1,33 +1,31 @@
 <div class="wrapper" [attr.data-item-id]="item?.id">
     <div class="head">
-        <mat-icon class="icon" aria-hidden="true">error</mat-icon>
+        <mat-icon class="icon" aria-hidden="true">help</mat-icon>
     </div>
     @if(!isConfirmed) {
-    <div class="body">
-            <div>
-            <p>Vuoi procedere con la terminazione della produzione dell'articolo? <br> ATTENZIONE: Questa azione è irreversibile</p>
+        <p class="first-text">Vuoi procedere con la terminazione della produzione dell'articolo?</p>
+        <div class="body" style="padding:20px">
+            <p class="second-text">ATTENZIONE: Questa azione e irreversibile</p>
         </div>
-    </div>
-    <div class="actions">
-        <button class="cancel-button" type="button" (click)="onCloseDialog()">
-            Annulla
-        </button>
-        <button class="confirm-button" type="button" (click)="onConfirm()">
-            Procedi
-        </button>
-    </div> 
-    }@else{
-            <div class="why">
-                <p>Perchè desideri terminare la produzione?</p>
-            </div>
-            <div class="actions">
+        <div class="actions">
+            <button class="cancel-button" type="button" (click)="onCloseDialog()">
+                Annulla
+            </button>
+            <button class="confirm-button" type="button" (click)="onConfirm()">
+                Procedi
+            </button>
+        </div>
+    } @else {
+        <div class="why">
+            <p>Desideri terminare la produzione marcando l'articolo come...</p>
+        </div>
+        <div class="actions">
             <button class="abandoned-button" type="button" (click)="onSelectState(itemState.Abandoned)">
                 Articolo Abbandonato
             </button>
             <button class="completed-button" type="button" (click)="onSelectState(itemState.Completed)">
                 Articolo Completato
             </button>
-        </div> 
-        }
-   
+        </div>
+    }
 </div>

@@ -24,6 +24,12 @@ properties:
     type: number
   metersToGo:
     type: number
+  totalPieces:
+    type: number
+  piecesRun:
+    type:  number
+  metersPerPiece:
+    type: number
   startDate:
     type: string
     format: date-time

@@ -25,7 +25,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("process")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-29T16:01:23.408857700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-09T10:41:00.278911500+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class Process {
 
   private @Nullable String id;
@@ -39,6 +39,12 @@ public class Process {
   private BigDecimal metersRun;
 
   private BigDecimal metersToGo;
+
+  private @Nullable BigDecimal totalPieces;
+
+  private @Nullable BigDecimal piecesRun;
+
+  private @Nullable BigDecimal metersPerPiece;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private OffsetDateTime startDate;
@@ -197,6 +203,69 @@ public class Process {
     this.metersToGo = metersToGo;
   }
 
+  public Process totalPieces(@Nullable BigDecimal totalPieces) {
+    this.totalPieces = totalPieces;
+    return this;
+  }
+
+  /**
+   * Get totalPieces
+   * @return totalPieces
+   */
+  @Valid 
+  @Schema(name = "totalPieces", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("totalPieces")
+  public @Nullable BigDecimal getTotalPieces() {
+    return totalPieces;
+  }
+
+  @JsonProperty("totalPieces")
+  public void setTotalPieces(@Nullable BigDecimal totalPieces) {
+    this.totalPieces = totalPieces;
+  }
+
+  public Process piecesRun(@Nullable BigDecimal piecesRun) {
+    this.piecesRun = piecesRun;
+    return this;
+  }
+
+  /**
+   * Get piecesRun
+   * @return piecesRun
+   */
+  @Valid 
+  @Schema(name = "piecesRun", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("piecesRun")
+  public @Nullable BigDecimal getPiecesRun() {
+    return piecesRun;
+  }
+
+  @JsonProperty("piecesRun")
+  public void setPiecesRun(@Nullable BigDecimal piecesRun) {
+    this.piecesRun = piecesRun;
+  }
+
+  public Process metersPerPiece(@Nullable BigDecimal metersPerPiece) {
+    this.metersPerPiece = metersPerPiece;
+    return this;
+  }
+
+  /**
+   * Get metersPerPiece
+   * @return metersPerPiece
+   */
+  @Valid 
+  @Schema(name = "metersPerPiece", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("metersPerPiece")
+  public @Nullable BigDecimal getMetersPerPiece() {
+    return metersPerPiece;
+  }
+
+  @JsonProperty("metersPerPiece")
+  public void setMetersPerPiece(@Nullable BigDecimal metersPerPiece) {
+    this.metersPerPiece = metersPerPiece;
+  }
+
   public Process startDate(OffsetDateTime startDate) {
     this.startDate = startDate;
     return this;
@@ -338,6 +407,9 @@ public class Process {
         Objects.equals(this.totalMeters, process.totalMeters) &&
         Objects.equals(this.metersRun, process.metersRun) &&
         Objects.equals(this.metersToGo, process.metersToGo) &&
+        Objects.equals(this.totalPieces, process.totalPieces) &&
+        Objects.equals(this.piecesRun, process.piecesRun) &&
+        Objects.equals(this.metersPerPiece, process.metersPerPiece) &&
         Objects.equals(this.startDate, process.startDate) &&
         Objects.equals(this.endDate, process.endDate) &&
         Objects.equals(this.days, process.days) &&
@@ -348,7 +420,7 @@ public class Process {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, speed, efficiency, totalMeters, metersRun, metersToGo, startDate, endDate, days, expectedEndDate, loom, itemHitsPerDm);
+    return Objects.hash(id, speed, efficiency, totalMeters, metersRun, metersToGo, totalPieces, piecesRun, metersPerPiece, startDate, endDate, days, expectedEndDate, loom, itemHitsPerDm);
   }
 
   @Override
@@ -361,6 +433,9 @@ public class Process {
     sb.append("    totalMeters: ").append(toIndentedString(totalMeters)).append("\n");
     sb.append("    metersRun: ").append(toIndentedString(metersRun)).append("\n");
     sb.append("    metersToGo: ").append(toIndentedString(metersToGo)).append("\n");
+    sb.append("    totalPieces: ").append(toIndentedString(totalPieces)).append("\n");
+    sb.append("    piecesRun: ").append(toIndentedString(piecesRun)).append("\n");
+    sb.append("    metersPerPiece: ").append(toIndentedString(metersPerPiece)).append("\n");
     sb.append("    startDate: ").append(toIndentedString(startDate)).append("\n");
     sb.append("    endDate: ").append(toIndentedString(endDate)).append("\n");
     sb.append("    days: ").append(toIndentedString(days)).append("\n");

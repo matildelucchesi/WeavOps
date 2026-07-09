@@ -13,7 +13,7 @@
             @if(meters){
                 <div style="display: flex; align-items: center; gap: 5px;">
                     <img class="dialog-icon" ngSrc="/icon/meters-icon.png" width="20" height="20" alt="Meters Icon">
-                    <p class="dialog-title">Aggiungi Metri</p>
+                    <p class="dialog-title">Aggiungi Numero Pezze</p>
                 </div>
             }
             @if (serialNumberChange) {
@@ -26,8 +26,8 @@
                 <p class="loom-reference">{{ 'Telaio ' + loom.serialNumber }}</p>
             }
         </div>
-        @if(!change && !meters && !serialNumberChange) {
-        <button class="close-button" type="button" (click)="close()">
+        @if((!change && !meters && !serialNumberChange) || isInitialMetersView) {
+        <button class="close-button cancel-button" type="button" (click)="close()">
             Annulla
         </button>
         } 
@@ -52,13 +52,8 @@
                         <button
                             class="action-button"
                             type="button"
-                            [disabled]="isLoomArrangementActionDisabled()"
-                            [attr.aria-disabled]="isLoomArrangementActionDisabled()">
-                            @if (!isLoomArrangementActionDisabled()) {
+                            (click)="openProductionPage()">
                                 <img ngSrc="/icon/work-icon-violet.png" width="40" height="40" alt="Work Icon">
-                            }@else {
-                                <img ngSrc="/icon/work-icon-grey.png" width="40" height="40" alt="Work Icon">
-                            }
                     </button>
                     <p class="action-button-label">Visualizza Lavorazione</p>
                 </div>
@@ -67,7 +62,7 @@
                     <button class="action-button" (click)="openMeters()">
                         <img ngSrc="/icon/meters-icon.png" width="40" height="40" alt="Meters Icon">
                     </button>
-                    <p class="action-button-label">Aggiungi Metri</p>
+                    <p class="action-button-label">Aggiungi Pezze Prodotte</p>
                 </div>
             </div>
             @if (modify) {
@@ -86,10 +81,10 @@
                         <button class="state-option-button" [class.current-state]="isCurrentState(loomStatus.Stopped)" [class.selected]="loomState === loomStatus.Stopped" (click)="setLoomState(loomStatus.Stopped)">FERMO</button>
                     </div>
                     <div class="state-option">
-                        <button class="state-option-button" [class.current-state]="isCurrentState(loomStatus.Working)" [class.selected]="loomState === loomStatus.Working" (click)="setLoomState(loomStatus.Working)">A LAVORO</button>
+                        <button class="state-option-button" [class.current-state]="isCurrentState(loomStatus.Working)" [class.selected]="loomState === loomStatus.Working" (click)="setLoomState(loomStatus.Working)">IN LAVORAZIONE</button>
                     </div>
                     <div class="state-option">
-                        <button class="state-option-button" [class.current-state]="isCurrentState(loomStatus.Maintenance)" [class.selected]="loomState === loomStatus.Maintenance" (click)="setLoomState(loomStatus.Maintenance)">IN MANUTENZIONE</button>
+                        <button class="state-option-button" [class.current-state]="isCurrentState(loomStatus.Maintenance)" [class.selected]="loomState === loomStatus.Maintenance" (click)="setLoomState(loomStatus.Maintenance)">MANUTENZIONE</button>
                     </div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; width: 100%;">
@@ -100,28 +95,41 @@
         @if (meters) {
             <div class="meters-section">
                 <div class="meters-input">
-                    <mat-form-field class="meters-form-field" appearance="outline">
-                        <mat-label>Metri prodotti</mat-label>
-                        <input type="number" matInput class="meters-input-field">
-                    </mat-form-field>
+                    <div class="form-group meters-form-group">
+                        <label for="piecesProduced">Numero pezze prodotte</label>
+                        <input
+                            type="number"
+                            id="piecesProduced"
+                            name="piecesProduced"
+                            min="1"
+                            step="1"
+                            required
+                            [(ngModel)]="piecesProduced"
+                            class="meters-input-field">
+                    </div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; width: 100%;">
-                    <button class="confirm-button" (click)="close()">Conferma</button>
+                    <button
+                        class="confirm-button"
+                        type="button"
+                        [disabled]="isAddingPieces"
+                        (click)="addPieces()">Conferma</button>
                 </div>
             </div>
         }
         @if (serialNumberChange) {
             <div class="serial-number-section">
                 <div class="serial-number-input">
-                    <mat-form-field class="serial-number-form-field" appearance="outline">
-                        <mat-label>Numero Seriale</mat-label>
+                    <div class="form-group serial-number-form-group">
+                        <label for="serialNumber">Numero Seriale</label>
                         <input
                             type="text"
-                            matInput
+                            id="serialNumber"
+                            name="serialNumber"
                             class="serial-number-input-field"
                             [value]="serialNumber"
                             (input)="setSerialNumber($event)">
-                    </mat-form-field>
+                    </div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; width: 100%;">
                     <button class="confirm-button" (click)="changeSerialNumber()">Conferma</button>

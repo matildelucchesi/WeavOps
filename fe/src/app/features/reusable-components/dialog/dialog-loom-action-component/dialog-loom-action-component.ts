@@ -1,4 +1,5 @@
 import { Component, Input, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { NgOptimizedImage } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +13,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 export interface DialogLoomActionData {
   loom?: Loom;
   modify?: boolean;
+  initialView?: 'meters';
 }
 
 @Component({
@@ -23,6 +25,7 @@ export interface DialogLoomActionData {
     MatInputModule,
     MatFormFieldModule,
     MatSnackBarModule,
+    FormsModule,
 ],
   standalone: true,
   templateUrl: './dialog-loom-action-component.html',
@@ -36,12 +39,15 @@ export class DialogLoomActionComponent {
 
   readonly loom = this.dialogData?.loom ?? null;
   public readonly loomStatus = Loom.StatusEnum;
+  public readonly isInitialMetersView = this.dialogData?.initialView === 'meters';
 
   public change: boolean = false;
-  public meters: boolean = false;
+  public meters: boolean = this.isInitialMetersView;
   public serialNumberChange: boolean = false;
   public loomState: Loom.StatusEnum = this.loom?.status ?? Loom.StatusEnum.Stopped;
   public serialNumber: string = this.loom?.serialNumber ?? '';
+  public piecesProduced: number | null = null;
+  public isAddingPieces: boolean = false;
 
   @Input() modify: boolean = this.dialogData?.modify ?? false;
 
@@ -189,6 +195,60 @@ export class DialogLoomActionComponent {
       horizontalPosition: 'end',
       verticalPosition: 'bottom',
       panelClass: ['error-snackbar'],
+    });
+  }
+
+  public openProductionPage(): void {
+    if (!this.loom) {
+      console.error('Loom data is missing');
+      return;
+    }
+
+    if (!this.loom.id) {
+      console.error('Loom id is missing');
+      return;
+    }
+
+    const loomId = this.loom.id;
+    const url = `/dettaglio-produzione/${loomId}`;
+    window.location.href = url;
+  }
+
+  addPieces(): void {
+    if (this.isAddingPieces) {
+      return;
+    }
+
+    const piecesProduced = Number(this.piecesProduced);
+
+    if (!Number.isInteger(piecesProduced) || piecesProduced <= 0) {
+      console.error('Invalid number of pieces produced');
+      this.showErrorSnackbar('Inserisci un numero di pezze valido');
+      return;
+    }
+
+    if (!this.loom) {
+      console.error('Loom data is missing');
+      return;
+    }
+
+    if (!this.loom.id) {
+      console.error('Loom id is missing');
+      return;
+    }
+
+    this.isAddingPieces = true;
+
+    this.loomService.addPieces(this.loom.id, piecesProduced).subscribe({
+      next: () => {
+        console.log('Pieces added successfully');
+        this.dialogRef?.close(true);
+      },
+      error: (err) => {
+        this.isAddingPieces = false;
+        console.error('Error adding pieces:', err);
+        this.showErrorSnackbar('Errore durante l\'aggiunta delle pezze');
+      }
     });
   }
 }

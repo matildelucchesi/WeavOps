@@ -1,3 +1,5 @@
+@use '../../dialog/dialog-alert' as dialogAlert;
+
 .close-button{
     cursor: pointer;
     border: none;
@@ -70,4 +72,35 @@
 .confirm-button:hover{
     --mdc-filled-button-container-color: #6f5603;
     background-color: #6f5603 !important;
+}
+
+.weavops-cancel-button{
+    --mdc-filled-button-container-color: var(--weavops-color-surface);
+    --mdc-filled-button-label-text-color: var(--weavops-color-primary);
+    --mat-filled-button-state-layer-color: var(--weavops-color-primary);
+    @include dialogAlert.cancel-button;
+    background-color: var(--weavops-color-surface) !important;
+    color: var(--weavops-color-primary) !important;
+}
+
+.weavops-cancel-button:hover{
+    --mdc-filled-button-container-color: var(--weavops-color-surface-muted);
+    @include dialogAlert.cancel-button-hover;
+}
+
+.close-button:disabled,
+.save-button:disabled,
+.cancel-button:disabled,
+.confirm-button:disabled,
+.weavops-cancel-button:disabled{
+    --mdc-filled-button-disabled-container-color: var(--weavops-color-grey-intermediate);
+    --mdc-filled-button-disabled-label-text-color: var(--weavops-color-surface);
+    --mdc-filled-button-container-color: var(--weavops-color-grey-intermediate);
+    --mdc-filled-button-label-text-color: var(--weavops-color-surface);
+    --mat-filled-button-state-layer-color: transparent;
+    background-color: var(--weavops-color-grey-intermediate) !important;
+    border-color: var(--weavops-color-grey-intermediate) !important;
+    color: var(--weavops-color-surface) !important;
+    cursor: not-allowed;
+    opacity: 1;
 }

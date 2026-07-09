@@ -30,6 +30,9 @@ public class ProcessMapper {
         dto.setLoom(entity.getLoom());
         dto.setDays(entity.getDays());
         dto.setItemHitsPerDm(toBigDecimal(entity.getItemHitsPerDm()));
+        dto.setMetersPerPiece(toBigDecimal(entity.getMetersPerPiece()));
+        dto.setPiecesRun(toBigDecimal(entity.getPiecesRun()));
+        dto.setTotalPieces(toBigDecimal(entity.getTotalPieces()));
         return dto;
     }
 
@@ -51,6 +54,9 @@ public class ProcessMapper {
         entity.setLoom(dto.getLoom());
         entity.setDays(dto.getDays());
         entity.setItemHitsPerDm(toInteger(dto.getItemHitsPerDm()));
+        entity.setMetersPerPiece(toInteger(dto.getMetersPerPiece()));
+        entity.setPiecesRun(toInteger(dto.getPiecesRun()));
+        entity.setTotalPieces(toInteger(dto.getTotalPieces()));
         return entity;
     }
 

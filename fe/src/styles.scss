@@ -29,6 +29,7 @@ $weavops-color-danger-bright: #dd0000;
 $weavops-color-danger-soft: #ffe1e1;
 $weavops-color-black: #000000;
 $weavops-color-grey: #e4dfdf;
+$weavops-color-grey-intermediate: #bfbcbc;
 $weavops-color-grey-dark: #404040;
 
 html {
@@ -54,6 +55,7 @@ html {
   --weavops-color-danger-soft: #{$weavops-color-danger-soft};
   --weavops-color-black: #{$weavops-color-black};
   --weavops-color-grey: #{$weavops-color-grey};
+  --weavops-color-grey-intermediate: #{$weavops-color-grey-intermediate};
   --weavops-color-grey-dark: #{$weavops-color-grey-dark};
   --weavops-color-blue: #{$weavops-color-blue};
   --weavops-color-blue-soft: #{$weavops-color-blue-soft};
@@ -207,6 +209,23 @@ body {
   overflow: hidden;
 }
 
+.item-alert-dialog-panel,
+.item-alert-dialog-panel .mat-mdc-dialog-container {
+  --mdc-dialog-container-color: transparent;
+  --mat-dialog-container-color: transparent;
+  --mat-dialog-container-shape: 10px;
+}
+
+.item-alert-dialog-panel .mat-mdc-dialog-surface,
+.item-alert-dialog-panel.mat-mdc-dialog-surface {
+  background-color: transparent !important;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 4px rgb(var(--weavops-rgb-black) / 0.25);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
 .assign-loom-dialog-panel .mat-mdc-dialog-surface {
   background-color: var(--weavops-color-surface);
   border-radius: 10px;
@@ -242,6 +261,19 @@ body {
 }
 
 .filter-dialog-panel .mat-mdc-dialog-container {
+  --mat-dialog-container-shape: 10px;
+}
+
+.informative-dialog-panel .mat-mdc-dialog-surface {
+  background-color: var(--weavops-color-surface);
+  border: 2px solid var(--weavops-color-primary);
+  border-radius: 10px;
+  box-shadow: 0 4px 4px rgb(var(--weavops-rgb-black) / 0.25);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.informative-dialog-panel .mat-mdc-dialog-container {
   --mat-dialog-container-shape: 10px;
 }
 

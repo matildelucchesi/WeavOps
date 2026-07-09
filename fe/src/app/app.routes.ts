@@ -9,7 +9,7 @@ import { CustomerPage } from './features/pages/customer-page/customer-page';
 import { CustomerDetailsPage } from './features/pages/customer-details-page/customer-details-page';
 import { CustomerItemsHistoryPage } from './features/pages/customer-items-history-page/customer-items-history-page';
 import { ItemAddNewPage } from './features/pages/item-add-new-page/item-add-new-page';
-import { ItemDetailsPage } from './features/pages/item-details-page/item-details-page';
+import { CalendarPage } from './features/pages/calendar-page/calendar-page';
 
 
 export const routes: Routes = [
@@ -37,6 +37,11 @@ export const routes: Routes = [
           .then((component) => component.LoomProductionDetailsPage),
       },
       {
+        path: 'cronologia-produzione/:id',
+        loadComponent: () => import('./features/pages/loom-history-page/loom-history-page')
+          .then((component) => component.LoomHistoryPage),
+      },
+      {
         path: 'articoli',
         component: ItemPage,
       },
@@ -46,7 +51,8 @@ export const routes: Routes = [
       },
       {
         path: 'dettaglio-articolo',
-        component: ItemDetailsPage,
+        loadComponent: () => import('./features/pages/item-details-page/item-details-page')
+          .then((component) => component.ItemDetailsPage),
       },
       {
         path: 'clienti',
@@ -65,10 +71,18 @@ export const routes: Routes = [
         component: CustomerDetailsPage,
       },
       {
+        path: 'calendario',
+        component: CalendarPage,
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full',
       },
+      {
+        path: '**',
+        redirectTo: 'home',
+      }
     ],
   },
 ];

@@ -30,4 +30,8 @@ export class LoomFacadeService {
   deleteMultiLooms(requestBody: Array<string>) {
     return this.loomApi.deleteMultiLooms({ requestBody });
   }
+
+  addPieces(id: string, pieces: number) {
+    return this.loomApi.addPieces({ id, pieces });
+  }
 }

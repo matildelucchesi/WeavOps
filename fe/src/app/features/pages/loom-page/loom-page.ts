@@ -1,6 +1,7 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { finalize } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, finalize, Subscription } from 'rxjs';
 import { TitlePageComponent } from '../../reusable-components/title-page-component/title-page-component';
 import { DecorativeLinesComponent } from '../../reusable-components/decorative-lines-component/decorative-lines-component';
 import { LoomTableRow } from '../../../table/table-row-interface/loom-table-row';
@@ -41,8 +42,15 @@ export class LoomPage implements OnInit, OnDestroy {
   private readonly loomTableService = inject(LoomTableService);
   private readonly loomService = inject(LoomFacadeService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private refreshLoaderTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private refreshLoaderStartedAt: number = 0;
+  private routeRefreshSubscription: Subscription | null = null;
+  private readonly refreshRowsOnWindowFocus = (): void => {
+    if (this.isLoomPageRoute()) {
+      this.loadLoomRows();
+    }
+  };
 
   public columns: TableColumn<LoomTableRow>[] = [
     { header: 'Numero Seriale', field: 'serialNumber' },
@@ -102,7 +110,13 @@ export class LoomPage implements OnInit, OnDestroy {
       id: 'production',
       label: 'Visualizza dettagli produzione',
       imageIcon: '/icon/work-icon-violet.png',
-      imageAlt: 'Cronologia articoli',
+      imageAlt: 'Dettagli produzione',
+    },
+    {
+      id: 'history',
+      label: 'Visualizza cronologia produzione',
+      icon: 'history',
+      iconColor: 'var(--weavops-color-primary)',
     },
     {
       id: 'edit',
@@ -125,11 +139,18 @@ export class LoomPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadLoomRows();
+    this.registerLoomRowsRefresh();
   }
 
   ngOnDestroy(): void {
     if (this.refreshLoaderTimeoutId) {
       clearTimeout(this.refreshLoaderTimeoutId);
+    }
+
+    this.routeRefreshSubscription?.unsubscribe();
+
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('focus', this.refreshRowsOnWindowFocus);
     }
   }
 
@@ -140,7 +161,7 @@ export class LoomPage implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((created) => {
       if (created) {
-        this.loadLoomRows(true, true);
+        this.loadLoomRows(true);
       }
     });
   }
@@ -162,7 +183,7 @@ export class LoomPage implements OnInit, OnDestroy {
         console.log('Visualizza dettagli produzione per telaio', event.row);
         break;
       case 'history':
-        //this.goToHistoryPage(event);
+        this.goToHistoryPage(event);
         console.log('Visualizza cronologia articoli per telaio', event.row);
         break;
       case 'edit':
@@ -176,7 +197,7 @@ export class LoomPage implements OnInit, OnDestroy {
     }
   }
 
-  public loadLoomRows(showLoader: boolean = false, reloadAfterLoader: boolean = false): void {
+  public loadLoomRows(showLoader: boolean = false): void {
     if (showLoader) {
       this.showRefreshLoader();
     }
@@ -184,7 +205,7 @@ export class LoomPage implements OnInit, OnDestroy {
     this.loomTableService.getRows().pipe(
       finalize(() => {
         if (showLoader) {
-          this.hideRefreshLoaderAfterMinimumDuration(reloadAfterLoader);
+          this.hideRefreshLoaderAfterMinimumDuration();
         }
       })
     ).subscribe({
@@ -210,17 +231,13 @@ export class LoomPage implements OnInit, OnDestroy {
     this.isRefreshingLooms.set(true);
   }
 
-  private hideRefreshLoaderAfterMinimumDuration(reloadAfterLoader: boolean = false): void {
+  private hideRefreshLoaderAfterMinimumDuration(): void {
     const elapsedMs = Date.now() - this.refreshLoaderStartedAt;
     const remainingMs = Math.max(this.refreshLoaderDurationMs - elapsedMs, 0);
 
     this.refreshLoaderTimeoutId = setTimeout(() => {
       this.refreshLoaderTimeoutId = null;
       this.isRefreshingLooms.set(false);
-
-      if (reloadAfterLoader) {
-        setTimeout(() => window.location.reload(), 0);
-      }
     }, remainingMs);
   }
 
@@ -278,7 +295,7 @@ export class LoomPage implements OnInit, OnDestroy {
         });
         dialogRef.afterClosed().subscribe((updated) => {
           if (updated) {
-            window.location.reload();
+            this.loadLoomRows(true);
           }
         });
     console.log(`Open dialog for action: ${action.id} on loom: ${row.serialNumber}`);
@@ -286,7 +303,27 @@ export class LoomPage implements OnInit, OnDestroy {
 
   public goToProductionDetailsPage(event: TableActionClick<LoomTableRow>): void {
     const loomId = this.getLoomId(event.row);
-    const url = `/dettaglio-produzione/${loomId}`;
-    window.location.href = url;
+    this.router.navigate(['/dettaglio-produzione', loomId]);
   }
+
+  public goToHistoryPage(event: TableActionClick<LoomTableRow>): void {
+    const loomId = this.getLoomId(event.row);
+    this.router.navigate(['/cronologia-produzione', loomId]);
+  }
+
+  private registerLoomRowsRefresh(): void {
+    this.routeRefreshSubscription = this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      filter(() => this.isLoomPageRoute()),
+    ).subscribe(() => this.loadLoomRows());
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('focus', this.refreshRowsOnWindowFocus);
+    }
+  }
+
+  private isLoomPageRoute(): boolean {
+    return this.router.url.split(/[?#]/)[0] === '/telai';
+  }
+  
 }

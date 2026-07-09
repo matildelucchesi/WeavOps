@@ -1,0 +1,170 @@
+/loom-item-assignments:
+  get:
+    summary: Recupera tutte le associazioni tra telai e item
+    operationId: getLoomItemAssignments
+    tags:
+      - LoomItemAssignment
+    responses:
+      '200':
+        description: Lista associazioni tra telai e item
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/loom-item-assignment.yaml'
+
+  post:
+    summary: Crea un'associazione tra telaio e item
+    operationId: createLoomItemAssignment
+    tags:
+      - LoomItemAssignment
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/loom-item-assignment.yaml'
+    responses:
+      '201':
+        description: Associazione tra telaio e item creata
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom-item-assignment.yaml'
+      '400':
+        description: Richiesta non valida
+
+/loom-item-assignments/{id}:
+  get:
+    summary: Recupera un'associazione tra telaio e item tramite ID
+    operationId: getLoomItemAssignmentById
+    tags:
+      - LoomItemAssignment
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Associazione tra telaio e item trovata
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom-item-assignment.yaml'
+      '404':
+        description: Associazione tra telaio e item non trovata
+
+  put:
+    summary: Aggiorna un'associazione tra telaio e item
+    operationId: updateLoomItemAssignment
+    tags:
+      - LoomItemAssignment
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/loom-item-assignment.yaml'
+    responses:
+      '200':
+        description: Associazione tra telaio e item aggiornata
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom-item-assignment.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Associazione tra telaio e item non trovata
+
+  delete:
+    summary: Elimina un'associazione tra telaio e item
+    operationId: deleteLoomItemAssignment
+    tags:
+      - LoomItemAssignment
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Associazione tra telaio e item eliminata
+      '404':
+        description: Associazione tra telaio e item non trovata
+
+/loom-item-assignments/loom/{loomId}:
+  get:
+    summary: Recupera le associazioni tramite loomId
+    operationId: getLoomItemAssignmentsByLoomId
+    tags:
+      - LoomItemAssignment
+    parameters:
+      - name: loomId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Lista associazioni trovate per il loom
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/loom-item-assignment.yaml'
+
+/loom-item-assignments/loom/{loomId}/running:
+  get:
+    summary: Recupera l'associazione RUNNING tramite loomId
+    operationId: getRunningAssignmentByLoomId
+    tags:
+      - LoomItemAssignment
+    parameters:
+      - name: loomId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Associazione RUNNING trovata per il loom
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom-item-assignment.yaml'
+      '404':
+        description: Nessuna associazione RUNNING trovata per il loom
+
+/loom-item-assignments/item/{itemId}:
+  get:
+    summary: Recupera le associazioni tramite itemId
+    operationId: getLoomItemAssignmentsByItemId
+    tags:
+      - LoomItemAssignment
+    parameters:
+      - name: itemId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Lista associazioni trovate per l'item
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/loom-item-assignment.yaml'

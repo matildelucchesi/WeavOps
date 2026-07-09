@@ -20,6 +20,9 @@ export interface Process {
     totalMeters: number;
     metersRun: number;
     metersToGo: number;
+    totalPieces?: number;
+    piecesRun?: number;
+    metersPerPiece?: number;
     startDate: string;
     endDate?: string;
     days?: number;

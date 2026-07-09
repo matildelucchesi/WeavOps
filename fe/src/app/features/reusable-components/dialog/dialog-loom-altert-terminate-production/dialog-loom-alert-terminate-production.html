@@ -1,0 +1,32 @@
+<div class="wrapper" [attr.data-assignment-id]="assignment?.id">
+    <div class="head">
+        <mat-icon class="icon" aria-hidden="true">help</mat-icon>
+    </div>
+    @if(!isConfirmed) {
+        <p class="first-text">Vuoi procedere con la terminazione della produzione dell'articolo?</p>
+        <div class="body" style="padding:20px">
+            <p class="second-text">ATTENZIONE: Questa azione e irreversibile</p>
+        </div>
+        <div class="actions">
+            <button class="cancel-button" type="button" (click)="onCloseDialog()">
+                Annulla
+            </button>
+            <button class="confirm-button" type="button" (click)="onConfirm()">
+                Procedi
+            </button>
+        </div>
+    } @else {
+        <div class="why">
+            <p>Desideri terminare la produzione marcando il lavoro come...</p>
+        </div>
+        <div class="actions">
+            <button class="abandoned-button" type="button" (click)="onSelectState(state.Abandoned)">
+                Abbandonato
+            </button>
+            <button class="completed-button" type="button" (click)="onSelectState(state.Completed)">
+                Completato
+            </button>
+        </div>
+    }
+</div>
+

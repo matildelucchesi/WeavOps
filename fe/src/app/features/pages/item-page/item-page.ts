@@ -80,7 +80,7 @@ export class ItemPage implements OnInit {
     },
     { header: 'Cliente', value: (row) => row.customer?.name },
     { header: 'Percentuale Completamento', value: (row) => this.getCompletionPercentage(row) },
-    { header: 'Data di completamento prevista', value: (row) => this.formatDate(row.arrangement?.deliveryDate) },
+    { header: 'Data di consegna', value: (row) => this.formatDate(row.arrangement?.deliveryDate) },
   ];
 
   public readonly rows = signal<ItemTableRow[]>([]);

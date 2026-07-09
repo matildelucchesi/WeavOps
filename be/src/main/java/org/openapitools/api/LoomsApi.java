@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-29T16:01:23.408857700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-09T10:41:00.278911500+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Loom", description = "the Loom API")
 public interface LoomsApi {
@@ -42,6 +42,54 @@ public interface LoomsApi {
     default Optional<NativeWebRequest> getRequest() {
         return Optional.empty();
     }
+
+    String PATH_ADD_PIECES = "/looms/{id}/add-pieces";
+    /**
+     * PUT /looms/{id}/add-pieces : Aggiunge il numero di pezze al telaio
+     *
+     * @param id  (required)
+     * @param pieces  (required)
+     * @return Pezzi aggiunti con successo (status code 200)
+     *         or Richiesta non valida (status code 400)
+     *         or Loom non trovato (status code 404)
+     */
+    @Operation(
+        operationId = "addPieces",
+        summary = "Aggiunge il numero di pezze al telaio",
+        tags = { "Loom" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Pezzi aggiunti con successo", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = Loom.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+            @ApiResponse(responseCode = "404", description = "Loom non trovato")
+        },
+        security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PUT,
+        value = LoomsApi.PATH_ADD_PIECES,
+        produces = { "application/json" }
+    )
+    default ResponseEntity<Loom> addPieces(
+        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id,
+        @NotNull @Parameter(name = "pieces", description = "", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "pieces", required = true) Integer pieces
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
 
     String PATH_CREATE_LOOM = "/looms";
     /**
@@ -77,7 +125,7 @@ public interface LoomsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"actualItemId\" : \"actualItemId\", \"id\" : \"id\", \"status\" : \"WORKING\" }";
+                    String exampleString = "{ \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -196,7 +244,7 @@ public interface LoomsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"actualItemId\" : \"actualItemId\", \"id\" : \"id\", \"status\" : \"WORKING\" }";
+                    String exampleString = "{ \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -237,7 +285,7 @@ public interface LoomsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"actualItemId\" : \"actualItemId\", \"id\" : \"id\", \"status\" : \"WORKING\" }, { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"actualItemId\" : \"actualItemId\", \"id\" : \"id\", \"status\" : \"WORKING\" } ]";
+                    String exampleString = "[ { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -286,7 +334,7 @@ public interface LoomsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"actualItemId\" : \"actualItemId\", \"id\" : \"id\", \"status\" : \"WORKING\" }";
+                    String exampleString = "{ \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

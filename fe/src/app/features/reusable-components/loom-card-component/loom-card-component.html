@@ -14,8 +14,11 @@
 </app-button-general-action-component>
         </div>
     } @else {
-        <div>
-        <p class="loom-status">{{ statusLabel }}</p>
-    </div>
+        <div class="loom-status-wrapper">
+            <span class="loom-status-chip {{ statusChipClass }}">{{ statusLabel }}</span>
+            @if(statusLabel === 'In lavorazione' && days) {
+                <span class="loom-days">{{ days }}</span>
+            }
+        </div>
     }
 </div>

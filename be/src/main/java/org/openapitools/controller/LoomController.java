@@ -2,13 +2,13 @@ package org.openapitools.controller;
 
 import org.openapitools.api.LoomsApi;
 import org.openapitools.mapper.LoomMapper;
-import org.openapitools.model.DeleteMultiCustomers200Response;
 import org.openapitools.model.DeleteMultiLooms200Response;
 import org.openapitools.model.Loom;
 import org.openapitools.service.LoomService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -76,5 +76,20 @@ public class LoomController implements LoomsApi {
         int deletedCount = service.deleteByIds(requestBody);
 
         return ResponseEntity.ok(new DeleteMultiLooms200Response().deletedCount(deletedCount));
+    }
+
+    @Override
+    public ResponseEntity<Loom> addPieces(
+            @PathVariable("id") String id,
+            @RequestParam(value = "pieces", required = true) Integer pieces
+    ) {
+        if (id == null || id.isBlank() || pieces == null || pieces <= 0) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return service.addPieces(id, pieces)
+                .map(mapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

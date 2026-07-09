@@ -23,8 +23,35 @@ public class ProcessEntity {
     private Float days;
     private Loom loom;
     private Integer itemHitsPerDm;
+    private Integer totalPieces;
+    private Integer piecesRun;
+    private Integer metersPerPiece;
 
     //getter & setter
+    public Integer getMetersPerPiece() {
+        return metersPerPiece;
+    }
+
+    public void setMetersPerPiece(Integer metersPerPiece) {
+        this.metersPerPiece = metersPerPiece;
+    }
+
+    public Integer getTotalPieces() {
+        return totalPieces;
+    }
+
+    public void setTotalPieces(Integer totalPieces) {
+        this.totalPieces = totalPieces;
+    }
+
+    public Integer getPiecesRun() {
+        return piecesRun;
+    }
+
+    public void setPiecesRun(Integer piecesRun) {
+        this.piecesRun = piecesRun;
+    }
+
     public Integer getItemHitsPerDm() {
         return itemHitsPerDm;
     }

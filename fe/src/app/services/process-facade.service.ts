@@ -23,7 +23,7 @@ export class ProcessFacadeService {
     return this.processApi.updateProcess({ id, process });
   }
 
-  remove(id: string) {
+  delete(id: string) {
     return this.processApi.deleteProcess({ id });
   }
 }

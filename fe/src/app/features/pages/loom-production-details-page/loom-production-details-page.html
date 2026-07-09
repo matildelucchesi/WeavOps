@@ -10,6 +10,10 @@
   [imageHeight]="50">
 </app-title-page-component>
 
+@if (isStartingProduction()) {
+  <app-loader-component [ariaLabel]="'Messa in produzione in corso'"></app-loader-component>
+}
+
 <div class="body">
   <div class="button-wrapper">
     <app-exit-button-component></app-exit-button-component>
@@ -21,21 +25,17 @@
         <div class="chip">
           <span [class]="'chip-status ' + statusChipClass()">{{ statusLabel() }}</span>
         </div>
-        <button type="button" class="button-style button-margin" (click)="toggleEditMode()">
-          <mat-icon style="font-size: 20px; align-content: center;">{{ editButtonIcon }}</mat-icon>
-          {{ editButtonLabel }}
-        </button>
       </div>
     </div>
 
     <div class="content-padding">
       <div class="production-data">
-        <div class="section-title">
+
+        @if (process()) {
+          <div class="section-title">
           <img class="arrangement-icon" src="/icon/work-icon-violet.png" width="30" height="30" alt="Arrangement Icon">
           <h2>Produzione attualmente in corso</h2>
         </div>
-
-        @if (process()) {
           <div class="data">
             <div class="column">
               <h3>Dettagli Articolo</h3>
@@ -59,7 +59,7 @@
                 </div>
               </div>
 
-              <h3>Parametri Operativi</h3>
+              <h3 style="margin-top: 20px;">Parametri Operativi</h3>
               <div class="form-group">
                 <label for="speed">Velocita (colpi/dm)</label>
                 <input type="number" id="speed" name="speed" [value]="process()?.speed ?? ''" [readonly]="!isEditEnabled">
@@ -71,39 +71,94 @@
             </div>
 
             <div class="column">
-              <h3>Dettagli Produzione</h3>
-              <div class="form-group">
-                <label for="totalMeters">Metri Totali</label>
-                <input type="number" id="totalMeters" name="totalMeters" [value]="item()?.totalMeters ?? ''" [readonly]="!isEditEnabled">
-              </div>
-              <div class="form-group">
-                <label for="metersRun">Metri Prodotti</label>
-                <input type="number" id="metersRun" name="metersRun" [value]="item()?.metersRun ?? ''" [readonly]="!isEditEnabled">
-              </div>
-              <div class="form-group">
-                <label for="completionPercentage">Percentuale Completamento</label>
-                <input type="number" id="completionPercentage" name="completionPercentage" [value]="percentage() ?? ''" [readonly]="!isEditEnabled">
-              </div>
-            </div>
-
-            <div class="column">
               <h3>Date</h3>
               <div class="form-group">
                 <label for="startDate">Data Inizio</label>
                 <input type="text" id="startDate" name="startDate" [value]="formatDate(process()?.startDate)" [readonly]="!isEditEnabled">
               </div>
               <div class="form-group">
-                <label for="expectedEndDate">Data Fine Prevista</label>
-                <input type="text" id="expectedEndDate" name="expectedEndDate" [value]="formatDate(process()?.expectedEndDate)" [readonly]="!isEditEnabled">
+                <label for="completionDays">Tempo necessario per il completamento</label>
+                <input type="text" id="completionDays" name="completionDays" [value]="formatTableDays(process()?.days)" [readonly]="!isEditEnabled">
               </div>
               <div class="form-group">
                 <label for="actualEndDate">Data Consegna Articolo</label>
                 <input type="text" id="actualEndDate" name="actualEndDate" [value]="formatDate(arrangement()?.deliveryDate)" [readonly]="!isEditEnabled">
               </div>
+
+            </div>
+
+            <div class="column production-column">
+              <h3>Dettagli Produzione</h3>
+              <div class="production-fields">
+                <div class="form-group">
+                  <label for="totalMeters">Metri Totali</label>
+                  <input type="number" id="totalMeters" name="totalMeters" [value]="process()?.totalMeters ?? ''" [readonly]="!isEditEnabled">
+                </div>
+                <div class="form-group">
+                  <label for="metersRun">Metri Prodotti</label>
+                  <input type="number" id="metersRun" name="metersRun" [value]="process()?.metersRun ?? ''" [readonly]="!isEditEnabled">
+                </div>
+                <div class="form-group pieces-produced-group">
+                  <label for="piecesRun">Numero Pezze Prodotte</label>
+                  <div class="pieces-produced-row">
+                    <input
+                      type="number"
+                      class="pieces-produced-input"
+                      id="piecesRun"
+                      name="piecesRun"
+                      [value]="process()?.piecesRun ?? ''"
+                      [readonly]="!isEditEnabled">
+                      <div
+                      class="meters-per-piece-indicator"
+                      [attr.aria-label]="'Lunghezza pezza: ' + (process()?.metersPerPiece ?? '-') + ' metri'"
+                      [attr.title]="'Lunghezza pezza: ' + (process()?.metersPerPiece ?? '-') + ' m'">
+                      <span class="meters-per-piece-value">{{ process()?.metersPerPiece ?? '-' }} m</span>
+                      <mat-icon fontSet="material-symbols-outlined" class="meters-per-piece-icon">straighten</mat-icon>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group meters-button-group" style="margin-top: 15px;">
+                <button
+                  type="button"
+                  class="button-qr"
+                  aria-label="Aggiungi"
+                  (click)="openAddMetersDialog()">
+                  <span class="qr-mark" aria-hidden="true">
+                    <img
+                      class="button-qr-icon"
+                      src="/icon/meters-icon.png"
+                      alt=""
+                      width="22"
+                      height="22">
+                  </span>
+                  <span class="button-qr-copy">
+                    <span>Aggiungi</span>
+                    <small style="font-weight: 300;">Numero Pezze Prodotte</small>
+                  </span>
+                </button>
+              </div>
+
+              </div>
+              <div class="form-group meters-button-group">
+                <button
+                  type="button"
+                  class="button-qr button-terminate"
+                  aria-label="Termina Produzione"
+                  (click)="openTerminateProductionDialog()">
+                  <span class="qr-mark" aria-hidden="true">
+                    <mat-icon fontSet="material-symbols-outlined">
+                      flag
+                    </mat-icon>
+                  </span>
+                  <span class="button-qr-copy">
+                    <span>Termina Produzione</span>
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         } @else {
-          <p class="no-data-message">Nessun processo di produzione in corso per questo telaio.</p>
+          <h3 style="margin-bottom: 20px;">Nessun processo di produzione in corso per questo telaio.</h3>
         }
       </div>
     </div>
@@ -115,7 +170,14 @@
   [imageHeight]="35"></app-title-page-component>
 
   <app-table-component
-    actionColumnHeader="">
+    [columns]="queuedProductionColumns"
+    [rows]="queuedProductionRows()"
+    [actions]="actions"
+    [enableMultiSelection]="false"
+    [sortByCreationDate]="false"
+    actionColumnHeader=""
+    (actionClick)="onTableAction($event)"
+    (bulkActionClick)="onTableBulkAction($event)">
     </app-table-component>
   
 </div>

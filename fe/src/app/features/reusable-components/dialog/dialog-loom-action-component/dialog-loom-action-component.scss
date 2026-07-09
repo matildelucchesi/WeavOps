@@ -1,3 +1,5 @@
+@use '../dialog-alert' as dialogAlert;
+
 .wrapper,
 :host {
     display: block;
@@ -121,6 +123,14 @@
     opacity: 0.8;
 }
 
+.close-button.cancel-button{
+    @include dialogAlert.cancel-button;
+}
+
+.close-button.cancel-button:hover{
+    @include dialogAlert.cancel-button-hover;
+}
+
 .modify-section{
     display: grid;
     align-items: center;
@@ -223,70 +233,40 @@
     opacity: 0.8;
 }
 
-.meters-form-field,
-.serial-number-form-field{
-    width: 100%;
-    margin: 0;
-    --mdc-outlined-text-field-outline-color: var(--weavops-color-primary);
-    --mdc-outlined-text-field-hover-outline-color: var(--weavops-color-primary);
-    --mdc-outlined-text-field-focus-outline-color: var(--weavops-color-primary);
-    --mdc-outlined-text-field-label-text-color: var(--weavops-color-primary);
-    --mdc-outlined-text-field-hover-label-text-color: var(--weavops-color-primary);
-    --mdc-outlined-text-field-focus-label-text-color: var(--weavops-color-primary);
-    --mdc-outlined-text-field-input-text-color: var(--weavops-color-primary);
+.meters-form-group,
+.serial-number-form-group{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 200px;
+    height: 65px;
+}
+
+.meters-form-group label,
+.serial-number-form-group label{
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 550;
 }
 
 .meters-input-field,
 .serial-number-input-field{
-    color: var(--weavops-color-primary);
-    font-size: 13px;
-    font-family: 'Instrument Sans', sans-serif;
-}
-
-:host ::ng-deep .meters-form-field .mat-mdc-text-field-wrapper,
-:host ::ng-deep .meters-form-field .mdc-text-field--outlined,
-:host ::ng-deep .meters-form-field .mat-mdc-form-field-flex,
-:host ::ng-deep .serial-number-form-field .mat-mdc-text-field-wrapper,
-:host ::ng-deep .serial-number-form-field .mdc-text-field--outlined,
-:host ::ng-deep .serial-number-form-field .mat-mdc-form-field-flex {
-    background-color: var(--weavops-color-surface);
+    width: 100%;
+    box-sizing: border-box;
+    border: 1.5px solid var(--weavops-color-primary);
     border-radius: 10px;
-}
-
-:host ::ng-deep .meters-form-field .mat-mdc-floating-label,
-:host ::ng-deep .meters-form-field .mdc-floating-label,
-:host ::ng-deep .meters-form-field .mdc-text-field__input,
-:host ::ng-deep .serial-number-form-field .mat-mdc-floating-label,
-:host ::ng-deep .serial-number-form-field .mdc-floating-label,
-:host ::ng-deep .serial-number-form-field .mdc-text-field__input {
+    padding: 8px 16px;
     color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
 }
 
-:host ::ng-deep .meters-form-field .mat-mdc-floating-label,
-:host ::ng-deep .meters-form-field .mdc-floating-label,
-:host ::ng-deep .serial-number-form-field .mat-mdc-floating-label,
-:host ::ng-deep .serial-number-form-field .mdc-floating-label {
-    font-size: 13px;
-}
-
-:host ::ng-deep .meters-form-field .mdc-text-field__input,
-:host ::ng-deep .serial-number-form-field .mdc-text-field__input {
-    font-size: 13px;
-}
-
-:host ::ng-deep .meters-form-field .mdc-notched-outline__leading,
-:host ::ng-deep .meters-form-field .mdc-notched-outline__notch,
-:host ::ng-deep .meters-form-field .mdc-notched-outline__trailing,
-:host ::ng-deep .serial-number-form-field .mdc-notched-outline__leading,
-:host ::ng-deep .serial-number-form-field .mdc-notched-outline__notch,
-:host ::ng-deep .serial-number-form-field .mdc-notched-outline__trailing {
-    border-color: var(--weavops-color-primary);
-}
-
-:host ::ng-deep .meters-form-field .mat-mdc-form-field-subscript-wrapper,
-:host ::ng-deep .serial-number-form-field .mat-mdc-form-field-subscript-wrapper {
-    margin: 0;
-    padding: 0;
+.meters-input-field:focus,
+.serial-number-input-field:focus{
+    outline: 1.5px solid var(--weavops-color-primary);
+    outline-offset: 2px;
 }
 
 .meters-input,
@@ -307,4 +287,5 @@
     justify-self: center;
     width: 90%;
     padding: 15px;
+    gap: 20px;
 }

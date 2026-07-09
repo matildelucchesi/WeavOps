@@ -1,0 +1,65 @@
+@use '../dialog-alert' as dialogAlert;
+
+@include dialogAlert.shell(
+    $body-background: #ffeeba,
+    $body-gap: 0,
+    $body-padding: 0,
+    $icon-color: var(--weavops-color-primary)
+);
+
+p{
+    justify-self: center;
+}
+
+.head{
+    gap: 0;
+}
+
+.first-text{
+    font-size: 14px;
+}
+
+.second-text{
+    font-size: 12px;
+    justify-self: stretch;
+    text-align: center;
+    width: 100%;
+}
+
+.completed-button,
+.abandoned-button{
+    cursor: pointer;
+    border-radius: 10px;
+    min-width: 100px;
+    height: 30px;
+    padding: 0 14px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+}
+
+.completed-button{
+    border: 1.5px solid var(--weavops-color-success);
+    background-color: var(--weavops-color-success-soft);
+    color: var(--weavops-color-success);
+}
+
+.completed-button:hover{
+    background-color: var(--weavops-color-success);
+    color: var(--weavops-color-surface);
+}
+
+.abandoned-button{
+    border: 1.5px solid var(--weavops-color-grey-dark);
+    background-color: var(--weavops-color-grey);
+    color: var(--weavops-color-grey-dark);
+}
+
+.abandoned-button:hover{
+    background-color: var(--weavops-color-grey-dark);
+    color: var(--weavops-color-surface);
+}
+
+.why{
+    display: flex;
+    justify-self: center;
+}

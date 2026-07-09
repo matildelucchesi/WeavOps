@@ -128,3 +128,32 @@
         description: Loom eliminato
       '404':
         description: Loom non trovato
+
+/looms/{id}/add-pieces:
+  put:
+    summary: Aggiunge il numero di pezze al telaio
+    operationId: addPieces
+    tags:
+      - Loom
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: pieces
+        in: query
+        required: true
+        schema:
+          type: integer
+    responses:
+      '200':
+        description: Pezzi aggiunti con successo
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Loom non trovato

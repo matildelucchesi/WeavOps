@@ -8,6 +8,7 @@ api/auth.service.ts
 api/customer.service.ts
 api/item.service.ts
 api/loom.service.ts
+api/loomItemAssignment.service.ts
 api/process.service.ts
 api/referent.service.ts
 api/user.service.ts
@@ -25,6 +26,7 @@ model/item.ts
 model/login200Response.ts
 model/loginRequest.ts
 model/loom.ts
+model/loomItemAssignment.ts
 model/models.ts
 model/process.ts
 model/referent.ts

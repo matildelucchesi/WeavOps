@@ -7,6 +7,7 @@ import org.openapitools.model.*;
 import org.openapitools.service.ItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,13 @@ public class ItemController implements ItemsApi {
     public ResponseEntity<Item> getItemById(@PathVariable("id") String id) {
         return service.findById(id)
                 .map(mapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/items/{id}/remaining-meters-to-assign")
+    public ResponseEntity<Integer> getRemainingMetersToAssign(@PathVariable("id") String id) {
+        return service.calculateRemainingMetersToAssign(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

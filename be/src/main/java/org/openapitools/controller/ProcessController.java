@@ -43,7 +43,6 @@ public class ProcessController implements ProcessesApi {
         ProcessEntity entity = mapper.toEntity(process);
         entity.setDays(service.calculateDays(entity));
         process.setDays(entity.getDays());
-        process.setExpectedEndDate(service.calculateExpectedEndDate(entity));
         entity = mapper.toEntity(process);
 
         return ResponseEntity.status(HttpStatus.CREATED)

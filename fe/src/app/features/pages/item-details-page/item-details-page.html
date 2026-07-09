@@ -15,14 +15,24 @@
   <div class="button-wrapper">
     <app-exit-button-component></app-exit-button-component>
   </div>
+
   <div class="content-wrapper">
     <div class="text-pattern">
+      @if(!isTerminated){
       <div class="button-wrapper">
       <button type="button" class="button-style button-margin" (click)="toggleEditMode()">
           <mat-icon style="font-size: 20px; align-content: center;">{{ editButtonIcon }}</mat-icon>
           {{ editButtonLabel }}
       </button>
     </div>
+  } @else {
+    <div class="button-wrapper">
+      <div [class]="'item-status-message ' + itemStatusMessageClass">
+      {{ formatState(itemData?.state) }}
+    </div>
+    </div>
+
+  }
     </div>
     <div class="content-padding">
       <div class="arrangement-data">
@@ -163,7 +173,7 @@
                     </span>
                     <span class="button-qr-copy">
                       <span>Esporta Disposizione</span>
-                      <small>Genera QR Code telai</small>
+                      <small style="font-weight: 300;">Genera QR Code telai</small>
                     </span>
                   </button>
                 </div>
@@ -219,23 +229,52 @@
                 <div class="column">
                   <div class="form-group">
                     <label for="startDate">Data Inizio Lavorazione</label>
+                    <div class="expected-end-date-row">
                     <input
                       type="text"
                       id="startDate"
                       name="startDate"
-                      [(ngModel)]="item.startDate"
+                      [ngModel]="formatItemStartDate(item.startDate)"
+                      (ngModelChange)="item.startDate = $event"
                       [readonly]="!isEditEnabled"
                       [class.input-readonly]="!isEditEnabled">
+                      <mat-icon
+                          class="info-icon material-symbols-outlined"
+                          fontSet="material-symbols-outlined"
+                          (click)="openInfoDialogStartDate()">
+                          info
+                        </mat-icon>
+                        </div>
                   </div>
                   <div class="form-group">
-                    <label for="expectedEndDate" style="white-space: nowrap;">Data Fine Lavorazione Prevista</label>
-                    <input
+                    <label for="expectedEndDate" style="white-space: nowrap;">Data Completamento Lavorazione Prevista</label>
+                    @if(!allTheProcessessAreRunning()) {
+                      <div class="expected-end-date-row">
+                        <input
+                          type="text"
+                          id="expectedEndDate"
+                          name="expectedEndDate"
+                          value="-"
+                          [readonly]="true"
+                          [class.input-readonly]="true">
+                        <mat-icon
+                          class="info-icon material-symbols-outlined"
+                          fontSet="material-symbols-outlined"
+                          (click)="openInfoDialogEndDate()">
+                          info
+                        </mat-icon>
+                      </div>
+                    }
+                    @else{
+                      <input
                       type="text"
                       id="expectedEndDate"
                       name="expectedEndDate"
-                      [(ngModel)]="item.expectedEndDate"
+                      [ngModel]="formatDate(item.expectedEndDate)"
+                      (ngModelChange)="item.expectedEndDate = $event"
                       [readonly]="!isEditEnabled"
                       [class.input-readonly]="!isEditEnabled">
+                    }
                   </div>
                   <div class="form-group">
                     
@@ -245,10 +284,10 @@
                   <div class="form-group">
                     <label for="percentage">Percentuale Completamento</label>
                     <input
-                      type="number"
+                      type="text"
                       id="percentage"
                       name="percentage"
-                      [value]="getPercentage()"
+                      [value]="formatPercentage(getPercentage() ?? undefined)"
                       [readonly]="true"
                       [class.input-readonly]="true">
                 </div>
@@ -257,7 +296,7 @@
                 <div class="button-wrapper">
                   <button
                     type="button"
-                    class="button-qr"
+                    class="button-qr button-terminate"
                     aria-label="Termina Produzione"
                     [disabled]="isTerminated"
                     (click)="openTerminateProductionDialog()">
@@ -270,7 +309,7 @@
                     </span>
                     <span class="button-qr-copy">
                       <span>{{ isTerminated ? 'Produzione terminata' : 'Termina Produzione' }}</span>
-                      <small>{{ isTerminated ? 'Stato aggiornato' : 'Completa o abbandona' }}</small>
+                      <small style="font-weight: 300;">{{ isTerminated ? 'Stato aggiornato' : 'Completa o abbandona' }}</small>
                     </span>
                   </button>
                 </div>
@@ -283,23 +322,28 @@
         <div class="production-table">
         <div class="section-title">
           <img class="loom-icon" src="/icon/loomicon-violet.png" width="40" height="40" alt="Loom Icon">
-          <h2>Telai previsti per la Lavorazione</h2>
+          <h2>Processi di Produzione</h2>
         </div>
+        @if(!isTerminated && calculateRemainingMetersToAssign() > 0){
         <div class="button-wrapper">
           <button
           type="button"
           class="button-style"
           (click)="openAssignLoomDialog()">
           <mat-icon style="font-size: 20px; align-content: center;">add</mat-icon>
-          Aggiungi Telaio
+          Aggiungi Processo
         </button>
         </div>
-        
+      }
         <div>
           <app-table-component
             [columns]="processesColumns"
             [rows]="rows()"
-            [enableMultiSelection]="false">
+            [enableMultiSelection]="false"
+            [actions]="assignmentActions"
+            [actionColumnHeader]="''"
+            (actionClick)="onTableAction($event)"
+            [sortByCreationDate]="true">
           </app-table-component>
         </div>
       </div>
@@ -308,5 +352,6 @@
     </div>
     <div class="text-pattern-inverse"></div>
     </div>
-  <app-white-panel [title]="'Attenzione'" [text]="'Se viene contrassegnata la produzione come TERMINATA, allora l’Articolo verrà inserito nella lista degli Articoli TERMINATI e saranno liberati immediatamente tutti i Telai. è possibile riabilitare l’Articolo per la produzione spuntando la casella Riabilita dalla Lista degli articoli TERMINATI.'"></app-white-panel>
+  <app-white-panel [title]="'Attenzione'" [text]="'Se la produzione viene contrassegnata come TERMINATA, l’articolo verrà inserito nella lista degli articoli ARCHIVIATI, visualizzabile nella pagina Anagrafiche Articoli, e tutti i telai associati verranno liberati immediatamente.<br>La terminazione è irreversibile, ma è comunque possibile copiare i dati dell’articolo per metterne in produzione uno nuovo con gli stessi dati di partenza.'"></app-white-panel>
+  <app-white-panel [title]="'Informazioni su eliminazione processo'" [text]="'Se un processo con stato IN LAVORAZIONE viene eliminato, tutti i dati associati verranno persi e non sarà possibile ripristinarli. Inoltre verrà contrassegnato come ABBANDONATO e i metri rimanenti saranno da riassegnare su altri processi. <br> Se un processo con stato IN CODA viene eliminato, verranno ripristinati tutti i dati a prima dell\'assegnazione del processo. <br><br> Non è possibile eliminare i processi con stato ABBANDONATO e COMPLETATO in modo da mantenere traccia della produzione.'"></app-white-panel>
 </div>

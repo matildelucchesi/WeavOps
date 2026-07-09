@@ -1,1 +1,54 @@
-<p>calendar-page works!</p>
+<section class="calendar-page" aria-labelledby="calendar-title">
+  <div class="calendar-header">
+    <div>
+      <p class="calendar-eyebrow">Calendario</p>
+      <h1 id="calendar-title">{{ monthLabel }}</h1>
+    </div>
+  </div>
+
+  <div class="calendar-grid" role="grid" [attr.aria-label]="'Calendario ' + monthLabel">
+    @for (weekDay of weekDays; track weekDay) {
+      <div class="calendar-weekday" role="columnheader">
+        {{ weekDay }}
+      </div>
+    }
+
+    @for (day of calendarDays; track day.ariaLabel) {
+      <div
+        class="calendar-day"
+        role="gridcell"
+        [class.calendar-day-muted]="!day.isCurrentMonth"
+        [class.calendar-day-today]="day.isToday"
+        [attr.aria-label]="day.ariaLabel">
+        <span class="calendar-day-number">{{ day.dayNumber }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="calendar-navigation" aria-label="Navigazione mesi">
+    <button
+      type="button"
+      class="calendar-nav-button"
+      aria-label="Mostra mese precedente"
+      (click)="showPreviousMonth()">
+      <mat-icon>chevron_left</mat-icon>
+      <span>Mese precedente</span>
+    </button>
+
+    <button
+      type="button"
+      class="calendar-today-button"
+      (click)="showTodayMonth()">
+      Oggi
+    </button>
+
+    <button
+      type="button"
+      class="calendar-nav-button"
+      aria-label="Mostra mese successivo"
+      (click)="showNextMonth()">
+      <span>Mese successivo</span>
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+</section>

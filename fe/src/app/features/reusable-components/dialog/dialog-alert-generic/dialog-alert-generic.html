@@ -1,0 +1,26 @@
+<div
+    class="wrapper"
+    [class.dialog-alert-danger]="isDangerVariant"
+    [class.dialog-alert-warning]="isWarningVariant"
+    [style.--dialog-alert-icon-color]="resolvedIconColor">
+    <div class="head">
+        <mat-icon class="icon" aria-hidden="true">{{ icon }}</mat-icon>
+    </div>
+    <p class="first-text">{{text}}</p>
+    @if(subtext){
+        <div class="body" style="padding:20px">
+            <p class="second-text">{{ subtext }}</p>
+        </div>
+    }
+    @if(button){
+        <div class="actions">
+            <button class="cancel-button" type="button" (click)="onCloseDialog()">
+                Annulla
+            </button>
+            <button class="confirm-button" type="button" (click)="onConfirm()">
+                Procedi
+            </button>
+        </div>
+    }
+    
+</div>

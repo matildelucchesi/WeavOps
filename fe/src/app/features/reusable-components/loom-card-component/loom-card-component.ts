@@ -16,6 +16,7 @@ import { ButtonGeneralActionComponent } from "../button/button-general-action-co
 export class LoomCardComponent {
   @Input() loom: Loom | null = null;
   @Input() isDialogMode: boolean = false;
+  @Input() days: string = '';
 
   get serialNumber(): string {
     return this.loom?.serialNumber ?? 'Numero Seriale Mancante';
@@ -26,11 +27,23 @@ export class LoomCardComponent {
       case Loom.StatusEnum.Maintenance:
         return 'Manutenzione';
       case Loom.StatusEnum.Stopped:
-        return '---';
+        return 'Fermo';
       case Loom.StatusEnum.Working:
         return 'In lavorazione';
       default:
         return '---';
+    }
+  }
+
+  get statusChipClass(): string {
+    switch (this.loom?.status) {
+      case Loom.StatusEnum.Maintenance:
+        return 'loom-status-chip-maintenance';
+      case Loom.StatusEnum.Working:
+        return 'loom-status-chip-working';
+      case Loom.StatusEnum.Stopped:
+      default:
+        return 'loom-status-chip-stopped';
     }
   }
 

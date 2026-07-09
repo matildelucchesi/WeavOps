@@ -6,6 +6,7 @@ import { MatIcon } from "@angular/material/icon";
 
 export interface DialogLoomAlertData {
   loomStatus?: Loom.StatusEnum;
+  busyUntilDate?: string;
 }
 
 @Component({
@@ -22,16 +23,20 @@ export class DialogLoomAlertComponent implements OnInit {
   @Input()
   public loomStatus: Loom.StatusEnum = Loom.StatusEnum.Stopped;
 
+  @Input()
+  public busyUntilDate?: string;
+
   public isLoading: boolean = false;
 
   ngOnInit(): void {
     this.loomStatus = this.dialogData?.loomStatus ?? this.loomStatus;
+    this.busyUntilDate = this.dialogData?.busyUntilDate ?? this.busyUntilDate;
   }
 
   public get alertMessage(): string {
     switch (this.loomStatus) {
       case Loom.StatusEnum.Working:
-        return "Il telaio scelto è OCCUPATO con la produzione di un altro articolo, vuoi comunque procedere con l'assegnazione?";
+        return `Il telaio scelto è OCCUPATO${this.busyUntilText} con la produzione di un altro articolo, vuoi comunque procedere con l'assegnazione?`;
       case Loom.StatusEnum.Maintenance:
         return "Il telaio scelto è in MANUTENZIONE, vuoi comunque procedere con l'assegnazione?";
       case Loom.StatusEnum.Stopped:
@@ -47,5 +52,29 @@ export class DialogLoomAlertComponent implements OnInit {
 
   public onConfirm(): void {
     this.dialogRef?.close(true);
+  }
+
+  private get busyUntilText(): string {
+    const formattedDate = this.formatDate(this.busyUntilDate);
+
+    return formattedDate ? ` (fino al ${formattedDate})` : '';
+  }
+
+  private formatDate(value: string | undefined): string {
+    if (!value) {
+      return '';
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
+    return date.toLocaleDateString('it-IT', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
   }
 }

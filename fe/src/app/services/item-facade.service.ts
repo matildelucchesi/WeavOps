@@ -1,11 +1,14 @@
 import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { CreateItemWithArrangementRequest, Item, ItemService as ItemApiService } from '../api';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ItemFacadeService {
   private readonly itemApi = inject(ItemApiService);
+  private readonly http = inject(HttpClient);
 
   getAll() {
     return this.itemApi.getItems();
@@ -13,6 +16,12 @@ export class ItemFacadeService {
 
   getById(id: string) {
     return this.itemApi.getItemById({ id });
+  }
+
+  getRemainingMetersToAssign(id: string) {
+    return this.http.get<number>(
+      `${environment.apiUrl}/items/${encodeURIComponent(id)}/remaining-meters-to-assign`,
+    );
   }
 
   create(item: Item) {

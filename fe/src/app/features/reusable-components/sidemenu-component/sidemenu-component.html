@@ -1,7 +1,19 @@
 <div class="wrapper">
     <app-sidemenu-button-component label="Home" icon="home" route="/home" style="width: 100%;"></app-sidemenu-button-component>
-    <app-sidemenu-button-component label="Telai" icon="/icon/loom-white-icon.png" route="/telai" style="width: 100%;"></app-sidemenu-button-component>
-    <app-sidemenu-button-component label="Articoli" icon="/icon/item-white-icon.png" route="/articoli" style="width: 100%;"></app-sidemenu-button-component>
+    <app-sidemenu-button-component 
+        label="Telai" 
+        icon="/icon/loom-white-icon.png" 
+        route="/telai" 
+        [activeRoutes]="['/dettaglio-produzione']"
+        style="width: 100%;"
+    ></app-sidemenu-button-component>
+    <app-sidemenu-button-component
+        label="Articoli"
+        icon="/icon/item-white-icon.png"
+        route="/articoli"
+        [activeRoutes]="['/dettaglio-articolo']"
+        style="width: 100%;"
+    ></app-sidemenu-button-component>
     <app-sidemenu-button-component
         label="Clienti"
         icon="group"

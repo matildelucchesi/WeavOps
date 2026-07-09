@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { finalize } from 'rxjs';
+import { catchError, finalize, map, of, switchMap } from 'rxjs';
 import { ButtonGeneralActionComponent } from "../../button/button-general-action-component/button-general-action-component";
 import { LoomFacadeService } from '../../../../services/loom-facade.service';
 import { Arrangement, Loom, Process } from '../../../../api';
@@ -11,10 +11,14 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { ProcessFacadeService } from '../../../../services/process-facade.service';
 import { DialogLoomAlertComponent, type DialogLoomAlertData } from '../dialog-loom-alert-component/dialog-loom-alert-component';
 import { MatError } from "@angular/material/form-field";
+import { LoomItemAssignmentFacadeService } from '../../../../services/loom-item-assignment-facade.service';
 
 export interface DialogAssignLoomData {
   arrangement?: Arrangement | null;
+  remainingMetersToAssign?: number;
 }
+
+export const TEMPORARY_PROCESS_START_DATE = '1970-01-01T00:00:00.000Z';
 
 @Component({
   selector: 'app-dialog-assign-loom-component',
@@ -26,6 +30,7 @@ export interface DialogAssignLoomData {
 export class DialogAssignLoomComponent implements OnInit {
   private readonly loomService = inject(LoomFacadeService);
   private readonly processService = inject(ProcessFacadeService);
+  private readonly assignmentService = inject(LoomItemAssignmentFacadeService);
   private readonly dialog = inject(MatDialog);
   private readonly data = inject<DialogAssignLoomData | null>(MAT_DIALOG_DATA, { optional: true });
   private readonly pageSize = 6;
@@ -33,6 +38,7 @@ export class DialogAssignLoomComponent implements OnInit {
   public readonly looms = signal<Loom[]>([]);
   public readonly currentPage = signal(1);
   public readonly isLoadingLooms = signal(true);
+  public readonly remainingMetersToAssign = this.data?.remainingMetersToAssign ?? 0;
 
   public readonly isProcessing = signal(false);
   public isSavingProcess: boolean = false;
@@ -42,7 +48,9 @@ export class DialogAssignLoomComponent implements OnInit {
     totalMeters: 0,
     metersRun: 0,
     metersToGo: 0,
-    startDate: '',
+    piecesRun: 0,
+    totalPieces: 0,
+    startDate: TEMPORARY_PROCESS_START_DATE,
     loom: undefined,
     days: undefined,
     expectedEndDate: undefined,
@@ -72,9 +80,33 @@ export class DialogAssignLoomComponent implements OnInit {
     return this.currentPage() >= this.totalPages;
   }
 
+  public get calculatedTotalPieces(): number {
+    const totalMeters = Number(this.process.totalMeters) || 0;
+    const metersPerPiece = Number(this.process.metersPerPiece) || 0;
+
+    if (metersPerPiece <= 0) {
+      return 0;
+    }
+
+    return totalMeters / metersPerPiece;
+  }
+
+  public get isTotalMetersOverRemaining(): boolean {
+    return Number(this.process.totalMeters) > this.remainingMetersToAssign;
+  }
+
+  public get isSpeedBelowMinimum(): boolean {
+    return Number(this.process.speed) < 250;
+  }
+
+  public get hasActiveMatError(): boolean {
+    return this.isTotalMetersOverRemaining || this.isSpeedBelowMinimum;
+  }
+
   ngOnInit(): void {
     this.isProcessing.set(false);
     this.isLoadingLooms.set(true);
+    this.setProcessMetersPerPieceFromArrangement();
 
     this.loomService.getAll().pipe(
       finalize(() => {
@@ -111,6 +143,31 @@ export class DialogAssignLoomComponent implements OnInit {
   }
 
   public onAssignLoom(loom: Loom): void {
+    if (loom.status === Loom.StatusEnum.Working && loom.id) {
+      this.openBusyLoomAlert(loom);
+      return;
+    }
+
+    this.openLoomAlert(loom);
+  }
+
+  private openBusyLoomAlert(loom: Loom): void {
+    this.assignmentService.getRunningAssignmentByLoomId(loom.id ?? '').pipe(
+      switchMap((assignment) => assignment.processId
+        ? this.processService.getById(assignment.processId)
+        : of(null),
+      ),
+      map((process) => process?.expectedEndDate),
+      catchError((error) => {
+        console.error('Error loading running process expected end date:', error);
+        return of(undefined);
+      }),
+    ).subscribe((busyUntilDate) => {
+      this.openLoomAlert(loom, busyUntilDate);
+    });
+  }
+
+  private openLoomAlert(loom: Loom, busyUntilDate?: string): void {
     const dialogRef = this.dialog.open<DialogLoomAlertComponent, DialogLoomAlertData, boolean>(
       DialogLoomAlertComponent,
       {
@@ -118,6 +175,7 @@ export class DialogAssignLoomComponent implements OnInit {
         autoFocus: false,
         data: {
           loomStatus: loom.status,
+          busyUntilDate,
         },
       },
     );
@@ -153,7 +211,7 @@ export class DialogAssignLoomComponent implements OnInit {
       return;
     }
 
-    if (form.invalid || !this.process.loom) {
+    if (form.invalid || this.hasActiveMatError || !this.process.loom) {
       form.form.markAllAsTouched();
       return;
     }
@@ -183,13 +241,25 @@ export class DialogAssignLoomComponent implements OnInit {
       speed: Number(this.process.speed) || 0,
       efficiency: Number(this.process.efficiency) || 0,
       totalMeters,
+      totalPieces: this.calculatedTotalPieces,
+      piecesRun: 0,
+      metersPerPiece: this.process.metersPerPiece,
       metersRun: 0,
       metersToGo: Math.max(totalMeters - metersRun, 0),
-      startDate: this.toApiDateTime(this.process.startDate),
+      startDate: this.toApiDateTime(this.process.startDate) || TEMPORARY_PROCESS_START_DATE,
       loom: this.process.loom,
       ...(itemHitsPerDm !== undefined ? { itemHitsPerDm } : {}),
       ...(expectedEndDate ? { expectedEndDate } : {}),
     };
+  }
+
+  private setProcessMetersPerPieceFromArrangement(): void {
+    const pieceLength = this.data?.arrangement?.pieceLength;
+    const metersPerPiece = Number(pieceLength);
+
+    if (Number.isFinite(metersPerPiece) && metersPerPiece > 0) {
+      this.process.metersPerPiece = metersPerPiece;
+    }
   }
 
   private getItemHitsPerDm(): number | undefined {
@@ -213,5 +283,6 @@ export class DialogAssignLoomComponent implements OnInit {
 
     return Number.isNaN(date.getTime()) ? value : date.toISOString();
   }
+
 
 }

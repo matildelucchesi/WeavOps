@@ -1,0 +1,23 @@
+type: object
+
+required:
+  - loomId
+  - itemId
+
+properties:
+  id:
+    type: string
+    readOnly: true
+  loomId:
+    type: string
+  itemId:
+    type: string
+  processId:
+    type: string
+  status:
+    type: string
+    enum:
+      - QUEUED
+      - RUNNING
+      - COMPLETED
+      - ABANDONED

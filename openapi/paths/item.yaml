@@ -129,6 +129,28 @@
       '404':
         description: Item non trovato
 
+/items/{id}/remaining-meters-to-assign:
+  get:
+    summary: Recupera i metri ancora da assegnare a un item
+    operationId: getRemainingMetersToAssign
+    tags:
+      - Item
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Metri ancora da assegnare
+        content:
+          application/json:
+            schema:
+              type: integer
+      '404':
+        description: Item non trovato
+
 /items/with-arrangement:
   post:
     summary: Crea item con disposizione e customerName

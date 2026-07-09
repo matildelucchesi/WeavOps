@@ -1,0 +1,59 @@
+@use '../dialog-alert' as dialogAlert;
+
+@include dialogAlert.shell(
+    $body-background: var(--dialog-alert-body-background),
+    $body-gap: 0,
+    $body-padding: 0,
+    $icon-color: var(--dialog-alert-icon-color)
+);
+
+.wrapper{
+    --dialog-alert-icon-color: var(--weavops-color-primary);
+    --dialog-alert-border-color: var(--weavops-color-warning);
+    --dialog-alert-body-background: #ffeeba;
+}
+
+.dialog-alert-danger{
+    --dialog-alert-icon-color: var(--weavops-color-danger-bright);
+    --dialog-alert-border-color: var(--weavops-color-danger-bright);
+    --dialog-alert-body-background: var(--weavops-color-danger-soft);
+}
+
+.dialog-alert-warning{
+    --dialog-alert-icon-color: var(--weavops-color-warning);
+    --dialog-alert-border-color: var(--weavops-color-warning);
+    --dialog-alert-body-background: var(--weavops-color-warning-alpha);
+}
+
+.body{
+    border-top-color: var(--dialog-alert-border-color);
+}
+
+.icon{
+    color: var(--dialog-alert-icon-color);
+}
+
+p{
+    justify-self: center;
+}
+
+.head{
+    gap: 0;
+}
+
+.first-text{
+    color: var(--dialog-alert-icon-color);
+    font-size: 14px;
+}
+
+.second-text{
+    font-size: 12px;
+    justify-self: stretch;
+    text-align: center;
+    width: 100%;
+}
+
+.why{
+    display: flex;
+    justify-self: center;
+}

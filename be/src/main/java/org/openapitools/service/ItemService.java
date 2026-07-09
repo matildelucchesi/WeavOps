@@ -3,12 +3,15 @@ package org.openapitools.service;
 import org.openapitools.domain.ArrangementEntity;
 import org.openapitools.domain.CustomerEntity;
 import org.openapitools.domain.ItemEntity;
-import org.openapitools.domain.LoomEntity;
+import org.openapitools.domain.LoomItemAssignmentEntity;
+import org.openapitools.domain.ProcessEntity;
 import org.openapitools.model.Arrangement;
 import org.openapitools.model.CreateItemWithArrangementRequest;
 import org.openapitools.model.Customer;
 import org.openapitools.model.Item;
 import org.openapitools.repository.ItemRepository;
+import org.openapitools.repository.LoomItemAssignmentRepository;
+import org.openapitools.repository.ProcessRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,12 +19,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ItemService {
+    private static final Instant TEMPORARY_ITEM_EXPECTED_END_DATE = Instant.EPOCH;
+
     @Autowired
     private CustomerService customerService;
 
@@ -29,9 +36,17 @@ public class ItemService {
     private ArrangementService arrangementService;
 
     private final ItemRepository repository;
+    private final LoomItemAssignmentRepository loomItemAssignmentRepository;
+    private final ProcessRepository processRepository;
 
-    public ItemService(ItemRepository repository) {
+    public ItemService(
+            ItemRepository repository,
+            LoomItemAssignmentRepository loomItemAssignmentRepository,
+            ProcessRepository processRepository
+    ) {
         this.repository = repository;
+        this.loomItemAssignmentRepository = loomItemAssignmentRepository;
+        this.processRepository = processRepository;
     }
 
     public List<ItemEntity> findAll() {
@@ -39,6 +54,7 @@ public class ItemService {
     }
 
     public ItemEntity save(ItemEntity item) {
+        ensureExpectedEndDate(item);
         return repository.save(item);
     }
 
@@ -51,6 +67,7 @@ public class ItemService {
             return Optional.empty();
         }
         entity.setId(id);
+        ensureExpectedEndDate(entity);
         return Optional.of(repository.save(entity));
     }
 
@@ -64,6 +81,38 @@ public class ItemService {
 
     public boolean existsById(String id){
         return repository.existsById(id);
+    }
+
+    public Optional<Integer> calculateRemainingMetersToAssign(String itemId) {
+        if (isBlank(itemId)) {
+            return Optional.empty();
+        }
+
+        return repository.findById(itemId)
+                .map(item -> Math.max(getTotalMeters(item) - calculateAssignedMeters(itemId), 0));
+    }
+
+    private int getTotalMeters(ItemEntity item) {
+        return item.getTotalMeters() != null ? item.getTotalMeters() : 0;
+    }
+
+    private int calculateAssignedMeters(String itemId) {
+        int assignedMeters = 0;
+        Set<String> processIds = new HashSet<>();
+
+        for (LoomItemAssignmentEntity assignment : loomItemAssignmentRepository.findByItemId(itemId)) {
+            if (assignment == null || isBlank(assignment.getProcessId()) || !processIds.add(assignment.getProcessId())) {
+                continue;
+            }
+
+            ProcessEntity process = processRepository.findById(assignment.getProcessId()).orElse(null);
+
+            if (process != null && process.getTotalMeters() != null) {
+                assignedMeters += process.getTotalMeters();
+            }
+        }
+
+        return assignedMeters;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -122,6 +171,7 @@ public class ItemService {
         item.setCustomerId(customer.getId());
         item.setState(Item.StateEnum.INITIALIZED);
         item.setIsArchived(false);
+        item.setExpectedEndDate(TEMPORARY_ITEM_EXPECTED_END_DATE);
 
         float totalMeters = arrangementRequest.getPiecesCount() * arrangementRequest.getPieceLength();
         item.setTotalMeters(Math.round(totalMeters));
@@ -129,8 +179,18 @@ public class ItemService {
         return repository.save(item);
     }
 
+    private void ensureExpectedEndDate(ItemEntity item) {
+        if (item.getExpectedEndDate() == null) {
+            item.setExpectedEndDate(TEMPORARY_ITEM_EXPECTED_END_DATE);
+        }
+    }
+
     private Instant toInstant(OffsetDateTime value) {
         return value == null ? null : value.toInstant();
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 
     public List<ItemEntity> findAllArchived() {
@@ -139,6 +199,14 @@ public class ItemService {
 
     public List<ItemEntity> findAllNotArchived() {
         return repository.findAllNotArchived();
+    }
+
+    public void addMeters(String id, Integer meters){
+        this.repository.findById(id).ifPresent(itemEntity -> {
+            Integer currentMetersRun = itemEntity.getMetersRun() != null ? itemEntity.getMetersRun() : 0;
+            itemEntity.setMetersRun(currentMetersRun + meters);
+            this.repository.save(itemEntity);
+        });
     }
 
 }

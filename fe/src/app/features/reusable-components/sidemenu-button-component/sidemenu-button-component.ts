@@ -1,14 +1,13 @@
 import { Component, Input, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidemenu-button-component',
   imports: [
     MatIconModule,
     CommonModule,
-    RouterLink
   ],
   standalone: true,
   templateUrl: './sidemenu-button-component.html',
@@ -27,17 +26,34 @@ export class SidemenuButtonComponent {
     return /\.(png|jpe?g|svg|gif)$/i.test(icon) || icon.includes('/');
   }
 
-  isActiveRoute(route: string | null): boolean {
-    const routesToMatch = [route, ...this.activeRoutes].filter((route): route is string => !!route);
+  public navigateToRoute(): void {
+    if (!this.route) {
+      return;
+    }
 
-    return routesToMatch.some((routeToMatch) =>
-      this.router.isActive(routeToMatch, {
+    this.router.navigateByUrl(this.route);
+  }
+
+  isActiveRoute(route: string | null): boolean {
+    const routeToMatch = route;
+
+    if (
+      routeToMatch
+      && this.router.isActive(routeToMatch, {
         paths: 'exact',
         queryParams: 'ignored',
         fragment: 'ignored',
         matrixParams: 'ignored',
-      }),
-    );
+      })
+    ) {
+      return true;
+    }
+
+    const currentPath = this.router.url.split(/[?#]/)[0];
+
+    return this.activeRoutes
+      .filter((activeRoute): activeRoute is string => !!activeRoute)
+      .some((activeRoute) => currentPath === activeRoute || currentPath.startsWith(`${activeRoute}/`));
   }
 
 }

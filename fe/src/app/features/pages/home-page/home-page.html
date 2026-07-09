@@ -12,7 +12,12 @@
         <div class="loom-section">
         @if(loomList().length > 0) {
           @for(loom of loomList(); track loom.id ?? loom.serialNumber) {
-            <app-loom-card-component [loom]="loom" (click)="openLoomActions(loom)" [isDialogMode]="false"></app-loom-card-component>
+            <app-loom-card-component
+              [loom]="loom"
+              [days]="getLoomDays(loom)"
+              [isDialogMode]="false"
+              (click)="openLoomActions(loom)">
+            </app-loom-card-component>
           }
         } 
         </div>

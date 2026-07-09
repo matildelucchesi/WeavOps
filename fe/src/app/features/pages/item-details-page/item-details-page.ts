@@ -4,22 +4,34 @@ import { ActivatedRoute } from '@angular/router';
 import { DecorativeLinesComponent } from '../../reusable-components/decorative-lines-component/decorative-lines-component';
 import { TitlePageComponent } from '../../reusable-components/title-page-component/title-page-component';
 import { WhitePanel } from '../../reusable-components/white-panel/white-panel';
-import { Arrangement, Item, Loom, Process } from '../../../api';
+import { Arrangement, Item, Loom, LoomItemAssignment, Process } from '../../../api';
 import { ItemFacadeService } from '../../../services/item-facade.service';
 import { ArrangementFacadeService } from '../../../services/arrangement-facade.service';
 import { LoomFacadeService } from '../../../services/loom-facade.service';
 import { ExitButtonComponent } from "../../reusable-components/button/exit-button-component/exit-button-component";
 import { MatIcon } from "@angular/material/icon";
-import { DialogAssignLoomComponent, type DialogAssignLoomData } from "../../reusable-components/dialog/dialog-assign-loom-component/dialog-assign-loom-component";
+import {
+  DialogAssignLoomComponent,
+  TEMPORARY_PROCESS_START_DATE,
+  type DialogAssignLoomData,
+} from "../../reusable-components/dialog/dialog-assign-loom-component/dialog-assign-loom-component";
 import { DialogItemAlertState, type DialogItemAlertStateData, type DialogItemAlertStateResult } from "../../reusable-components/dialog/dialog-item-alert-state/dialog-item-alert-state";
 import { MatDialog } from '@angular/material/dialog';
-import { TableComponent, type TableColumn } from "../../reusable-components/table-component/table-component";
+import { TableAction, TableActionClick, TableComponent, type TableColumn } from "../../reusable-components/table-component/table-component";
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { LoomItemAssignmentFacadeService } from '../../../services/loom-item-assignment-facade.service';
+import { DialogInformativeComponent, type DialogInformativeData } from '../../reusable-components/dialog/dialog-informative-component/dialog-informative-component';
 
 interface ProcessTableRow {
+  id: string;
+  assignmentId: string;
+  processId?: string;
+  loomId?: string;
+  status?: LoomItemAssignment.StatusEnum;
   loomName: string;
-  metersRun: string;
-  metersToGo: string;
+  piecesRun: string;
+  totalPieces: string;
+  state: string;
   days: string;
   expectedEndDate: string;
 }
@@ -45,30 +57,100 @@ export class ItemDetailsPage implements OnInit {
   private readonly item = signal<Item | null>(null);
   private readonly arrangement = signal<Arrangement | null>(null);
   private readonly loomNamesById = signal<Record<string, string>>({});
+  private readonly itemAssignments = signal<LoomItemAssignment[]>([]);
+  private readonly remainingMetersToAssign = signal<number>(0);
   public itemName: string = '';
   public isEditEnabled: boolean = false;
 
   public readonly processesColumns: TableColumn<ProcessTableRow>[] = [
     { header: 'Nome Telaio', field: 'loomName' },
-    { header: 'Metri Fatti', field: 'metersRun' },
-    { header: 'Metri da Fare', field: 'metersToGo' },
+    { header: 'Pezze Fatte', field: 'piecesRun' },
+    { header: 'Pezze Totali Assegnate', field: 'totalPieces' },
+    {
+      header: 'Stato',
+      field: 'state',
+      chip: {
+        defaultStyle: {
+          width: '132px',
+          minWidth: '132px',
+          height: '28px',
+        },
+        styles: {
+          'In coda': {
+            label: 'In coda',
+            backgroundColor: 'var(--weavops-color-accent-lighter)',
+            color: 'var(--weavops-color-accent-deep)',
+            borderColor: 'var(--weavops-color-accent-deep)',
+          },
+          'In lavorazione': {
+            label: 'In lavorazione',
+            backgroundColor: 'var(--weavops-color-blue-soft)',
+            color: 'var(--weavops-color-blue)',
+            borderColor: 'var(--weavops-color-blue)',
+          },
+          'Completato': {
+            label: 'Completato',
+            backgroundColor: 'var(--weavops-color-success-soft)',
+            color: 'var(--weavops-color-success)',
+            borderColor: 'var(--weavops-color-success)',
+          },
+          'Abbandonato': {
+            label: 'Abbandonato',
+            backgroundColor: 'var(--weavops-color-grey)',
+            color: 'var(--weavops-color-grey-dark)',
+            borderColor: 'var(--weavops-color-grey-dark)',
+          },
+        },
+      },
+    },
     { header: 'Tempo stimato', field: 'days' },
     { header: 'Data di fine prevista', field: 'expectedEndDate' },
   ];
-  public readonly rows = computed<ProcessTableRow[]>(() => this.productionRows.map((process) => ({
-    loomName: this.getProcessLoomName(process),
-    metersRun: this.formatTableMeters(process.metersRun),
-    metersToGo: this.formatTableMeters(process.metersToGo),
-    days: this.formatTableDays(process.days),
-    expectedEndDate: this.formatDate(process.expectedEndDate),
-  })));
+  public readonly rows = computed<ProcessTableRow[]>(() => this.itemAssignments().map((assignment) => {
+    const process = this.getAssignmentProcess(assignment);
+
+    return {
+      id: assignment.id ?? '',
+      assignmentId: assignment.id ?? '',
+      processId: assignment.processId,
+      loomId: assignment.loomId,
+      status: assignment.status,
+      loomName: this.getAssignmentLoomName(assignment, process),
+      piecesRun: this.formatTablePieces(process?.piecesRun),
+      totalPieces: this.formatTablePieces(process?.totalPieces),
+      state: this.getAssignmentState(assignment),
+      days: this.formatTableDays(process?.days),
+      expectedEndDate: this.formatDate(process?.expectedEndDate),
+    };
+  }));
   
   private readonly itemService = inject(ItemFacadeService);
+  private readonly assignmentService = inject(LoomItemAssignmentFacadeService);
   private readonly arrangementService = inject(ArrangementFacadeService);
   private readonly loomService = inject(LoomFacadeService);
   private readonly route = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+
+  public assignmentActions : TableAction<ProcessTableRow>[] = [
+        {
+          id: 'delete',
+          label: 'Elimina',
+          icon: 'cancel',
+          imageAlt: 'Elimina',
+          visible: (row) => row.status !== LoomItemAssignment.StatusEnum.Abandoned && row.status !== LoomItemAssignment.StatusEnum.Completed,
+          deleteItemName: () => "l'elemento selezionato",
+        },
+      ]
+
+  public onTableAction(event: TableActionClick<ProcessTableRow>): void {
+      switch (event.action.id) {
+        case 'delete':
+          this.deleteAssignment(event.row);
+          console.log('Elimina assegnazione', event.row);
+          break;
+      }
+    }
 
   public get pageTitle(): string {
     return this.itemName ? `Dettagli ${this.itemName}` : 'Dettagli Articolo';
@@ -83,7 +165,7 @@ export class ItemDetailsPage implements OnInit {
   }
 
   public get productionRows() {
-    return this.item()?.processing ?? [];
+    return this.itemAssignments();
   }
 
   public get hasProductionRows(): boolean {
@@ -94,6 +176,17 @@ export class ItemDetailsPage implements OnInit {
     const state = this.item()?.state;
 
     return state === Item.StateEnum.Completed || state === Item.StateEnum.Abandoned;
+  }
+
+  public get itemStatusMessageClass(): string {
+    switch (this.item()?.state) {
+      case Item.StateEnum.Completed:
+        return 'item-status-message-completed';
+      case Item.StateEnum.Abandoned:
+        return 'item-status-message-abandoned';
+      default:
+        return 'item-status-message-default';
+    }
   }
 
   public get editButtonLabel(): string {
@@ -148,6 +241,8 @@ export class ItemDetailsPage implements OnInit {
     this.item.set(navigationItem);
 
     if (navigationItem) {
+      this.loadItemAssignments(navigationItem.id);
+      this.loadRemainingMetersToAssign(navigationItem.id);
       this.setArrangement(navigationArrangement);
       this.loadArrangement(navigationItem.arrangementId);
     }
@@ -158,7 +253,43 @@ export class ItemDetailsPage implements OnInit {
 
     this.itemService.getById(itemId).subscribe((item) => {
       this.item.set(item);
+      this.loadItemAssignments(item.id);
+      this.loadRemainingMetersToAssign(item.id);
       this.loadArrangement(item.arrangementId);
+    });
+  }
+
+  private loadRemainingMetersToAssign(itemId: string | undefined): void {
+    if (!itemId) {
+      this.remainingMetersToAssign.set(0);
+      return;
+    }
+
+    this.itemService.getRemainingMetersToAssign(itemId).subscribe({
+      next: (remainingMeters) => {
+        this.remainingMetersToAssign.set(remainingMeters);
+      },
+      error: (error) => {
+        console.error('Error loading remaining meters to assign:', error);
+        this.remainingMetersToAssign.set(0);
+      },
+    });
+  }
+
+  private loadItemAssignments(itemId: string | undefined): void {
+    if (!itemId) {
+      this.itemAssignments.set([]);
+      return;
+    }
+
+    this.assignmentService.getByItemId(itemId).subscribe({
+      next: (assignments) => {
+        this.itemAssignments.set(assignments);
+      },
+      error: (error) => {
+        console.error('Error loading item assignments:', error);
+        this.itemAssignments.set([]);
+      },
     });
   }
 
@@ -259,6 +390,18 @@ export class ItemDetailsPage implements OnInit {
       month: '2-digit',
       year: 'numeric',
     });
+  }
+
+  public formatItemStartDate(value: string | undefined): string {
+    const startDate = this.isRealStartDate(value)
+      ? value
+      : this.getOldestRealProcessStartDate(this.itemData?.processing ?? []);
+
+    if (!startDate) {
+      return '';
+    }
+
+    return this.formatDate(startDate);
   }
 
   public formatNumber(value: number | undefined, suffix: string = ''): string {
@@ -471,8 +614,10 @@ export class ItemDetailsPage implements OnInit {
         width: '720px',
         maxWidth: 'calc(100vw - 48px)',
         autoFocus: false,
+        disableClose: true,
         data: {
           arrangement: this.arrangementData,
+          remainingMetersToAssign: this.calculateRemainingMetersToAssign(),
         },
       },
     );
@@ -501,6 +646,7 @@ export class ItemDetailsPage implements OnInit {
     const dialogRef = this.dialog.open<DialogItemAlertState, DialogItemAlertStateData, DialogItemAlertStateResult>(
       DialogItemAlertState,
       {
+        panelClass: 'item-alert-dialog-panel',
         width: '520px',
         maxWidth: 'calc(100vw - 48px)',
         autoFocus: false,
@@ -569,11 +715,22 @@ export class ItemDetailsPage implements OnInit {
     this.itemService.update(currentItem.id, updatedItem).subscribe({
       next: (item) => {
         this.item.set(item);
-        this.snackBar.open('Assegnazione avvenuta con successo', 'Chiudi', {
-          duration: 4000,
-          horizontalPosition: 'end',
-          verticalPosition: 'bottom',
+        if(process.id && item.id && process.loom?.id) {
+        this.assignmentService.create(process.loom?.id ?? '', item.id, process.id, LoomItemAssignment.StatusEnum.Queued).subscribe({
+          next: (assignment) => {
+            this.itemAssignments.set([...this.itemAssignments(), assignment]);
+            this.loadRemainingMetersToAssign(item.id);
+            this.snackBar.open('Assegnazione avvenuta con successo', 'Chiudi', {
+              duration: 4000,
+              horizontalPosition: 'end',
+              verticalPosition: 'bottom',
+            });
+          },
+          error: (error) => {
+            console.error("Errore durante l'assegnazione del processo:", error);
+          }
         });
+      }
       },
       error: (error) => {
         this.item.set(currentItem);
@@ -608,8 +765,8 @@ export class ItemDetailsPage implements OnInit {
     return `Telaio ${loom.serialNumber}`;
   }
 
-  private formatTableMeters(value: number | undefined): string {
-    return this.formatNumber(value, ' m');
+  private formatTablePieces(value: number | undefined): string {
+    return this.formatNumber(value);
   }
 
   private formatTableDays(value: number | undefined): string {
@@ -647,4 +804,150 @@ export class ItemDetailsPage implements OnInit {
 
     return parts.join(' ');
   }
+
+  public calculateRemainingMetersToAssign(): number {
+    return this.remainingMetersToAssign();
+  }
+
+  private isTemporaryProcessStartDate(value: string): boolean {
+    const date = new Date(value);
+    const temporaryDate = new Date(TEMPORARY_PROCESS_START_DATE);
+
+    return !Number.isNaN(date.getTime()) && date.getTime() === temporaryDate.getTime();
+  }
+
+  private isRealStartDate(value: string | undefined): value is string {
+    if (!value) {
+      return false;
+    }
+
+    const date = new Date(value);
+
+    return !Number.isNaN(date.getTime()) && !this.isTemporaryProcessStartDate(value);
+  }
+
+  private getOldestRealProcessStartDate(processes: Process[]): string | undefined {
+    return processes
+      .map((process) => process.startDate)
+      .filter((startDate): startDate is string => this.isRealStartDate(startDate))
+      .sort((left, right) => new Date(left).getTime() - new Date(right).getTime())[0];
+  }
+
+  public openInfoDialogEndDate(): void {
+    this.dialog.open<DialogInformativeComponent, DialogInformativeData>(DialogInformativeComponent, {
+      panelClass: 'informative-dialog-panel',
+      width: '520px',
+      maxWidth: 'calc(100vw - 48px)',
+      autoFocus: false,
+      data: {
+        title: 'Informazioni',
+        message: 'La data PREVISTA per il completamento della lavorazione dell\'intero articolo sarà visualizzabile nel momento in cui saranno assegnati tutti i metri da produrre ai telai.',
+      },
+    });
+
+  }
+
+   public openInfoDialogStartDate(): void {
+    this.dialog.open<DialogInformativeComponent, DialogInformativeData>(DialogInformativeComponent, {
+      panelClass: 'informative-dialog-panel',
+      width: '520px',
+      maxWidth: 'calc(100vw - 48px)',
+      autoFocus: false,
+      data: {
+        title: 'Informazioni',
+        message: 'La data di INIZIO della lavorazione dell\'articolo è data dalla data della prima messa in produzione di un processo.',
+      },
+    });
+
+  }
+
+
+  public allTheProcessessAreRunning(): boolean {
+    const assignments = this.itemAssignments();
+
+    return assignments.length > 0
+      && assignments.every((assignment) => assignment.status === LoomItemAssignment.StatusEnum.Running);
+  }
+
+  private deleteAssignment(row: ProcessTableRow): void {
+    const currentItem = this.item();
+
+    if (!currentItem?.id) {
+      console.error("Impossibile eliminare l'assegnazione: id dell'item mancante");
+      return;
+    }
+
+    const itemId = currentItem.id;
+
+    if (!row.assignmentId) {
+      console.error("Impossibile eliminare l'assegnazione: id dell'assegnazione mancante");
+      return;
+    }
+
+    this.assignmentService.remove(row.assignmentId).subscribe({
+      next: () => {
+        this.loadItem(itemId);
+        this.snackBar.open(this.getDeleteAssignmentSuccessMessage(row), 'Chiudi', {
+          duration: 4000,
+          horizontalPosition: 'end',
+          verticalPosition: 'bottom',
+        });
+      },
+      error: (error) => {
+        console.error("Errore durante l'eliminazione dell'assegnazione:", error);
+        this.snackBar.open("Errore durante l'eliminazione dell'assegnazione", 'Chiudi', {
+          duration: 4000,
+          horizontalPosition: 'end',
+          verticalPosition: 'bottom',
+        });
+      }
+    });
+
+  }
+
+  private getAssignmentProcess(assignment: LoomItemAssignment): Process | null {
+    if (!assignment.processId) {
+      return null;
+    }
+
+    return this.item()?.processing?.find((process) => process.id === assignment.processId) ?? null;
+  }
+
+  private getAssignmentLoomName(assignment: LoomItemAssignment, process: Process | null): string {
+    if (assignment.loomId) {
+      const loomName = this.getLoomNameById(assignment.loomId);
+
+      if (loomName !== 'Telaio non disponibile') {
+        return loomName;
+      }
+    }
+
+    if (process) {
+      return this.getProcessLoomName(process);
+    }
+
+    return 'Telaio non disponibile';
+  }
+
+  private getAssignmentState(assignment: LoomItemAssignment): string {
+    switch (assignment.status) {
+      case LoomItemAssignment.StatusEnum.Queued:
+        return 'In coda';
+      case LoomItemAssignment.StatusEnum.Running:
+        return 'In lavorazione';
+      case LoomItemAssignment.StatusEnum.Completed:
+        return 'Completato';
+      case LoomItemAssignment.StatusEnum.Abandoned:
+        return 'Abbandonato';
+      default:
+        return 'Stato sconosciuto';
+    }
+  }
+
+  private getDeleteAssignmentSuccessMessage(row: ProcessTableRow): string {
+    return row.state === 'In lavorazione'
+      ? 'Produzione abbandonata con successo'
+      : 'Assegnazione eliminata con successo';
+  }
+
 }

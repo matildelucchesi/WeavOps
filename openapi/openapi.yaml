@@ -17,12 +17,16 @@ paths:
     $ref: './paths/loom.yaml#/~1looms~1delete-multi'
   /looms/{id}:
     $ref: './paths/loom.yaml#/~1looms~1{id}'
+  /looms/{id}/add-pieces:
+    $ref: './paths/loom.yaml#/~1looms~1{id}~1add-pieces'
   /items:
     $ref: './paths/item.yaml#/~1items'
   /items/delete-multi:
     $ref: './paths/item.yaml#/~1items~1delete-multi'
   /items/{id}:
     $ref: './paths/item.yaml#/~1items~1{id}'
+  /items/{id}/remaining-meters-to-assign:
+    $ref: './paths/item.yaml#/~1items~1{id}~1remaining-meters-to-assign'
   /items/with-arrangement:
     $ref: './paths/item.yaml#/~1items~1with-arrangement'
   /items/items-not-archived:
@@ -41,6 +45,16 @@ paths:
     $ref: './paths/process.yaml#/~1processes'
   /processes/{id}:
     $ref: './paths/process.yaml#/~1processes~1{id}'
+  /loom-item-assignments:
+    $ref: './paths/loom-item-assignment.yaml#/~1loom-item-assignments'
+  /loom-item-assignments/{id}:
+    $ref: './paths/loom-item-assignment.yaml#/~1loom-item-assignments~1{id}'
+  /loom-item-assignments/loom/{loomId}:
+    $ref: './paths/loom-item-assignment.yaml#/~1loom-item-assignments~1loom~1{loomId}'
+  /loom-item-assignments/loom/{loomId}/running:
+    $ref:  './paths/loom-item-assignment.yaml#/~1loom-item-assignments~1loom~1{loomId}~1running'
+  /loom-item-assignments/item/{itemId}:
+    $ref: './paths/loom-item-assignment.yaml#/~1loom-item-assignments~1item~1{itemId}'
   /customers:
     $ref: './paths/customer.yaml#/~1customers'
   /customers/delete-multi:

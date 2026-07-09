@@ -8,6 +8,7 @@ export * from './item';
 export * from './login200Response';
 export * from './loginRequest';
 export * from './loom';
+export * from './loomItemAssignment';
 export * from './process';
 export * from './referent';
 export * from './user';
