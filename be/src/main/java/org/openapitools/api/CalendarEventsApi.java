@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-09T18:56:56.745953300+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-10T15:50:31.737609900+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "CalendarEvents", description = "the CalendarEvents API")
 public interface CalendarEventsApi {
@@ -76,7 +76,7 @@ public interface CalendarEventsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"importance\" : \"LOW\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"type\", \"assignmentId\" : \"assignmentId\" }";
+                    String exampleString = "{ \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -152,7 +152,7 @@ public interface CalendarEventsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"importance\" : \"LOW\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"type\", \"assignmentId\" : \"assignmentId\" }";
+                    String exampleString = "{ \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -193,7 +193,7 @@ public interface CalendarEventsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"importance\" : \"LOW\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"type\", \"assignmentId\" : \"assignmentId\" }, { \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"importance\" : \"LOW\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"type\", \"assignmentId\" : \"assignmentId\" } ]";
+                    String exampleString = "[ { \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\" }, { \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\" } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -242,7 +242,7 @@ public interface CalendarEventsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"importance\" : \"LOW\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"type\", \"assignmentId\" : \"assignmentId\" }";
+                    String exampleString = "{ \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

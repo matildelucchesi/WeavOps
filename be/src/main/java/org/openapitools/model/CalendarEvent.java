@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("calendar-event")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-09T18:56:56.745953300+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-10T15:50:31.737609900+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class CalendarEvent {
 
   private @Nullable String id;
@@ -34,19 +34,33 @@ public class CalendarEvent {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private OffsetDateTime date;
 
+  private @Nullable String assignmentId;
+
+  private @Nullable String loomId;
+
+  private @Nullable String itemId;
+
+  private @Nullable String processId;
+
+  private @Nullable String arrangementId;
+
   /**
-   * Gets or Sets importance
+   * Gets or Sets type
    */
-  public enum ImportanceEnum {
-    LOW("LOW"),
+  public enum TypeEnum {
+    GENERIC("GENERIC"),
     
-    MEDIUM("MEDIUM"),
+    DELIVERY("DELIVERY"),
     
-    HIGH("HIGH");
+    ITEM_FORECAST("ITEM_FORECAST"),
+    
+    LOOM_FORECAST("LOOM_FORECAST"),
+    
+    CLOSURE("CLOSURE");
 
     private final String value;
 
-    ImportanceEnum(String value) {
+    TypeEnum(String value) {
       this.value = value;
     }
 
@@ -61,8 +75,8 @@ public class CalendarEvent {
     }
 
     @JsonCreator
-    public static ImportanceEnum fromValue(String value) {
-      for (ImportanceEnum b : ImportanceEnum.values()) {
+    public static TypeEnum fromValue(String value) {
+      for (TypeEnum b : TypeEnum.values()) {
         if (b.value.equals(value)) {
           return b;
         }
@@ -71,19 +85,7 @@ public class CalendarEvent {
     }
   }
 
-  private ImportanceEnum importance;
-
-  private @Nullable String assignmentId;
-
-  private @Nullable String loomId;
-
-  private @Nullable String itemId;
-
-  private @Nullable String processId;
-
-  private @Nullable String arrangementId;
-
-  private @Nullable String type;
+  private TypeEnum type;
 
   public CalendarEvent() {
     super();
@@ -92,10 +94,10 @@ public class CalendarEvent {
   /**
    * Constructor with only required parameters
    */
-  public CalendarEvent(String description, OffsetDateTime date, ImportanceEnum importance) {
+  public CalendarEvent(String description, OffsetDateTime date, TypeEnum type) {
     this.description = description;
     this.date = date;
-    this.importance = importance;
+    this.type = type;
   }
 
   public CalendarEvent id(@Nullable String id) {
@@ -159,27 +161,6 @@ public class CalendarEvent {
   @JsonProperty("date")
   public void setDate(OffsetDateTime date) {
     this.date = date;
-  }
-
-  public CalendarEvent importance(ImportanceEnum importance) {
-    this.importance = importance;
-    return this;
-  }
-
-  /**
-   * Get importance
-   * @return importance
-   */
-  @NotNull 
-  @Schema(name = "importance", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("importance")
-  public ImportanceEnum getImportance() {
-    return importance;
-  }
-
-  @JsonProperty("importance")
-  public void setImportance(ImportanceEnum importance) {
-    this.importance = importance;
   }
 
   public CalendarEvent assignmentId(@Nullable String assignmentId) {
@@ -287,24 +268,24 @@ public class CalendarEvent {
     this.arrangementId = arrangementId;
   }
 
-  public CalendarEvent type(@Nullable String type) {
+  public CalendarEvent type(TypeEnum type) {
     this.type = type;
     return this;
   }
 
   /**
-   * Tipo di evento
+   * Get type
    * @return type
    */
-  
-  @Schema(name = "type", description = "Tipo di evento", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull 
+  @Schema(name = "type", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("type")
-  public @Nullable String getType() {
+  public TypeEnum getType() {
     return type;
   }
 
   @JsonProperty("type")
-  public void setType(@Nullable String type) {
+  public void setType(TypeEnum type) {
     this.type = type;
   }
 
@@ -320,7 +301,6 @@ public class CalendarEvent {
     return Objects.equals(this.id, calendarEvent.id) &&
         Objects.equals(this.description, calendarEvent.description) &&
         Objects.equals(this.date, calendarEvent.date) &&
-        Objects.equals(this.importance, calendarEvent.importance) &&
         Objects.equals(this.assignmentId, calendarEvent.assignmentId) &&
         Objects.equals(this.loomId, calendarEvent.loomId) &&
         Objects.equals(this.itemId, calendarEvent.itemId) &&
@@ -331,7 +311,7 @@ public class CalendarEvent {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, description, date, importance, assignmentId, loomId, itemId, processId, arrangementId, type);
+    return Objects.hash(id, description, date, assignmentId, loomId, itemId, processId, arrangementId, type);
   }
 
   @Override
@@ -341,7 +321,6 @@ public class CalendarEvent {
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    date: ").append(toIndentedString(date)).append("\n");
-    sb.append("    importance: ").append(toIndentedString(importance)).append("\n");
     sb.append("    assignmentId: ").append(toIndentedString(assignmentId)).append("\n");
     sb.append("    loomId: ").append(toIndentedString(loomId)).append("\n");
     sb.append("    itemId: ").append(toIndentedString(itemId)).append("\n");

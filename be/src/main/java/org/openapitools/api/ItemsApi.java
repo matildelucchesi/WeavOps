@@ -8,6 +8,7 @@ package org.openapitools.api;
 import org.openapitools.model.CreateItemWithArrangementRequest;
 import org.openapitools.model.DeleteMultiItems200Response;
 import org.openapitools.model.Item;
+import org.openapitools.model.ProductionAdvice;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-09T18:56:56.745953300+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-10T15:50:31.737609900+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Item", description = "the Item API")
 public interface ItemsApi {
@@ -368,6 +369,52 @@ public interface ItemsApi {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "[ { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    String PATH_GET_PRODUCTION_ADVICE_BY_ITEM_ID = "/items/{id}/production-advice";
+    /**
+     * GET /items/{id}/production-advice : Calcola il consiglio di produzione per un articolo
+     *
+     * @param id  (required)
+     * @return Previsione e numero di telai consigliati per rispettare la consegna (status code 200)
+     *         or Item non trovato (status code 404)
+     *         or Previsione non calcolabile per dati mancanti o non validi (status code 422)
+     */
+    @Operation(
+        operationId = "getProductionAdviceByItemId",
+        summary = "Calcola il consiglio di produzione per un articolo",
+        tags = { "Item" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Previsione e numero di telai consigliati per rispettare la consegna", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProductionAdvice.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Item non trovato"),
+            @ApiResponse(responseCode = "422", description = "Previsione non calcolabile per dati mancanti o non validi")
+        },
+        security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = ItemsApi.PATH_GET_PRODUCTION_ADVICE_BY_ITEM_ID,
+        produces = { "application/json" }
+    )
+    default ResponseEntity<ProductionAdvice> getProductionAdviceByItemId(
+        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"daysUntilDelivery\" : 0.6027456, \"recommendedTotalLooms\" : 0, \"referenceDailyCapacity\" : 0.7061401, \"currentRunningLooms\" : 0, \"additionalDailyCapacity\" : 0.23021358, \"currentDailyCapacity\" : 0.5962134, \"remainingMeters\" : 0, \"recommendedAdditionalLooms\" : 0, \"meetsDeliveryDate\" : true, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\", \"requiredDailyCapacity\" : 0.5637377, \"estimatedCompletionDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

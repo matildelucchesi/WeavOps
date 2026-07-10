@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +36,7 @@ public class LoomItemAssignmentService {
     private ProcessService processService;
 
     @Autowired
-    private CalendarEventService calendarEventService;
+    private ProductionForecastService productionForecastService;
 
     private final LoomItemAssignmentRepository repository;
 
@@ -145,97 +144,17 @@ public class LoomItemAssignmentService {
         itemEntity.setState(Item.StateEnum.RUNNING);
 
         processEntity.setStartDate(now);
-        processEntity.setDays(this.processService.calculateDays(processEntity));
-        OffsetDateTime expectedEndDate = this.processService.calculateExpectedEndDate(processEntity);
-        processEntity.setExpectedEndDate(expectedEndDate != null ? expectedEndDate.toInstant() : null);
         processEntity.setLoom(loomMapper.toDto(loomEntity));
 
         ProcessEntity savedProcess = this.processService.save(processEntity);
-        this.calendarEventService.createOrUpdateLoomExpectedEndDateEvent(entity, loomEntity, savedProcess);
 
         itemEntity.getProcessing().set(processIndex, savedProcess);
         updateItemStartDateFromProcesses(itemEntity);
-        updateItemExpectedEndDateFromAssignments(itemEntity, entity);
-        this.calendarEventService.createOrUpdateItemExpectedEndDateEvent(itemEntity);
 
-        this.itemService.save(itemEntity);
         this.loomService.save(loomEntity);
+        this.productionForecastService.recalculateProductionForecast(itemEntity, entity);
 
         return true;
-    }
-
-    private void updateItemExpectedEndDateFromAssignments(
-            ItemEntity item,
-            LoomItemAssignmentEntity currentAssignment
-    ) {
-        List<LoomItemAssignmentEntity> assignments = getAssignmentsWithCurrentUpdate(currentAssignment);
-
-        if (checkIfOthersAssignmentsAreRunning(assignments)) {
-            item.setExpectedEndDate(calculateLatestExpectedEndDateFromAssignments(assignments));
-            return;
-        }
-
-        item.setExpectedEndDate(null);
-    }
-
-    private List<LoomItemAssignmentEntity> getAssignmentsWithCurrentUpdate(
-            LoomItemAssignmentEntity currentAssignment
-    ) {
-        List<LoomItemAssignmentEntity> assignments = new ArrayList<>();
-        boolean currentAssignmentAdded = false;
-
-        for (LoomItemAssignmentEntity assignment : this.findByItemId(currentAssignment.getItemId())) {
-            if (assignment != null
-                    && currentAssignment.getId() != null
-                    && currentAssignment.getId().equals(assignment.getId())) {
-                assignments.add(currentAssignment);
-                currentAssignmentAdded = true;
-                continue;
-            }
-
-            assignments.add(assignment);
-        }
-
-        if (!currentAssignmentAdded) {
-            assignments.add(currentAssignment);
-        }
-
-        return assignments;
-    }
-
-    private boolean checkIfOthersAssignmentsAreRunning(List<LoomItemAssignmentEntity> assignments) {
-        return assignments != null
-                && !assignments.isEmpty()
-                && assignments.stream().allMatch(this::hasRunningCompletedOrAbandonedStatus);
-    }
-
-    private boolean hasRunningCompletedOrAbandonedStatus(LoomItemAssignmentEntity entity) {
-        return entity != null
-                && (entity.getStatus() == LoomItemAssignment.StatusEnum.RUNNING
-                || entity.getStatus() == LoomItemAssignment.StatusEnum.COMPLETED
-                || entity.getStatus() == LoomItemAssignment.StatusEnum.ABANDONED);
-    }
-
-    private Instant calculateLatestExpectedEndDateFromAssignments(List<LoomItemAssignmentEntity> assignments) {
-        Instant latestExpectedEndDate = null;
-
-        for (LoomItemAssignmentEntity assignment : assignments) {
-            if (assignment == null || isBlank(assignment.getProcessId())) {
-                continue;
-            }
-
-            ProcessEntity process = this.processService.findById(assignment.getProcessId()).orElse(null);
-
-            if (process == null || process.getExpectedEndDate() == null) {
-                continue;
-            }
-
-            if (latestExpectedEndDate == null || process.getExpectedEndDate().isAfter(latestExpectedEndDate)) {
-                latestExpectedEndDate = process.getExpectedEndDate();
-            }
-        }
-
-        return latestExpectedEndDate;
     }
 
     private boolean endProduction(LoomItemAssignmentEntity entity) {
@@ -269,9 +188,8 @@ public class LoomItemAssignmentService {
         this.processService.save(processEntity);
         itemEntity.getProcessing().set(processIndex, processEntity);
         updateItemStartDateFromProcesses(itemEntity);
-        updateItemStateAfterProductionEnd(itemEntity, entity);
-        this.itemService.save(itemEntity);
         this.loomService.save(loomEntity);
+        this.productionForecastService.recalculateProductionForecast(itemEntity, entity);
 
         return true;
     }
@@ -294,40 +212,6 @@ public class LoomItemAssignmentService {
 
     private boolean isRealProcessStartDate(Instant startDate) {
         return startDate != null && !TEMPORARY_PROCESS_START_DATE.equals(startDate);
-    }
-
-    private void updateItemStateAfterProductionEnd(
-            ItemEntity item,
-            LoomItemAssignmentEntity currentAssignment
-    ) {
-        if (!areAllProcessesEnded(item)) {
-            return;
-        }
-
-        item.setState(
-                hasAbandonedAssignmentForItem(currentAssignment)
-                        ? Item.StateEnum.ABANDONED
-                        : Item.StateEnum.COMPLETED
-        );
-        item.setIsArchived(true);
-    }
-
-    private boolean areAllProcessesEnded(ItemEntity item) {
-        return item.getProcessing() != null
-                && !item.getProcessing().isEmpty()
-                && item.getProcessing().stream()
-                .allMatch(process -> process != null && process.getEndDate() != null);
-    }
-
-    private boolean hasAbandonedAssignmentForItem(LoomItemAssignmentEntity currentAssignment) {
-        if (currentAssignment.getStatus() == LoomItemAssignment.StatusEnum.ABANDONED) {
-            return true;
-        }
-
-        return repository.findByItemId(currentAssignment.getItemId()).stream()
-                .filter(assignment -> assignment.getId() == null
-                        || !assignment.getId().equals(currentAssignment.getId()))
-                .anyMatch(assignment -> assignment.getStatus() == LoomItemAssignment.StatusEnum.ABANDONED);
     }
 
     private int findProcessIndex(ItemEntity item, String processId) {
@@ -409,9 +293,8 @@ public class LoomItemAssignmentService {
         this.processService.save(processEntity);
         itemEntity.getProcessing().set(processIndex, processEntity);
         updateItemStartDateFromProcesses(itemEntity);
-        updateItemStateAfterProductionEnd(itemEntity, assignment);
-        this.itemService.save(itemEntity);
         this.loomService.save(loomEntity);
+        this.productionForecastService.recalculateProductionForecast(itemEntity, assignment);
 
         return true;
     }
@@ -420,6 +303,8 @@ public class LoomItemAssignmentService {
         if (isBlank(assignment.getId())) {
             return false;
         }
+
+        String itemId = assignment.getItemId();
 
         if (!isBlank(assignment.getItemId())) {
             this.itemService.findById(assignment.getItemId()).ifPresent(item -> {
@@ -433,6 +318,11 @@ public class LoomItemAssignmentService {
         }
 
         repository.deleteById(assignment.getId());
+
+        if (!isBlank(itemId)) {
+            this.productionForecastService.recalculateProductionForecast(itemId);
+        }
+
         return true;
     }
 

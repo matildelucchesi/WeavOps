@@ -28,7 +28,7 @@
           </div>
         } @else {
           <div class="button-wrapper edit-actions">
-            <button type="button" class="button-style" (click)="saveChanges()">
+            <button type="button" class="button-style save-case" (click)="saveChanges()">
               <mat-icon style="font-size: 20px; align-content: center;">save</mat-icon>
               Salva Modifiche
             </button>
@@ -163,14 +163,23 @@
               <div class="column">
                 <div class="form-group">
                   <label for="deliveryDate">Data di consegna</label>
+                  @if(isEditEnabled) {
+                  <input
+                    type="date"
+                    id="deliveryDate"
+                    name="deliveryDate"
+                    [ngModel]="toDateInputValue(arrangement.deliveryDate)"
+                    (ngModelChange)="arrangement.deliveryDate = $event"
+                    [class.input-readonly]="false">
+                  } @else {
                   <input
                     type="text"
                     id="deliveryDate"
                     name="deliveryDate"
-                    [ngModel]="formatDate(arrangement.deliveryDate)"
-                    (ngModelChange)="arrangement.deliveryDate = $event"
-                    [readonly]="!isEditEnabled"
-                    [class.input-readonly]="!isEditEnabled">
+                    [value]="formatDate(arrangement.deliveryDate)"
+                    readonly
+                    class="input-readonly">
+                  }
                 </div>
                 <div class="form-group"></div>
                 @if(!isEditEnabled){
@@ -265,8 +274,23 @@
                         </div>
                   </div>
                   <div class="form-group">
-                    <label for="expectedEndDate" style="white-space: nowrap;">Data Completamento Lavorazione Prevista</label>
-                    @if(!allTheProcessessAreRunning()) {
+                  <label for="estimatedCompletionDays">Tempo stimato completamento articolo</label>
+                  <div class="expected-end-date-row">
+                  <input
+                    type="text"
+                    id="estimatedCompletionDays"
+                    name="estimatedCompletionDays"
+                    [value]="getEstimatedArticleCompletionDays()"
+                    [readonly]="true"
+                    [class.input-readonly]="true">
+                </div>
+                </div>
+                  <div class="form-group">
+                    <label
+                      for="expectedEndDate"
+                      style="white-space: nowrap;"
+                      [class.expected-end-date-label]="isExpectedEndDateAfterDeliveryDate()">Data Completamento Lavorazione Prevista</label>
+                    @if(!hasExpectedEndDateForecast()) {
                       <div class="expected-end-date-row">
                         <input
                           type="text"
@@ -274,7 +298,8 @@
                           name="expectedEndDate"
                           value="-"
                           [readonly]="true"
-                          [class.input-readonly]="true">
+                          [class.input-readonly]="true"
+                          [class.expected-end-date-late]="isExpectedEndDateAfterDeliveryDate()">
                         <mat-icon
                           class="info-icon material-symbols-outlined"
                           fontSet="material-symbols-outlined"
@@ -284,19 +309,35 @@
                       </div>
                     }
                     @else{
-                      <input
-                      type="text"
-                      id="expectedEndDate"
-                      name="expectedEndDate"
-                      [ngModel]="formatDate(item.expectedEndDate)"
-                      (ngModelChange)="item.expectedEndDate = $event"
-                      [readonly]="!isEditEnabled"
-                      [class.input-readonly]="!isEditEnabled">
+                      <div class="expected-end-date-row">
+                        <input
+                          type="text"
+                          id="expectedEndDate"
+                          name="expectedEndDate"
+                          [ngModel]="formatDate(item.expectedEndDate)"
+                          (ngModelChange)="item.expectedEndDate = $event"
+                          [readonly]="true"
+                          [class.input-readonly]="true"
+                          [class.expected-end-date-late]="isExpectedEndDateAfterDeliveryDate()">
+                        @if(isExpectedEndDateAfterDeliveryDate()) {
+                          <mat-icon
+                            class="expected-end-date-alert-icon material-symbols-outlined"
+                            fontSet="material-symbols-outlined"
+                            aria-label="La fine prevista supera la data di consegna"
+                            title="La fine prevista supera la data di consegna">
+                            warning
+                          </mat-icon>
+                        }
+                      </div>
+                      @if(isExpectedEndDateAfterDeliveryDate()) {
+                    <div class="advice">
+                      @if(productionAdvice(); as advice) {
+                        <p>{{ getProductionAdviceMessage(advice) }}</p>
+                      }
+                    </div>
+                   }
                     }
                   </div>
-                  <div class="form-group">
-                    
-                </div>
                 </div>
                 <div class="column">
                   <div class="form-group">
@@ -344,7 +385,7 @@
           <img class="loom-icon" src="/icon/loomicon-violet.png" width="40" height="40" alt="Loom Icon">
           <h2>Processi di Produzione</h2>
         </div>
-        @if(calculateRemainingMetersToAssign() > 0){
+        @if(!isTerminated && calculateRemainingMetersToAssign() > 0){
         <div class="button-wrapper">
           <button
           type="button"
@@ -373,5 +414,5 @@
     <div class="text-pattern-inverse"></div>
     </div>
   <app-white-panel [title]="'Attenzione'" [text]="'Se la produzione viene contrassegnata come TERMINATA, l’articolo verrà inserito nella lista degli articoli ARCHIVIATI, visualizzabile nella pagina Anagrafiche Articoli, e tutti i telai associati verranno liberati immediatamente.<br>La terminazione è irreversibile, ma è comunque possibile copiare i dati dell’articolo per metterne in produzione uno nuovo con gli stessi dati di partenza.'"></app-white-panel>
-  <app-white-panel [title]="'Informazioni su eliminazione processo'" [text]="'Se un processo con stato IN LAVORAZIONE viene eliminato, tutti i dati associati verranno persi e non sarà possibile ripristinarli. Inoltre verrà contrassegnato come ABBANDONATO e i metri rimanenti saranno da riassegnare su altri processi. <br> Se un processo con stato IN CODA viene eliminato, verranno ripristinati tutti i dati a prima dell\'assegnazione del processo. <br><br> Non è possibile eliminare i processi con stato ABBANDONATO e COMPLETATO in modo da mantenere traccia della produzione.'"></app-white-panel>
+  <app-white-panel [title]="'Informazioni su eliminazione processo'" [text]="'Se un processo con stato IN LAVORAZIONE viene eliminato, tutti i dati associati verranno persi e non sarà possibile ripristinarli. Inoltre verrà contrassegnato come ABBANDONATO e i metri non ancora prodotti resteranno nel totale da completare. <br> Se un processo con stato IN CODA viene eliminato, verranno ripristinati tutti i dati a prima dell\'assegnazione del processo. <br><br> Non è possibile eliminare i processi con stato ABBANDONATO e COMPLETATO in modo da mantenere traccia della produzione.'"></app-white-panel>
 </div>

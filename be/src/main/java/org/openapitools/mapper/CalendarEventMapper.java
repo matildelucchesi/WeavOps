@@ -21,13 +21,12 @@ public class CalendarEventMapper {
         dto.setId(entity.getId());
         dto.setDate(toOffsetDateTime(entity.getDate()));
         dto.setDescription(entity.getDescription());
-        dto.setImportance(entity.getImportance());
         dto.setItemId(entity.getItemId());
         dto.setProcessId(entity.getProcessId());
         dto.setLoomId(entity.getLoomId());
         dto.setAssignmentId(entity.getAssignmentId());
         dto.setArrangementId(entity.getArrangementId());
-        dto.setType(entity.getEventType());
+        dto.setType(entity.getType());
         return dto;
     }
 
@@ -40,13 +39,12 @@ public class CalendarEventMapper {
         entity.setId(dto.getId());
         entity.setDate(toInstant(dto.getDate()));
         entity.setDescription(dto.getDescription());
-        entity.setImportance(dto.getImportance());
         entity.setItemId(dto.getItemId());
         entity.setProcessId(dto.getProcessId());
         entity.setLoomId(dto.getLoomId());
         entity.setAssignmentId(dto.getAssignmentId());
         entity.setArrangementId(dto.getArrangementId());
-        entity.setEventType(dto.getType());
+        entity.setType(dto.getType());
         return entity;
     }
 

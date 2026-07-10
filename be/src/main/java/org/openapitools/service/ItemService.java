@@ -3,15 +3,12 @@ package org.openapitools.service;
 import org.openapitools.domain.ArrangementEntity;
 import org.openapitools.domain.CustomerEntity;
 import org.openapitools.domain.ItemEntity;
-import org.openapitools.domain.LoomItemAssignmentEntity;
-import org.openapitools.domain.ProcessEntity;
 import org.openapitools.model.Arrangement;
 import org.openapitools.model.CreateItemWithArrangementRequest;
 import org.openapitools.model.Customer;
 import org.openapitools.model.Item;
+import org.openapitools.model.ProductionAdvice;
 import org.openapitools.repository.ItemRepository;
-import org.openapitools.repository.LoomItemAssignmentRepository;
-import org.openapitools.repository.ProcessRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class ItemService {
@@ -36,17 +31,14 @@ public class ItemService {
     private ArrangementService arrangementService;
 
     private final ItemRepository repository;
-    private final LoomItemAssignmentRepository loomItemAssignmentRepository;
-    private final ProcessRepository processRepository;
+    private final ProductionForecastService productionForecastService;
 
     public ItemService(
             ItemRepository repository,
-            LoomItemAssignmentRepository loomItemAssignmentRepository,
-            ProcessRepository processRepository
+            ProductionForecastService productionForecastService
     ) {
         this.repository = repository;
-        this.loomItemAssignmentRepository = loomItemAssignmentRepository;
-        this.processRepository = processRepository;
+        this.productionForecastService = productionForecastService;
     }
 
     public List<ItemEntity> findAll() {
@@ -62,13 +54,17 @@ public class ItemService {
         return repository.findById(id);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Optional<ItemEntity> update(String id, ItemEntity entity){
         if (!repository.existsById(id)) {
             return Optional.empty();
         }
         entity.setId(id);
         ensureExpectedEndDate(entity);
-        return Optional.of(repository.save(entity));
+        ItemEntity savedItem = repository.save(entity);
+
+        return productionForecastService.recalculateProductionForecast(savedItem.getId())
+                .or(() -> Optional.of(savedItem));
     }
 
     public boolean deleteById(String id){
@@ -89,30 +85,19 @@ public class ItemService {
         }
 
         return repository.findById(itemId)
-                .map(item -> Math.max(getTotalMeters(item) - calculateAssignedMeters(itemId), 0));
+                .map(item -> Math.max(getTotalMeters(item) - getMetersRun(item), 0));
+    }
+
+    public Optional<ProductionAdvice> calculateProductionAdvice(String itemId) {
+        return productionForecastService.calculateProductionAdvice(itemId);
     }
 
     private int getTotalMeters(ItemEntity item) {
         return item.getTotalMeters() != null ? item.getTotalMeters() : 0;
     }
 
-    private int calculateAssignedMeters(String itemId) {
-        int assignedMeters = 0;
-        Set<String> processIds = new HashSet<>();
-
-        for (LoomItemAssignmentEntity assignment : loomItemAssignmentRepository.findByItemId(itemId)) {
-            if (assignment == null || isBlank(assignment.getProcessId()) || !processIds.add(assignment.getProcessId())) {
-                continue;
-            }
-
-            ProcessEntity process = processRepository.findById(assignment.getProcessId()).orElse(null);
-
-            if (process != null && process.getTotalMeters() != null) {
-                assignedMeters += process.getTotalMeters();
-            }
-        }
-
-        return assignedMeters;
+    private int getMetersRun(ItemEntity item) {
+        return item.getMetersRun() != null ? item.getMetersRun() : 0;
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -12,9 +12,8 @@ public class CalendarEventEntity {
     private String id;
 
     String description;
-    String eventType;
     Instant date;
-    CalendarEvent.ImportanceEnum importance;
+    CalendarEvent.TypeEnum type;
     String assignmentId;
     String loomId;
     String processId;
@@ -22,12 +21,12 @@ public class CalendarEventEntity {
     String arrangementId;
 
     //getter & setter
-    public String getEventType() {
-        return eventType;
+    public CalendarEvent.TypeEnum getType() {
+        return type;
     }
 
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
+    public void setType(CalendarEvent.TypeEnum type) {
+        this.type = type;
     }
 
     public String getArrangementId() {
@@ -68,14 +67,6 @@ public class CalendarEventEntity {
 
     public void setAssignmentId(String assignmentId) {
         this.assignmentId = assignmentId;
-    }
-
-    public CalendarEvent.ImportanceEnum getImportance() {
-        return importance;
-    }
-
-    public void setImportance(CalendarEvent.ImportanceEnum importance) {
-        this.importance = importance;
     }
 
     public Instant getDate() {

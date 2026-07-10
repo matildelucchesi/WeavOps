@@ -28,7 +28,7 @@ app-title-page-component,
 .item-legend-row{
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
     flex-wrap: wrap;
 }
 
@@ -83,7 +83,27 @@ app-title-page-component,
     font-family: 'Instrument Sans', sans-serif;
     font-size: 14px;
     align-items: center;
-    display: flex;
-    gap: 5px;
+    gap: 10px;
 }
 
+.icon-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 132px;
+}
+
+.icon{
+    color: var(--weavops-color-danger-bright);
+    justify-self: center;
+}
+
+.description-icon{
+    align-self: center;
+    display: inline-flex;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    font-size: 18px;
+}

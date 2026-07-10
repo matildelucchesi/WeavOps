@@ -5,12 +5,12 @@
             @if (!isProcessing()) {
                 <div class="title-wrapper">
                     <h2>Assegna Telaio</h2>
-                    <p class="subtitle">Metri ancora da assegnare: {{ remainingMetersToAssign }}</p>
+                    <p class="subtitle">Metri rimanenti da produrre: {{ remainingMetersToAssign }}</p>
                 </div>
             } @else {
                 <div class="title-wrapper">
                     <h2>Inserisci dati Produzione</h2>
-                    <p class="subtitle">Metri ancora da assegnare: {{ remainingMetersToAssign }}</p>
+                    <p class="subtitle">Metri rimanenti da produrre: {{ remainingMetersToAssign }}</p>
                 </div>
             }
         </div>
@@ -51,7 +51,7 @@
                 <div class="process-data">
                     <div class="column">
                         <div class="form-group">
-                            <label for="totalMeters">Metri Totali</label>
+                            <label for="totalMeters">Metri mancanti al completamento</label>
                             <input
                                 type="number"
                                 id="totalMeters"
@@ -59,11 +59,6 @@
                                 min="0"
                                 required
                                 [(ngModel)]="process.totalMeters">
-                                @if(isTotalMetersOverRemaining){
-                                <mat-error class="validation-error">
-                                    I metri totali non possono superare i metri rimanenti da assegnare.
-                                </mat-error>
-                            }
                         </div>
                         <div class="form-group">
                             <label for="speed">Velocità (Colpi/Minuto)</label>

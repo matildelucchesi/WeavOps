@@ -3,7 +3,7 @@ type: object
 required:
   - description
   - date
-  - importance
+  - type
 
 properties:
   id:
@@ -17,12 +17,6 @@ properties:
     type: string
     format: date-time
     description: Data e ora dell'evento
-  importance:
-      type: string
-      enum:
-          - LOW
-          - MEDIUM
-          - HIGH
   assignmentId:
     type: string
     description: Identificativo dell'assegnazione dell'evento
@@ -40,5 +34,10 @@ properties:
     description: Identificativo della disposizione associata all'evento
   type:
     type: string
-    description: Tipo di evento
+    enum:
+      - GENERIC
+      - DELIVERY
+      - ITEM_FORECAST
+      - LOOM_FORECAST
+      - CLOSURE
 

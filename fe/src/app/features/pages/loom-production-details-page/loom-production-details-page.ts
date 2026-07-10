@@ -80,7 +80,7 @@ export class LoomProductionDetailsPage implements OnInit {
 
   public readonly queuedProductionColumns: TableColumn<QueuedProductionTableRow>[] = [
     { header: 'Articolo', field: 'itemName' },
-    { header: 'Metri Totali', field: 'totalMeters' },
+    { header: 'Metri mancanti al completamento', field: 'totalMeters' },
     { header: 'Giorni completamento', field: 'completionDays' },
     {
       header: 'Stato',
@@ -93,7 +93,7 @@ export class LoomProductionDetailsPage implements OnInit {
         },
         styles: {
           QUEUED: {
-            label: 'In attesa',
+            label: 'In coda',
             backgroundColor: 'var(--weavops-color-accent-lighter)',
             color: 'var(--weavops-color-accent-deep)',
             borderColor: 'var(--weavops-color-accent-deep)',
@@ -192,6 +192,8 @@ export class LoomProductionDetailsPage implements OnInit {
       panelClass: 'loom-action-dialog-panel',
       data: {
         loom,
+        item: this.item(),
+        process: this.process(),
         modify: false,
         initialView: 'meters',
       },

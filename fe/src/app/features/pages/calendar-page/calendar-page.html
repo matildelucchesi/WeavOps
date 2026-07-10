@@ -12,65 +12,236 @@
         </app-title-page-component>  
 </div>
 
-<section class="calendar-page" aria-labelledby="calendar-title">
-  <div class="calendar-header">
-    <div class="calendar-month-wrapper">
-      <h1 id="calendar-title" style="align-self: center">{{ monthLabel() }}</h1>
-      <div class="calendar-navigation" aria-label="Navigazione mesi">
-        <button
-          type="button"
-          class="calendar-nav-button calendar-nav-icon-button"
-          aria-label="Mostra mese precedente"
-          (click)="showPreviousMonth()">
-          <mat-icon>chevron_left</mat-icon>
-        </button>
+@if (isSaving()) {
+  <app-loader-component [ariaLabel]="'Salvataggio evento in corso'"></app-loader-component>
+}
 
-        <button
-          type="button"
-          class="calendar-today-button"
-          (click)="showTodayMonth()">
-          Oggi
-        </button>
+  <section class="calendar-page" aria-labelledby="calendar-title">
 
-        <button
-          type="button"
-          class="calendar-nav-button calendar-nav-icon-button"
-          aria-label="Mostra mese successivo"
-          (click)="showNextMonth()">
-          <mat-icon>chevron_right</mat-icon>
-        </button>
+  <div class="content">
+    <div class="column">
+      <div class="column-section">
+        <div class="calendar-add-event-menu">
+          <button
+            type="button"
+            class="calendar-add-event-button"
+            aria-label="Aggiungi evento"
+            [attr.aria-expanded]="isAddEventMenuOpen()"
+            (click)="toggleAddEventMenu()">
+            <mat-icon fontSet="material-symbols-outlined" class="button-icon">calendar_add_on</mat-icon>
+            <span>Aggiungi evento</span>
+            <mat-icon fontSet="material-symbols-outlined" class="calendar-add-event-chevron">expand_more</mat-icon>
+          </button>
+
+          @if (isAddEventMenuOpen()) {
+            <div class="calendar-add-event-options" role="menu">
+              <button type="button" role="menuitem" (click)="openGenericEventEditor()">Generale</button>
+              <button type="button" role="menuitem" (click)="openClosureEditor()">Chiusura aziendale</button>
+            </div>
+          }
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div class="calendar-grid" role="grid" [attr.aria-label]="'Calendario ' + monthLabel()">
-    @for (weekDay of weekDays; track weekDay) {
-      <div class="calendar-weekday" role="columnheader">
-        {{ weekDay }}
-      </div>
-    }
-
-    @for (day of calendarDays(); track day.ariaLabel) {
-      <div
-        class="calendar-day"
-        role="gridcell"
-        [class.calendar-day-muted]="!day.isCurrentMonth"
-        [class.calendar-day-today]="day.isToday"
-        [attr.aria-label]="day.ariaLabel">
-        <span class="calendar-day-number">{{ day.dayNumber }}</span>
-        @if (day.events.length > 0) {
-          <div class="calendar-events" aria-label="Eventi del giorno">
-            @for (event of day.events; track event.id ?? event.date + event.description + $index) {
-              <span
-                class="calendar-event-chip {{ getCalendarEventChipClass(event) }}"
-                [attr.title]="event.description">
-                {{ event.description }}
-              </span>
-            }
+      <hr>
+      <div class="column-section">
+        <div class="column-section-header">
+          <mat-icon class="column-section-header-icon">category</mat-icon>
+        <h2 class="calendar-sidebar-title">Legenda</h2>
+        </div>
+        @for (eventType of eventTypeOptions; track eventType.type) {
+          <div class="calendar-legend-row">
+            <span class="calendar-event-color {{ eventType.colorClass }}" aria-hidden="true"></span>
+            <span>{{ eventType.label }}</span>
           </div>
         }
       </div>
-    }
-  </div>
+      <hr>
+      <div class="column-section">
+        <div class="column-section-header">
+          <mat-icon class="column-section-header-icon">filter_alt</mat-icon>
+        <h2 class="calendar-sidebar-title">Tipologia evento</h2>
+        </div>
+        @for (eventType of eventTypeOptions; track eventType.type) {
+          <label class="calendar-filter-row">
+            <input
+              type="checkbox"
+              [checked]="isCalendarEventTypeVisible(eventType.type)"
+              (change)="setCalendarEventTypeVisibility(eventType.type, $any($event.target).checked)">
+            <span class="calendar-event-color {{ eventType.colorClass }}" aria-hidden="true"></span>
+            <span>{{ eventType.label }}</span>
+          </label>
+        }
+      </div>
+    </div>
+    <div class="calendar-wrapper">
+      @if (viewMode() === 'closure-editor') {
+        <section class="closure-editor" aria-labelledby="closure-editor-title">
+          <div class="closure-editor-header">
+            <div class="closure-year-navigation">
+              <button
+                type="button"
+                class="closure-year-button"
+                aria-label="Mostra anno precedente"
+                (click)="showPreviousClosureYear()">
+                <mat-icon fontSet="material-symbols-outlined">chevron_left</mat-icon>
+              </button>
+              <h1 id="closure-editor-title">{{ closureEditorYear() }}</h1>
+              <button
+                type="button"
+                class="closure-year-button"
+                aria-label="Mostra anno successivo"
+                (click)="showNextClosureYear()">
+                <mat-icon fontSet="material-symbols-outlined">chevron_right</mat-icon>
+              </button>
+            </div>
+            <button type="button" class="closure-back-button" (click)="returnToCalendar()">
+              <mat-icon fontSet="material-symbols-outlined">arrow_back</mat-icon>
+              <span>Torna al calendario</span>
+            </button>
+          </div>
 
+          <div class="closure-year-grid">
+            @for (month of closureEditorMonths(); track month.label) {
+              <section class="closure-month" [attr.aria-label]="month.label + ' ' + closureEditorYear()">
+                <h2>{{ month.label }}</h2>
+                @for (weekDay of weekDays; track weekDay) {
+                  <span class="closure-weekday" aria-hidden="true">{{ weekDay }}</span>
+                }
+                @for (day of month.days; track $index) {
+                  @if (day.date) {
+                    <button
+                      type="button"
+                      class="closure-day"
+                      [class.closure-day-today]="day.isToday"
+                      [class.closure-day-selected]="day.isSelected"
+                      [attr.aria-pressed]="day.isSelected"
+                      [attr.aria-label]="'Seleziona ' + day.dayNumber + ' ' + month.label"
+                      (click)="toggleClosureDate(day)">
+                      {{ day.dayNumber }}
+                    </button>
+                  } @else {
+                    <span class="closure-day-empty" aria-hidden="true"></span>
+                  }
+                }
+              </section>
+            }
+          </div>
+
+        </section>
+      } @else if (viewMode() === 'generic-event') {
+        <section class="generic-event-editor" aria-labelledby="generic-event-title">
+          <button type="button" class="closure-back-button" (click)="returnToCalendar()">
+            <mat-icon fontSet="material-symbols-outlined">arrow_back</mat-icon>
+            <span>Torna al calendario</span>
+          </button>
+
+          <form class="generic-event-form" (ngSubmit)="saveGenericEvent()">
+            <h1 id="generic-event-title">Nuovo evento generale</h1>
+            <div class="generic-event-field">
+              <label for="genericEventDescription">Descrizione</label>
+              <input
+                id="genericEventDescription"
+                name="genericEventDescription"
+                type="text"
+                [(ngModel)]="genericEventDescription"
+                required>
+            </div>
+            <div class="generic-event-field">
+              <label for="genericEventDate">Data</label>
+              <input
+                id="genericEventDate"
+                name="genericEventDate"
+                type="date"
+                [(ngModel)]="genericEventDate"
+                required>
+            </div>
+          </form>
+        </section>
+      } @else {
+      <div class="calendar-header">
+        <div class="calendar-month-wrapper">
+        <h1 id="calendar-title" style="align-self: center">{{ monthLabel() }}</h1>
+        <div class="calendar-navigation" aria-label="Navigazione mesi">
+          <button
+            type="button"
+            class="calendar-nav-button calendar-nav-icon-button"
+            aria-label="Mostra mese precedente"
+            (click)="showPreviousMonth()">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+
+          <button
+            type="button"
+            class="calendar-today-button"
+            (click)="showTodayMonth()">
+            Oggi
+          </button>
+
+          <button
+            type="button"
+            class="calendar-nav-button calendar-nav-icon-button"
+            aria-label="Mostra mese successivo"
+            (click)="showNextMonth()">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+        </div>
+      </div>
+
+    <div class="calendar-grid" role="grid" [attr.aria-label]="'Calendario ' + monthLabel()">
+      @for (weekDay of weekDays; track weekDay) {
+        <div class="calendar-weekday" role="columnheader">
+          {{ weekDay }}
+        </div>
+      }
+
+      @for (day of calendarDays(); track day.ariaLabel) {
+        <div
+          class="calendar-day"
+          role="gridcell"
+          [class.calendar-day-muted]="!day.isCurrentMonth"
+          [class.calendar-day-today]="day.isToday"
+          [class.calendar-day-closure]="day.hasClosure"
+          [attr.aria-label]="day.ariaLabel + (day.hasClosure ? ', giorno di chiusura' : '')">
+          <span class="calendar-day-number">{{ day.dayNumber }}</span>
+          @if (day.events.length > 0) {
+            <div class="calendar-events" aria-label="Eventi del giorno">
+              @for (event of day.events; track event.id ?? event.date + event.description + $index) {
+                <span
+                  class="calendar-event-chip {{ getCalendarEventChipClass(event) }}"
+                  [matTooltip]="event.description"
+                  matTooltipPosition="above"
+                  [matTooltipShowDelay]="200">
+                  <span class="calendar-event-chip-text">{{ event.description }}</span>
+                </span>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+      }
+    </div>
+    </div>
+
+    @if (viewMode() === 'closure-editor' && hasUnsavedClosureChanges()) {
+      <div class="calendar-page-actions">
+        <app-button-general-action-component
+          label="SALVA"
+          className="save-button"
+          [disabled]="isSavingClosures()"
+          (buttonClick)="saveClosures()">
+        </app-button-general-action-component>
+      </div>
+    } @else if (viewMode() === 'generic-event') {
+      <div class="calendar-page-actions">
+        <app-button-general-action-component
+          label="SALVA"
+          className="save-button"
+          [disabled]="!genericEventDescription.trim() || !genericEventDate || isSavingGenericEvent()"
+          (buttonClick)="saveGenericEvent()">
+        </app-button-general-action-component>
+      </div>
+    }
 </section>
+
+<app-white-panel [text]="'Una volta aggiunte le date di CHIUSURA AZIENDALE, se si desidera rimuoverle, rientrare nella pagina relativa e deselezionarle facendo click sul relativo giorno selezionato.'"></app-white-panel> 

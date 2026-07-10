@@ -1,10 +1,10 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DecorativeLinesComponent } from '../../reusable-components/decorative-lines-component/decorative-lines-component';
 import { TitlePageComponent } from '../../reusable-components/title-page-component/title-page-component';
 import { WhitePanel } from '../../reusable-components/white-panel/white-panel';
-import { Arrangement, Item, Loom, LoomItemAssignment, Process } from '../../../api';
+import { Arrangement, Item, Loom, LoomItemAssignment, Process, ProductionAdvice } from '../../../api';
 import { ItemFacadeService } from '../../../services/item-facade.service';
 import { ArrangementFacadeService } from '../../../services/arrangement-facade.service';
 import { LoomFacadeService } from '../../../services/loom-facade.service';
@@ -70,15 +70,15 @@ export class ItemDetailsPage implements OnInit {
   private readonly loomNamesById = signal<Record<string, string>>({});
   private readonly itemAssignments = signal<LoomItemAssignment[]>([]);
   private readonly remainingMetersToAssign = signal<number>(0);
+  public readonly productionAdvice = signal<ProductionAdvice | null>(null);
   public itemName: string = '';
   public isEditEnabled: boolean = false;
 
   public readonly processesColumns: TableColumn<ProcessTableRow>[] = [
     { header: 'Nome Telaio', field: 'loomName' },
     { header: 'Pezze Fatte', field: 'piecesRun' },
-    { header: 'Pezze Totali Assegnate', field: 'totalPieces' },
     {
-      header: 'Stato',
+      header: 'Stato Processo',
       field: 'state',
       chip: {
         defaultStyle: {
@@ -114,8 +114,6 @@ export class ItemDetailsPage implements OnInit {
         },
       },
     },
-    { header: 'Tempo stimato', field: 'days' },
-    { header: 'Data di fine prevista', field: 'expectedEndDate' },
   ];
   public readonly rows = computed<ProcessTableRow[]>(() => this.itemAssignments().map((assignment) => {
     const process = this.getAssignmentProcess(assignment);
@@ -142,16 +140,23 @@ export class ItemDetailsPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly router = inject(Router);
 
   public assignmentActions : TableAction<ProcessTableRow>[] = [
-        {
+    {
+          id: 'production',
+          label: 'Visualizza dettagli produzione',
+          imageIcon: '/icon/work-icon-violet.png',
+          imageAlt: 'Dettagli produzione',
+        },    
+    {
           id: 'delete',
           label: 'Elimina',
           icon: 'cancel',
           imageAlt: 'Elimina',
           visible: (row) => row.status !== LoomItemAssignment.StatusEnum.Abandoned && row.status !== LoomItemAssignment.StatusEnum.Completed,
           deleteItemName: () => "l'elemento selezionato",
-        },
+        }
       ]
 
   public onTableAction(event: TableActionClick<ProcessTableRow>): void {
@@ -160,8 +165,16 @@ export class ItemDetailsPage implements OnInit {
           this.deleteAssignment(event.row);
           console.log('Elimina assegnazione', event.row);
           break;
+        case 'production':
+          this.goToProductionDetailsPage(event);
+          break;
       }
     }
+
+  public goToProductionDetailsPage(event: TableActionClick<ProcessTableRow>): void {
+      const loomId = event.row.loomId;
+      this.router.navigate(['/dettaglio-produzione', loomId]);
+  }
 
   public get pageTitle(): string {
     return this.itemName ? `Dettagli ${this.itemName}` : 'Dettagli Articolo';
@@ -357,6 +370,10 @@ export class ItemDetailsPage implements OnInit {
     const italianDateMatch = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(trimmedValue);
 
     if (!italianDateMatch) {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(trimmedValue)) {
+        return `${trimmedValue}T00:00:00.000Z`;
+      }
+
       return trimmedValue;
     }
 
@@ -374,6 +391,24 @@ export class ItemDetailsPage implements OnInit {
     }
 
     return date.toISOString();
+  }
+
+  public toDateInputValue(value: string | undefined): string {
+    if (!this.isRealStartDate(value)) {
+      return '';
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 
   public async exportArrangementData(): Promise<void> {
@@ -440,6 +475,7 @@ export class ItemDetailsPage implements OnInit {
     if (navigationItem) {
       this.loadItemAssignments(navigationItem.id);
       this.loadRemainingMetersToAssign(navigationItem.id);
+      this.loadProductionAdvice(navigationItem.id);
       this.setArrangement(navigationArrangement);
       this.loadArrangement(navigationItem.arrangementId);
     }
@@ -452,7 +488,21 @@ export class ItemDetailsPage implements OnInit {
       this.item.set(item);
       this.loadItemAssignments(item.id);
       this.loadRemainingMetersToAssign(item.id);
+      this.loadProductionAdvice(item.id);
       this.loadArrangement(item.arrangementId);
+    });
+  }
+
+  private loadProductionAdvice(itemId: string | undefined): void {
+    this.productionAdvice.set(null);
+
+    if (!itemId) {
+      return;
+    }
+
+    this.itemService.getProductionAdvice(itemId).subscribe({
+      next: (advice) => this.productionAdvice.set(advice),
+      error: () => this.productionAdvice.set(null),
     });
   }
 
@@ -661,15 +711,7 @@ export class ItemDetailsPage implements OnInit {
           }
 
           const qrUrl = this.createLoomProductionDetailsUrl(assignment.loomId);
-          const qrCodeDataUrl = await qrCode.toDataURL(qrUrl, {
-            errorCorrectionLevel: 'M',
-            margin: 1,
-            width: 220,
-            color: {
-              dark: '#3f177b',
-              light: '#ffffff',
-            },
-          });
+          const qrCodeDataUrl = await this.createLoomQrCodeWithLogo(qrCode, qrUrl);
 
           return {
             assignment,
@@ -682,6 +724,65 @@ export class ItemDetailsPage implements OnInit {
     );
 
     return sections.filter((section): section is ArrangementPdfSection => section !== null);
+  }
+
+  private async createLoomQrCodeWithLogo(
+    qrCode: typeof import('qrcode'),
+    qrUrl: string,
+  ): Promise<string> {
+    const qrCodeDataUrl = await qrCode.toDataURL(qrUrl, {
+      errorCorrectionLevel: 'H',
+      margin: 1,
+      width: 220,
+      color: {
+        dark: '#3f177b',
+        light: '#ffffff',
+      },
+    });
+
+    try {
+      return await this.addLogoToQrCode(qrCodeDataUrl);
+    } catch (error) {
+      console.warn('Unable to add the logo to the loom QR code:', error);
+      return qrCodeDataUrl;
+    }
+  }
+
+  private async addLogoToQrCode(qrCodeDataUrl: string): Promise<string> {
+    const [qrImage, logoImage] = await Promise.all([
+      this.loadImage(qrCodeDataUrl),
+      this.loadImage('/images/Copilot_20260520_122802.png'),
+    ]);
+    const canvas = document.createElement('canvas');
+    const qrSize = qrImage.naturalWidth || 220;
+    const logoSize = Math.round(qrSize * 0.3);
+    const logoX = Math.round((qrSize - logoSize) / 2);
+    const logoY = Math.round((qrSize - logoSize) / 2);
+    const context = canvas.getContext('2d');
+
+    if (!context) {
+      return qrCodeDataUrl;
+    }
+
+    canvas.width = qrSize;
+    canvas.height = qrSize;
+    context.drawImage(qrImage, 0, 0, qrSize, qrSize);
+    context.drawImage(logoImage, logoX, logoY, logoSize, logoSize);
+    context.strokeStyle = '#ffffff';
+    context.lineWidth = Math.max(2, Math.round(qrSize * 0.009));
+    context.strokeRect(logoX, logoY, logoSize, logoSize);
+
+    return canvas.toDataURL('image/png');
+  }
+
+  private loadImage(source: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error(`Unable to load image: ${source}`));
+      image.src = source;
+    });
   }
 
   private isExportableArrangementAssignment(assignment: LoomItemAssignment): boolean {
@@ -746,7 +847,7 @@ export class ItemDetailsPage implements OnInit {
     pdf.setTextColor(63, 23, 123);
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(6.5);
-    pdf.text('Dettaglio lavorazione', qrX + qrSize / 2, qrY + qrSize + 4, { align: 'center' });
+    pdf.text('Telaio', qrX + qrSize / 2, qrY + qrSize + 4, { align: 'center' });
 
     pdf.setTextColor(80, 80, 80);
     pdf.setFont('helvetica', 'normal');
@@ -789,7 +890,7 @@ export class ItemDetailsPage implements OnInit {
 
     return [
       `Articolo: ${this.formatPdfValue(arrangement.itemName)}`,
-      `Metri assegnati: ${this.formatPdfValue(process.totalMeters, 'm')}`,
+      `Metri previsti: ${this.formatPdfValue(process.totalMeters, 'm')}`,
       `Lunghezza pezza: ${this.formatPdfValue(process.metersPerPiece, 'm')}`,
       `Velocita: ${this.formatPdfValue(process.speed)}`,
       `Efficienza: ${this.formatPdfValue(process.efficiency, '%')}`,
@@ -1087,27 +1188,9 @@ export class ItemDetailsPage implements OnInit {
   }
 
   private updateRemainingMetersToAssignFromTotalMeters(totalMeters: number): void {
-    this.remainingMetersToAssign.set(Math.max(totalMeters - this.calculateAssignedMeters(), 0));
-  }
+    const metersRun = this.item()?.metersRun ?? 0;
 
-  private calculateAssignedMeters(): number {
-    const processIds = new Set<string>();
-    let assignedMeters = 0;
-
-    for (const assignment of this.itemAssignments()) {
-      if (!assignment.processId || processIds.has(assignment.processId)) {
-        continue;
-      }
-
-      processIds.add(assignment.processId);
-      const process = this.getAssignmentProcess(assignment);
-
-      if (process?.totalMeters !== undefined && process.totalMeters !== null) {
-        assignedMeters += process.totalMeters;
-      }
-    }
-
-    return assignedMeters;
+    this.remainingMetersToAssign.set(Math.max(totalMeters - metersRun, 0));
   }
 
   private toFiniteNumber(value: unknown): number | null {
@@ -1152,7 +1235,8 @@ export class ItemDetailsPage implements OnInit {
       autoFocus: false,
       data: {
         title: 'Informazioni',
-        message: 'La data PREVISTA per il completamento della lavorazione dell\'intero articolo sarà visualizzabile nel momento in cui saranno assegnati tutti i metri da produrre ai telai.',
+        icon: 'info',
+        message: 'La data PREVISTA per il completamento della lavorazione dell\'intero articolo sarà visualizzabile quando almeno un processo sarà in produzione e avrà i dati necessari per calcolare la capacità giornaliera.',
       },
     });
 
@@ -1166,6 +1250,7 @@ export class ItemDetailsPage implements OnInit {
       autoFocus: false,
       data: {
         title: 'Informazioni',
+        icon: 'info',
         message: 'La data di INIZIO della lavorazione dell\'articolo è data dalla data della prima messa in produzione di un processo.',
       },
     });
@@ -1178,6 +1263,48 @@ export class ItemDetailsPage implements OnInit {
 
     return assignments.length > 0
       && assignments.every((assignment) => assignment.status === LoomItemAssignment.StatusEnum.Running);
+  }
+
+  public hasExpectedEndDateForecast(): boolean {
+    return this.hasRunningAssignment()
+      && this.isRealStartDate(this.itemData?.expectedEndDate);
+  }
+
+  public isExpectedEndDateAfterDeliveryDate(): boolean {
+    const expectedEndDate = this.getComparableDateValue(this.itemData?.expectedEndDate);
+    const deliveryDate = this.getComparableDateValue(this.arrangementData?.deliveryDate);
+
+    return expectedEndDate !== null
+      && deliveryDate !== null
+      && expectedEndDate > deliveryDate;
+  }
+
+  public getEstimatedArticleCompletionDays(): string {
+    const runningProcessDays = this.itemAssignments()
+      .filter((assignment) => assignment.status === LoomItemAssignment.StatusEnum.Running)
+      .map((assignment) => this.getAssignmentProcess(assignment)?.days)
+      .filter((days): days is number => days !== undefined && Number.isFinite(days) && days > 0);
+
+    if (runningProcessDays.length === 0) {
+      return '-';
+    }
+
+    return this.formatTableDays(Math.max(...runningProcessDays));
+  }
+
+  private hasRunningAssignment(): boolean {
+    return this.itemAssignments()
+      .some((assignment) => assignment.status === LoomItemAssignment.StatusEnum.Running);
+  }
+
+  private getComparableDateValue(value: string | undefined): number | null {
+    if (!this.isRealStartDate(value)) {
+      return null;
+    }
+
+    const date = new Date(value);
+
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
   }
 
   private deleteAssignment(row: ProcessTableRow): void {
@@ -1269,6 +1396,7 @@ export class ItemDetailsPage implements OnInit {
       autoFocus: false,
       data: {
         title: 'Salvataggio modifiche',
+        icon: 'info',
         message: 'Le modifiche apportate all\'articolo sono state salvate con successo.',
       },
     });
@@ -1276,6 +1404,19 @@ export class ItemDetailsPage implements OnInit {
     dialogRef.afterClosed().subscribe(() => {
       this.isEditEnabled = false;
     });
+  }
+
+
+
+  public getProductionAdviceMessage(advice: ProductionAdvice): string {
+    if (advice.meetsDeliveryDate || advice.recommendedAdditionalLooms === 0) {
+      return `I ${advice.currentRunningLooms} telai attualmente in produzione sono sufficienti per rispettare la data di consegna.`;
+    }
+
+    const additionalLoomLabel = advice.recommendedAdditionalLooms === 1 ? 'telaio' : 'telai';
+    const totalLoomLabel = advice.recommendedTotalLooms === 1 ? 'telaio' : 'telai';
+
+    return `Per rispettare la data di consegna, si consiglia di aggiungere almeno ${advice.recommendedAdditionalLooms} ${additionalLoomLabel} alla produzione.`;
   }
 
 }

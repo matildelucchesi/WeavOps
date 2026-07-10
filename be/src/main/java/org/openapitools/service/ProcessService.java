@@ -14,6 +14,9 @@ import java.util.Optional;
 
 @Service
 public class ProcessService {
+    private static final int MINUTES_PER_DAY = 24 * 60;
+    private static final int DECIMETERS_PER_METER = 10;
+
     private final ProcessRepository repository;
     private final LoomItemAssignmentRepository assignmentRepository;
 
@@ -78,36 +81,53 @@ public class ProcessService {
 
     public float calculateDays(ProcessEntity entity) {
         if (entity == null
-                || entity.getSpeed() == null
-                || entity.getEfficiency() == null
                 || entity.getTotalMeters() == null
-                || entity.getItemHitsPerDm() == null
-                || entity.getSpeed() <= 0
-                || entity.getEfficiency() <= 0
-                || entity.getItemHitsPerDm() <= 0
                 || entity.getTotalMeters() <= 0) {
             return 0;
         }
 
-        float hitsPerDay = (entity.getSpeed() * 60 * 24 * entity.getEfficiency()) / 100.f;
-        return entity.getItemHitsPerDm() * 10 * entity.getTotalMeters() / hitsPerDay;
+        return calculateDaysForMeters(entity, entity.getTotalMeters());
     }
 
     public float calculateRemainingDays(ProcessEntity entity) {
         if (entity == null
-                || entity.getSpeed() == null
-                || entity.getEfficiency() == null
                 || entity.getMetersToGo() == null
-                || entity.getItemHitsPerDm() == null
-                || entity.getSpeed() <= 0
-                || entity.getEfficiency() <= 0
-                || entity.getItemHitsPerDm() <= 0
                 || entity.getMetersToGo() <= 0) {
             return 0;
         }
 
-        float hitsPerDay = (entity.getSpeed() * 60 * 24 * entity.getEfficiency()) / 100.f;
-        return entity.getItemHitsPerDm() * 10 * entity.getMetersToGo() / hitsPerDay;
+        return calculateDaysForMeters(entity, entity.getMetersToGo());
+    }
+
+    public float calculateDaysForMeters(ProcessEntity entity, int meters) {
+        if (entity == null || meters <= 0) {
+            return 0;
+        }
+
+        float dailyCapacity = calculateDailyCapacity(entity);
+
+        if (dailyCapacity <= 0) {
+            return 0;
+        }
+
+        return meters / dailyCapacity;
+    }
+
+    public float calculateDailyCapacity(ProcessEntity entity) {
+        if (entity == null
+                || entity.getSpeed() == null
+                || entity.getEfficiency() == null
+                || entity.getItemHitsPerDm() == null
+                || entity.getSpeed() <= 0
+                || entity.getEfficiency() <= 0
+                || entity.getItemHitsPerDm() <= 0) {
+            return 0;
+        }
+
+        return entity.getSpeed()
+                * (entity.getEfficiency() / 100.f)
+                * MINUTES_PER_DAY
+                / (entity.getItemHitsPerDm() * DECIMETERS_PER_METER);
     }
 
     public OffsetDateTime calculateExpectedEndDate(ProcessEntity entity) {

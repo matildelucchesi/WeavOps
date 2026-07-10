@@ -22,7 +22,6 @@ export interface CalendarEvent {
      * Data e ora dell\'evento
      */
     date: string;
-    importance: CalendarEvent.ImportanceEnum;
     /**
      * Identificativo dell\'assegnazione dell\'evento
      */
@@ -43,18 +42,17 @@ export interface CalendarEvent {
      * Identificativo della disposizione associata all\'evento
      */
     arrangementId?: string;
-    /**
-     * Tipo di evento
-     */
-    type?: string;
+    type: CalendarEvent.TypeEnum;
 }
 export namespace CalendarEvent {
-    export const ImportanceEnum = {
-        Low: 'LOW',
-        Medium: 'MEDIUM',
-        High: 'HIGH'
+    export const TypeEnum = {
+        Generic: 'GENERIC',
+        Delivery: 'DELIVERY',
+        ItemForecast: 'ITEM_FORECAST',
+        LoomForecast: 'LOOM_FORECAST',
+        Closure: 'CLOSURE'
     } as const;
-    export type ImportanceEnum = typeof ImportanceEnum[keyof typeof ImportanceEnum];
+    export type TypeEnum = typeof TypeEnum[keyof typeof TypeEnum];
 }
 
 

@@ -151,6 +151,30 @@
       '404':
         description: Item non trovato
 
+/items/{id}/production-advice:
+  get:
+    summary: Calcola il consiglio di produzione per un articolo
+    operationId: getProductionAdviceByItemId
+    tags:
+      - Item
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Previsione e numero di telai consigliati per rispettare la consegna
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/production-advice.yaml'
+      '404':
+        description: Item non trovato
+      '422':
+        description: Previsione non calcolabile per dati mancanti o non validi
+
 /items/with-arrangement:
   post:
     summary: Crea item con disposizione e customerName

@@ -91,22 +91,19 @@ export class DialogAssignLoomComponent implements OnInit {
     return totalMeters / metersPerPiece;
   }
 
-  public get isTotalMetersOverRemaining(): boolean {
-    return Number(this.process.totalMeters) > this.remainingMetersToAssign;
-  }
-
   public get isSpeedBelowMinimum(): boolean {
     return Number(this.process.speed) < 250;
   }
 
   public get hasActiveMatError(): boolean {
-    return this.isTotalMetersOverRemaining || this.isSpeedBelowMinimum;
+    return this.isSpeedBelowMinimum;
   }
 
   ngOnInit(): void {
     this.isProcessing.set(false);
     this.isLoadingLooms.set(true);
     this.setProcessMetersPerPieceFromArrangement();
+    this.setInitialProcessMetersFromRemainingProduction();
 
     this.loomService.getAll().pipe(
       finalize(() => {
@@ -260,6 +257,19 @@ export class DialogAssignLoomComponent implements OnInit {
     if (Number.isFinite(metersPerPiece) && metersPerPiece > 0) {
       this.process.metersPerPiece = metersPerPiece;
     }
+  }
+
+  private setInitialProcessMetersFromRemainingProduction(): void {
+    const remainingMeters = Number(this.remainingMetersToAssign);
+
+    if (!Number.isFinite(remainingMeters) || remainingMeters <= 0) {
+      return;
+    }
+
+    const roundedRemainingMeters = Math.round(remainingMeters);
+
+    this.process.totalMeters = roundedRemainingMeters;
+    this.process.metersToGo = roundedRemainingMeters;
   }
 
   private getItemHitsPerDm(): number | undefined {

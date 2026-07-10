@@ -18,6 +18,9 @@
 }
 
 .save-button{
+    --mdc-filled-button-container-color: var(--weavops-color-accent);
+    --mdc-filled-button-label-text-color: var(--weavops-color-surface);
+    --mat-filled-button-state-layer-color: var(--weavops-color-surface);
     cursor: pointer;
     border: none;
     border-radius: 10px;
@@ -30,6 +33,7 @@
 }
 
 .save-button:hover{
+    --mdc-filled-button-container-color: var(--weavops-color-accent-dark);
     background-color: var(--weavops-color-accent);
     opacity: 0.8;
 }

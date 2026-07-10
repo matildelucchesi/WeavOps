@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CreateItemWithArrangementRequest, Item, ItemService as ItemApiService } from '../api';
+import { CreateItemWithArrangementRequest, Item, ItemService as ItemApiService, ProductionAdvice } from '../api';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -22,6 +22,10 @@ export class ItemFacadeService {
     return this.http.get<number>(
       `${environment.apiUrl}/items/${encodeURIComponent(id)}/remaining-meters-to-assign`,
     );
+  }
+
+  getProductionAdvice(id: string) {
+    return this.itemApi.getProductionAdviceByItemId({ id });
   }
 
   create(item: Item) {

@@ -8,27 +8,48 @@ import org.openapitools.domain.LoomEntity;
 import org.openapitools.domain.LoomItemAssignmentEntity;
 import org.openapitools.domain.ProcessEntity;
 import org.openapitools.model.CalendarEvent;
+import org.openapitools.repository.ArrangementRepository;
 import org.openapitools.repository.CalendarEventRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.openapitools.constants.CalendarEventConstants.DELIVERY_DATE;
-import static org.openapitools.constants.CalendarEventConstants.EXPECTED_END_DATE;
-import static org.openapitools.constants.CalendarEventConstants.LOOM_PRODUCTION_END;
+import static org.openapitools.constants.CalendarEventConstants.ITEM_EXPECTED_END;
+import static org.openapitools.constants.CalendarEventConstants.LOOM_EXPECTED_END;
 
 @Service
 public class CalendarEventService {
+    private static final Instant TEMPORARY_EXPECTED_END_DATE = Instant.EPOCH;
+    private static final ZoneId BUSINESS_TIME_ZONE = ZoneId.of("Europe/Rome");
 
     private final CalendarEventRepository repository;
+    private final ArrangementRepository arrangementRepository;
 
-    public CalendarEventService(CalendarEventRepository repository) {
+    public CalendarEventService(
+            CalendarEventRepository repository,
+            ArrangementRepository arrangementRepository
+    ) {
         this.repository = repository;
+        this.arrangementRepository = arrangementRepository;
     }
 
     public List<CalendarEventEntity> findAll() {
         return repository.findAll();
+    }
+
+    public Set<LocalDate> findClosureDates() {
+        return repository.findAllByType(CalendarEvent.TypeEnum.CLOSURE).stream()
+                .map(CalendarEventEntity::getDate)
+                .filter(date -> date != null)
+                .map(date -> date.atZone(BUSINESS_TIME_ZONE).toLocalDate())
+                .collect(Collectors.toSet());
     }
 
     public CalendarEventEntity save(CalendarEventEntity entity) {
@@ -40,18 +61,17 @@ public class CalendarEventService {
             return Optional.empty();
         }
 
-        Optional<CalendarEventEntity> existingEvent = findDeliveryDateEvent(arrangement);
+        Optional<CalendarEventEntity> existingEvent = findDeliveryDateEvent(arrangement.getId());
 
-        if (arrangement.getDeliveryDate() == null) {
+        if (!hasEventDate(arrangement.getDeliveryDate())) {
             existingEvent.ifPresent(repository::delete);
             return Optional.empty();
         }
 
         CalendarEventEntity calendarEvent = existingEvent.orElseGet(CalendarEventEntity::new);
-        calendarEvent.setEventType(DELIVERY_DATE);
+        calendarEvent.setType(getType(DELIVERY_DATE));
         calendarEvent.setDate(arrangement.getDeliveryDate());
         calendarEvent.setDescription(buildDescription(DELIVERY_DATE, arrangement.getItemName()));
-        calendarEvent.setImportance(getImportance(DELIVERY_DATE));
         calendarEvent.setArrangementId(arrangement.getId());
         calendarEvent.setAssignmentId(null);
         calendarEvent.setLoomId(null);
@@ -66,22 +86,26 @@ public class CalendarEventService {
             LoomEntity loom,
             ProcessEntity process
     ) {
-        if (assignment == null || loom == null || process == null || isBlank(process.getId())) {
+        if (assignment == null
+                || loom == null
+                || process == null
+                || isBlank(assignment.getId())
+                || isBlank(loom.getId())
+                || isBlank(process.getId())) {
             return Optional.empty();
         }
 
         Optional<CalendarEventEntity> existingEvent = findLoomExpectedEndDateEvent(process.getId());
 
-        if (process.getExpectedEndDate() == null) {
+        if (!hasEventDate(process.getExpectedEndDate())) {
             existingEvent.ifPresent(repository::delete);
             return Optional.empty();
         }
 
         CalendarEventEntity calendarEvent = existingEvent.orElseGet(CalendarEventEntity::new);
-        calendarEvent.setEventType(LOOM_PRODUCTION_END);
+        calendarEvent.setType(getType(LOOM_EXPECTED_END));
         calendarEvent.setDate(process.getExpectedEndDate());
-        calendarEvent.setDescription(buildDescription(LOOM_PRODUCTION_END, loom.getSerialNumber()));
-        calendarEvent.setImportance(getImportance(LOOM_PRODUCTION_END));
+        calendarEvent.setDescription(buildDescription(LOOM_EXPECTED_END, loom.getSerialNumber()));
         calendarEvent.setAssignmentId(assignment.getId());
         calendarEvent.setLoomId(loom.getId());
         calendarEvent.setItemId(assignment.getItemId());
@@ -98,16 +122,15 @@ public class CalendarEventService {
 
         Optional<CalendarEventEntity> existingEvent = findItemExpectedEndDateEvent(item.getId());
 
-        if (item.getExpectedEndDate() == null) {
+        if (!hasEventDate(item.getExpectedEndDate())) {
             existingEvent.ifPresent(repository::delete);
             return Optional.empty();
         }
 
         CalendarEventEntity calendarEvent = existingEvent.orElseGet(CalendarEventEntity::new);
-        calendarEvent.setEventType(EXPECTED_END_DATE);
+        calendarEvent.setType(getType(ITEM_EXPECTED_END));
         calendarEvent.setDate(item.getExpectedEndDate());
-        calendarEvent.setDescription(getDescription(EXPECTED_END_DATE));
-        calendarEvent.setImportance(getImportance(EXPECTED_END_DATE));
+        calendarEvent.setDescription(buildDescription(ITEM_EXPECTED_END, getItemName(item)));
         calendarEvent.setItemId(item.getId());
         calendarEvent.setArrangementId(item.getArrangementId());
         calendarEvent.setAssignmentId(null);
@@ -118,11 +141,7 @@ public class CalendarEventService {
     }
 
     public Optional<CalendarEventEntity> findById(String id) {
-        if (isBlank(id)) {
-            return Optional.empty();
-        }
-
-        return repository.findById(id);
+        return isBlank(id) ? Optional.empty() : repository.findById(id);
     }
 
     public Optional<CalendarEventEntity> update(String id, CalendarEventEntity entity) {
@@ -143,66 +162,64 @@ public class CalendarEventService {
         return true;
     }
 
-    private String buildDescription(String eventType, String detail) {
-        if (isBlank(detail)) {
-            return getDescription(eventType);
-        }
-
-        return getDescription(eventType) + detail;
-    }
-
-    private Optional<CalendarEventEntity> findDeliveryDateEvent(ArrangementEntity arrangement) {
-        Optional<CalendarEventEntity> event = repository.findByEventTypeAndArrangementId(
-                DELIVERY_DATE,
-                arrangement.getId()
+    private Optional<CalendarEventEntity> findDeliveryDateEvent(String arrangementId) {
+        Optional<CalendarEventEntity> event = repository.findFirstByTypeAndArrangementId(
+                getType(DELIVERY_DATE),
+                arrangementId
         );
 
-        if (event.isPresent()) {
-            return event;
-        }
-
-        Optional<CalendarEventEntity> legacyEventById = repository.findFirstByArrangementIdAndEventTypeIsNull(
-                arrangement.getId()
-        );
-
-        if (legacyEventById.isPresent() || isBlank(arrangement.getItemName())) {
-            return legacyEventById;
-        }
-
-        return repository.findFirstByArrangementIdAndEventTypeIsNull(arrangement.getItemName());
+        return event.isPresent()
+                ? event
+                : repository.findFirstByArrangementIdAndTypeIsNull(arrangementId);
     }
 
     private Optional<CalendarEventEntity> findLoomExpectedEndDateEvent(String processId) {
-        Optional<CalendarEventEntity> event = repository.findByEventTypeAndProcessId(
-                LOOM_PRODUCTION_END,
+        Optional<CalendarEventEntity> event = repository.findFirstByTypeAndProcessId(
+                getType(LOOM_EXPECTED_END),
                 processId
         );
 
         return event.isPresent()
                 ? event
-                : repository.findFirstByProcessIdAndEventTypeIsNull(processId);
+                : repository.findFirstByProcessIdAndTypeIsNull(processId);
     }
 
     private Optional<CalendarEventEntity> findItemExpectedEndDateEvent(String itemId) {
-        Optional<CalendarEventEntity> event = repository.findByEventTypeAndItemId(
-                EXPECTED_END_DATE,
+        Optional<CalendarEventEntity> event = repository.findFirstByTypeAndItemId(
+                getType(ITEM_EXPECTED_END),
                 itemId
         );
 
         return event.isPresent()
                 ? event
-                : repository.findFirstByItemIdAndEventTypeIsNull(itemId);
+                : repository.findFirstByItemIdAndTypeIsNull(itemId);
     }
 
-    private String getDescription(String eventType) {
-        return CalendarEventConstants.EVENT_DESCRIPTIONS.getOrDefault(eventType, "Evento calendario");
+    private String buildDescription(String eventType, String detail) {
+        String description = CalendarEventConstants.EVENT_DESCRIPTIONS.getOrDefault(eventType, "Evento calendario");
+
+        return isBlank(detail) ? description.trim() : description + detail;
     }
 
-    private CalendarEvent.ImportanceEnum getImportance(String eventType) {
-        return CalendarEventConstants.EVENT_IMPORTANCE.getOrDefault(
+    private String getItemName(ItemEntity item) {
+        if (item == null || isBlank(item.getArrangementId())) {
+            return null;
+        }
+
+        return arrangementRepository.findById(item.getArrangementId())
+                .map(ArrangementEntity::getItemName)
+                .orElse(null);
+    }
+
+    private CalendarEvent.TypeEnum getType(String eventType) {
+        return CalendarEventConstants.EVENT_TYPE.getOrDefault(
                 eventType,
-                CalendarEvent.ImportanceEnum.MEDIUM
+                CalendarEvent.TypeEnum.GENERIC
         );
+    }
+
+    private boolean hasEventDate(Instant date) {
+        return date != null && !TEMPORARY_EXPECTED_END_DATE.equals(date);
     }
 
     private boolean isBlank(String value) {

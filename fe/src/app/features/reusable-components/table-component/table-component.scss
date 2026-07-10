@@ -161,6 +161,21 @@ td{
     white-space: nowrap;
 }
 
+.table-icon-header,
+.table-icon-cell{
+    width: 52px;
+    text-align: center;
+}
+
+.table-column-icon{
+    color: var(--table-column-icon-color, var(--weavops-color-primary));
+    font-size: 22px;
+    font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 22;
+    height: 22px;
+    line-height: 22px;
+    width: 22px;
+}
+
 .actions-header,
 .actions-cell{
     text-align: right;

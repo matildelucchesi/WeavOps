@@ -1,22 +1,26 @@
 package org.openapitools.repository;
 
 import org.openapitools.domain.CalendarEventEntity;
+import org.openapitools.model.CalendarEvent;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface CalendarEventRepository extends MongoRepository<CalendarEventEntity, String> {
-    Optional<CalendarEventEntity> findByEventTypeAndArrangementId(String eventType, String arrangementId);
+    List<CalendarEventEntity> findAllByType(CalendarEvent.TypeEnum type);
 
-    Optional<CalendarEventEntity> findByEventTypeAndItemId(String eventType, String itemId);
+    Optional<CalendarEventEntity> findFirstByTypeAndArrangementId(CalendarEvent.TypeEnum type, String arrangementId);
 
-    Optional<CalendarEventEntity> findByEventTypeAndProcessId(String eventType, String processId);
+    Optional<CalendarEventEntity> findFirstByTypeAndItemId(CalendarEvent.TypeEnum type, String itemId);
 
-    Optional<CalendarEventEntity> findFirstByArrangementIdAndEventTypeIsNull(String arrangementId);
+    Optional<CalendarEventEntity> findFirstByTypeAndProcessId(CalendarEvent.TypeEnum type, String processId);
 
-    Optional<CalendarEventEntity> findFirstByItemIdAndEventTypeIsNull(String itemId);
+    Optional<CalendarEventEntity> findFirstByArrangementIdAndTypeIsNull(String arrangementId);
 
-    Optional<CalendarEventEntity> findFirstByProcessIdAndEventTypeIsNull(String processId);
+    Optional<CalendarEventEntity> findFirstByItemIdAndTypeIsNull(String itemId);
+
+    Optional<CalendarEventEntity> findFirstByProcessIdAndTypeIsNull(String processId);
 }

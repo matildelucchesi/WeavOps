@@ -360,6 +360,34 @@ paths:
       - application/json
       x-tags:
       - tag: Item
+  /items/{id}/production-advice:
+    get:
+      operationId: getProductionAdviceByItemId
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/production-advice"
+          description: Previsione e numero di telai consigliati per rispettare la
+            consegna
+        "404":
+          description: Item non trovato
+        "422":
+          description: Previsione non calcolabile per dati mancanti o non validi
+      summary: Calcola il consiglio di produzione per un articolo
+      tags:
+      - Item
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Item
   /items/with-arrangement:
     post:
       operationId: createItemWithArrangement
@@ -1529,6 +1557,97 @@ components:
       - arrangement
       - customer
       type: object
+    production-advice:
+      description: Previsione della produzione di un articolo. La capacita di riferimento
+        per un nuovo telaio corrisponde alla capacita giornaliera media dei telai
+        gia in produzione.
+      example:
+        daysUntilDelivery: 0.6027456
+        recommendedTotalLooms: 0
+        referenceDailyCapacity: 0.7061401
+        currentRunningLooms: 0
+        additionalDailyCapacity: 0.23021358
+        currentDailyCapacity: 0.5962134
+        remainingMeters: 0
+        recommendedAdditionalLooms: 0
+        meetsDeliveryDate: true
+        deliveryDate: 2000-01-23T04:56:07.000+00:00
+        requiredDailyCapacity: 0.5637377
+        estimatedCompletionDate: 2000-01-23T04:56:07.000+00:00
+      properties:
+        remainingMeters:
+          description: Metri ancora da produrre per completare l'articolo.
+          minimum: 0
+          type: integer
+        daysUntilDelivery:
+          description: Giorni disponibili fino alla data di consegna.
+          format: float
+          minimum: 0
+          type: number
+        currentRunningLooms:
+          description: Numero di telai attualmente in produzione per l'articolo.
+          minimum: 0
+          type: integer
+        currentDailyCapacity:
+          description: "Capacita giornaliera complessiva dei telai attualmente in\
+            \ produzione, in metri."
+          format: float
+          minimum: 0
+          type: number
+        requiredDailyCapacity:
+          description: "Capacita giornaliera necessaria per completare l'articolo\
+            \ entro la consegna, in metri."
+          format: float
+          minimum: 0
+          type: number
+        additionalDailyCapacity:
+          description: "Capacita giornaliera aggiuntiva necessaria per rispettare\
+            \ la consegna, in metri."
+          format: float
+          minimum: 0
+          type: number
+        referenceDailyCapacity:
+          description: "Capacita giornaliera media dei telai in produzione, usata\
+            \ come riferimento per ciascun nuovo telaio."
+          format: float
+          minimum: 0
+          type: number
+        recommendedAdditionalLooms:
+          description: Numero minimo di telai aggiuntivi consigliati per rispettare
+            la consegna.
+          minimum: 0
+          type: integer
+        recommendedTotalLooms:
+          description: "Numero totale di telai consigliato, inclusi quelli gia in\
+            \ produzione."
+          minimum: 0
+          type: integer
+        estimatedCompletionDate:
+          description: Data prevista di completamento mantenendo i soli telai attuali.
+          format: date-time
+          type: string
+        deliveryDate:
+          description: Data di consegna dell'articolo.
+          format: date-time
+          type: string
+        meetsDeliveryDate:
+          description: Indica se i telai attuali sono gia sufficienti a rispettare
+            la consegna.
+          type: boolean
+      required:
+      - additionalDailyCapacity
+      - currentDailyCapacity
+      - currentRunningLooms
+      - daysUntilDelivery
+      - deliveryDate
+      - estimatedCompletionDate
+      - meetsDeliveryDate
+      - recommendedAdditionalLooms
+      - recommendedTotalLooms
+      - referenceDailyCapacity
+      - remainingMeters
+      - requiredDailyCapacity
+      type: object
     create-item-with-arrangement-request:
       properties:
         customerName:
@@ -1898,11 +2017,10 @@ components:
         arrangementId: arrangementId
         itemId: itemId
         processId: processId
-        importance: LOW
         loomId: loomId
         description: description
         id: id
-        type: type
+        type: GENERIC
         assignmentId: assignmentId
       properties:
         id:
@@ -1915,12 +2033,6 @@ components:
         date:
           description: Data e ora dell'evento
           format: date-time
-          type: string
-        importance:
-          enum:
-          - LOW
-          - MEDIUM
-          - HIGH
           type: string
         assignmentId:
           description: Identificativo dell'assegnazione dell'evento
@@ -1938,12 +2050,17 @@ components:
           description: Identificativo della disposizione associata all'evento
           type: string
         type:
-          description: Tipo di evento
+          enum:
+          - GENERIC
+          - DELIVERY
+          - ITEM_FORECAST
+          - LOOM_FORECAST
+          - CLOSURE
           type: string
       required:
       - date
       - description
-      - importance
+      - type
       type: object
     deleteMultiLooms_200_response:
       example:

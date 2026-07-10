@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +28,7 @@ public class LoomService {
     private ProcessService processService;
 
     @Autowired
-    private CalendarEventService calendarEventService;
+    private ProductionForecastService productionForecastService;
 
     private final LoomRepository repository;
 
@@ -137,19 +135,12 @@ public class LoomService {
         process.setPiecesRun(updatedPiecesRun);
         process.setMetersRun(updatedMetersRun);
         process.setMetersToGo(calculateMetersToGo(process, updatedMetersRun, metersToAdd));
-        process.setDays(this.processService.calculateRemainingDays(process));
-
-        OffsetDateTime expectedEndDate = this.processService.calculateExpectedEndDateFromNow(process);
-        process.setExpectedEndDate(expectedEndDate != null ? expectedEndDate.toInstant() : null);
 
         ProcessEntity savedProcess = this.processService.save(process);
 
         item.getProcessing().set(processIndex, savedProcess);
         item.setMetersRun(valueOrZero(item.getMetersRun()) + metersToAdd);
-        this.calendarEventService.createOrUpdateLoomExpectedEndDateEvent(assignmentEntity, loom.get(), savedProcess);
-        updateItemExpectedEndDateFromAssignments(item, assignmentEntity);
-        this.calendarEventService.createOrUpdateItemExpectedEndDateEvent(item);
-        this.itemService.save(item);
+        this.productionForecastService.recalculateProductionForecast(item, assignmentEntity);
 
         return loom;
     }
@@ -164,59 +155,6 @@ public class LoomService {
         }
 
         return 0;
-    }
-
-    private void updateItemExpectedEndDateFromAssignments(
-            ItemEntity item,
-            LoomItemAssignmentEntity currentAssignment
-    ) {
-        if (item == null || currentAssignment == null || isBlank(currentAssignment.getItemId())) {
-            return;
-        }
-
-        List<LoomItemAssignmentEntity> assignments = assignmentRepository.findByItemId(currentAssignment.getItemId());
-
-        if (!checkIfAssignmentsCanDefineItemExpectedEndDate(assignments)) {
-            item.setExpectedEndDate(null);
-            return;
-        }
-
-        item.setExpectedEndDate(calculateLatestExpectedEndDateFromAssignments(assignments));
-    }
-
-    private boolean checkIfAssignmentsCanDefineItemExpectedEndDate(List<LoomItemAssignmentEntity> assignments) {
-        return assignments != null
-                && !assignments.isEmpty()
-                && assignments.stream().allMatch(this::hasRunningCompletedOrAbandonedStatus);
-    }
-
-    private boolean hasRunningCompletedOrAbandonedStatus(LoomItemAssignmentEntity entity) {
-        return entity != null
-                && (entity.getStatus() == LoomItemAssignment.StatusEnum.RUNNING
-                || entity.getStatus() == LoomItemAssignment.StatusEnum.COMPLETED
-                || entity.getStatus() == LoomItemAssignment.StatusEnum.ABANDONED);
-    }
-
-    private Instant calculateLatestExpectedEndDateFromAssignments(List<LoomItemAssignmentEntity> assignments) {
-        Instant latestExpectedEndDate = null;
-
-        for (LoomItemAssignmentEntity assignment : assignments) {
-            if (assignment == null || isBlank(assignment.getProcessId())) {
-                continue;
-            }
-
-            ProcessEntity process = this.processService.findById(assignment.getProcessId()).orElse(null);
-
-            if (process == null || process.getExpectedEndDate() == null) {
-                continue;
-            }
-
-            if (latestExpectedEndDate == null || process.getExpectedEndDate().isAfter(latestExpectedEndDate)) {
-                latestExpectedEndDate = process.getExpectedEndDate();
-            }
-        }
-
-        return latestExpectedEndDate;
     }
 
     private int findProcessIndex(ItemEntity item, String processId) {

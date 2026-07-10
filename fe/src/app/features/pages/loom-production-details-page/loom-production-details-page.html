@@ -91,8 +91,14 @@
               <h3>Dettagli Produzione</h3>
               <div class="production-fields">
                 <div class="form-group">
-                  <label for="totalMeters">Metri Totali</label>
-                  <input type="number" id="totalMeters" name="totalMeters" [value]="process()?.totalMeters ?? ''" [readonly]="!isEditEnabled">
+                  @if(process()?.metersToGo === 0){
+                    <label for="totalMeters" [class.complete-text]="process()?.metersToGo === 0">Articolo completato</label>
+                  }
+                  @else{
+                    <label for="totalMeters" [class.complete-text]="process()?.metersToGo === 0">Metri mancanti al completamento</label>
+                  }
+                 
+                  <input type="number" id="totalMeters" name="totalMeters" [value]="process()?.metersToGo ?? ''" [readonly]="!isEditEnabled" [class.complete]="process()?.metersToGo === 0">
                 </div>
                 <div class="form-group">
                   <label for="metersRun">Metri Prodotti</label>

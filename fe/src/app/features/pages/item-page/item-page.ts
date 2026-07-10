@@ -81,6 +81,15 @@ export class ItemPage implements OnInit {
     { header: 'Cliente', value: (row) => row.customer?.name },
     { header: 'Percentuale Completamento', value: (row) => this.getCompletionPercentage(row) },
     { header: 'Data di consegna', value: (row) => this.formatDate(row.arrangement?.deliveryDate) },
+    {
+      header: '',
+      icon: {
+        name: 'warning',
+        color: 'var(--weavops-color-danger-bright)',
+        tooltip: 'La data di completamento prevista supera la data di consegna',
+        visible: (row) => this.isExpectedEndDateAfterDeliveryDate(row),
+      },
+    },
   ];
 
   public readonly rows = signal<ItemTableRow[]>([]);
@@ -304,6 +313,40 @@ export class ItemPage implements OnInit {
       month: '2-digit',
       year: 'numeric',
     }).format(date);
+  }
+
+  private isExpectedEndDateAfterDeliveryDate(row: ItemTableRow): boolean {
+    const expectedEndDate = this.toDateOnlyTimestamp(row.item.expectedEndDate);
+    const deliveryDate = this.toDateOnlyTimestamp(row.arrangement?.deliveryDate);
+
+    return expectedEndDate !== null
+      && deliveryDate !== null
+      && expectedEndDate > deliveryDate;
+  }
+
+  private toDateOnlyTimestamp(value: string | undefined): number | null {
+    if (!value || value === '-') {
+      return null;
+    }
+
+    const datePart = value.split('T')[0];
+    const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(datePart);
+
+    if (dateMatch) {
+      return Date.UTC(
+        Number(dateMatch[1]),
+        Number(dateMatch[2]) - 1,
+        Number(dateMatch[3]),
+      );
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+
+    return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
   }
 
   private getFilterValue(row: ItemTableRow, field: string): string {

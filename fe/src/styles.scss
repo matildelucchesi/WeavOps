@@ -32,6 +32,15 @@ $weavops-color-grey: #e4dfdf;
 $weavops-color-grey-intermediate: #bfbcbc;
 $weavops-color-grey-dark: #404040;
 
+// Calendar palette: Indigo Focus
+$calendar-color-generic: #4f46e5;
+$calendar-color-text: #170da9;
+$calendar-color-item-forecast: #3d81f6;
+$calendar-color-loom-forecast: #15be80;
+$calendar-color-event-high: #e11d48;
+$calendar-color-delivery: #170da9;
+$calendar-color-event-low: #394b3f;
+
 html {
   height: 100%;
   --weavops-color-primary: #{$weavops-color-primary};
@@ -59,6 +68,13 @@ html {
   --weavops-color-grey-dark: #{$weavops-color-grey-dark};
   --weavops-color-blue: #{$weavops-color-blue};
   --weavops-color-blue-soft: #{$weavops-color-blue-soft};
+  --calendar-color-generic: #{$calendar-color-generic};
+  --calendar-color-text: #{$calendar-color-text};
+  --calendar-color-item-forecast: #{$calendar-color-item-forecast};
+  --calendar-color-loom-forecast: #{$calendar-color-loom-forecast};
+  --calendar-color-event-high: #{$calendar-color-event-high};
+  --calendar-color-delivery: #{$calendar-color-delivery};
+  --calendar-color-event-low: #{$calendar-color-event-low};
   --weavops-rgb-primary: 63 23 123;
   --weavops-rgb-primary-shadow: 108 83 145;
   --weavops-rgb-accent: 247 135 1;
@@ -321,4 +337,48 @@ body {
 app-root {
   display: block;
   min-height: 100%;
+}
+
+.calendar-page {
+  .calendar-wrapper { min-width: 0; }
+  .calendar-add-event-menu { position: relative; width: 100%; }
+  .calendar-add-event-chevron { width: 18px !important; height: 18px !important; margin-left: auto; font-size: 18px !important; line-height: 18px !important; }
+  .calendar-add-event-options { position: absolute; z-index: 3; top: calc(100% + 6px); left: 0; display: grid; width: 100%; overflow: hidden; border: 1.5px solid var(--weavops-color-primary); border-radius: 8px; background-color: var(--weavops-color-surface); box-shadow: 0 6px 14px rgba(32, 55, 75, 0.18); }
+  .calendar-add-event-options button { min-height: 38px; border: 0; border-bottom: 1px solid var(--weavops-color-primary-soft); padding: 0 12px; background-color: transparent; color: var(--weavops-color-primary); cursor: pointer; font-family: 'Instrument Sans', sans-serif; font-size: 12px; font-weight: 700; text-align: left; }
+  .calendar-add-event-options button:last-child { border-bottom: 0; }
+  .calendar-add-event-options button:hover { background-color: var(--weavops-color-primary-soft); }
+
+  .closure-editor, .generic-event-editor { display: grid; gap: 20px; width: 100%; min-width: 0; }
+  .closure-editor-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .closure-back-button, .closure-year-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 38px; border: 1.5px solid var(--weavops-color-primary); border-radius: 8px; background-color: var(--weavops-color-surface); color: var(--weavops-color-primary); cursor: pointer; font-family: 'Instrument Sans', sans-serif; font-size: 13px; font-weight: 700; transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease; }
+  .closure-back-button { padding: 0 12px; }
+  .closure-year-button { width: 38px; min-width: 38px; padding: 0; }
+  .closure-back-button:hover, .closure-year-button:hover { transform: translateY(-1px); background-color: var(--weavops-color-primary); color: var(--weavops-color-surface); }
+  .closure-back-button mat-icon, .closure-year-button mat-icon { width: 20px; height: 20px; font-size: 20px; }
+  .closure-year-navigation { display: inline-flex; align-items: center; gap: 8px; }
+  .closure-year-navigation h1 { min-width: 72px; text-align: center; }
+  .closure-year-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .closure-month { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; border: 1px solid var(--weavops-color-primary); border-radius: 8px; padding: 10px; background-color: var(--weavops-color-surface); }
+  .closure-month h2 { grid-column: 1 / -1; margin: 0 0 4px; color: var(--weavops-color-primary); font-family: 'Instrument Sans', sans-serif; font-size: 13px; font-weight: 700; text-transform: capitalize; }
+  .closure-weekday { display: inline-flex; align-items: center; justify-content: center; height: 22px; color: var(--weavops-color-primary); font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 700; }
+  .closure-day, .closure-day-empty { width: 100%; min-width: 0; aspect-ratio: 1; }
+  .closure-day { display: inline-flex; align-items: center; justify-content: center; border: 1.5px solid transparent; border-radius: 999px; padding: 0; background-color: transparent; color: var(--weavops-color-primary); cursor: pointer; font-family: 'Instrument Sans', sans-serif; font-size: 11px; font-weight: 700; transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
+  .closure-day:hover, .closure-day-selected { border-color: var(--weavops-color-danger-bright); background-color: var(--weavops-color-danger-soft); color: var(--weavops-color-danger-bright); }
+  .closure-day-today { border-color: var(--weavops-color-accent-deep); background-color: var(--weavops-color-accent-lighter); color: var(--weavops-color-accent-deep); }
+  .closure-day-selected { border-color: var(--weavops-color-danger-bright); background-color: var(--weavops-color-danger-soft); color: var(--weavops-color-danger-bright); }
+  .generic-event-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; width: 100%; }
+  .generic-event-form h1 { grid-column: 1 / -1; }
+  .generic-event-field { display: grid; gap: 6px; }
+  .generic-event-field label { color: var(--weavops-color-primary); font-family: 'Instrument Sans', sans-serif; font-size: 13px; font-weight: 700; }
+  .generic-event-field input { width: 100%; min-height: 40px; box-sizing: border-box; border: 1.5px solid var(--weavops-color-primary); border-radius: 6px; padding: 0 10px; background-color: var(--weavops-color-surface); color: var(--weavops-color-primary); font-family: 'Instrument Sans', sans-serif; font-size: 13px; }
+  .generic-event-field input:focus { outline: none; border-color: var(--weavops-color-accent-deep); box-shadow: 0 0 0 2px var(--weavops-color-accent-lighter); }
+
+  @media (max-width: 960px) { .closure-year-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 760px) { .closure-editor-header { align-items: flex-start; flex-direction: column; } .closure-year-grid, .generic-event-form { grid-template-columns: 1fr; } .closure-year-navigation { align-self: flex-end; } }
+}
+
+.calendar-page-actions {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
 }

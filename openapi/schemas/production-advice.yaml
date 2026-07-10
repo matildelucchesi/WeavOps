@@ -1,0 +1,72 @@
+type: object
+description: >-
+  Previsione della produzione di un articolo. La capacita di riferimento per un
+  nuovo telaio corrisponde alla capacita giornaliera media dei telai gia in produzione.
+
+required:
+  - remainingMeters
+  - daysUntilDelivery
+  - currentRunningLooms
+  - currentDailyCapacity
+  - requiredDailyCapacity
+  - additionalDailyCapacity
+  - referenceDailyCapacity
+  - recommendedAdditionalLooms
+  - recommendedTotalLooms
+  - estimatedCompletionDate
+  - deliveryDate
+  - meetsDeliveryDate
+
+properties:
+  remainingMeters:
+    type: integer
+    minimum: 0
+    description: Metri ancora da produrre per completare l'articolo.
+  daysUntilDelivery:
+    type: number
+    format: float
+    minimum: 0
+    description: Giorni disponibili fino alla data di consegna.
+  currentRunningLooms:
+    type: integer
+    minimum: 0
+    description: Numero di telai attualmente in produzione per l'articolo.
+  currentDailyCapacity:
+    type: number
+    format: float
+    minimum: 0
+    description: Capacita giornaliera complessiva dei telai attualmente in produzione, in metri.
+  requiredDailyCapacity:
+    type: number
+    format: float
+    minimum: 0
+    description: Capacita giornaliera necessaria per completare l'articolo entro la consegna, in metri.
+  additionalDailyCapacity:
+    type: number
+    format: float
+    minimum: 0
+    description: Capacita giornaliera aggiuntiva necessaria per rispettare la consegna, in metri.
+  referenceDailyCapacity:
+    type: number
+    format: float
+    minimum: 0
+    description: Capacita giornaliera media dei telai in produzione, usata come riferimento per ciascun nuovo telaio.
+  recommendedAdditionalLooms:
+    type: integer
+    minimum: 0
+    description: Numero minimo di telai aggiuntivi consigliati per rispettare la consegna.
+  recommendedTotalLooms:
+    type: integer
+    minimum: 0
+    description: Numero totale di telai consigliato, inclusi quelli gia in produzione.
+  estimatedCompletionDate:
+    type: string
+    format: date-time
+    description: Data prevista di completamento mantenendo i soli telai attuali.
+  deliveryDate:
+    type: string
+    format: date-time
+    description: Data di consegna dell'articolo.
+  meetsDeliveryDate:
+    type: boolean
+    description: Indica se i telai attuali sono gia sufficienti a rispettare la consegna.

@@ -47,6 +47,17 @@ public class ItemController implements ItemsApi {
     }
 
     @Override
+    public ResponseEntity<ProductionAdvice> getProductionAdviceByItemId(@PathVariable("id") String id) {
+        if (service.findById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return service.calculateProductionAdvice(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build());
+    }
+
+    @Override
     public ResponseEntity<Item> createItem(@Valid @RequestBody Item item) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(mapper.toDto(service.save(mapper.toEntity(item))));

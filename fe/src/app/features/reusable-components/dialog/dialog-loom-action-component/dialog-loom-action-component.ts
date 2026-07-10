@@ -3,15 +3,30 @@ import { FormsModule } from '@angular/forms';
 import { NgOptimizedImage } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Loom } from '../../../../api';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Item, Loom, Process } from '../../../../api';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { LoomFacadeService } from '../../../../services/loom-facade.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
+import { LoomItemAssignmentFacadeService } from '../../../../services/loom-item-assignment-facade.service';
+import { ItemFacadeService } from '../../../../services/item-facade.service';
+import { ProcessFacadeService } from '../../../../services/process-facade.service';
+import {
+  DialogAlertGeneric,
+  type DialogAlertGenericData,
+} from '../dialog-alert-generic/dialog-alert-generic';
+
+interface ProductionContext {
+  item: Item;
+  process: Process;
+}
 
 export interface DialogLoomActionData {
   loom?: Loom;
+  item?: Item | null;
+  process?: Process | null;
   modify?: boolean;
   initialView?: 'meters';
 }
@@ -34,10 +49,16 @@ export interface DialogLoomActionData {
 export class DialogLoomActionComponent {
   private readonly dialogRef = inject(MatDialogRef<DialogLoomActionComponent>, { optional: true });
   private readonly dialogData = inject<DialogLoomActionData | null>(MAT_DIALOG_DATA, { optional: true });
+  private readonly dialog = inject(MatDialog);
   private loomService = inject(LoomFacadeService);
+  private readonly assignmentService = inject(LoomItemAssignmentFacadeService);
+  private readonly itemService = inject(ItemFacadeService);
+  private readonly processService = inject(ProcessFacadeService);
   private snackBar = inject(MatSnackBar);
 
   readonly loom = this.dialogData?.loom ?? null;
+  readonly item = this.dialogData?.item ?? null;
+  readonly process = this.dialogData?.process ?? null;
   public readonly loomStatus = Loom.StatusEnum;
   public readonly isInitialMetersView = this.dialogData?.initialView === 'meters';
 
@@ -214,26 +235,146 @@ export class DialogLoomActionComponent {
     window.location.href = url;
   }
 
-  addPieces(): void {
+  public addPieces(): void {
     if (this.isAddingPieces) {
       return;
     }
 
-    const piecesProduced = Number(this.piecesProduced);
+    const piecesProduced = this.getValidPiecesProduced();
 
-    if (!Number.isInteger(piecesProduced) || piecesProduced <= 0) {
-      console.error('Invalid number of pieces produced');
-      this.showErrorSnackbar('Inserisci un numero di pezze valido');
+    if (piecesProduced === null) {
       return;
     }
 
+    if (!this.hasValidLoom()) {
+      return;
+    }
+
+    this.isAddingPieces = true;
+    this.resolveProductionContext().subscribe({
+      next: (productionContext) => {
+        if (this.shouldShowOverproductionAlert(piecesProduced, productionContext)) {
+          this.isAddingPieces = false;
+          this.openOverproductionAlert(piecesProduced);
+          return;
+        }
+
+        this.confirmAddPieces(piecesProduced);
+      },
+      error: (error) => {
+        this.isAddingPieces = false;
+        console.error('Error checking overproduction:', error);
+        this.showErrorSnackbar('Errore durante il controllo delle pezze prodotte');
+      },
+    });
+  }
+
+  private getValidPiecesProduced(): number | null {
+    const piecesProduced = Number(this.piecesProduced);
+
+    if (Number.isInteger(piecesProduced) && piecesProduced > 0) {
+      return piecesProduced;
+    }
+
+    console.error('Invalid number of pieces produced');
+    this.showErrorSnackbar('Inserisci un numero di pezze valido');
+    return null;
+  }
+
+  private hasValidLoom(): boolean {
     if (!this.loom) {
       console.error('Loom data is missing');
-      return;
+      return false;
     }
 
     if (!this.loom.id) {
       console.error('Loom id is missing');
+      return false;
+    }
+
+    return true;
+  }
+
+  private resolveProductionContext(): Observable<ProductionContext | null> {
+    if (this.item && this.process) {
+      return of({
+        item: this.item,
+        process: this.process,
+      });
+    }
+
+    if (!this.loom?.id) {
+      return of(null);
+    }
+
+    return this.assignmentService.getRunningAssignmentByLoomId(this.loom.id).pipe(
+      switchMap((assignment) => {
+        if (!assignment?.itemId || !assignment?.processId) {
+          return of(null);
+        }
+
+        return forkJoin({
+          item: this.itemService.getById(assignment.itemId),
+          process: this.processService.getById(assignment.processId),
+        });
+      }),
+      map((productionContext) => productionContext ?? null),
+      catchError((error) => {
+        console.error('Error loading production context:', error);
+        return of(null);
+      }),
+    );
+  }
+
+  private shouldShowOverproductionAlert(
+    piecesProduced: number,
+    productionContext: ProductionContext | null,
+  ): boolean {
+    const totalMeters = Number(productionContext?.item.totalMeters);
+    const metersRun = Number(productionContext?.item.metersRun ?? 0);
+    const metersPerPiece = Number(productionContext?.process.metersPerPiece);
+
+    if (
+      !Number.isFinite(totalMeters)
+      || !Number.isFinite(metersRun)
+      || !Number.isFinite(metersPerPiece)
+      || totalMeters <= 0
+      || metersPerPiece <= 0
+    ) {
+      return false;
+    }
+
+    return metersRun + (piecesProduced * metersPerPiece) > totalMeters;
+  }
+
+  private openOverproductionAlert(piecesProduced: number): void {
+    const dialogRef = this.dialog.open<
+      DialogAlertGeneric,
+      DialogAlertGenericData,
+      boolean
+    >(DialogAlertGeneric, {
+      panelClass: 'loom-alert-dialog-panel',
+      autoFocus: false,
+      data: {
+        text: 'Pezze oltre il necessario',
+        subtext: 'Le pezze inserite superano quelle necessarie per completare l\'articolo. Se procedi, verranno comunque aggiunte al numero di pezze prodotte.',
+        icon: 'warning',
+        iconColor: 'warning',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+
+      this.confirmAddPieces(piecesProduced);
+    });
+  }
+
+  private confirmAddPieces(piecesProduced: number): void {
+    if (!this.loom?.id) {
+      this.isAddingPieces = false;
       return;
     }
 

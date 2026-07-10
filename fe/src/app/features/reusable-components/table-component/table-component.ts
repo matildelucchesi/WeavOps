@@ -15,6 +15,14 @@ export interface TableColumn<T = any> {
   field?: keyof T | string;
   value?: (row: T) => string | number | null | undefined;
   chip?: boolean | TableChipConfig<T>;
+  icon?: TableIconConfig<T>;
+}
+
+export interface TableIconConfig<T = any> {
+  name: string | ((row: T) => string);
+  color?: string | ((row: T) => string);
+  tooltip?: string | ((row: T) => string);
+  visible?: boolean | ((row: T) => boolean);
 }
 
 export interface TableChipConfig<T = any> {
@@ -300,6 +308,34 @@ export class TableComponent {
 
   public isChipColumn(column: string | TableColumn): boolean {
     return typeof column !== 'string' && Boolean(column.chip);
+  }
+
+  public isIconColumn(column: string | TableColumn): boolean {
+    return typeof column !== 'string' && Boolean(column.icon);
+  }
+
+  public isColumnIconVisible(row: any, column: string | TableColumn): boolean {
+    const visible = typeof column === 'string' ? undefined : column.icon?.visible;
+
+    return this.resolveColumnState(visible, row, true);
+  }
+
+  public getColumnIconName(row: any, column: string | TableColumn): string {
+    const name = typeof column === 'string' ? undefined : column.icon?.name;
+
+    return typeof name === 'function' ? name(row) : name ?? '';
+  }
+
+  public getColumnIconColor(row: any, column: string | TableColumn): string {
+    const color = typeof column === 'string' ? undefined : column.icon?.color;
+
+    return this.resolveColumnText(color, row, 'var(--weavops-color-primary)');
+  }
+
+  public getColumnIconTooltip(row: any, column: string | TableColumn): string {
+    const tooltip = typeof column === 'string' ? undefined : column.icon?.tooltip;
+
+    return this.resolveColumnText(tooltip, row, '');
   }
 
   public getChipLabel(row: any, column: string | TableColumn, columnIndex: number): string {
@@ -603,6 +639,26 @@ export class TableComponent {
     }
 
     return state ?? defaultValue;
+  }
+
+  private resolveColumnState(
+    state: boolean | ((row: any) => boolean) | undefined,
+    row: any,
+    defaultValue: boolean,
+  ): boolean {
+    if (typeof state === 'function') {
+      return state(row);
+    }
+
+    return state ?? defaultValue;
+  }
+
+  private resolveColumnText(
+    value: string | ((row: any) => string) | undefined,
+    row: any,
+    fallback: string,
+  ): string {
+    return typeof value === 'function' ? value(row) : value ?? fallback;
   }
 
   private resolveCreationTimestamp(row: any): number | null {

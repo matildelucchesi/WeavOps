@@ -26,6 +26,7 @@ src/main/java/org/openapitools/model/LoginRequest.java
 src/main/java/org/openapitools/model/Loom.java
 src/main/java/org/openapitools/model/LoomItemAssignment.java
 src/main/java/org/openapitools/model/Process.java
+src/main/java/org/openapitools/model/ProductionAdvice.java
 src/main/java/org/openapitools/model/Referent.java
 src/main/java/org/openapitools/model/User.java
 src/main/resources/openapi.yaml

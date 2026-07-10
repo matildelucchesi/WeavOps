@@ -54,7 +54,7 @@
           </th>
         }
         @for(col of columns; track col){
-          <th>{{ getColumnHeader(col) }}</th>
+          <th [class.table-icon-header]="isIconColumn(col)">{{ getColumnHeader(col) }}</th>
         }
         @if (actions.length > 0) {
           <th class="actions-header">{{ actionColumnHeader }}</th>
@@ -75,7 +75,7 @@
             </td>
           }
           @for(col of columns; track col; let columnIndex = $index){
-            <td>
+            <td [class.table-icon-cell]="isIconColumn(col)">
               @if (isChipColumn(col)) {
                 <span
                   class="table-chip"
@@ -87,6 +87,17 @@
                   [style.--chip-height]="getChipHeight(row, col, columnIndex)">
                   {{ getChipLabel(row, col, columnIndex) }}
                 </span>
+              } @else if (isIconColumn(col)) {
+                @if (isColumnIconVisible(row, col)) {
+                  <mat-icon
+                    class="table-column-icon material-symbols-outlined"
+                    fontSet="material-symbols-outlined"
+                    [matTooltip]="getColumnIconTooltip(row, col)"
+                    matTooltipPosition="above"
+                    [style.--table-column-icon-color]="getColumnIconColor(row, col)">
+                    {{ getColumnIconName(row, col) }}
+                  </mat-icon>
+                }
               } @else {
                 {{ getCellValue(row, col, columnIndex) }}
               }

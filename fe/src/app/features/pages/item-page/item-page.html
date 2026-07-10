@@ -51,13 +51,20 @@
   <app-white-panel [iconName]="'category'" [title]="'Legenda'">
     <div class="item-legend">
       <div class="item-legend-row">
+        <div class="icon-wrapper">
+          <mat-icon class="icon">warning</mat-icon>
+        </div>
+    
+        <span class="item-legend-description">Se questa icona è presente, significa che la data di fine produzione dell'articolo prevista supera la data di consegna dell'articolo. <br> Clicca su <mat-icon class="description-icon">visibility</mat-icon> per gestire la situazione e per visualizzare eventuali consigli.</span>
+      </div>
+      <div class="item-legend-row">
         <span class="item-legend-chip item-legend-chip-initialized">Inizializzato</span>
         <span class="item-legend-description">L'articolo è stato inizializzato.</span>
       </div>
 
       <div class="item-legend-row">
         <span class="item-legend-chip item-legend-chip-production">In produzione</span>
-        <span class="item-legend-description">L'articolo è in produzione. Clicca su <mat-icon>visibility</mat-icon> per vedere lo stato.</span>
+        <span class="item-legend-description">L'articolo è in produzione. Clicca su <mat-icon class="description-icon">visibility</mat-icon> per vedere lo stato.</span>
       </div>
 
       <div class="item-legend-row">
@@ -70,6 +77,7 @@
         <span class="item-legend-description">L'articolo è stato abbandonato.</span>
       </div>
     </div>
+
   </app-white-panel>
 
 </div>

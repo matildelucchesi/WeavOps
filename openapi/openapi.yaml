@@ -27,6 +27,8 @@ paths:
     $ref: './paths/item.yaml#/~1items~1{id}'
   /items/{id}/remaining-meters-to-assign:
     $ref: './paths/item.yaml#/~1items~1{id}~1remaining-meters-to-assign'
+  /items/{id}/production-advice:
+    $ref: './paths/item.yaml#/~1items~1{id}~1production-advice'
   /items/with-arrangement:
     $ref: './paths/item.yaml#/~1items~1with-arrangement'
   /items/items-not-archived:

@@ -31,6 +31,7 @@ model/loom.ts
 model/loomItemAssignment.ts
 model/models.ts
 model/process.ts
+model/productionAdvice.ts
 model/referent.ts
 model/user.ts
 param.ts

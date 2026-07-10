@@ -368,3 +368,13 @@ input.pieces-produced-input{
 h3{
     margin: 0;
 }
+
+.complete{
+    border-color: var(--weavops-color-success);
+    box-shadow: 0 0 5px var(--weavops-color-success);
+    background-color: var(--weavops-color-success-soft);
+}
+
+.complete-text{
+    color: var(--weavops-color-success);
+}

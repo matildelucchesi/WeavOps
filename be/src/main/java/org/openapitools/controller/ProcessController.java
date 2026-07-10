@@ -5,6 +5,7 @@ import org.openapitools.domain.ProcessEntity;
 import org.openapitools.mapper.ProcessMapper;
 import org.openapitools.model.Process;
 import org.openapitools.service.ProcessService;
+import org.openapitools.service.ProductionForecastService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,10 +19,16 @@ import java.util.List;
 public class ProcessController implements ProcessesApi {
 
     private final ProcessService service;
+    private final ProductionForecastService productionForecastService;
     private final ProcessMapper mapper;
 
-    public ProcessController(ProcessService service, ProcessMapper mapper) {
+    public ProcessController(
+            ProcessService service,
+            ProductionForecastService productionForecastService,
+            ProcessMapper mapper
+    ) {
         this.service = service;
+        this.productionForecastService = productionForecastService;
         this.mapper = mapper;
     }
 
@@ -53,11 +60,14 @@ public class ProcessController implements ProcessesApi {
     public ResponseEntity<Process> updateProcess(@PathVariable("id") String id, @Valid @RequestBody Process process) {
         ProcessEntity entity = mapper.toEntity(process);
         entity.setDays(service.calculateDays(entity));
-        process.setDays(entity.getDays());
-        process.setExpectedEndDate(service.calculateExpectedEndDate(entity));
-        entity = mapper.toEntity(process);
+        entity.setExpectedEndDate(null);
 
         return service.update(id, entity)
+                .map(updatedProcess -> {
+                    productionForecastService.recalculateProductionForecastForProcess(updatedProcess.getId());
+
+                    return service.findById(updatedProcess.getId()).orElse(updatedProcess);
+                })
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
