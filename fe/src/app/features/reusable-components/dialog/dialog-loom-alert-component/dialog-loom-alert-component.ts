@@ -7,6 +7,7 @@ import { MatIcon } from "@angular/material/icon";
 export interface DialogLoomAlertData {
   loomStatus?: Loom.StatusEnum;
   busyUntilDate?: string;
+  message?: string;
 }
 
 @Component({
@@ -25,15 +26,21 @@ export class DialogLoomAlertComponent implements OnInit {
 
   @Input()
   public busyUntilDate?: string;
+  public message?: string;
 
   public isLoading: boolean = false;
 
   ngOnInit(): void {
     this.loomStatus = this.dialogData?.loomStatus ?? this.loomStatus;
     this.busyUntilDate = this.dialogData?.busyUntilDate ?? this.busyUntilDate;
+    this.message = this.dialogData?.message;
   }
 
   public get alertMessage(): string {
+    if (this.message) {
+      return this.message;
+    }
+
     switch (this.loomStatus) {
       case Loom.StatusEnum.Working:
         return `Il telaio scelto è OCCUPATO${this.busyUntilText} con la produzione di un altro articolo, vuoi comunque procedere con l'assegnazione?`;

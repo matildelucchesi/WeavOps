@@ -98,6 +98,15 @@
                     {{ getColumnIconName(row, col) }}
                   </mat-icon>
                 }
+              } @else if (isCheckboxColumn(col)) {
+                <mat-checkbox
+                  class="table-value-checkbox"
+                  [checked]="isColumnCheckboxChecked(row, col)"
+                  [disabled]="isColumnCheckboxDisabled(row, col)"
+                  [attr.aria-label]="getColumnCheckboxAriaLabel(row, col)"
+                  (click)="$event.stopPropagation()"
+                  (change)="handleColumnCheckboxChange(row, col, $event.checked)">
+                </mat-checkbox>
               } @else {
                 {{ getCellValue(row, col, columnIndex) }}
               }

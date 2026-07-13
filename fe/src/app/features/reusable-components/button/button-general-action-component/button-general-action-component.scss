@@ -19,6 +19,7 @@
 
 .save-button{
     --mdc-filled-button-container-color: var(--weavops-color-accent);
+    --mat-filled-button-container-color: var(--weavops-color-accent);
     --mdc-filled-button-label-text-color: var(--weavops-color-surface);
     --mat-filled-button-state-layer-color: var(--weavops-color-surface);
     cursor: pointer;
@@ -32,8 +33,14 @@
     font-weight: 600;
 }
 
+.save-button:not(:disabled).mat-mdc-unelevated-button{
+    background-color: var(--weavops-color-accent) !important;
+    color: var(--weavops-color-surface) !important;
+}
+
 .save-button:hover{
     --mdc-filled-button-container-color: var(--weavops-color-accent-dark);
+    --mat-filled-button-container-color: var(--weavops-color-accent-dark);
     background-color: var(--weavops-color-accent);
     opacity: 0.8;
 }

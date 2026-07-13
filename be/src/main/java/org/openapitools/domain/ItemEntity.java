@@ -24,9 +24,16 @@ public class ItemEntity {
     private Instant endDate;
     private Instant startDate;
     private Boolean isArchived;
-    private Integer assignedMeters;
+    private Boolean isDelivered;
 
     //getter & setter
+    public Boolean getDelivered() {
+        return isDelivered;
+    }
+
+    public void setDelivered(Boolean delivered) {
+        isDelivered = delivered;
+    }
 
     public Boolean getArchived() {
         return isArchived;

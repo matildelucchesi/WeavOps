@@ -10,6 +10,10 @@ import { ArrangementFacadeService } from '../../../services/arrangement-facade.s
 import { LoomFacadeService } from '../../../services/loom-facade.service';
 import { ExitButtonComponent } from "../../reusable-components/button/exit-button-component/exit-button-component";
 import { MatIcon } from "@angular/material/icon";
+import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import {
   DialogAssignLoomComponent,
   TEMPORARY_PROCESS_START_DATE,
@@ -55,9 +59,16 @@ interface ArrangementPdfSection {
     WhitePanel,
     ExitButtonComponent,
     MatIcon,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
     FormsModule,
     TableComponent,
     MatSnackBarModule,
+  ],
+  providers: [
+    provideNativeDateAdapter(),
+    { provide: MAT_DATE_LOCALE, useValue: 'it-IT' },
   ],
   standalone: true,
   templateUrl: './item-details-page.html',
@@ -73,6 +84,7 @@ export class ItemDetailsPage implements OnInit {
   public readonly productionAdvice = signal<ProductionAdvice | null>(null);
   public itemName: string = '';
   public isEditEnabled: boolean = false;
+  public deliveryDate: Date | null = null;
 
   public readonly processesColumns: TableColumn<ProcessTableRow>[] = [
     { header: 'Nome Telaio', field: 'loomName' },
@@ -222,7 +234,13 @@ export class ItemDetailsPage implements OnInit {
   }
 
   public toggleEditMode(): void {
-    this.isEditEnabled = !this.isEditEnabled;
+    const willEnableEdit = !this.isEditEnabled;
+
+    if (willEnableEdit) {
+      this.deliveryDate = this.toDatePickerValue(this.arrangement()?.deliveryDate);
+    }
+
+    this.isEditEnabled = willEnableEdit;
   }
 
   public saveChanges(): void {
@@ -409,6 +427,28 @@ export class ItemDetailsPage implements OnInit {
     const day = String(date.getDate()).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+  }
+
+  public toDatePickerValue(value: string | undefined): Date | null {
+    if (!value) {
+      return null;
+    }
+
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  public onDeliveryDateChange(value: Date | null): void {
+    const currentArrangement = this.arrangement();
+
+    if (!currentArrangement) {
+      return;
+    }
+
+    this.arrangement.set({
+      ...currentArrangement,
+      deliveryDate: value ? value.toISOString() : undefined,
+    });
   }
 
   public async exportArrangementData(): Promise<void> {
@@ -974,6 +1014,7 @@ export class ItemDetailsPage implements OnInit {
         data: {
           arrangement: this.arrangementData,
           remainingMetersToAssign: this.calculateRemainingMetersToAssign(),
+          itemId: this.item()?.id,
         },
       },
     );
@@ -1040,6 +1081,7 @@ export class ItemDetailsPage implements OnInit {
           horizontalPosition: 'end',
           verticalPosition: 'bottom',
         });
+        this.router.navigate(['/articoli']);
       },
       error: (error) => {
         this.item.set(currentItem);
@@ -1076,6 +1118,7 @@ export class ItemDetailsPage implements OnInit {
           next: (assignment) => {
             this.itemAssignments.set([...this.itemAssignments(), assignment]);
             this.loadRemainingMetersToAssign(item.id);
+            this.loadProductionAdvice(item.id);
             this.snackBar.open('Assegnazione avvenuta con successo', 'Chiudi', {
               duration: 4000,
               horizontalPosition: 'end',
@@ -1266,30 +1309,59 @@ export class ItemDetailsPage implements OnInit {
   }
 
   public hasExpectedEndDateForecast(): boolean {
-    return this.hasRunningAssignment()
-      && this.isRealStartDate(this.itemData?.expectedEndDate);
+    return this.isRealStartDate(this.getExpectedEndDateForecast());
+  }
+
+  public getExpectedEndDateForecast(): string | undefined {
+    const forecastExpectedEndDate = this.productionAdvice()?.estimatedCompletionDate;
+    const savedExpectedEndDate = this.itemData?.expectedEndDate;
+
+    return this.isRealStartDate(forecastExpectedEndDate)
+      ? forecastExpectedEndDate
+      : savedExpectedEndDate;
   }
 
   public isExpectedEndDateAfterDeliveryDate(): boolean {
-    const expectedEndDate = this.getComparableDateValue(this.itemData?.expectedEndDate);
-    const deliveryDate = this.getComparableDateValue(this.arrangementData?.deliveryDate);
+    const advice = this.productionAdvice();
+
+    if (advice) {
+      return advice.meetsDeliveryDate === false;
+    }
+
+    const expectedEndDate = this.getComparableDateValue(this.getExpectedEndDateForecast());
+    const deliveryDate = this.getComparableDateValue(
+      this.arrangementData?.deliveryDate,
+    );
 
     return expectedEndDate !== null
       && deliveryDate !== null
       && expectedEndDate > deliveryDate;
   }
 
-  public getEstimatedArticleCompletionDays(): string {
-    const runningProcessDays = this.itemAssignments()
-      .filter((assignment) => assignment.status === LoomItemAssignment.StatusEnum.Running)
-      .map((assignment) => this.getAssignmentProcess(assignment)?.days)
-      .filter((days): days is number => days !== undefined && Number.isFinite(days) && days > 0);
+  public isExpectedEndDateOnSchedule(): boolean {
+    return this.hasExpectedEndDateForecast()
+      && this.productionAdvice()?.meetsDeliveryDate === true;
+  }
 
-    if (runningProcessDays.length === 0) {
+  public getEstimatedArticleCompletionDays(): string {
+    const expectedEndDate = this.getExpectedEndDateForecast();
+
+    if (!this.isRealStartDate(expectedEndDate)) {
       return '-';
     }
 
-    return this.formatTableDays(Math.max(...runningProcessDays));
+    const expectedEndTimestamp = new Date(expectedEndDate).getTime();
+
+    if (Number.isNaN(expectedEndTimestamp)) {
+      return '-';
+    }
+
+    const remainingDays = Math.max(
+      (expectedEndTimestamp - Date.now()) / (24 * 60 * 60 * 1000),
+      0,
+    );
+
+    return this.formatTableDays(remainingDays);
   }
 
   private hasRunningAssignment(): boolean {
@@ -1410,13 +1482,41 @@ export class ItemDetailsPage implements OnInit {
 
   public getProductionAdviceMessage(advice: ProductionAdvice): string {
     if (advice.meetsDeliveryDate || advice.recommendedAdditionalLooms === 0) {
-      return `I ${advice.currentRunningLooms} telai attualmente in produzione sono sufficienti per rispettare la data di consegna.`;
+      const sufficientLoomsMessage = `I ${advice.currentRunningLooms} telai già assegnati sono sufficienti per rispettare la data di consegna.`;
+
+      if (this.isRealStartDate(this.itemData?.startDate)) {
+        return sufficientLoomsMessage;
+      }
+
+      const marginDays = this.getProductionAdviceMarginDays(advice);
+
+      if (marginDays === null) {
+        return sufficientLoomsMessage;
+      }
+
+      if (marginDays === 0) {
+        return `${sufficientLoomsMessage} L'articolo deve essere messo in produzione oggi.`;
+      }
+
+      const dayLabel = marginDays === 1 ? 'giorno' : 'giorni';
+      return `${sufficientLoomsMessage} Hai ${marginDays} ${dayLabel} di margine per iniziare la produzione.`;
     }
 
     const additionalLoomLabel = advice.recommendedAdditionalLooms === 1 ? 'telaio' : 'telai';
     const totalLoomLabel = advice.recommendedTotalLooms === 1 ? 'telaio' : 'telai';
 
     return `Per rispettare la data di consegna, si consiglia di aggiungere almeno ${advice.recommendedAdditionalLooms} ${additionalLoomLabel} alla produzione.`;
+  }
+
+  private getProductionAdviceMarginDays(advice: ProductionAdvice): number | null {
+    const estimatedCompletionDate = this.getComparableDateValue(advice.estimatedCompletionDate);
+    const deliveryDate = this.getComparableDateValue(advice.deliveryDate);
+
+    if (estimatedCompletionDate === null || deliveryDate === null) {
+      return null;
+    }
+
+    return Math.max(Math.floor((deliveryDate - estimatedCompletionDate) / (24 * 60 * 60 * 1000)), 0);
   }
 
 }

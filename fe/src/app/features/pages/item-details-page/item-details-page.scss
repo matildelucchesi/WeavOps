@@ -250,6 +250,55 @@ input{
     width: 200px;
 }
 
+.date-picker-field {
+    width: 234px;
+    font-family: 'Instrument Sans', sans-serif;
+    background: white;
+    border-radius: 10px;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-text-field-wrapper {
+    height: 34px;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    padding: 0 8px 0 16px;
+    background: transparent;
+}
+
+:host ::ng-deep .date-picker-field .mdc-notched-outline {
+    display: none;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-form-field-flex {
+    height: 100%;
+    align-items: center;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-form-field-infix {
+    min-height: 0;
+    padding: 0;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-input-element {
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    width: 100%;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-icon-button {
+    width: 28px;
+    height: 28px;
+    padding: 2px;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+}
+
 .column{
     display: grid;
     gap: 20px;
@@ -370,6 +419,11 @@ select:disabled{
     background-color: var(--expected-end-date-late-background-color, var(--weavops-color-danger-soft));
 }
 
+.expected-end-date-on-schedule {
+    border-color: var(--weavops-color-success) !important;
+    color: var(--weavops-color-success);
+}
+
 .expected-end-date-alert-icon{
     align-items: center;
     color: var(--weavops-color-danger-bright);
@@ -392,6 +446,10 @@ select:disabled{
     width: 270px;
 }
 
+.advice-success {
+    color: var(--weavops-color-success);
+}
+
 .advice p{
     margin: 0;
     margin-bottom: 2px;
@@ -411,4 +469,8 @@ select:disabled{
 
 .expected-end-date-label{
     color: var(--weavops-color-danger-bright);
+}
+
+.expected-end-date-label-success {
+    color: var(--weavops-color-success);
 }

@@ -25,6 +25,7 @@ export interface Item {
     endDate?: string;
     startDate?: string;
     isArchived?: boolean;
+    isDelivered?: boolean;
 }
 export namespace Item {
     export const StateEnum = {

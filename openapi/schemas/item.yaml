@@ -40,3 +40,6 @@ properties:
   isArchived:
     type: boolean
     default: false
+  isDelivered:
+    type: boolean
+    default: false

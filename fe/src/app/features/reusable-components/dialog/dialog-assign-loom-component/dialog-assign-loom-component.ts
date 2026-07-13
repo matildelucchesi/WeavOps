@@ -16,6 +16,7 @@ import { LoomItemAssignmentFacadeService } from '../../../../services/loom-item-
 export interface DialogAssignLoomData {
   arrangement?: Arrangement | null;
   remainingMetersToAssign?: number;
+  itemId?: string;
 }
 
 export const TEMPORARY_PROCESS_START_DATE = '1970-01-01T00:00:00.000Z';
@@ -140,6 +141,34 @@ export class DialogAssignLoomComponent implements OnInit {
   }
 
   public onAssignLoom(loom: Loom): void {
+    const itemId = this.data?.itemId;
+
+    if (itemId && loom.id) {
+      this.assignmentService.getByItemId(itemId).subscribe({
+        next: (assignments) => {
+          if (assignments.some((assignment) => assignment.loomId === loom.id)) {
+            this.openLoomAlert(
+              loom,
+              undefined,
+              'Questo telaio è stato già assegnato per questo articolo, vuoi procedere?',
+            );
+            return;
+          }
+
+          this.openAssignmentAlert(loom);
+        },
+        error: (error) => {
+          console.error('Errore durante il controllo delle assegnazioni del telaio:', error);
+          this.openAssignmentAlert(loom);
+        },
+      });
+      return;
+    }
+
+    this.openAssignmentAlert(loom);
+  }
+
+  private openAssignmentAlert(loom: Loom): void {
     if (loom.status === Loom.StatusEnum.Working && loom.id) {
       this.openBusyLoomAlert(loom);
       return;
@@ -164,7 +193,7 @@ export class DialogAssignLoomComponent implements OnInit {
     });
   }
 
-  private openLoomAlert(loom: Loom, busyUntilDate?: string): void {
+  private openLoomAlert(loom: Loom, busyUntilDate?: string, message?: string): void {
     const dialogRef = this.dialog.open<DialogLoomAlertComponent, DialogLoomAlertData, boolean>(
       DialogLoomAlertComponent,
       {
@@ -173,6 +202,7 @@ export class DialogAssignLoomComponent implements OnInit {
         data: {
           loomStatus: loom.status,
           busyUntilDate,
+          message,
         },
       },
     );

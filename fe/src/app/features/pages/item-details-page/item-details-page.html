@@ -164,13 +164,17 @@
                 <div class="form-group">
                   <label for="deliveryDate">Data di consegna</label>
                   @if(isEditEnabled) {
-                  <input
-                    type="date"
-                    id="deliveryDate"
-                    name="deliveryDate"
-                    [ngModel]="toDateInputValue(arrangement.deliveryDate)"
-                    (ngModelChange)="arrangement.deliveryDate = $event"
-                    [class.input-readonly]="false">
+                    <mat-form-field appearance="outline" class="date-picker-field">
+                      <input
+                        matInput
+                        id="deliveryDate"
+                        name="deliveryDate"
+                        [matDatepicker]="deliveryDatePicker"
+                        [(ngModel)]="deliveryDate"
+                        (ngModelChange)="onDeliveryDateChange($event)">
+                      <mat-datepicker-toggle matIconSuffix [for]="deliveryDatePicker"></mat-datepicker-toggle>
+                      <mat-datepicker #deliveryDatePicker></mat-datepicker>
+                    </mat-form-field>
                   } @else {
                   <input
                     type="text"
@@ -289,7 +293,8 @@
                     <label
                       for="expectedEndDate"
                       style="white-space: nowrap;"
-                      [class.expected-end-date-label]="isExpectedEndDateAfterDeliveryDate()">Data Completamento Lavorazione Prevista</label>
+                      [class.expected-end-date-label]="isExpectedEndDateAfterDeliveryDate()"
+                      [class.expected-end-date-label-success]="isExpectedEndDateOnSchedule()">Data Completamento Lavorazione Prevista</label>
                     @if(!hasExpectedEndDateForecast()) {
                       <div class="expected-end-date-row">
                         <input
@@ -299,7 +304,8 @@
                           value="-"
                           [readonly]="true"
                           [class.input-readonly]="true"
-                          [class.expected-end-date-late]="isExpectedEndDateAfterDeliveryDate()">
+                          [class.expected-end-date-late]="isExpectedEndDateAfterDeliveryDate()"
+                          [class.expected-end-date-on-schedule]="isExpectedEndDateOnSchedule()">
                         <mat-icon
                           class="info-icon material-symbols-outlined"
                           fontSet="material-symbols-outlined"
@@ -307,6 +313,11 @@
                           info
                         </mat-icon>
                       </div>
+                      @if(isExpectedEndDateAfterDeliveryDate() && productionAdvice(); as advice) {
+                        <div class="advice" [class.advice-success]="isExpectedEndDateOnSchedule()">
+                          <p>{{ getProductionAdviceMessage(advice) }}</p>
+                        </div>
+                      }
                     }
                     @else{
                       <div class="expected-end-date-row">
@@ -314,11 +325,11 @@
                           type="text"
                           id="expectedEndDate"
                           name="expectedEndDate"
-                          [ngModel]="formatDate(item.expectedEndDate)"
-                          (ngModelChange)="item.expectedEndDate = $event"
+                          [value]="formatDate(getExpectedEndDateForecast())"
                           [readonly]="true"
                           [class.input-readonly]="true"
-                          [class.expected-end-date-late]="isExpectedEndDateAfterDeliveryDate()">
+                          [class.expected-end-date-late]="isExpectedEndDateAfterDeliveryDate()"
+                          [class.expected-end-date-on-schedule]="isExpectedEndDateOnSchedule()">
                         @if(isExpectedEndDateAfterDeliveryDate()) {
                           <mat-icon
                             class="expected-end-date-alert-icon material-symbols-outlined"
@@ -329,13 +340,11 @@
                           </mat-icon>
                         }
                       </div>
-                      @if(isExpectedEndDateAfterDeliveryDate()) {
-                    <div class="advice">
                       @if(productionAdvice(); as advice) {
-                        <p>{{ getProductionAdviceMessage(advice) }}</p>
+                        <div class="advice" [class.advice-success]="isExpectedEndDateOnSchedule()">
+                          <p>{{ getProductionAdviceMessage(advice) }}</p>
+                        </div>
                       }
-                    </div>
-                   }
                     }
                   </div>
                 </div>
@@ -415,4 +424,5 @@
     </div>
   <app-white-panel [title]="'Attenzione'" [text]="'Se la produzione viene contrassegnata come TERMINATA, l’articolo verrà inserito nella lista degli articoli ARCHIVIATI, visualizzabile nella pagina Anagrafiche Articoli, e tutti i telai associati verranno liberati immediatamente.<br>La terminazione è irreversibile, ma è comunque possibile copiare i dati dell’articolo per metterne in produzione uno nuovo con gli stessi dati di partenza.'"></app-white-panel>
   <app-white-panel [title]="'Informazioni su eliminazione processo'" [text]="'Se un processo con stato IN LAVORAZIONE viene eliminato, tutti i dati associati verranno persi e non sarà possibile ripristinarli. Inoltre verrà contrassegnato come ABBANDONATO e i metri non ancora prodotti resteranno nel totale da completare. <br> Se un processo con stato IN CODA viene eliminato, verranno ripristinati tutti i dati a prima dell\'assegnazione del processo. <br><br> Non è possibile eliminare i processi con stato ABBANDONATO e COMPLETATO in modo da mantenere traccia della produzione.'"></app-white-panel>
+  <app-white-panel [iconName]="'contact_support'" [title]="'Come viene calcolata la Data Completamento Lavorazione Prevista?'" [text]="'La Data di Completamento Lavorazione Prevista viene calcolata stimando la produzione giornaliera di ogni telaio assegnato, considerando una lavorazione continua senza interruzioni.'"></app-white-panel>
 </div>

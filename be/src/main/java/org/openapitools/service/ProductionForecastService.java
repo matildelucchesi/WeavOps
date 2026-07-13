@@ -90,17 +90,17 @@ public class ProductionForecastService {
 
     @Transactional(rollbackFor = Exception.class)
     public void recalculateAllProductionForecasts() {
-        Set<String> runningItemIds = new HashSet<>();
+        Set<String> activeItemIds = new HashSet<>();
 
         for (LoomItemAssignmentEntity assignment : assignmentRepository.findAll()) {
             if (assignment != null
-                    && assignment.getStatus() == LoomItemAssignment.StatusEnum.RUNNING
+                    && isForecastAssignment(assignment)
                     && !isBlank(assignment.getItemId())) {
-                runningItemIds.add(assignment.getItemId());
+                activeItemIds.add(assignment.getItemId());
             }
         }
 
-        for (String itemId : runningItemIds) {
+        for (String itemId : activeItemIds) {
             recalculateProductionForecast(itemId);
         }
     }
@@ -236,7 +236,7 @@ public class ProductionForecastService {
 
         for (LoomItemAssignmentEntity assignment : assignments) {
             if (assignment == null
-                    || assignment.getStatus() != LoomItemAssignment.StatusEnum.RUNNING
+                    || !isForecastAssignment(assignment)
                     || isBlank(assignment.getProcessId())
                     || !processIds.add(assignment.getProcessId())) {
                 continue;
@@ -251,6 +251,15 @@ public class ProductionForecastService {
         }
 
         return runningProcesses;
+    }
+
+    /**
+     * A queued process already reserves a loom and has all the production parameters
+     * required for a forecast, so it must contribute before production actually starts.
+     */
+    private boolean isForecastAssignment(LoomItemAssignmentEntity assignment) {
+        return assignment.getStatus() == LoomItemAssignment.StatusEnum.RUNNING
+                || assignment.getStatus() == LoomItemAssignment.StatusEnum.QUEUED;
     }
 
     private float calculateTotalDailyCapacity(List<RunningProcessForecast> runningProcesses) {

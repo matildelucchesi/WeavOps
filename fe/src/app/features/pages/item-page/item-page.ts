@@ -19,6 +19,10 @@ import type { FilterValues } from '../../reusable-components/button/filter-butto
 import { WhitePanel } from "../../reusable-components/white-panel/white-panel";
 import { Item } from '../../../api';
 import { MatIcon } from "@angular/material/icon";
+import { ArrangementFacadeService } from '../../../services/arrangement-facade.service';
+import { forkJoin } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogAlertGeneric, type DialogAlertGenericData } from '../../reusable-components/dialog/dialog-alert-generic/dialog-alert-generic';
 
 @Component({
   selector: 'app-item-page',
@@ -37,7 +41,9 @@ export class ItemPage implements OnInit {
   private readonly itemNotArchivedTableService = inject(ItemNotArchivedTableService);
   private readonly itemArchivedTableService = inject(ItemArchivedTableService);
   private readonly itemService = inject(ItemFacadeService);
+  private readonly arrangementService = inject(ArrangementFacadeService);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
 
   public columns: TableColumn<ItemTableRow>[] = [
     { header: 'Nome', value: (row) => row.arrangement?.itemName },
@@ -90,6 +96,58 @@ export class ItemPage implements OnInit {
         visible: (row) => this.isExpectedEndDateAfterDeliveryDate(row),
       },
     },
+  ];
+
+  public archivedColumns: TableColumn<ItemTableRow>[] = [
+    { header: 'Nome', value: (row) => row.arrangement?.itemName },
+    {
+      header: 'Stato',
+      field: 'state',
+      chip: {
+        defaultStyle: {
+          width: '132px',
+          minWidth: '132px',
+          height: '28px',
+        },
+        styles: {
+          [Item.StateEnum.Running]: {
+            label: 'In produzione',
+            backgroundColor: 'var(--weavops-color-blue-soft)',
+            color: 'var(--weavops-color-blue)',
+            borderColor: 'var(--weavops-color-blue)',
+          },
+          [Item.StateEnum.Abandoned]: {
+            label: 'Abbandonato',
+            backgroundColor: 'var(--weavops-color-grey)',
+            color: 'var(--weavops-color-grey-dark)',
+            borderColor: 'var(--weavops-color-grey-dark)',
+          },
+          [Item.StateEnum.Initialized]: {
+            label: 'Inizializzato',
+            backgroundColor: 'var(--weavops-color-accent-lighter)',
+            color: 'var(--weavops-color-accent-deep)',
+            borderColor: 'var(--weavops-color-accent-deep)',
+          },
+          [Item.StateEnum.Completed]: {
+            label: 'Completato',
+            backgroundColor: 'var(--weavops-color-success-soft)',
+            color: 'var(--weavops-color-success)',
+            borderColor: 'var(--weavops-color-success)',
+          },
+        },
+      },
+    },
+    { header: 'Cliente', value: (row) => row.customer?.name },
+    {
+      header: 'Consegnato',
+      checkbox: {
+        checked: (row) => row.item.isDelivered === true,
+        disabled: (row) => row.item.isDelivered === true,
+        ariaLabel: (row) => `Articolo ${row.arrangement?.itemName ?? ''} consegnato`,
+        onChange: (row, isDelivered) => this.updateItemDeliveryState(row, isDelivered),
+      },
+    },
+    { header: 'Data di consegna', value: (row) => this.formatDate(row.arrangement?.deliveryDate) },
   ];
 
   public readonly rows = signal<ItemTableRow[]>([]);
@@ -172,6 +230,95 @@ export class ItemPage implements OnInit {
         this.allArchivedRows.set([]);
         this.archivedRows.set([]);
       },
+    });
+  }
+
+  private updateItemDeliveryState(row: ItemTableRow, isDelivered: boolean): void {
+    if (isDelivered) {
+      this.openDeliveredConfirmationDialog(row);
+      return;
+    }
+
+    this.persistItemDeliveryState(row, false);
+  }
+
+  private openDeliveredConfirmationDialog(row: ItemTableRow): void {
+    const itemName = row.arrangement?.itemName ?? 'selezionato';
+    const dialogRef = this.dialog.open<DialogAlertGeneric, DialogAlertGenericData, boolean>(DialogAlertGeneric, {
+      panelClass: 'item-alert-dialog-panel',
+      width: '520px',
+      maxWidth: 'calc(100vw - 48px)',
+      autoFocus: false,
+      data: {
+        text: `L'articolo ${itemName} verrà contrassegnato come Consegnato, vuoi procedere?`,
+        subtext: 'La data di consegna verrà aggiornata con la data odierna.',
+        icon: 'help',
+        iconColor: 'var(--weavops-color-primary)',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.persistItemDeliveryState(row, true);
+        return;
+      }
+
+      this.resetDeliveredCheckbox(row);
+    });
+  }
+
+  private resetDeliveredCheckbox(row: ItemTableRow): void {
+    const resetRow = (currentRow: ItemTableRow): ItemTableRow => {
+      if ((currentRow.item.id ?? currentRow.id) !== (row.item.id ?? row.id)) {
+        return currentRow;
+      }
+
+      return {
+        ...currentRow,
+        item: {
+          ...currentRow.item,
+          isDelivered: false,
+        },
+      };
+    };
+
+    this.allArchivedRows.update((rows) => rows.map(resetRow));
+    this.archivedRows.update((rows) => rows.map(resetRow));
+  }
+
+  private persistItemDeliveryState(row: ItemTableRow, isDelivered: boolean): void {
+    const itemId = row.item.id ?? row.id;
+
+    if (!itemId) {
+      console.error('Impossibile aggiornare la consegna: id dell\'articolo mancante', row);
+      return;
+    }
+
+    const updatedItem: Item = {
+      ...row.item,
+      isDelivered,
+    };
+
+    if (!isDelivered || !row.arrangement?.id) {
+      this.itemService.update(itemId, updatedItem).subscribe({
+        next: () => this.loadArchivedItemRows(),
+        error: (error) => console.error('Errore durante l\'aggiornamento della consegna:', error),
+      });
+      return;
+    }
+
+    const deliveredAt = new Date().toISOString();
+    const updatedArrangement = {
+      ...row.arrangement,
+      deliveryDate: deliveredAt,
+    };
+
+    forkJoin({
+      item: this.itemService.update(itemId, updatedItem),
+      arrangement: this.arrangementService.update(row.arrangement.id, updatedArrangement),
+    }).subscribe({
+      next: () => this.loadArchivedItemRows(),
+      error: (error) => console.error('Errore durante l\'aggiornamento della consegna:', error),
     });
   }
 

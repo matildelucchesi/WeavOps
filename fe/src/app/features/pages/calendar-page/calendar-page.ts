@@ -3,6 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { concatMap, from, toArray } from 'rxjs';
 import { DecorativeLinesComponent } from "../../reusable-components/decorative-lines-component/decorative-lines-component";
 import { TitlePageComponent } from "../../reusable-components/title-page-component/title-page-component";
@@ -47,7 +51,11 @@ type CalendarViewMode = 'calendar' | 'generic-event' | 'closure-editor';
 
 @Component({
   selector: 'app-calendar-page',
-  imports: [FormsModule, MatIconModule, MatSnackBarModule, MatTooltipModule, DecorativeLinesComponent, TitlePageComponent, ButtonGeneralActionComponent, LoaderComponent, WhitePanel],
+  imports: [FormsModule, MatIconModule, MatSnackBarModule, MatTooltipModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, DecorativeLinesComponent, TitlePageComponent, ButtonGeneralActionComponent, LoaderComponent, WhitePanel],
+  providers: [
+    provideNativeDateAdapter(),
+    { provide: MAT_DATE_LOCALE, useValue: 'it-IT' },
+  ],
   standalone: true,
   templateUrl: './calendar-page.html',
   styleUrl: './calendar-page.scss',
@@ -62,6 +70,10 @@ export class CalendarPage implements OnInit {
   public currentMonth: Date = this.getCurrentMonth();
   public readonly monthLabel = signal(this.formatMonthLabel(this.currentMonth));
   public readonly calendarDays = signal<CalendarDay[]>(this.buildCalendarDays(this.currentMonth));
+  public readonly calendarEvents = signal<CalendarEvent[]>([]);
+  public readonly currentWeekDeliveryCount = computed(() =>
+    this.countCurrentWeekDeliveries(this.calendarEvents())
+  );
   public readonly viewMode = signal<CalendarViewMode>('calendar');
   public readonly isAddEventMenuOpen = signal(false);
   public readonly closureEditorYear = signal(new Date().getFullYear());
@@ -73,7 +85,7 @@ export class CalendarPage implements OnInit {
   public readonly isSavingGenericEvent = signal(false);
   public readonly isSaving = computed(() => this.isSavingClosures() || this.isSavingGenericEvent());
   public genericEventDescription = '';
-  public genericEventDate = '';
+  public genericEventDate: Date | null = null;
   public readonly eventTypeOptions: CalendarEventTypeOption[] = [
     { type: CalendarEvent.TypeEnum.Generic, label: 'Evento generico', colorClass: 'calendar-event-color-generic' },
     { type: CalendarEvent.TypeEnum.Delivery, label: 'Consegna articolo', colorClass: 'calendar-event-color-delivery' },
@@ -112,7 +124,7 @@ export class CalendarPage implements OnInit {
 
   public openGenericEventEditor(): void {
     this.genericEventDescription = '';
-    this.genericEventDate = this.toDateInputValue(new Date());
+    this.genericEventDate = new Date();
     this.isAddEventMenuOpen.set(false);
     this.viewMode.set('generic-event');
   }
@@ -225,9 +237,9 @@ export class CalendarPage implements OnInit {
 
   public saveGenericEvent(): void {
     const description = this.genericEventDescription.trim();
-    const date = this.parseDateInput(this.genericEventDate);
+    const date = this.genericEventDate;
 
-    if (!description || !date || this.isSavingGenericEvent()) {
+    if (!description || !date || Number.isNaN(date.getTime()) || this.isSavingGenericEvent()) {
       return;
     }
 
@@ -291,12 +303,15 @@ export class CalendarPage implements OnInit {
   private loadCalendarEvents(onLoaded?: () => void, onError?: () => void): void {
     this.calendarEventService.getCalendarEvents().subscribe({
       next: (calendarEvents) => {
-        this.calendarEventsByDate = this.groupCalendarEventsByDate(calendarEvents ?? []);
+        const events = calendarEvents ?? [];
+        this.calendarEvents.set(events);
+        this.calendarEventsByDate = this.groupCalendarEventsByDate(events);
         this.calendarDays.set(this.buildCalendarDays(this.currentMonth));
         onLoaded?.();
       },
       error: (error) => {
         console.error('Error loading calendar events:', error);
+        this.calendarEvents.set([]);
         this.calendarEventsByDate = new Map<string, CalendarEvent[]>();
         this.calendarDays.set(this.buildCalendarDays(this.currentMonth));
         onError?.();
@@ -351,6 +366,28 @@ export class CalendarPage implements OnInit {
     }
 
     return firstEvent.description.localeCompare(secondEvent.description, 'it-IT');
+  }
+
+  private countCurrentWeekDeliveries(calendarEvents: CalendarEvent[]): number {
+    const today = new Date();
+    const currentWeekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const daysSinceMonday = (currentWeekStart.getDay() + 6) % 7;
+    currentWeekStart.setDate(currentWeekStart.getDate() - daysSinceMonday);
+
+    const currentWeekEnd = new Date(currentWeekStart);
+    currentWeekEnd.setDate(currentWeekStart.getDate() + 7);
+
+    return calendarEvents.filter((event) => {
+      if (this.getCalendarEventType(event) !== CalendarEvent.TypeEnum.Delivery) {
+        return false;
+      }
+
+      const eventDate = new Date(event.date);
+
+      return !Number.isNaN(eventDate.getTime())
+        && eventDate >= currentWeekStart
+        && eventDate < currentWeekEnd;
+    }).length;
   }
 
   private getCurrentMonth(): Date {

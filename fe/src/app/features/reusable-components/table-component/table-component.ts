@@ -16,6 +16,14 @@ export interface TableColumn<T = any> {
   value?: (row: T) => string | number | null | undefined;
   chip?: boolean | TableChipConfig<T>;
   icon?: TableIconConfig<T>;
+  checkbox?: TableCheckboxConfig<T>;
+}
+
+export interface TableCheckboxConfig<T = any> {
+  checked: (row: T) => boolean;
+  disabled?: boolean | ((row: T) => boolean);
+  ariaLabel?: string | ((row: T) => string);
+  onChange?: (row: T, checked: boolean) => void;
 }
 
 export interface TableIconConfig<T = any> {
@@ -312,6 +320,32 @@ export class TableComponent {
 
   public isIconColumn(column: string | TableColumn): boolean {
     return typeof column !== 'string' && Boolean(column.icon);
+  }
+
+  public isCheckboxColumn(column: string | TableColumn): boolean {
+    return typeof column !== 'string' && Boolean(column.checkbox);
+  }
+
+  public isColumnCheckboxChecked(row: any, column: string | TableColumn): boolean {
+    return typeof column !== 'string' && Boolean(column.checkbox?.checked(row));
+  }
+
+  public isColumnCheckboxDisabled(row: any, column: string | TableColumn): boolean {
+    const disabled = typeof column === 'string' ? undefined : column.checkbox?.disabled;
+    return this.resolveColumnState(disabled, row, false);
+  }
+
+  public getColumnCheckboxAriaLabel(row: any, column: string | TableColumn): string {
+    const ariaLabel = typeof column === 'string' ? undefined : column.checkbox?.ariaLabel;
+    return this.resolveColumnText(ariaLabel, row, 'Seleziona valore');
+  }
+
+  public handleColumnCheckboxChange(row: any, column: string | TableColumn, checked: boolean): void {
+    if (typeof column === 'string' || this.isColumnCheckboxDisabled(row, column)) {
+      return;
+    }
+
+    column.checkbox?.onChange?.(row, checked);
   }
 
   public isColumnIconVisible(row: any, column: string | TableColumn): boolean {

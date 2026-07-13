@@ -382,6 +382,35 @@ hr{
     font-weight: 600;
 }
 
+.calendar-delivery-summary{
+    display: flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    border-left: 3px solid var(--weavops-color-accent);
+    background-color: var(--weavops-color-surface);
+}
+
+.calendar-delivery-label{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.calendar-delivery-label .column-section-header-icon{
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--weavops-color-accent);
+    font-size: 20px;
+}
+
 .calendar-legend-row,
 .calendar-filter-row{
     display: flex;
@@ -452,4 +481,93 @@ hr{
     font-size: 14px;
     width: 14px;
     height: 14px;
+}
+
+.calendar-page-actions{
+    margin-bottom: 20px;
+}
+
+.generic-event-button-wrapper{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.generic-event-wrapper{
+    display: grid;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    background: var(--weavops-color-surface);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.generic-event-header{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.generic-event-actions{
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.generic-event-field .date-picker-field{
+    width: 234px;
+    font-family: 'Instrument Sans', sans-serif;
+    background: var(--weavops-color-surface);
+    border-radius: 10px;
+}
+
+:host ::ng-deep .generic-event-field .date-picker-field .mat-mdc-text-field-wrapper{
+    height: 34px;
+    box-sizing: border-box;
+    border: 1.5px solid var(--weavops-color-primary) !important;
+    border-radius: 10px;
+    padding: 0 8px 0 16px;
+    background: transparent;
+    overflow: hidden;
+}
+
+:host ::ng-deep .generic-event-field .date-picker-field .mdc-notched-outline{
+    display: none;
+}
+
+:host ::ng-deep .generic-event-field .date-picker-field.mat-focused .mat-mdc-text-field-wrapper,
+:host ::ng-deep .generic-event-field .date-picker-field:hover .mat-mdc-text-field-wrapper{
+    border-color: var(--weavops-color-primary) !important;
+}
+
+:host ::ng-deep .generic-event-field .date-picker-field .mat-mdc-form-field-flex{
+    height: 100%;
+    align-items: center;
+}
+
+:host ::ng-deep .generic-event-field .date-picker-field .mat-mdc-form-field-infix{
+    min-height: 0;
+    padding: 0;
+}
+
+:host ::ng-deep .generic-event-field .date-picker-field .mat-mdc-input-element{
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    width: 100%;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+:host ::ng-deep .generic-event-field .date-picker-field .mat-mdc-icon-button{
+    width: 28px;
+    height: 28px;
+    padding: 2px;
+}
+
+:host ::ng-deep .generic-event-field .date-picker-field .mat-mdc-form-field-subscript-wrapper{
+    display: none;
 }

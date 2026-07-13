@@ -29,7 +29,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("item")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-10T15:50:31.737609900+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-13T11:37:20.448567200+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class Item {
 
   private @Nullable String id;
@@ -96,6 +96,8 @@ public class Item {
   private @Nullable OffsetDateTime startDate;
 
   private Boolean isArchived = false;
+
+  private Boolean isDelivered = false;
 
   public Item id(@Nullable String id) {
     this.id = id;
@@ -336,6 +338,27 @@ public class Item {
     this.isArchived = isArchived;
   }
 
+  public Item isDelivered(Boolean isDelivered) {
+    this.isDelivered = isDelivered;
+    return this;
+  }
+
+  /**
+   * Get isDelivered
+   * @return isDelivered
+   */
+  
+  @Schema(name = "isDelivered", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("isDelivered")
+  public Boolean getIsDelivered() {
+    return isDelivered;
+  }
+
+  @JsonProperty("isDelivered")
+  public void setIsDelivered(Boolean isDelivered) {
+    this.isDelivered = isDelivered;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -355,12 +378,13 @@ public class Item {
         Objects.equals(this.expectedEndDate, item.expectedEndDate) &&
         Objects.equals(this.endDate, item.endDate) &&
         Objects.equals(this.startDate, item.startDate) &&
-        Objects.equals(this.isArchived, item.isArchived);
+        Objects.equals(this.isArchived, item.isArchived) &&
+        Objects.equals(this.isDelivered, item.isDelivered);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, arrangementId, state, customerId, totalMeters, metersRun, processing, expectedEndDate, endDate, startDate, isArchived);
+    return Objects.hash(id, arrangementId, state, customerId, totalMeters, metersRun, processing, expectedEndDate, endDate, startDate, isArchived, isDelivered);
   }
 
   @Override
@@ -378,6 +402,7 @@ public class Item {
     sb.append("    endDate: ").append(toIndentedString(endDate)).append("\n");
     sb.append("    startDate: ").append(toIndentedString(startDate)).append("\n");
     sb.append("    isArchived: ").append(toIndentedString(isArchived)).append("\n");
+    sb.append("    isDelivered: ").append(toIndentedString(isDelivered)).append("\n");
     sb.append("}");
     return sb.toString();
   }

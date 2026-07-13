@@ -43,6 +43,12 @@
       </div>
       <hr>
       <div class="column-section">
+        <div class="calendar-delivery-summary" aria-live="polite">
+          <span class="calendar-delivery-label"><mat-icon class="column-section-header-icon">local_shipping</mat-icon> {{ currentWeekDeliveryCount() }} consegne previste questa settimana</span>
+        </div>
+      </div>
+      <hr>
+      <div class="column-section">
         <div class="column-section-header">
           <mat-icon class="column-section-header-icon">category</mat-icon>
         <h2 class="calendar-sidebar-title">Legenda</h2>
@@ -129,13 +135,20 @@
         </section>
       } @else if (viewMode() === 'generic-event') {
         <section class="generic-event-editor" aria-labelledby="generic-event-title">
-          <button type="button" class="closure-back-button" (click)="returnToCalendar()">
+          <div class="generic-event-button-wrapper">
+             <button type="button" class="closure-back-button" (click)="returnToCalendar()">
             <mat-icon fontSet="material-symbols-outlined">arrow_back</mat-icon>
             <span>Torna al calendario</span>
           </button>
-
-          <form class="generic-event-form" (ngSubmit)="saveGenericEvent()">
-            <h1 id="generic-event-title">Nuovo evento generale</h1>
+          </div>
+         
+          <div class="generic-event-wrapper">
+          
+            <div class="generic-event-header">
+              <mat-icon class="generic-event-icon" fontSet="material-symbols-outlined">event</mat-icon>
+              <h1 id="generic-event-title">Inserisci nuovo evento</h1>
+            </div>
+           <form class="generic-event-form" (ngSubmit)="saveGenericEvent()">
             <div class="generic-event-field">
               <label for="genericEventDescription">Descrizione</label>
               <input
@@ -147,14 +160,28 @@
             </div>
             <div class="generic-event-field">
               <label for="genericEventDate">Data</label>
-              <input
-                id="genericEventDate"
-                name="genericEventDate"
-                type="date"
-                [(ngModel)]="genericEventDate"
-                required>
+              <mat-form-field appearance="outline" class="date-picker-field">
+                <input
+                  matInput
+                  id="genericEventDate"
+                  name="genericEventDate"
+                  [matDatepicker]="genericEventDatePicker"
+                  [(ngModel)]="genericEventDate"
+                  required>
+                <mat-datepicker-toggle matIconSuffix [for]="genericEventDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #genericEventDatePicker></mat-datepicker>
+              </mat-form-field>
             </div>
           </form>
+          <div class="generic-event-actions">
+            <app-button-general-action-component
+              label="SALVA"
+              className="save-button"
+              [disabled]="!genericEventDescription.trim() || !genericEventDate || isSavingGenericEvent()"
+              (buttonClick)="saveGenericEvent()">
+            </app-button-general-action-component>
+          </div>
+          </div>
         </section>
       } @else {
       <div class="calendar-header">
@@ -230,15 +257,6 @@
           className="save-button"
           [disabled]="isSavingClosures()"
           (buttonClick)="saveClosures()">
-        </app-button-general-action-component>
-      </div>
-    } @else if (viewMode() === 'generic-event') {
-      <div class="calendar-page-actions">
-        <app-button-general-action-component
-          label="SALVA"
-          className="save-button"
-          [disabled]="!genericEventDescription.trim() || !genericEventDate || isSavingGenericEvent()"
-          (buttonClick)="saveGenericEvent()">
         </app-button-general-action-component>
       </div>
     }

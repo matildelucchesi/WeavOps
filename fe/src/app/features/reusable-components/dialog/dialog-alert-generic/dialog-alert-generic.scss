@@ -9,7 +9,7 @@
 
 .wrapper{
     --dialog-alert-icon-color: var(--weavops-color-primary);
-    --dialog-alert-border-color: var(--weavops-color-warning);
+    --dialog-alert-border-color: var(--weavops-color-primary);
     --dialog-alert-body-background: #ffeeba;
 }
 
@@ -44,6 +44,9 @@ p{
 .first-text{
     color: var(--dialog-alert-icon-color);
     font-size: 14px;
+    justify-self: stretch;
+    text-align: center;
+    width: 100%;
 }
 
 .second-text{
