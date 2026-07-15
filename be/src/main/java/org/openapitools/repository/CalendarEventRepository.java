@@ -23,4 +23,6 @@ public interface CalendarEventRepository extends MongoRepository<CalendarEventEn
     Optional<CalendarEventEntity> findFirstByItemIdAndTypeIsNull(String itemId);
 
     Optional<CalendarEventEntity> findFirstByProcessIdAndTypeIsNull(String processId);
+
+    List<CalendarEventEntity> findAllByCategoryId(String categoryId);
 }

@@ -1,0 +1,104 @@
+/customer-item-histories:
+  get:
+    summary: Recupera tutte le cronologie articoli cliente
+    operationId: getCustomerItemHistories
+    tags:
+      - CustomerItemHistory
+    responses:
+      '200':
+        description: Lista cronologie articoli cliente
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/customer-item-history.yaml'
+
+  post:
+    summary: Crea una cronologia articolo cliente
+    operationId: createCustomerItemHistory
+    tags:
+      - CustomerItemHistory
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/customer-item-history.yaml'
+    responses:
+      '201':
+        description: Cronologia articolo cliente creata
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/customer-item-history.yaml'
+      '400':
+        description: Richiesta non valida
+
+/customer-item-histories/{id}:
+  get:
+    summary: Recupera una cronologia articolo cliente tramite ID
+    operationId: getCustomerItemHistoryById
+    tags:
+      - CustomerItemHistory
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Cronologia articolo cliente trovata
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/customer-item-history.yaml'
+      '404':
+        description: Cronologia articolo cliente non trovata
+
+  put:
+    summary: Aggiorna una cronologia articolo cliente
+    operationId: updateCustomerItemHistory
+    tags:
+      - CustomerItemHistory
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/customer-item-history.yaml'
+    responses:
+      '200':
+        description: Cronologia articolo cliente aggiornata
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/customer-item-history.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Cronologia articolo cliente non trovata
+
+  delete:
+    summary: Elimina una cronologia articolo cliente
+    operationId: deleteCustomerItemHistory
+    tags:
+      - CustomerItemHistory
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Cronologia articolo cliente eliminata
+      '404':
+        description: Cronologia articolo cliente non trovata

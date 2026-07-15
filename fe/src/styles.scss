@@ -23,6 +23,7 @@ $weavops-color-accent-lighter: #fcd8ab;
 $weavops-color-warning: #ffc800;
 $weavops-color-warning-alpha: #ffe46daa;
 $weavops-color-success: #065f46;
+$weavops-color-success-bright: #16a34a;
 $weavops-color-success-soft: #d1fae5;
 $weavops-color-danger: #d90000;
 $weavops-color-danger-bright: #dd0000;
@@ -59,6 +60,7 @@ html {
   --weavops-color-warning-alpha: #{$weavops-color-warning-alpha};
   --weavops-color-success: #{$weavops-color-success};
   --weavops-color-success-soft: #{$weavops-color-success-soft};
+  --weavops-color-success-bright: #{$weavops-color-success-bright};
   --weavops-color-danger: #{$weavops-color-danger};
   --weavops-color-danger-bright: #{$weavops-color-danger-bright};
   --weavops-color-danger-soft: #{$weavops-color-danger-soft};
@@ -195,7 +197,8 @@ body {
   --mat-dialog-container-shape: 10px;
 }
 
-.loom-action-dialog-panel .mat-mdc-dialog-surface {
+.loom-action-dialog-panel .mat-mdc-dialog-surface,
+.calendar-actions-dialog-panel .mat-mdc-dialog-surface {
   background-color: var(--weavops-color-surface);
   border: 2px solid var(--weavops-color-primary);
   border-radius: 10px;
@@ -204,7 +207,8 @@ body {
   overflow: hidden;
 }
 
-.loom-action-dialog-panel .mat-mdc-dialog-container {
+.loom-action-dialog-panel .mat-mdc-dialog-container,
+.calendar-actions-dialog-panel .mat-mdc-dialog-container {
   --mat-dialog-container-shape: 10px;
 }
 

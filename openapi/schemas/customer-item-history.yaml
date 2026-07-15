@@ -1,0 +1,14 @@
+type: object
+
+required:
+  - customerId
+  - itemId
+
+properties:
+  id:
+    type: string
+    readOnly: true
+  customerId:
+    type: string
+  itemId:
+    type: string

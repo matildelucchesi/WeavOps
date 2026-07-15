@@ -1,0 +1,14 @@
+type: object
+
+required:
+  - loomId
+  - processId
+
+properties:
+  id:
+    type: string
+    readOnly: true
+  loomId:
+    type: string
+  processId:
+    type: string

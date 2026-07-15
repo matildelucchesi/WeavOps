@@ -1,7 +1,9 @@
 export * from './arrangement';
 export * from './calendarEvent';
+export * from './calendarEventCategory';
 export * from './createItemWithArrangementRequest';
 export * from './customer';
+export * from './customerItemHistory';
 export * from './deleteMultiCustomers200Response';
 export * from './deleteMultiItems200Response';
 export * from './deleteMultiLooms200Response';
@@ -10,6 +12,7 @@ export * from './login200Response';
 export * from './loginRequest';
 export * from './loom';
 export * from './loomItemAssignment';
+export * from './loomProcessHistory';
 export * from './process';
 export * from './productionAdvice';
 export * from './referent';

@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("calendar-event")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-13T11:37:20.448567200+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-15T12:18:51.296312700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class CalendarEvent {
 
   private @Nullable String id;
@@ -43,6 +43,8 @@ public class CalendarEvent {
   private @Nullable String processId;
 
   private @Nullable String arrangementId;
+
+  private @Nullable String categoryId;
 
   /**
    * Gets or Sets type
@@ -268,6 +270,27 @@ public class CalendarEvent {
     this.arrangementId = arrangementId;
   }
 
+  public CalendarEvent categoryId(@Nullable String categoryId) {
+    this.categoryId = categoryId;
+    return this;
+  }
+
+  /**
+   * Identificativo della categoria custom associata all'evento
+   * @return categoryId
+   */
+  
+  @Schema(name = "categoryId", description = "Identificativo della categoria custom associata all'evento", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("categoryId")
+  public @Nullable String getCategoryId() {
+    return categoryId;
+  }
+
+  @JsonProperty("categoryId")
+  public void setCategoryId(@Nullable String categoryId) {
+    this.categoryId = categoryId;
+  }
+
   public CalendarEvent type(TypeEnum type) {
     this.type = type;
     return this;
@@ -306,12 +329,13 @@ public class CalendarEvent {
         Objects.equals(this.itemId, calendarEvent.itemId) &&
         Objects.equals(this.processId, calendarEvent.processId) &&
         Objects.equals(this.arrangementId, calendarEvent.arrangementId) &&
+        Objects.equals(this.categoryId, calendarEvent.categoryId) &&
         Objects.equals(this.type, calendarEvent.type);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, description, date, assignmentId, loomId, itemId, processId, arrangementId, type);
+    return Objects.hash(id, description, date, assignmentId, loomId, itemId, processId, arrangementId, categoryId, type);
   }
 
   @Override
@@ -326,6 +350,7 @@ public class CalendarEvent {
     sb.append("    itemId: ").append(toIndentedString(itemId)).append("\n");
     sb.append("    processId: ").append(toIndentedString(processId)).append("\n");
     sb.append("    arrangementId: ").append(toIndentedString(arrangementId)).append("\n");
+    sb.append("    categoryId: ").append(toIndentedString(categoryId)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("}");
     return sb.toString();

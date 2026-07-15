@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-13T11:37:20.448567200+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-15T12:18:51.296312700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Loom", description = "the Loom API")
 public interface LoomsApi {

@@ -62,6 +62,7 @@ public class ItemMapper {
         dto.setStartDate(toOffsetDateTime(entity.getStartDate()));
         dto.setIsArchived(entity.getIsArchived());
         dto.setIsDelivered(entity.getDelivered());
+        dto.setIsLate(entity.getLate());
         return dto;
     }
 
@@ -87,6 +88,7 @@ public class ItemMapper {
         entity.setStartDate(toInstant(dto.getStartDate()));
         entity.setIsArchived(dto.getIsArchived() != null ? dto.getIsArchived() : false);
         entity.setDelivered(dto.getIsDelivered() != null ? dto.getIsDelivered() : false);
+        entity.setLate(dto.getIsLate() != null ? dto.getIsLate() : false);
         return entity;
     }
 

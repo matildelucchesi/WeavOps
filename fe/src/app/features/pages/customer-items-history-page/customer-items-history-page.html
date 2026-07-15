@@ -5,25 +5,25 @@
 
 <div class="title-wrapper">
   <app-title-page-component
-  title="Cronologia Articoli"
+  [title]="title"
   iconName="history"
   [imageWidth]="40"
   [imageHeight]="40">
 </app-title-page-component>
 </div>
 
+<app-exit-button-component></app-exit-button-component>
+
 <div class="body">
-  <div class="button-wrapper">
-    <app-filter-button-component></app-filter-button-component>
-  </div>
-  <div>
-    <!--
+  <div class="history-table-wrapper">
     <app-table-component
-    [columns]="columns"
-    [rows]="rows()"
-    [actions]="actions"
-    actionColumnHeader=""
-    (actionClick)="onTableAction($event)">
-    </app-table-component>-->
+      [columns]="columns"
+      [rows]="rows()"
+      [filterButton]="filterButton"
+      [enableMultiSelection]="false"
+      [sortByCreationDate]="false"
+      (filterSelected)="onFilterSelected($event)"
+      (actionClick)="onTableAction($event)">
+    </app-table-component>
   </div>
 </div>

@@ -1,0 +1,104 @@
+/loom-process-histories:
+  get:
+    summary: Recupera tutte le cronologie processi telaio
+    operationId: getLoomProcessHistories
+    tags:
+      - LoomProcessHistory
+    responses:
+      '200':
+        description: Lista cronologie processi telaio
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/loom-process-history.yaml'
+
+  post:
+    summary: Crea una cronologia processo telaio
+    operationId: createLoomProcessHistory
+    tags:
+      - LoomProcessHistory
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/loom-process-history.yaml'
+    responses:
+      '201':
+        description: Cronologia processo telaio creata
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom-process-history.yaml'
+      '400':
+        description: Richiesta non valida
+
+/loom-process-histories/{id}:
+  get:
+    summary: Recupera una cronologia processo telaio tramite ID
+    operationId: getLoomProcessHistoryById
+    tags:
+      - LoomProcessHistory
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Cronologia processo telaio trovata
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom-process-history.yaml'
+      '404':
+        description: Cronologia processo telaio non trovata
+
+  put:
+    summary: Aggiorna una cronologia processo telaio
+    operationId: updateLoomProcessHistory
+    tags:
+      - LoomProcessHistory
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/loom-process-history.yaml'
+    responses:
+      '200':
+        description: Cronologia processo telaio aggiornata
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom-process-history.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Cronologia processo telaio non trovata
+
+  delete:
+    summary: Elimina una cronologia processo telaio
+    operationId: deleteLoomProcessHistory
+    tags:
+      - LoomProcessHistory
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Cronologia processo telaio eliminata
+      '404':
+        description: Cronologia processo telaio non trovata

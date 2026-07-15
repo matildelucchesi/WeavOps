@@ -9,7 +9,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { timeout } from 'rxjs';
+import { map, switchMap, timeout } from 'rxjs';
 import { DecorativeLinesComponent } from "../../reusable-components/decorative-lines-component/decorative-lines-component";
 import { TitlePageComponent } from "../../reusable-components/title-page-component/title-page-component";
 import { ExitButtonComponent } from "../../reusable-components/button/exit-button-component/exit-button-component";
@@ -17,7 +17,8 @@ import { ButtonGeneralActionComponent } from "../../reusable-components/button/b
 import { ItemFacadeService } from '../../../services/item-facade.service';
 import { LoaderComponent } from '../../reusable-components/loader-component/loader-component';
 import { CustomerFacadeService } from '../../../services/customer-facade.service';
-import { Customer } from '../../../api';
+import { Customer, Item } from '../../../api';
+import { CustomerItemHistoryFacadeService } from '../../../services/customer-item-history-facade.service';
 
 @Component({
   selector: 'app-item-add-new-page',
@@ -47,6 +48,7 @@ export class ItemAddNewPage implements OnInit, OnDestroy {
   private readonly saveTimeoutMs: number = 15000;
   private readonly itemService = inject(ItemFacadeService);
   private readonly customerService = inject(CustomerFacadeService);
+  private readonly customerItemHistoryService = inject(CustomerItemHistoryFacadeService);
   private readonly navigationService = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private loaderTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -133,7 +135,8 @@ export class ItemAddNewPage implements OnInit, OnDestroy {
           : undefined,
       },
     }).pipe(
-      timeout(this.saveTimeoutMs)
+      timeout(this.saveTimeoutMs),
+      switchMap((createdItem: Item) => this.createCustomerItemHistory(createdItem)),
     ).subscribe({
       next: (response) => {
         this.isRequestPending = false;
@@ -179,6 +182,17 @@ export class ItemAddNewPage implements OnInit, OnDestroy {
         this.filteredCustomers.set([]);
       },
     });
+  }
+
+  private createCustomerItemHistory(createdItem: Item) {
+    if (!createdItem.id || !createdItem.customerId) {
+      throw new Error('Impossibile creare la cronologia articolo: id articolo o cliente mancante');
+    }
+
+    return this.customerItemHistoryService.create({
+      customerId: createdItem.customerId,
+      itemId: createdItem.id,
+    }).pipe(map(() => createdItem));
   }
 
   private showLoader(): void {

@@ -47,6 +47,10 @@ paths:
     $ref: './paths/process.yaml#/~1processes'
   /processes/{id}:
     $ref: './paths/process.yaml#/~1processes~1{id}'
+  /loom-process-histories:
+    $ref: './paths/loom-process-history.yaml#/~1loom-process-histories'
+  /loom-process-histories/{id}:
+    $ref: './paths/loom-process-history.yaml#/~1loom-process-histories~1{id}'
   /loom-item-assignments:
     $ref: './paths/loom-item-assignment.yaml#/~1loom-item-assignments'
   /loom-item-assignments/{id}:
@@ -63,6 +67,10 @@ paths:
     $ref: './paths/customer.yaml#/~1customers~1delete-multi'
   /customers/{id}:
     $ref: './paths/customer.yaml#/~1customers~1{id}'
+  /customer-item-histories:
+    $ref: './paths/customer-item-history.yaml#/~1customer-item-histories'
+  /customer-item-histories/{id}:
+    $ref: './paths/customer-item-history.yaml#/~1customer-item-histories~1{id}'
   /users:
     $ref: './paths/user.yaml#/~1users'
   /users/{id}:
@@ -71,8 +79,16 @@ paths:
     $ref: './paths/user.yaml#/~1auth~1login'
   /calendar-events:
     $ref: './paths/calendar-event.yaml#/~1calendar-events'
+  /calendar-events/deliveries/current-week-count:
+    $ref: './paths/calendar-event.yaml#/~1calendar-events~1deliveries~1current-week-count'
+  /calendar-events/deliveries/overdue-count:
+    $ref: './paths/calendar-event.yaml#/~1calendar-events~1deliveries~1overdue-count'
   /calendar-events/{id}:
     $ref: './paths/calendar-event.yaml#/~1calendar-events~1{id}'
+  /calendar-event-categories:
+    $ref: './paths/calendar-event-category.yaml#/~1calendar-event-categories'
+  /calendar-event-categories/{id}:
+    $ref: './paths/calendar-event-category.yaml#/~1calendar-event-categories~1{id}'
 
 components:
   securitySchemes:

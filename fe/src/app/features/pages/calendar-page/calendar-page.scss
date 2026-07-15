@@ -215,6 +215,43 @@ h1{
     text-overflow: ellipsis;
 }
 
+.calendar-event-delivered-icon{
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+    border-radius: 999px;
+    background: var(--weavops-color-surface);
+    color: var(--weavops-color-success-bright);
+    font-size: 16px;
+    line-height: 16px;
+    padding: 1px;
+}
+
+.calendar-event-late-icon{
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+    border-radius: 999px;
+    background: var(--weavops-color-surface);
+    color: var(--weavops-color-danger-bright);
+    font-size: 16px;
+    line-height: 16px;
+    padding: 1px;
+}
+
+.calendar-event-chip-action{
+    cursor: pointer;
+    transition: filter 0.2s ease, outline-color 0.2s ease;
+}
+
+.calendar-event-chip-action:hover,
+.calendar-event-chip-action:focus-visible{
+    filter: brightness(0.9);
+    
+}
+
 .calendar-event-chip-generic{
     --calendar-event-background-color: var(--calendar-color-generic);
     --calendar-event-text-color: var(--weavops-color-surface);
@@ -236,8 +273,12 @@ h1{
 }
 
 .calendar-event-chip-closure{
-    --calendar-event-background-color: var(--weavops-color-danger-soft);
-    --calendar-event-text-color: var(--weavops-color-danger-bright);
+    --calendar-event-background-color: var(--calendar-color-closure);
+    --calendar-event-text-color: var(--weavops-color-surface);
+}
+
+.calendar-event-chip-custom{
+    --calendar-event-text-color: var(--weavops-color-surface);
 }
 
 
@@ -271,6 +312,14 @@ h1{
         min-height: 20px;
         padding: 3px 6px;
         font-size: 10px;
+    }
+
+    .calendar-event-delivered-icon{
+        flex-basis: 14px;
+        width: 14px;
+        height: 14px;
+        font-size: 14px;
+        line-height: 14px;
     }
 
     .calendar-navigation{
@@ -384,12 +433,18 @@ hr{
 
 .calendar-delivery-summary{
     display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: 8px;
     min-height: 42px;
     padding: 8px 10px;
     box-sizing: border-box;
     border-left: 3px solid var(--weavops-color-accent);
     background-color: var(--weavops-color-surface);
+}
+
+.calendar-delivery-summary.calendar-delivery-summary-overdue{
+    border-left-color: var(--weavops-color-danger);
 }
 
 .calendar-delivery-label{
@@ -409,6 +464,10 @@ hr{
     height: 20px;
     color: var(--weavops-color-accent);
     font-size: 20px;
+}
+
+.calendar-delivery-label.calendar-delivery-label-overdue .column-section-header-icon{
+    color: var(--weavops-color-danger-bright);
 }
 
 .calendar-legend-row,
@@ -458,7 +517,41 @@ hr{
 }
 
 .calendar-event-color-closure{
-    --calendar-event-color: var(--weavops-color-danger-bright);
+    --calendar-event-color: var(--calendar-color-closure);
+}
+
+.calendar-settings-button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    width: 100%;
+    min-height: 40px;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 8px;
+    padding: 0 12px;
+    box-sizing: border-box;
+    background-color: var(--weavops-color-surface);
+    color: var(--weavops-color-primary);
+    cursor: pointer;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.calendar-settings-button mat-icon{
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+}
+
+.calendar-settings-button:hover,
+.calendar-settings-button-active{
+    transform: translateY(-1px);
+    background-color: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
 }
 
 @media (max-width: 760px){
@@ -483,9 +576,6 @@ hr{
     height: 14px;
 }
 
-.calendar-page-actions{
-    margin-bottom: 20px;
-}
 
 .generic-event-button-wrapper{
     display: flex;
@@ -570,4 +660,286 @@ hr{
 
 :host ::ng-deep .generic-event-field .date-picker-field .mat-mdc-form-field-subscript-wrapper{
     display: none;
+}
+
+.generic-event-content{
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    background-color: var(--weavops-color-primary-soft);
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.generic-event-field select{
+    width: 100%;
+    min-height: 40px;
+    box-sizing: border-box;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 6px;
+    padding: 0 10px;
+    background-color: var(--weavops-color-surface);
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.calendar-settings{
+    display: grid;
+    gap: 20px;
+    width: 100%;
+}
+
+.settings-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.settings-title-wrapper{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.settings-icon{
+    width: 30px;
+    height: 30px;
+    color: var(--weavops-color-primary);
+    font-size: 30px;
+}
+
+.settings-content{
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(260px, 0.7fr);
+    gap: 20px;
+    width: 100%;
+}
+
+.event-palette-section,
+.event-palette-preview{
+    display: grid;
+    align-content: start;
+    gap: 16px;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    background: var(--weavops-color-surface);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.settings-section-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.settings-section-header h2,
+.event-palette-preview h2{
+    margin: 0;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.palette-reset-button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 8px;
+    padding: 0 10px;
+    background: var(--weavops-color-surface);
+    color: var(--weavops-color-primary);
+    cursor: pointer;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.palette-reset-button:hover{
+    background: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
+}
+
+.palette-reset-button:disabled{
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.palette-reset-button mat-icon{
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+.palette-options{
+    display: grid;
+    gap: 10px;
+}
+
+.custom-category-editor{
+    display: grid;
+    gap: 12px;
+    border-top: 1px solid var(--weavops-color-primary);
+    padding-top: 16px;
+}
+
+.custom-category-form,
+.custom-category-row{
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 48px max-content;
+    align-items: center;
+    gap: 10px;
+}
+
+.custom-category-form input[type='text'],
+.custom-category-row input[type='text']{
+    width: 100%;
+    min-height: 36px;
+    box-sizing: border-box;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 8px;
+    padding: 0 10px;
+    background: var(--weavops-color-surface);
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.custom-category-form input[type='color'],
+.custom-category-row input[type='color']{
+    width: 48px;
+    height: 34px;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 8px;
+    padding: 2px;
+    background: var(--weavops-color-surface);
+    cursor: pointer;
+}
+
+.custom-category-list{
+    display: grid;
+    gap: 8px;
+}
+
+.category-remove-button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1.5px solid var(--weavops-color-danger-bright);
+    border-radius: 8px;
+    background: var(--weavops-color-surface);
+    color: var(--weavops-color-danger-bright);
+    cursor: pointer;
+}
+
+.category-remove-button:hover{
+    background: var(--weavops-color-danger-bright);
+    color: var(--weavops-color-surface);
+}
+
+.category-remove-button mat-icon{
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+.palette-option{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 44px;
+    border: 1px solid var(--weavops-color-primary);
+    border-radius: 8px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    background-color: var(--weavops-color-primary-soft);
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.palette-option-label{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.palette-option-swatch{
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--weavops-color-surface);
+    border-radius: 999px;
+}
+
+.palette-option input[type='color']{
+    flex: 0 0 42px;
+    width: 42px;
+    height: 28px;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 6px;
+    padding: 2px;
+    background: var(--weavops-color-surface);
+    cursor: pointer;
+}
+
+.palette-preview-list{
+    display: grid;
+    gap: 8px;
+}
+
+.palette-preview-list .calendar-event-chip{
+    width: 100%;
+    min-height: 28px;
+    font-size: 12px;
+}
+
+@media (max-width: 960px){
+    .settings-content{
+        grid-template-columns: 1fr;
+    }
+
+    .settings-header{
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+.legend-icon.success{
+    color: var(--weavops-color-success-bright);
+}
+
+.legend-icon.late{
+    color: var(--weavops-color-danger-bright);
+}
+
+.legend-row{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.legend{
+    display: grid;
+    gap: 10px;
+}
+.body{
+    display: grid;
+    gap: 20px;
 }

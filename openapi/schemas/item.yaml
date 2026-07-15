@@ -43,3 +43,6 @@ properties:
   isDelivered:
     type: boolean
     default: false
+  isLate:
+    type: boolean
+    default: false

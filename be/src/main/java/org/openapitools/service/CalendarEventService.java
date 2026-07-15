@@ -10,6 +10,7 @@ import org.openapitools.domain.ProcessEntity;
 import org.openapitools.model.CalendarEvent;
 import org.openapitools.repository.ArrangementRepository;
 import org.openapitools.repository.CalendarEventRepository;
+import org.openapitools.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -31,13 +32,16 @@ public class CalendarEventService {
 
     private final CalendarEventRepository repository;
     private final ArrangementRepository arrangementRepository;
+    private final ItemRepository itemRepository;
 
     public CalendarEventService(
             CalendarEventRepository repository,
-            ArrangementRepository arrangementRepository
+            ArrangementRepository arrangementRepository,
+            ItemRepository itemRepository
     ) {
         this.repository = repository;
         this.arrangementRepository = arrangementRepository;
+        this.itemRepository = itemRepository;
     }
 
     public List<CalendarEventEntity> findAll() {
@@ -77,6 +81,7 @@ public class CalendarEventService {
         calendarEvent.setLoomId(null);
         calendarEvent.setItemId(null);
         calendarEvent.setProcessId(null);
+        calendarEvent.setCategoryId(null);
 
         return Optional.of(repository.save(calendarEvent));
     }
@@ -111,6 +116,7 @@ public class CalendarEventService {
         calendarEvent.setItemId(assignment.getItemId());
         calendarEvent.setProcessId(process.getId());
         calendarEvent.setArrangementId(null);
+        calendarEvent.setCategoryId(null);
 
         return Optional.of(repository.save(calendarEvent));
     }
@@ -136,6 +142,7 @@ public class CalendarEventService {
         calendarEvent.setAssignmentId(null);
         calendarEvent.setLoomId(null);
         calendarEvent.setProcessId(null);
+        calendarEvent.setCategoryId(null);
 
         return Optional.of(repository.save(calendarEvent));
     }
@@ -160,6 +167,26 @@ public class CalendarEventService {
 
         repository.deleteById(id);
         return true;
+    }
+
+    public int countCurrentWeekPendingDeliveries() {
+        LocalDate today = LocalDate.now(BUSINESS_TIME_ZONE);
+        LocalDate weekStartDate = today.minusDays(today.getDayOfWeek().getValue() - 1L);
+        Instant weekStart = weekStartDate.atStartOfDay(BUSINESS_TIME_ZONE).toInstant();
+        Instant nextWeekStart = weekStartDate.plusWeeks(1).atStartOfDay(BUSINESS_TIME_ZONE).toInstant();
+
+        return countPendingDeliveriesBetween(weekStart, nextWeekStart);
+    }
+
+    public int countOverdueDeliveries() {
+        Instant todayStart = LocalDate.now(BUSINESS_TIME_ZONE).atStartOfDay(BUSINESS_TIME_ZONE).toInstant();
+
+        return (int) itemRepository.findAll().stream()
+                .filter(this::isPendingDelivery)
+                .map(this::getDeliveryDate)
+                .flatMap(Optional::stream)
+                .filter(deliveryDate -> deliveryDate.isBefore(todayStart))
+                .count();
     }
 
     private Optional<CalendarEventEntity> findDeliveryDateEvent(String arrangementId) {
@@ -193,6 +220,29 @@ public class CalendarEventService {
         return event.isPresent()
                 ? event
                 : repository.findFirstByItemIdAndTypeIsNull(itemId);
+    }
+
+    private int countPendingDeliveriesBetween(Instant startInclusive, Instant endExclusive) {
+        return (int) itemRepository.findAll().stream()
+                .filter(this::isPendingDelivery)
+                .map(this::getDeliveryDate)
+                .flatMap(Optional::stream)
+                .filter(deliveryDate -> !deliveryDate.isBefore(startInclusive) && deliveryDate.isBefore(endExclusive))
+                .count();
+    }
+
+    private boolean isPendingDelivery(ItemEntity item) {
+        return item != null && !Boolean.TRUE.equals(item.getDelivered());
+    }
+
+    private Optional<Instant> getDeliveryDate(ItemEntity item) {
+        if (item == null || isBlank(item.getArrangementId())) {
+            return Optional.empty();
+        }
+
+        return arrangementRepository.findById(item.getArrangementId())
+                .map(ArrangementEntity::getDeliveryDate)
+                .filter(this::hasEventDate);
     }
 
     private String buildDescription(String eventType, String detail) {

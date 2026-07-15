@@ -22,7 +22,12 @@ import { MatIcon } from "@angular/material/icon";
 import { ArrangementFacadeService } from '../../../services/arrangement-facade.service';
 import { forkJoin } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogAlertGeneric, type DialogAlertGenericData } from '../../reusable-components/dialog/dialog-alert-generic/dialog-alert-generic';
+import {
+  DialogAlertGeneric,
+  type DialogAlertGenericData,
+  type DialogAlertGenericDeliveryResult,
+  type DialogAlertGenericResult,
+} from '../../reusable-components/dialog/dialog-alert-generic/dialog-alert-generic';
 
 @Component({
   selector: 'app-item-page',
@@ -244,22 +249,24 @@ export class ItemPage implements OnInit {
 
   private openDeliveredConfirmationDialog(row: ItemTableRow): void {
     const itemName = row.arrangement?.itemName ?? 'selezionato';
-    const dialogRef = this.dialog.open<DialogAlertGeneric, DialogAlertGenericData, boolean>(DialogAlertGeneric, {
+    const dialogRef = this.dialog.open<DialogAlertGeneric, DialogAlertGenericData, DialogAlertGenericResult>(DialogAlertGeneric, {
       panelClass: 'item-alert-dialog-panel',
       width: '520px',
       maxWidth: 'calc(100vw - 48px)',
       autoFocus: false,
       data: {
         text: `L'articolo ${itemName} verrà contrassegnato come Consegnato, vuoi procedere?`,
-        subtext: 'La data di consegna verrà aggiornata con la data odierna.',
         icon: 'help',
         iconColor: 'var(--weavops-color-primary)',
+        deliveryDetails: true,
+        deliveryDetailsTitle: 'Indica la Data di consegna',
+        deliveryDate: new Date(),
       },
     });
 
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (confirmed) {
-        this.persistItemDeliveryState(row, true);
+    dialogRef.afterClosed().subscribe((result) => {
+      if (this.isDeliveryDialogResult(result)) {
+        this.persistItemDeliveryState(row, true, result.deliveryDate, result.isLate);
         return;
       }
 
@@ -278,6 +285,7 @@ export class ItemPage implements OnInit {
         item: {
           ...currentRow.item,
           isDelivered: false,
+          isLate: false,
         },
       };
     };
@@ -286,7 +294,12 @@ export class ItemPage implements OnInit {
     this.archivedRows.update((rows) => rows.map(resetRow));
   }
 
-  private persistItemDeliveryState(row: ItemTableRow, isDelivered: boolean): void {
+  private persistItemDeliveryState(
+    row: ItemTableRow,
+    isDelivered: boolean,
+    deliveredAt?: string,
+    isLate: boolean = false,
+  ): void {
     const itemId = row.item.id ?? row.id;
 
     if (!itemId) {
@@ -297,6 +310,7 @@ export class ItemPage implements OnInit {
     const updatedItem: Item = {
       ...row.item,
       isDelivered,
+      isLate: isDelivered ? isLate : false,
     };
 
     if (!isDelivered || !row.arrangement?.id) {
@@ -307,10 +321,9 @@ export class ItemPage implements OnInit {
       return;
     }
 
-    const deliveredAt = new Date().toISOString();
     const updatedArrangement = {
       ...row.arrangement,
-      deliveryDate: deliveredAt,
+      deliveryDate: deliveredAt ?? new Date().toISOString(),
     };
 
     forkJoin({
@@ -320,6 +333,14 @@ export class ItemPage implements OnInit {
       next: () => this.loadArchivedItemRows(),
       error: (error) => console.error('Errore durante l\'aggiornamento della consegna:', error),
     });
+  }
+
+  private isDeliveryDialogResult(result: DialogAlertGenericResult | undefined): result is DialogAlertGenericDeliveryResult {
+    return typeof result === 'object'
+      && result !== null
+      && result.confirmed === true
+      && typeof result.deliveryDate === 'string'
+      && typeof result.isLate === 'boolean';
   }
 
   public onTableAction(event: TableActionClick<ItemTableRow>): void {

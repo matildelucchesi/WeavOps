@@ -26,6 +26,7 @@ public class CalendarEventMapper {
         dto.setLoomId(entity.getLoomId());
         dto.setAssignmentId(entity.getAssignmentId());
         dto.setArrangementId(entity.getArrangementId());
+        dto.setCategoryId(entity.getCategoryId());
         dto.setType(entity.getType());
         return dto;
     }
@@ -44,6 +45,7 @@ public class CalendarEventMapper {
         entity.setLoomId(dto.getLoomId());
         entity.setAssignmentId(dto.getAssignmentId());
         entity.setArrangementId(dto.getArrangementId());
+        entity.setCategoryId(dto.getCategoryId());
         entity.setType(dto.getType());
         return entity;
     }

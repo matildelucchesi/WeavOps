@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-13T11:37:20.448567200+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-15T12:18:51.296312700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "CalendarEvents", description = "the CalendarEvents API")
 public interface CalendarEventsApi {
@@ -76,7 +76,7 @@ public interface CalendarEventsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\" }";
+                    String exampleString = "{ \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\", \"categoryId\" : \"categoryId\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -152,7 +152,7 @@ public interface CalendarEventsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\" }";
+                    String exampleString = "{ \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\", \"categoryId\" : \"categoryId\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -193,12 +193,80 @@ public interface CalendarEventsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\" }, { \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\" } ]";
+                    String exampleString = "[ { \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\", \"categoryId\" : \"categoryId\" }, { \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\", \"categoryId\" : \"categoryId\" } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
             }
         });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    String PATH_GET_CURRENT_WEEK_PENDING_DELIVERY_COUNT = "/calendar-events/deliveries/current-week-count";
+    /**
+     * GET /calendar-events/deliveries/current-week-count : Conta le consegne non ancora effettuate previste nella settimana corrente
+     * Restituisce il numero di eventi di consegna previsti nella settimana corrente per articoli non ancora consegnati, quindi con isDelivered uguale a false. La settimana corrente è calcolata lato backend. 
+     *
+     * @return Numero di consegne non ancora effettuate previste nella settimana corrente (status code 200)
+     */
+    @Operation(
+        operationId = "getCurrentWeekPendingDeliveryCount",
+        summary = "Conta le consegne non ancora effettuate previste nella settimana corrente",
+        description = "Restituisce il numero di eventi di consegna previsti nella settimana corrente per articoli non ancora consegnati, quindi con isDelivered uguale a false. La settimana corrente è calcolata lato backend. ",
+        tags = { "CalendarEvents" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Numero di consegne non ancora effettuate previste nella settimana corrente", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = CalendarEventsApi.PATH_GET_CURRENT_WEEK_PENDING_DELIVERY_COUNT,
+        produces = { "application/json" }
+    )
+    default ResponseEntity<Integer> getCurrentWeekPendingDeliveryCount(
+        
+    ) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    String PATH_GET_OVERDUE_DELIVERY_COUNT = "/calendar-events/deliveries/overdue-count";
+    /**
+     * GET /calendar-events/deliveries/overdue-count : Conta le consegne scadute non ancora effettuate
+     * Restituisce il numero di articoli con data di consegna superata e non ancora consegnati, quindi con isDelivered uguale a false. 
+     *
+     * @return Numero di consegne scadute non ancora effettuate (status code 200)
+     */
+    @Operation(
+        operationId = "getOverdueDeliveryCount",
+        summary = "Conta le consegne scadute non ancora effettuate",
+        description = "Restituisce il numero di articoli con data di consegna superata e non ancora consegnati, quindi con isDelivered uguale a false. ",
+        tags = { "CalendarEvents" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Numero di consegne scadute non ancora effettuate", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = CalendarEventsApi.PATH_GET_OVERDUE_DELIVERY_COUNT,
+        produces = { "application/json" }
+    )
+    default ResponseEntity<Integer> getOverdueDeliveryCount(
+        
+    ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
@@ -242,7 +310,7 @@ public interface CalendarEventsApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\" }";
+                    String exampleString = "{ \"date\" : \"2000-01-23T04:56:07.000+00:00\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"processId\" : \"processId\", \"loomId\" : \"loomId\", \"description\" : \"description\", \"id\" : \"id\", \"type\" : \"GENERIC\", \"assignmentId\" : \"assignmentId\", \"categoryId\" : \"categoryId\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

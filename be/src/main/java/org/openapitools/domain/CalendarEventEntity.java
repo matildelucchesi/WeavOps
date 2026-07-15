@@ -19,8 +19,17 @@ public class CalendarEventEntity {
     String processId;
     String itemId;
     String arrangementId;
+    String categoryId;
 
     //getter & setter
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
     public CalendarEvent.TypeEnum getType() {
         return type;
     }

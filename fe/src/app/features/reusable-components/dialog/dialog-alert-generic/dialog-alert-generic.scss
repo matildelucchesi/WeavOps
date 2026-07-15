@@ -56,7 +56,121 @@ p{
     width: 100%;
 }
 
+.actions{
+    justify-self: end;
+}
+
 .why{
     display: flex;
     justify-self: center;
+}
+
+.delivery-details-section{
+    display: grid;
+    gap: 16px;
+    width: 100%;
+    padding: 0 20px 20px;
+    box-sizing: border-box;
+}
+
+.delivery-date-field{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.delivery-date-field label,
+.delivery-late-field{
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.delivery-late-field{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    justify-self: start;
+    cursor: pointer;
+}
+
+.delivery-late-field input{
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--weavops-color-primary);
+}
+
+.date-picker-field{
+    width: 234px;
+    max-width: 100%;
+    font-family: 'Instrument Sans', sans-serif;
+    background: var(--weavops-color-surface);
+    border-radius: 10px;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-text-field-wrapper{
+    height: 34px;
+    box-sizing: border-box;
+    border: 1.5px solid var(--weavops-color-primary) !important;
+    border-radius: 10px;
+    padding: 0 8px 0 16px;
+    background: transparent;
+    overflow: hidden;
+}
+
+:host ::ng-deep .date-picker-field .mdc-notched-outline{
+    display: none;
+}
+
+:host ::ng-deep .date-picker-field.mat-focused .mat-mdc-text-field-wrapper,
+:host ::ng-deep .date-picker-field:hover .mat-mdc-text-field-wrapper{
+    border-color: var(--weavops-color-primary) !important;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-form-field-flex{
+    height: 100%;
+    align-items: center;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-form-field-infix{
+    min-height: 0;
+    padding: 0;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-input-element{
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    width: 100%;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-icon-button{
+    width: 28px;
+    height: 28px;
+    padding: 2px;
+}
+
+:host ::ng-deep .date-picker-field .mat-mdc-form-field-subscript-wrapper{
+    display: none;
+}
+
+.content-wrapper{
+    display: grid;
+    background-color: var(--weavops-color-primary-soft);
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+    gap: 20px;
+}
+
+.late-checkbox{
+    cursor: pointer;
 }

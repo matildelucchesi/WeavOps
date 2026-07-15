@@ -35,6 +35,43 @@
       '400':
         description: Richiesta non valida
 
+/calendar-events/deliveries/current-week-count:
+  get:
+    summary: Conta le consegne non ancora effettuate previste nella settimana corrente
+    operationId: getCurrentWeekPendingDeliveryCount
+    tags:
+      - CalendarEvents
+    description: >
+      Restituisce il numero di eventi di consegna previsti nella settimana corrente
+      per articoli non ancora consegnati, quindi con isDelivered uguale a false.
+      La settimana corrente è calcolata lato backend.
+    responses:
+      '200':
+        description: Numero di consegne non ancora effettuate previste nella settimana corrente
+        content:
+          application/json:
+            schema:
+              type: integer
+              format: int32
+
+/calendar-events/deliveries/overdue-count:
+  get:
+    summary: Conta le consegne scadute non ancora effettuate
+    operationId: getOverdueDeliveryCount
+    tags:
+      - CalendarEvents
+    description: >
+      Restituisce il numero di articoli con data di consegna superata e non ancora
+      consegnati, quindi con isDelivered uguale a false.
+    responses:
+      '200':
+        description: Numero di consegne scadute non ancora effettuate
+        content:
+          application/json:
+            schema:
+              type: integer
+              format: int32
+
 /calendar-events/{id}:
   get:
     summary: Recupera un calendar event tramite ID

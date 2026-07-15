@@ -9,6 +9,7 @@ import { DialogDelete } from '../dialog/dialog-delete/dialog-delete';
 import type { DialogDeleteData } from '../dialog/dialog-delete/dialog-delete';
 import { FilterButtonComponent, type FilterOption, type FilterValues } from '../button/filter-button-component/filter-button-component';
 import { forkJoin, type Observable } from 'rxjs';
+import { ExitButtonComponent } from "../button/exit-button-component/exit-button-component";
 
 export interface TableColumn<T = any> {
   header: string;
@@ -104,8 +105,8 @@ export interface TableFilterButtonConfig {
     FilterButtonComponent,
     MatCheckboxModule,
     MatIconModule,
-    MatTooltipModule,
-  ],
+    MatTooltipModule
+],
   templateUrl: './table-component.html',
   styleUrl: './table-component.scss',
   standalone: true,

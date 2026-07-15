@@ -820,6 +820,128 @@ paths:
       - application/json
       x-tags:
       - tag: Process
+  /loom-process-histories:
+    get:
+      operationId: getLoomProcessHistories
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/loom-process-history"
+                type: array
+          description: Lista cronologie processi telaio
+      summary: Recupera tutte le cronologie processi telaio
+      tags:
+      - LoomProcessHistory
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: LoomProcessHistory
+    post:
+      operationId: createLoomProcessHistory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/loom-process-history"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/loom-process-history"
+          description: Cronologia processo telaio creata
+        "400":
+          description: Richiesta non valida
+      summary: Crea una cronologia processo telaio
+      tags:
+      - LoomProcessHistory
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: LoomProcessHistory
+  /loom-process-histories/{id}:
+    delete:
+      operationId: deleteLoomProcessHistory
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Cronologia processo telaio eliminata
+        "404":
+          description: Cronologia processo telaio non trovata
+      summary: Elimina una cronologia processo telaio
+      tags:
+      - LoomProcessHistory
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: LoomProcessHistory
+    get:
+      operationId: getLoomProcessHistoryById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/loom-process-history"
+          description: Cronologia processo telaio trovata
+        "404":
+          description: Cronologia processo telaio non trovata
+      summary: Recupera una cronologia processo telaio tramite ID
+      tags:
+      - LoomProcessHistory
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: LoomProcessHistory
+    put:
+      operationId: updateLoomProcessHistory
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/loom-process-history"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/loom-process-history"
+          description: Cronologia processo telaio aggiornata
+        "400":
+          description: Richiesta non valida
+        "404":
+          description: Cronologia processo telaio non trovata
+      summary: Aggiorna una cronologia processo telaio
+      tags:
+      - LoomProcessHistory
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: LoomProcessHistory
   /loom-item-assignments:
     get:
       operationId: getLoomItemAssignments
@@ -1165,6 +1287,128 @@ paths:
       - application/json
       x-tags:
       - tag: Customer
+  /customer-item-histories:
+    get:
+      operationId: getCustomerItemHistories
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/customer-item-history"
+                type: array
+          description: Lista cronologie articoli cliente
+      summary: Recupera tutte le cronologie articoli cliente
+      tags:
+      - CustomerItemHistory
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CustomerItemHistory
+    post:
+      operationId: createCustomerItemHistory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/customer-item-history"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customer-item-history"
+          description: Cronologia articolo cliente creata
+        "400":
+          description: Richiesta non valida
+      summary: Crea una cronologia articolo cliente
+      tags:
+      - CustomerItemHistory
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CustomerItemHistory
+  /customer-item-histories/{id}:
+    delete:
+      operationId: deleteCustomerItemHistory
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Cronologia articolo cliente eliminata
+        "404":
+          description: Cronologia articolo cliente non trovata
+      summary: Elimina una cronologia articolo cliente
+      tags:
+      - CustomerItemHistory
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CustomerItemHistory
+    get:
+      operationId: getCustomerItemHistoryById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customer-item-history"
+          description: Cronologia articolo cliente trovata
+        "404":
+          description: Cronologia articolo cliente non trovata
+      summary: Recupera una cronologia articolo cliente tramite ID
+      tags:
+      - CustomerItemHistory
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CustomerItemHistory
+    put:
+      operationId: updateCustomerItemHistory
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/customer-item-history"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customer-item-history"
+          description: Cronologia articolo cliente aggiornata
+        "400":
+          description: Richiesta non valida
+        "404":
+          description: Cronologia articolo cliente non trovata
+      summary: Aggiorna una cronologia articolo cliente
+      tags:
+      - CustomerItemHistory
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CustomerItemHistory
   /users:
     get:
       operationId: getUsers
@@ -1360,6 +1604,47 @@ paths:
       - application/json
       x-tags:
       - tag: CalendarEvents
+  /calendar-events/deliveries/current-week-count:
+    get:
+      description: |
+        Restituisce il numero di eventi di consegna previsti nella settimana corrente per articoli non ancora consegnati, quindi con isDelivered uguale a false. La settimana corrente è calcolata lato backend.
+      operationId: getCurrentWeekPendingDeliveryCount
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                format: int32
+                type: integer
+          description: Numero di consegne non ancora effettuate previste nella settimana
+            corrente
+      summary: Conta le consegne non ancora effettuate previste nella settimana corrente
+      tags:
+      - CalendarEvents
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CalendarEvents
+  /calendar-events/deliveries/overdue-count:
+    get:
+      description: |
+        Restituisce il numero di articoli con data di consegna superata e non ancora consegnati, quindi con isDelivered uguale a false.
+      operationId: getOverdueDeliveryCount
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                format: int32
+                type: integer
+          description: Numero di consegne scadute non ancora effettuate
+      summary: Conta le consegne scadute non ancora effettuate
+      tags:
+      - CalendarEvents
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CalendarEvents
   /calendar-events/{id}:
     delete:
       operationId: deleteCalendarEvent
@@ -1438,6 +1723,128 @@ paths:
       - application/json
       x-tags:
       - tag: CalendarEvents
+  /calendar-event-categories:
+    get:
+      operationId: getCalendarEventCategories
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/calendar-event-category"
+                type: array
+          description: Lista categorie evento calendario
+      summary: Recupera tutte le categorie evento calendario
+      tags:
+      - CalendarEventCategory
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CalendarEventCategory
+    post:
+      operationId: createCalendarEventCategory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/calendar-event-category"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/calendar-event-category"
+          description: Categoria evento calendario creata
+        "400":
+          description: Richiesta non valida
+      summary: Crea una categoria evento calendario
+      tags:
+      - CalendarEventCategory
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CalendarEventCategory
+  /calendar-event-categories/{id}:
+    delete:
+      operationId: deleteCalendarEventCategory
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Categoria evento calendario eliminata
+        "404":
+          description: Categoria evento calendario non trovata
+      summary: Elimina una categoria evento calendario
+      tags:
+      - CalendarEventCategory
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CalendarEventCategory
+    get:
+      operationId: getCalendarEventCategoryById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/calendar-event-category"
+          description: Categoria evento calendario trovata
+        "404":
+          description: Categoria evento calendario non trovata
+      summary: Recupera una categoria evento calendario tramite ID
+      tags:
+      - CalendarEventCategory
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CalendarEventCategory
+    put:
+      operationId: updateCalendarEventCategory
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/calendar-event-category"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/calendar-event-category"
+          description: Categoria evento calendario aggiornata
+        "400":
+          description: Richiesta non valida
+        "404":
+          description: Categoria evento calendario non trovata
+      summary: Aggiorna una categoria evento calendario
+      tags:
+      - CalendarEventCategory
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: CalendarEventCategory
 components:
   schemas:
     loom:
@@ -1469,11 +1876,12 @@ components:
     item:
       example:
         arrangementId: arrangementId
-        isDelivered: false
         metersRun: 6.027456183070403
-        expectedEndDate: 2000-01-23T04:56:07.000+00:00
         endDate: 2000-01-23T04:56:07.000+00:00
         isArchived: false
+        isDelivered: false
+        expectedEndDate: 2000-01-23T04:56:07.000+00:00
+        isLate: false
         totalMeters: 0.8008281904610115
         customerId: customerId
         processing:
@@ -1555,6 +1963,9 @@ components:
           default: false
           type: boolean
         isDelivered:
+          default: false
+          type: boolean
+        isLate:
           default: false
           type: boolean
       required:
@@ -1818,6 +2229,23 @@ components:
       - startDate
       - totalMeters
       type: object
+    loom-process-history:
+      example:
+        processId: processId
+        loomId: loomId
+        id: id
+      properties:
+        id:
+          readOnly: true
+          type: string
+        loomId:
+          type: string
+        processId:
+          type: string
+      required:
+      - loomId
+      - processId
+      type: object
     loom-item-assignment:
       example:
         itemId: itemId
@@ -1864,11 +2292,12 @@ components:
         id: id
         items:
         - arrangementId: arrangementId
-          isDelivered: false
           metersRun: 6.027456183070403
-          expectedEndDate: 2000-01-23T04:56:07.000+00:00
           endDate: 2000-01-23T04:56:07.000+00:00
           isArchived: false
+          isDelivered: false
+          expectedEndDate: 2000-01-23T04:56:07.000+00:00
+          isLate: false
           totalMeters: 0.8008281904610115
           customerId: customerId
           processing:
@@ -1914,11 +2343,12 @@ components:
           state: INITIALIZED
           startDate: 2000-01-23T04:56:07.000+00:00
         - arrangementId: arrangementId
-          isDelivered: false
           metersRun: 6.027456183070403
-          expectedEndDate: 2000-01-23T04:56:07.000+00:00
           endDate: 2000-01-23T04:56:07.000+00:00
           isArchived: false
+          isDelivered: false
+          expectedEndDate: 2000-01-23T04:56:07.000+00:00
+          isLate: false
           totalMeters: 0.8008281904610115
           customerId: customerId
           processing:
@@ -1987,6 +2417,23 @@ components:
       - email
       - name
       type: object
+    customer-item-history:
+      example:
+        itemId: itemId
+        customerId: customerId
+        id: id
+      properties:
+        id:
+          readOnly: true
+          type: string
+        customerId:
+          type: string
+        itemId:
+          type: string
+      required:
+      - customerId
+      - itemId
+      type: object
     user:
       example:
         firstName: firstName
@@ -2028,6 +2475,7 @@ components:
         id: id
         type: GENERIC
         assignmentId: assignmentId
+        categoryId: categoryId
       properties:
         id:
           description: Identificativo MongoDB generato dal server
@@ -2055,6 +2503,9 @@ components:
         arrangementId:
           description: Identificativo della disposizione associata all'evento
           type: string
+        categoryId:
+          description: Identificativo della categoria custom associata all'evento
+          type: string
         type:
           enum:
           - GENERIC
@@ -2067,6 +2518,28 @@ components:
       - date
       - description
       - type
+      type: object
+    calendar-event-category:
+      example:
+        standard: true
+        color: color
+        name: name
+        id: id
+      properties:
+        id:
+          readOnly: true
+          type: string
+        name:
+          type: string
+        color:
+          pattern: "^#[0-9A-Fa-f]{6}$"
+          type: string
+        standard:
+          readOnly: true
+          type: boolean
+      required:
+      - color
+      - name
       type: object
     deleteMultiLooms_200_response:
       example:

@@ -32,6 +32,9 @@ properties:
   arrangementId:
     type: string
     description: Identificativo della disposizione associata all'evento
+  categoryId:
+    type: string
+    description: Identificativo della categoria custom associata all'evento
   type:
     type: string
     enum:

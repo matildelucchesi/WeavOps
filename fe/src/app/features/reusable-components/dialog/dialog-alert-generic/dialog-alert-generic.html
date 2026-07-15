@@ -4,23 +4,63 @@
     [class.dialog-alert-warning]="isWarningVariant"
     [style.--dialog-alert-icon-color]="resolvedIconColor"
     [style.--dialog-alert-border-color]="resolvedIconColor">
-    <div class="head">
-        <mat-icon class="icon" aria-hidden="true">{{ icon }}</mat-icon>
-    </div>
-    <p class="first-text">{{text}}</p>
-    @if(subtext){
-        <div class="body" style="padding:20px">
-            <p class="second-text">{{ subtext }}</p>
+    @if(!showDeliveryDetails){
+        <div class="head">
+            <mat-icon class="icon" aria-hidden="true">{{ icon }}</mat-icon>
         </div>
-    }
-    @if(button){
-        <div class="actions">
-            <button class="cancel-button" type="button" (click)="onCloseDialog()">
-                Annulla
-            </button>
-            <button class="confirm-button" type="button" (click)="onConfirm()">
-                Procedi
-            </button>
+        <p class="first-text">{{text}}</p>
+        @if(subtext){
+            <div class="body" style="padding:20px">
+                <p class="second-text">{{ subtext }}</p>
+            </div>
+        }
+        @if(button){
+            <div class="actions">
+                <button class="cancel-button" type="button" (click)="onCloseDialog()">
+                    Annulla
+                </button>
+                <button class="confirm-button" type="button" (click)="onConfirm()">
+                    Procedi
+                </button>
+            </div>
+        }
+    } @else {
+        <div class="delivery-details-section">
+            <h3>{{ deliveryDetailsTitle }}</h3>
+            <div class="content-wrapper">
+            <div class="delivery-date-field">
+                <label for="deliveryDate">Data di consegna</label>
+                <mat-form-field appearance="outline" class="date-picker-field">
+                    <input
+                        matInput
+                        id="deliveryDate"
+                        name="deliveryDate"
+                        [matDatepicker]="deliveryDatePicker"
+                        [(ngModel)]="deliveryDate"
+                        required>
+                    <mat-datepicker-toggle matIconSuffix [for]="deliveryDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #deliveryDatePicker></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <label class="delivery-late-field">
+                <span>La consegna è in ritardo</span>
+                <input
+                    type="checkbox"
+                    class="late-checkbox"
+                    name="isLate"
+                    [checked]="isLate"
+                    (change)="setIsLate($any($event.target).checked)">
+            </label>
+            <div class="actions">
+                <button
+                    class="confirm-button"
+                    type="button"
+                    [disabled]="!deliveryDate"
+                    (click)="onConfirmDeliveryDetails()">
+                    Conferma
+                </button>
+            </div>
+            </div>
         </div>
     }
     

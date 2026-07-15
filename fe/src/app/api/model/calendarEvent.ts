@@ -42,6 +42,10 @@ export interface CalendarEvent {
      * Identificativo della disposizione associata all\'evento
      */
     arrangementId?: string;
+    /**
+     * Identificativo della categoria custom associata all\'evento
+     */
+    categoryId?: string;
     type: CalendarEvent.TypeEnum;
 }
 export namespace CalendarEvent {

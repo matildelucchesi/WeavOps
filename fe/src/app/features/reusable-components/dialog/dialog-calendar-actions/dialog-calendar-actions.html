@@ -1,0 +1,73 @@
+<div class="wrapper">
+    <div class="head">
+        @if(!change) {
+        <p class="dialog-title">Cosa vuoi fare?</p>
+        } @else {
+        <div class="dialog-heading">
+            <mat-icon class="material-icons-filled dialog-heading-icon">edit</mat-icon>
+            <p class="dialog-title">Modifica evento</p>
+        </div>
+        }
+        @if(!change) {
+        <button class="close-button cancel-button" type="button" (click)="close()">
+            Annulla
+        </button>
+        } @else {
+        <button class="close-button" type="button" (click)="goBack()">
+            Indietro
+        </button>
+        }
+    </div>
+    <div class="body">
+        @if(!change){
+        <div class="body-actions">
+            <div class="action">
+                <button class="action-button" type="button" aria-label="Modifica evento" (click)="selectAction('edit')">
+                    <mat-icon class="material-icons-filled action-icon">edit</mat-icon>
+                </button>
+                <p class="action-button-label">Modifica</p>
+            </div>
+            <div class="action">
+                <button class="action-button" type="button" aria-label="Elimina evento" (click)="selectAction('delete')">
+                    <mat-icon class="material-icons-filled action-icon">delete</mat-icon>
+                </button>
+                <p class="action-button-label">Elimina</p>
+            </div>
+        </div>
+    }@else{
+        <form class="generic-event-form" (ngSubmit)="saveGenericEvent()">
+            <div class="generic-event-field">
+                <label for="genericEventDescription">Descrizione</label>
+                <input
+                    id="genericEventDescription"
+                    name="genericEventDescription"
+                    type="text"
+                    [(ngModel)]="genericEventDescription"
+                    required>
+            </div>
+            <div class="generic-event-field">
+                <label for="genericEventDate">Data</label>
+                <mat-form-field appearance="outline" class="date-picker-field">
+                    <input
+                        matInput
+                        id="genericEventDate"
+                        name="genericEventDate"
+                        [matDatepicker]="genericEventDatePicker"
+                        [(ngModel)]="genericEventDate"
+                        required>
+                    <mat-datepicker-toggle matIconSuffix [for]="genericEventDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #genericEventDatePicker></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="edit-actions">
+                <button
+                    class="confirm-button"
+                    type="submit"
+                    [disabled]="!genericEventDescription.trim() || !genericEventDate">
+                    Conferma
+                </button>
+            </div>
+        </form>
+    }
+    </div>
+</div>

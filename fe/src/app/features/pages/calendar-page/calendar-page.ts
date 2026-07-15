@@ -1,20 +1,28 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { concatMap, from, toArray } from 'rxjs';
+import { catchError, concatMap, forkJoin, from, of, toArray } from 'rxjs';
 import { DecorativeLinesComponent } from "../../reusable-components/decorative-lines-component/decorative-lines-component";
 import { TitlePageComponent } from "../../reusable-components/title-page-component/title-page-component";
 import { ButtonGeneralActionComponent } from '../../reusable-components/button/button-general-action-component/button-general-action-component';
 import { LoaderComponent } from '../../reusable-components/loader-component/loader-component';
-import { CalendarEvent } from '../../../api';
+import { CalendarEvent, Item } from '../../../api';
 import { CalendarEventFacadeService } from '../../../services/calendar-event-facade.service';
+import { ItemFacadeService } from '../../../services/item-facade.service';
 import { WhitePanel } from "../../reusable-components/white-panel/white-panel";
+import { DialogCalendarActions, type DialogCalendarActionsResult } from '../../reusable-components/dialog/dialog-calendar-actions/dialog-calendar-actions';
+import { DialogAlertGeneric, type DialogAlertGenericData } from '../../reusable-components/dialog/dialog-alert-generic/dialog-alert-generic';
+import {
+  CalendarEventCategoryFacadeService,
+  type CalendarEventCategory,
+} from '../../../services/calendar-event-category-facade.service';
 
 interface CalendarDay {
   date: Date;
@@ -27,11 +35,17 @@ interface CalendarDay {
 }
 
 type CalendarEventType = CalendarEvent.TypeEnum | 'CLOSURE';
+type CalendarEventColorKey = 'generic' | 'delivery' | 'itemForecast' | 'loomForecast' | 'closure';
 
 interface CalendarEventTypeOption {
   type: CalendarEventType;
   label: string;
   colorClass: string;
+}
+
+interface CalendarEventColorOption {
+  key: CalendarEventColorKey;
+  label: string;
 }
 
 interface ClosureEditorDay {
@@ -47,7 +61,7 @@ interface ClosureEditorMonth {
   days: ClosureEditorDay[];
 }
 
-type CalendarViewMode = 'calendar' | 'generic-event' | 'closure-editor';
+type CalendarViewMode = 'calendar' | 'generic-event' | 'closure-editor' | 'settings';
 
 @Component({
   selector: 'app-calendar-page',
@@ -62,18 +76,32 @@ type CalendarViewMode = 'calendar' | 'generic-event' | 'closure-editor';
 })
 export class CalendarPage implements OnInit {
   private readonly calendarEventService = inject(CalendarEventFacadeService);
+  private readonly calendarEventCategoryService = inject(CalendarEventCategoryFacadeService);
+  private readonly itemService = inject(ItemFacadeService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
   private calendarEventsByDate = new Map<string, CalendarEvent[]>();
+  private itemDeliveryById = new Map<string, boolean>();
+  private itemDeliveryByArrangementId = new Map<string, boolean>();
+  private itemLateById = new Map<string, boolean>();
+  private itemLateByArrangementId = new Map<string, boolean>();
   private readonly minimumLoaderDurationMs = 1000;
+  private readonly calendarPaletteStorageKey = 'weavops.calendar.eventPalette';
+  private readonly defaultEventPalette: Record<CalendarEventColorKey, string> = {
+    generic: '#4f46e5',
+    delivery: '#170da9',
+    itemForecast: '#3d81f6',
+    loomForecast: '#15be80',
+    closure: '#dd0000',
+  };
 
   public readonly weekDays: string[] = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
   public currentMonth: Date = this.getCurrentMonth();
   public readonly monthLabel = signal(this.formatMonthLabel(this.currentMonth));
   public readonly calendarDays = signal<CalendarDay[]>(this.buildCalendarDays(this.currentMonth));
   public readonly calendarEvents = signal<CalendarEvent[]>([]);
-  public readonly currentWeekDeliveryCount = computed(() =>
-    this.countCurrentWeekDeliveries(this.calendarEvents())
-  );
+  public readonly currentWeekDeliveryCount = signal(0);
+  public readonly overdueDeliveryCount = signal(0);
   public readonly viewMode = signal<CalendarViewMode>('calendar');
   public readonly isAddEventMenuOpen = signal(false);
   public readonly closureEditorYear = signal(new Date().getFullYear());
@@ -83,15 +111,34 @@ export class CalendarPage implements OnInit {
   );
   public readonly isSavingClosures = signal(false);
   public readonly isSavingGenericEvent = signal(false);
-  public readonly isSaving = computed(() => this.isSavingClosures() || this.isSavingGenericEvent());
+  public readonly isDeletingGenericEvent = signal(false);
+  public readonly isUpdatingGenericEvent = signal(false);
+  public readonly isSaving = computed(() =>
+    this.isSavingClosures()
+    || this.isSavingGenericEvent()
+    || this.isDeletingGenericEvent()
+    || this.isUpdatingGenericEvent()
+  );
   public genericEventDescription = '';
   public genericEventDate: Date | null = null;
+  public genericEventCategoryId = '';
+  public newEventCategoryName = '';
+  public newEventCategoryColor = '#64748b';
+  public readonly eventPalette = signal<Record<CalendarEventColorKey, string>>({ ...this.defaultEventPalette });
+  public readonly customEventCategories = signal<CalendarEventCategory[]>([]);
   public readonly eventTypeOptions: CalendarEventTypeOption[] = [
     { type: CalendarEvent.TypeEnum.Generic, label: 'Evento generico', colorClass: 'calendar-event-color-generic' },
     { type: CalendarEvent.TypeEnum.Delivery, label: 'Consegna articolo', colorClass: 'calendar-event-color-delivery' },
     { type: CalendarEvent.TypeEnum.ItemForecast, label: 'Fine prevista articolo', colorClass: 'calendar-event-color-item-forecast' },
     { type: CalendarEvent.TypeEnum.LoomForecast, label: 'Fine prevista telaio', colorClass: 'calendar-event-color-loom-forecast' },
     { type: 'CLOSURE', label: 'Chiusura aziendale', colorClass: 'calendar-event-color-closure' },
+  ];
+  public readonly eventColorOptions: CalendarEventColorOption[] = [
+    { key: 'generic', label: 'Evento generico' },
+    { key: 'delivery', label: 'Consegna articolo' },
+    { key: 'itemForecast', label: 'Fine prevista articolo' },
+    { key: 'loomForecast', label: 'Fine prevista telaio' },
+    { key: 'closure', label: 'Chiusura aziendale' },
   ];
   private readonly eventTypeVisibility = signal<Record<CalendarEventType, boolean>>({
     [CalendarEvent.TypeEnum.Generic]: true,
@@ -100,9 +147,12 @@ export class CalendarPage implements OnInit {
     [CalendarEvent.TypeEnum.LoomForecast]: true,
     CLOSURE: true,
   });
+  private readonly customCategoryVisibility = signal<Record<string, boolean>>({});
   private initialClosureDateKeys = new Set<string>();
 
   public ngOnInit(): void {
+    this.loadStoredEventPalette();
+    this.loadCustomEventCategories();
     this.loadCalendarEvents();
   }
 
@@ -125,6 +175,7 @@ export class CalendarPage implements OnInit {
   public openGenericEventEditor(): void {
     this.genericEventDescription = '';
     this.genericEventDate = new Date();
+    this.genericEventCategoryId = '';
     this.isAddEventMenuOpen.set(false);
     this.viewMode.set('generic-event');
   }
@@ -134,6 +185,11 @@ export class CalendarPage implements OnInit {
     this.closureEditorYear.set(new Date().getFullYear());
     this.isAddEventMenuOpen.set(false);
     this.viewMode.set('closure-editor');
+  }
+
+  public openCalendarSettings(): void {
+    this.isAddEventMenuOpen.set(false);
+    this.viewMode.set('settings');
   }
 
   public returnToCalendar(onLoaded?: () => void, onError?: () => void): void {
@@ -238,17 +294,28 @@ export class CalendarPage implements OnInit {
   public saveGenericEvent(): void {
     const description = this.genericEventDescription.trim();
     const date = this.genericEventDate;
+    const categoryId = this.genericEventCategoryId;
 
     if (!description || !date || Number.isNaN(date.getTime()) || this.isSavingGenericEvent()) {
       return;
     }
 
+    if (this.isPastDate(date)) {
+      this.openPastGenericEventAlert(description, date, categoryId);
+      return;
+    }
+
+    this.createGenericCalendarEvent(description, date, categoryId);
+  }
+
+  private createGenericCalendarEvent(description: string, date: Date, categoryId: string = ''): void {
     const saveStartedAt = Date.now();
     this.isSavingGenericEvent.set(true);
     this.calendarEventService.createCalendarEvent({
       description,
       date: date.toISOString(),
       type: CalendarEvent.TypeEnum.Generic,
+      categoryId: categoryId || undefined,
     }).subscribe({
       next: () => {
         this.returnToCalendar(() => {
@@ -271,7 +338,29 @@ export class CalendarPage implements OnInit {
     });
   }
 
+  private openPastGenericEventAlert(description: string, date: Date, categoryId: string): void {
+    const dialogRef = this.dialog.open<DialogAlertGeneric, DialogAlertGenericData, boolean>(DialogAlertGeneric, {
+      panelClass: 'loom-alert-dialog-panel',
+      autoFocus: false,
+      data: {
+        text: "L'evento che vuoi inserire è nel passato, continuare?",
+        icon: 'help',
+        iconColor: 'var(--weavops-color-primary)',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.createGenericCalendarEvent(description, date, categoryId);
+      }
+    });
+  }
+
   public getCalendarEventChipClass(event: CalendarEvent): string {
+    if (event.categoryId) {
+      return 'calendar-event-chip-custom';
+    }
+
     switch (this.getCalendarEventType(event)) {
       case CalendarEvent.TypeEnum.Generic:
         return 'calendar-event-chip-generic';
@@ -288,8 +377,97 @@ export class CalendarPage implements OnInit {
     }
   }
 
+  public getCalendarEventChipColor(event: CalendarEvent): string | null {
+    if (event.categoryId) {
+      return this.getCustomEventCategory(event.categoryId)?.color ?? null;
+    }
+
+    switch (this.getCalendarEventType(event)) {
+      case CalendarEvent.TypeEnum.Generic:
+        return this.getCalendarEventColor('generic');
+      case CalendarEvent.TypeEnum.Delivery:
+        return this.getCalendarEventColor('delivery');
+      case CalendarEvent.TypeEnum.ItemForecast:
+        return this.getCalendarEventColor('itemForecast');
+      case CalendarEvent.TypeEnum.LoomForecast:
+        return this.getCalendarEventColor('loomForecast');
+      case 'CLOSURE':
+        return this.getCalendarEventColor('closure');
+      default:
+        return null;
+    }
+  }
+
+  public getCustomEventCategory(categoryId: string | undefined): CalendarEventCategory | undefined {
+    if (!categoryId) {
+      return undefined;
+    }
+
+    return this.customEventCategories().find((category) => category.id === categoryId);
+  }
+
+  public isGenericCalendarEvent(event: CalendarEvent): boolean {
+    return this.getCalendarEventType(event) === CalendarEvent.TypeEnum.Generic;
+  }
+
+  public isDeliveredDeliveryEvent(event: CalendarEvent): boolean {
+    if (this.getCalendarEventType(event) !== CalendarEvent.TypeEnum.Delivery) {
+      return false;
+    }
+
+    return (!!event.itemId && this.itemDeliveryById.get(event.itemId) === true)
+      || (!!event.arrangementId && this.itemDeliveryByArrangementId.get(event.arrangementId) === true);
+  }
+
+  public isLateDeliveryEvent(event: CalendarEvent): boolean {
+    if (this.getCalendarEventType(event) !== CalendarEvent.TypeEnum.Delivery) {
+      return false;
+    }
+
+    return (!!event.itemId && this.itemLateById.get(event.itemId) === true)
+      || (!!event.arrangementId && this.itemLateByArrangementId.get(event.arrangementId) === true);
+  }
+
+  public openCalendarEventActions(event: CalendarEvent): void {
+    if (!this.isGenericCalendarEvent(event)) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open<DialogCalendarActions, { event: CalendarEvent }, DialogCalendarActionsResult>(DialogCalendarActions, {
+      panelClass: 'calendar-actions-dialog-panel',
+      data: { event },
+    });
+
+    dialogRef.afterClosed().subscribe((action) => {
+      if (action === 'delete') {
+        this.deleteGenericCalendarEvent(event);
+        return;
+      }
+
+      if (action && action.action === 'edit') {
+        this.updateGenericCalendarEvent(event, action.event);
+      }
+    });
+  }
+
   public isCalendarEventTypeVisible(type: CalendarEventType): boolean {
     return this.eventTypeVisibility()[type];
+  }
+
+  public isCustomCategoryVisible(categoryId: string | undefined): boolean {
+    return !categoryId || this.customCategoryVisibility()[categoryId] !== false;
+  }
+
+  public setCustomCategoryVisibility(categoryId: string | undefined, isVisible: boolean): void {
+    if (!categoryId) {
+      return;
+    }
+
+    this.customCategoryVisibility.update((visibility) => ({
+      ...visibility,
+      [categoryId]: isVisible,
+    }));
+    this.calendarDays.set(this.buildCalendarDays(this.currentMonth));
   }
 
   public setCalendarEventTypeVisibility(type: CalendarEventType, isVisible: boolean): void {
@@ -300,10 +478,153 @@ export class CalendarPage implements OnInit {
     this.calendarDays.set(this.buildCalendarDays(this.currentMonth));
   }
 
+  public createCustomEventCategory(): void {
+    const name = this.newEventCategoryName.trim();
+    const color = this.newEventCategoryColor;
+
+    if (!name || !this.isValidHexColor(color)) {
+      return;
+    }
+
+    this.calendarEventCategoryService.create({ name, color }).subscribe({
+      next: (category) => {
+        this.customEventCategories.update((categories) => [...categories, category]);
+        if (category.id) {
+          this.setCustomCategoryVisibility(category.id, true);
+        }
+        this.newEventCategoryName = '';
+        this.newEventCategoryColor = '#64748b';
+        this.calendarDays.set(this.buildCalendarDays(this.currentMonth));
+      },
+      error: (error) => console.error('Error creating calendar event category:', error),
+    });
+  }
+
+  public updateCustomEventCategory(category: CalendarEventCategory, changes: Partial<CalendarEventCategory>): void {
+    if (!category.id || category.standard) {
+      return;
+    }
+
+    const updatedCategory = {
+      ...category,
+      ...changes,
+      name: (changes.name ?? category.name).trim(),
+    };
+
+    if (!updatedCategory.name || !this.isValidHexColor(updatedCategory.color)) {
+      return;
+    }
+
+    this.calendarEventCategoryService.update(category.id, updatedCategory).subscribe({
+      next: (savedCategory) => {
+        this.customEventCategories.update((categories) =>
+          categories.map((currentCategory) => currentCategory.id === savedCategory.id ? savedCategory : currentCategory)
+        );
+        this.calendarDays.set(this.buildCalendarDays(this.currentMonth));
+      },
+      error: (error) => console.error('Error updating calendar event category:', error),
+    });
+  }
+
+  public removeCustomEventCategory(category: CalendarEventCategory): void {
+    if (!category.id || category.standard) {
+      return;
+    }
+
+    this.calendarEventCategoryService.remove(category.id).subscribe({
+      next: () => {
+        this.customEventCategories.update((categories) =>
+          categories.filter((currentCategory) => currentCategory.id !== category.id)
+        );
+        if (this.genericEventCategoryId === category.id) {
+          this.genericEventCategoryId = '';
+        }
+        this.customCategoryVisibility.update((visibility) => {
+          const updatedVisibility = { ...visibility };
+          delete updatedVisibility[category.id!];
+          return updatedVisibility;
+        });
+        this.loadCalendarEvents();
+      },
+      error: (error) => console.error('Error deleting calendar event category:', error),
+    });
+  }
+
+  public getCalendarEventColor(key: CalendarEventColorKey): string {
+    return this.eventPalette()[key];
+  }
+
+  public setCalendarEventColor(key: CalendarEventColorKey, color: string): void {
+    if (!this.isValidHexColor(color)) {
+      return;
+    }
+
+    this.eventPalette.update((palette) => {
+      const updatedPalette = {
+        ...palette,
+        [key]: color,
+      };
+
+      this.storeEventPalette(updatedPalette);
+      return updatedPalette;
+    });
+  }
+
+  public resetCalendarEventPalette(): void {
+    const defaultPalette = { ...this.defaultEventPalette };
+    this.eventPalette.set(defaultPalette);
+    this.storeEventPalette(defaultPalette);
+  }
+
+  private loadCustomEventCategories(): void {
+    this.calendarEventCategoryService.getAll().subscribe({
+      next: (categories) => {
+        const customCategories = (categories ?? []).filter((category) => category.standard !== true);
+        this.customEventCategories.set(customCategories);
+        this.customCategoryVisibility.update((visibility) => {
+          const updatedVisibility = { ...visibility };
+
+          for (const category of customCategories) {
+            if (category.id && updatedVisibility[category.id] === undefined) {
+              updatedVisibility[category.id] = true;
+            }
+          }
+
+          return updatedVisibility;
+        });
+        this.calendarDays.set(this.buildCalendarDays(this.currentMonth));
+      },
+      error: (error) => console.error('Error loading calendar event categories:', error),
+    });
+  }
+
   private loadCalendarEvents(onLoaded?: () => void, onError?: () => void): void {
-    this.calendarEventService.getCalendarEvents().subscribe({
-      next: (calendarEvents) => {
+    forkJoin({
+      calendarEvents: this.calendarEventService.getCalendarEvents(),
+      currentWeekDeliveryCount: this.calendarEventService.getCurrentWeekPendingDeliveryCount().pipe(
+        catchError((error) => {
+          console.error('Error loading current week delivery count:', error);
+          return of(0);
+        }),
+      ),
+      overdueDeliveryCount: this.calendarEventService.getOverdueDeliveryCount().pipe(
+        catchError((error) => {
+          console.error('Error loading overdue delivery count:', error);
+          return of(0);
+        }),
+      ),
+      items: this.itemService.getAll().pipe(
+        catchError((error) => {
+          console.error('Error loading items for calendar delivery state:', error);
+          return of([] as Item[]);
+        }),
+      ),
+    }).subscribe({
+      next: ({ calendarEvents, currentWeekDeliveryCount, overdueDeliveryCount, items }) => {
         const events = calendarEvents ?? [];
+        this.currentWeekDeliveryCount.set(currentWeekDeliveryCount ?? 0);
+        this.overdueDeliveryCount.set(overdueDeliveryCount ?? 0);
+        this.setItemDeliveryMaps(items ?? []);
         this.calendarEvents.set(events);
         this.calendarEventsByDate = this.groupCalendarEventsByDate(events);
         this.calendarDays.set(this.buildCalendarDays(this.currentMonth));
@@ -312,18 +633,150 @@ export class CalendarPage implements OnInit {
       error: (error) => {
         console.error('Error loading calendar events:', error);
         this.calendarEvents.set([]);
+        this.currentWeekDeliveryCount.set(0);
+        this.overdueDeliveryCount.set(0);
         this.calendarEventsByDate = new Map<string, CalendarEvent[]>();
+        this.itemDeliveryById = new Map<string, boolean>();
+        this.itemDeliveryByArrangementId = new Map<string, boolean>();
+        this.itemLateById = new Map<string, boolean>();
+        this.itemLateByArrangementId = new Map<string, boolean>();
         this.calendarDays.set(this.buildCalendarDays(this.currentMonth));
         onError?.();
       },
     });
   }
 
+  private setItemDeliveryMaps(items: Item[]): void {
+    const deliveryById = new Map<string, boolean>();
+    const deliveryByArrangementId = new Map<string, boolean>();
+    const lateById = new Map<string, boolean>();
+    const lateByArrangementId = new Map<string, boolean>();
+
+    for (const item of items) {
+      const isDelivered = item.isDelivered === true;
+      const isLate = item.isLate === true;
+
+      if (item.id) {
+        deliveryById.set(item.id, isDelivered);
+        lateById.set(item.id, isLate);
+      }
+
+      if (item.arrangementId) {
+        deliveryByArrangementId.set(item.arrangementId, isDelivered);
+        lateByArrangementId.set(item.arrangementId, isLate);
+      }
+    }
+
+    this.itemDeliveryById = deliveryById;
+    this.itemDeliveryByArrangementId = deliveryByArrangementId;
+    this.itemLateById = lateById;
+    this.itemLateByArrangementId = lateByArrangementId;
+  }
+
   private showSaveSuccessMessage(): void {
-    this.snackBar.open('Salvataggio avvenuto con successo', 'Chiudi', {
+    this.snackBar.open('Evento aggiunto con successo', 'Chiudi', {
       duration: 4000,
       horizontalPosition: 'end',
       verticalPosition: 'bottom',
+    });
+  }
+
+  private showDeleteSuccessMessage(): void {
+    this.snackBar.open('Evento eliminato con successo', 'Chiudi', {
+      duration: 4000,
+      horizontalPosition: 'end',
+      verticalPosition: 'bottom',
+    });
+  }
+
+  private showDeleteErrorMessage(): void {
+    this.snackBar.open("Errore durante l'eliminazione dell'evento", 'Chiudi', {
+      duration: 4000,
+      horizontalPosition: 'end',
+      verticalPosition: 'bottom',
+    });
+  }
+
+  private showUpdateErrorMessage(): void {
+    this.snackBar.open("Errore durante la modifica dell'evento", 'Chiudi', {
+      duration: 4000,
+      horizontalPosition: 'end',
+      verticalPosition: 'bottom',
+    });
+  }
+
+  private deleteGenericCalendarEvent(event: CalendarEvent): void {
+    if (!this.isGenericCalendarEvent(event) || this.isDeletingGenericEvent()) {
+      return;
+    }
+
+    if (!event.id) {
+      this.showDeleteErrorMessage();
+      return;
+    }
+
+    const deleteStartedAt = Date.now();
+    this.isDeletingGenericEvent.set(true);
+    this.calendarEventService.deleteCalendarEvent(event.id).subscribe({
+      next: () => {
+        this.loadCalendarEvents(() => {
+          this.finishSavingAfterMinimumDuration(deleteStartedAt, () => {
+            this.isDeletingGenericEvent.set(false);
+            this.showDeleteSuccessMessage();
+          });
+        }, () => {
+          this.finishSavingAfterMinimumDuration(deleteStartedAt, () => {
+            this.isDeletingGenericEvent.set(false);
+          });
+        });
+      },
+      error: (error) => {
+        console.error('Error deleting generic calendar event:', error);
+        this.finishSavingAfterMinimumDuration(deleteStartedAt, () => {
+          this.isDeletingGenericEvent.set(false);
+          this.showDeleteErrorMessage();
+        });
+      },
+    });
+  }
+
+  private updateGenericCalendarEvent(originalEvent: CalendarEvent, updatedEvent: CalendarEvent): void {
+    if (!this.isGenericCalendarEvent(originalEvent) || this.isUpdatingGenericEvent()) {
+      return;
+    }
+
+    if (!originalEvent.id) {
+      this.showUpdateErrorMessage();
+      return;
+    }
+
+    const updateStartedAt = Date.now();
+    this.isUpdatingGenericEvent.set(true);
+    this.calendarEventService.updateCalendarEvent(originalEvent.id, {
+      ...originalEvent,
+      description: updatedEvent.description,
+      date: updatedEvent.date,
+      type: CalendarEvent.TypeEnum.Generic,
+    }).subscribe({
+      next: () => {
+        this.loadCalendarEvents(() => {
+          this.finishSavingAfterMinimumDuration(updateStartedAt, () => {
+            this.isUpdatingGenericEvent.set(false);
+            this.showSaveSuccessMessage();
+          });
+        }, () => {
+          this.finishSavingAfterMinimumDuration(updateStartedAt, () => {
+            this.isUpdatingGenericEvent.set(false);
+          });
+        });
+      },
+      error: (error) => {
+        console.error('Error updating generic calendar event:', error);
+        this.finishSavingAfterMinimumDuration(updateStartedAt, () => {
+          this.isUpdatingGenericEvent.set(false);
+          this.showUpdateErrorMessage();
+        });
+      },
     });
   }
 
@@ -368,28 +821,6 @@ export class CalendarPage implements OnInit {
     return firstEvent.description.localeCompare(secondEvent.description, 'it-IT');
   }
 
-  private countCurrentWeekDeliveries(calendarEvents: CalendarEvent[]): number {
-    const today = new Date();
-    const currentWeekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const daysSinceMonday = (currentWeekStart.getDay() + 6) % 7;
-    currentWeekStart.setDate(currentWeekStart.getDate() - daysSinceMonday);
-
-    const currentWeekEnd = new Date(currentWeekStart);
-    currentWeekEnd.setDate(currentWeekStart.getDate() + 7);
-
-    return calendarEvents.filter((event) => {
-      if (this.getCalendarEventType(event) !== CalendarEvent.TypeEnum.Delivery) {
-        return false;
-      }
-
-      const eventDate = new Date(event.date);
-
-      return !Number.isNaN(eventDate.getTime())
-        && eventDate >= currentWeekStart
-        && eventDate < currentWeekEnd;
-    }).length;
-  }
-
   private getCurrentMonth(): Date {
     const today = new Date();
 
@@ -421,13 +852,55 @@ export class CalendarPage implements OnInit {
         hasClosure: dayEvents.some((event) => this.getCalendarEventType(event) === 'CLOSURE'),
         ariaLabel: this.formatAriaLabel(date),
         events: dayEvents
-          .filter((event) => this.isCalendarEventTypeVisible(this.getCalendarEventType(event))),
+          .filter((event) => this.isCalendarEventVisible(event)),
       };
     });
   }
 
+  private isCalendarEventVisible(event: CalendarEvent): boolean {
+    return this.isCalendarEventTypeVisible(this.getCalendarEventType(event))
+      && this.isCustomCategoryVisible(event.categoryId);
+  }
+
   private getCalendarEventType(event: CalendarEvent): CalendarEventType {
     return event.type ?? CalendarEvent.TypeEnum.Generic;
+  }
+
+  private loadStoredEventPalette(): void {
+    try {
+      const storedPalette = window.localStorage.getItem(this.calendarPaletteStorageKey);
+
+      if (!storedPalette) {
+        return;
+      }
+
+      const parsedPalette = JSON.parse(storedPalette) as Partial<Record<CalendarEventColorKey, unknown>>;
+      const nextPalette = { ...this.defaultEventPalette };
+
+      for (const key of Object.keys(this.defaultEventPalette) as CalendarEventColorKey[]) {
+        const color = parsedPalette[key];
+
+        if (typeof color === 'string' && this.isValidHexColor(color)) {
+          nextPalette[key] = color;
+        }
+      }
+
+      this.eventPalette.set(nextPalette);
+    } catch (error) {
+      console.error('Error loading calendar event palette:', error);
+    }
+  }
+
+  private storeEventPalette(palette: Record<CalendarEventColorKey, string>): void {
+    try {
+      window.localStorage.setItem(this.calendarPaletteStorageKey, JSON.stringify(palette));
+    } catch (error) {
+      console.error('Error saving calendar event palette:', error);
+    }
+  }
+
+  private isValidHexColor(color: string): boolean {
+    return /^#[\da-f]{6}$/i.test(color);
   }
 
   private initializeClosureSelection(): void {
@@ -523,6 +996,14 @@ export class CalendarPage implements OnInit {
     return firstDate.getFullYear() === secondDate.getFullYear()
       && firstDate.getMonth() === secondDate.getMonth()
       && firstDate.getDate() === secondDate.getDate();
+  }
+
+  private isPastDate(date: Date): boolean {
+    const selectedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const today = new Date();
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+    return selectedDate < todayDate;
   }
 
   private toDateKey(date: Date): string {

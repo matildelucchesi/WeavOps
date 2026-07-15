@@ -1,0 +1,104 @@
+/calendar-event-categories:
+  get:
+    summary: Recupera tutte le categorie evento calendario
+    operationId: getCalendarEventCategories
+    tags:
+      - CalendarEventCategory
+    responses:
+      '200':
+        description: Lista categorie evento calendario
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/calendar-event-category.yaml'
+
+  post:
+    summary: Crea una categoria evento calendario
+    operationId: createCalendarEventCategory
+    tags:
+      - CalendarEventCategory
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/calendar-event-category.yaml'
+    responses:
+      '201':
+        description: Categoria evento calendario creata
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/calendar-event-category.yaml'
+      '400':
+        description: Richiesta non valida
+
+/calendar-event-categories/{id}:
+  get:
+    summary: Recupera una categoria evento calendario tramite ID
+    operationId: getCalendarEventCategoryById
+    tags:
+      - CalendarEventCategory
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Categoria evento calendario trovata
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/calendar-event-category.yaml'
+      '404':
+        description: Categoria evento calendario non trovata
+
+  put:
+    summary: Aggiorna una categoria evento calendario
+    operationId: updateCalendarEventCategory
+    tags:
+      - CalendarEventCategory
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/calendar-event-category.yaml'
+    responses:
+      '200':
+        description: Categoria evento calendario aggiornata
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/calendar-event-category.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Categoria evento calendario non trovata
+
+  delete:
+    summary: Elimina una categoria evento calendario
+    operationId: deleteCalendarEventCategory
+    tags:
+      - CalendarEventCategory
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Categoria evento calendario eliminata
+      '404':
+        description: Categoria evento calendario non trovata

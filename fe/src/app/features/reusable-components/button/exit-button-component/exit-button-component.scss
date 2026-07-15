@@ -1,3 +1,9 @@
+div{
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
 button{
     background: var(--weavops-color-surface);
     color: var(--weavops-color-primary);

@@ -37,6 +37,16 @@ public class CalendarEventController implements CalendarEventsApi {
     }
 
     @Override
+    public ResponseEntity<Integer> getCurrentWeekPendingDeliveryCount() {
+        return ResponseEntity.ok(service.countCurrentWeekPendingDeliveries());
+    }
+
+    @Override
+    public ResponseEntity<Integer> getOverdueDeliveryCount() {
+        return ResponseEntity.ok(service.countOverdueDeliveries());
+    }
+
+    @Override
     public ResponseEntity<CalendarEvent> getCalendarEventById(@PathVariable("id") String id) {
         return service.findById(id)
                 .map(mapper::toDto)

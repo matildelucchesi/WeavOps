@@ -5,11 +5,14 @@ api.module.ts
 api/api.ts
 api/arrangement.service.ts
 api/auth.service.ts
+api/calendarEventCategory.service.ts
 api/calendarEvents.service.ts
 api/customer.service.ts
+api/customerItemHistory.service.ts
 api/item.service.ts
 api/loom.service.ts
 api/loomItemAssignment.service.ts
+api/loomProcessHistory.service.ts
 api/process.service.ts
 api/referent.service.ts
 api/user.service.ts
@@ -19,8 +22,10 @@ git_push.sh
 index.ts
 model/arrangement.ts
 model/calendarEvent.ts
+model/calendarEventCategory.ts
 model/createItemWithArrangementRequest.ts
 model/customer.ts
+model/customerItemHistory.ts
 model/deleteMultiCustomers200Response.ts
 model/deleteMultiItems200Response.ts
 model/deleteMultiLooms200Response.ts
@@ -29,6 +34,7 @@ model/login200Response.ts
 model/loginRequest.ts
 model/loom.ts
 model/loomItemAssignment.ts
+model/loomProcessHistory.ts
 model/models.ts
 model/process.ts
 model/productionAdvice.ts

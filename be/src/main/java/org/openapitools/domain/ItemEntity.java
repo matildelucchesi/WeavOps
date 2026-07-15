@@ -25,8 +25,17 @@ public class ItemEntity {
     private Instant startDate;
     private Boolean isArchived;
     private Boolean isDelivered;
+    private Boolean isLate;
 
     //getter & setter
+    public Boolean getLate() {
+        return isLate;
+    }
+
+    public void setLate(Boolean late) {
+        isLate = late;
+    }
+
     public Boolean getDelivered() {
         return isDelivered;
     }

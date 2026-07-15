@@ -19,8 +19,16 @@ export class CalendarEventFacadeService {
     return this.api.getCalendarEvents();
   }
 
+  getCurrentWeekPendingDeliveryCount() {
+    return this.api.getCurrentWeekPendingDeliveryCount();
+  }
+
   getCalendarEventById(calendarEventId: string) {
     return this.api.getCalendarEventById({ id: calendarEventId });
+  }
+
+  getOverdueDeliveryCount() {
+    return this.api.getOverdueDeliveryCount();
   }
 
   updateCalendarEvent(calendarEventId: string, calendarEvent: CalendarEvent) {
