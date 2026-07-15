@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("deleteMultiCustomers_200_response")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-15T12:18:51.296312700+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-15T15:46:57.800382600+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class DeleteMultiCustomers200Response {
 
   private @Nullable Integer deletedCount;

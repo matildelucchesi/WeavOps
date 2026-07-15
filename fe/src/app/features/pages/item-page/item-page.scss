@@ -98,6 +98,21 @@ app-title-page-component,
     justify-self: center;
 }
 
+.item-note-copy-text{
+    display: inline;
+}
+
+.item-note-copy-icon{
+    display: inline-flex;
+    vertical-align: middle;
+    margin: 0 4px;
+    font-size: 18px;
+    line-height: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--weavops-color-primary);
+}
+
 .description-icon{
     align-self: center;
     display: inline-flex;

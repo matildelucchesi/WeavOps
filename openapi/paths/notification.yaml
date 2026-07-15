@@ -1,0 +1,37 @@
+/notifications:
+  get:
+    summary: Recupera le notifiche calcolate del sistema
+    operationId: getNotifications
+    tags:
+      - Notifications
+    description: >
+      Restituisce le notifiche calcolate lato backend a partire dallo stato
+      corrente dei dati applicativi. Le notifiche non vengono salvate su DB.
+    responses:
+      '200':
+        description: Lista notifiche
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/notification.yaml'
+
+/notifications/item-delivery-risks:
+  get:
+    summary: Recupera le notifiche per articoli con consegna a rischio
+    operationId: getItemDeliveryRiskNotifications
+    tags:
+      - Notifications
+    description: >
+      Restituisce le notifiche per gli articoli non consegnati e non archiviati
+      la cui fine produzione prevista supera la data di consegna.
+    responses:
+      '200':
+        description: Lista notifiche di rischio consegna
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/notification.yaml'

@@ -85,6 +85,16 @@ export class CustomerItemsHistoryPage implements OnInit {
     { header: 'Inizio', field: 'startDate' },
     { header: 'Fine prevista', field: 'expectedEndDate' },
     { header: 'Data di Consegna', field: 'deliveryDate' },
+    {
+      header: 'Consegnato',
+      checkbox: {
+        checked: (row) => row.item?.isDelivered === true,
+        disabled: true,
+        ariaLabel: (row) => row.item?.isDelivered === true
+          ? `Articolo ${row.itemName} consegnato`
+          : `Articolo ${row.itemName} non consegnato`,
+      },
+    },
   ];
 
   public readonly actions: TableAction<CustomerItemHistoryRow>[] = [

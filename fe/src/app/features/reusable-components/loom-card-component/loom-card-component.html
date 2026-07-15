@@ -2,6 +2,12 @@
     <div>
         <p class="loom-name">{{ 'Telaio ' + serialNumber }}</p>
     </div>
+    <span
+        class="queue-badge"
+        [class.queue-badge-empty]="queueCount === 0"
+        aria-label="Elementi in coda">
+        {{ queueCount }}
+    </span>
     <div>
     <img ngSrc="{{ icon }}" alt="Loom Image" class="loom-image" width="45" height="45">
     </div>

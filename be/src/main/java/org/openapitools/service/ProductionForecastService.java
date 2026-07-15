@@ -243,6 +243,7 @@ public class ProductionForecastService {
             }
 
             processRepository.findById(assignment.getProcessId())
+                    .map(process -> ensureProcessHitsPerDm(process, assignment))
                     .ifPresent(process -> runningProcesses.add(new RunningProcessForecast(
                             assignment,
                             process,
@@ -251,6 +252,26 @@ public class ProductionForecastService {
         }
 
         return runningProcesses;
+    }
+
+    private ProcessEntity ensureProcessHitsPerDm(ProcessEntity process, LoomItemAssignmentEntity assignment) {
+        if (process == null
+                || valueOrZero(process.getItemHitsPerDm()) > 0
+                || assignment == null
+                || isBlank(assignment.getItemId())) {
+            return process;
+        }
+
+        return itemRepository.findById(assignment.getItemId())
+                .filter(item -> !isBlank(item.getArrangementId()))
+                .flatMap(item -> arrangementRepository.findById(item.getArrangementId()))
+                .map(arrangement -> arrangement.getHitsPerDm())
+                .filter(hitsPerDm -> hitsPerDm != null && hitsPerDm.signum() > 0)
+                .map(hitsPerDm -> {
+                    process.setItemHitsPerDm(hitsPerDm.intValue());
+                    return processRepository.save(process);
+                })
+                .orElse(process);
     }
 
     /**

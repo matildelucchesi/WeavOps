@@ -1,0 +1,24 @@
+<div
+    class="wrapper"
+    [class.wrapper-danger]="variant === 'danger'"
+    [class.wrapper-accent]="variant === 'accent'">
+    <div class="row">
+        <mat-icon class="icon">{{ iconName }}</mat-icon>
+        <span class="text">{{ text }}</span>
+        @if (buttonIcon || buttonText) {
+            <button
+                type="button"
+                class="action-button"
+                [class.action-button-danger]="variant === 'danger'"
+                [class.action-button-accent]="variant === 'accent'"
+                (click)="buttonClicked.emit()">
+                @if (buttonIcon) {
+                    <mat-icon>{{ buttonIcon }}</mat-icon>
+                }
+                @if (buttonText) {
+                    <span>{{ buttonText }}</span>
+                }
+            </button>
+        }
+    </div>
+</div>

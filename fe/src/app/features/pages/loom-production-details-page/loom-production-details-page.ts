@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DecorativeLinesComponent } from "../../reusable-components/decorative-lines-component/decorative-lines-component";
 import { TitlePageComponent } from "../../reusable-components/title-page-component/title-page-component";
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LoomFacadeService } from '../../../services/loom-facade.service';
 import { ItemFacadeService } from '../../../services/item-facade.service';
 import { ExitButtonComponent } from "../../reusable-components/button/exit-button-component/exit-button-component";
@@ -63,6 +63,7 @@ export class LoomProductionDetailsPage implements OnInit {
   private readonly arrangementService = inject(ArrangementFacadeService);
   private readonly processService = inject(ProcessFacadeService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private startProductionLoaderTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -591,12 +592,13 @@ export class LoomProductionDetailsPage implements OnInit {
         this.isStartProductionRequestPending = false;
         this.showStartProductionFeedbackAfterLoader(() => {
           this.runningAssignment.set(updatedAssignment);
-          this.reloadProductionsForCurrentLoom();
           this.snackBar.open('Messa in produzione avvenuta con successo.', 'Chiudi', {
             duration: 4000,
             horizontalPosition: 'end',
             verticalPosition: 'bottom',
           });
+          this.dialog.closeAll();
+          this.router.navigate(['/home']);
         });
       },
       error: (error) => {

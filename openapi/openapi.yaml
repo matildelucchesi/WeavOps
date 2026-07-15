@@ -89,6 +89,10 @@ paths:
     $ref: './paths/calendar-event-category.yaml#/~1calendar-event-categories'
   /calendar-event-categories/{id}:
     $ref: './paths/calendar-event-category.yaml#/~1calendar-event-categories~1{id}'
+  /notifications:
+    $ref: './paths/notification.yaml#/~1notifications'
+  /notifications/item-delivery-risks:
+    $ref: './paths/notification.yaml#/~1notifications~1item-delivery-risks'
 
 components:
   securitySchemes:

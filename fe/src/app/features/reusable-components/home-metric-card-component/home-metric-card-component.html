@@ -1,0 +1,30 @@
+<button
+    type="button"
+    class="metric-card metric-card-{{ variant }}"
+    [class.metric-card-clickable]="clickable"
+    [disabled]="!clickable"
+    (click)="onCardClick()">
+    <span class="metric-header">
+        <span class="metric-icon">
+            <mat-icon>{{ iconName }}</mat-icon>
+        </span>
+        <span class="metric-title">{{ title }}</span>
+    </span>
+    <span class="metric-body">
+        @if (hasGauge()) {
+            <span class="metric-gauge" aria-hidden="true">
+                <span class="gauge-arc"></span>
+                <span class="gauge-needle" [style.transform]="getGaugeNeedleTransform()"></span>
+                <span class="gauge-center"></span>
+            </span>
+        } @else if (showBodyIcon) {
+            <span class="metric-body-icon">
+                <mat-icon>{{ iconName }}</mat-icon>
+            </span>
+        }
+        <span class="metric-content">
+            <span class="metric-value">{{ value }}</span>
+            <span class="metric-subtitle">{{ subtitle }}</span>
+        </span>
+    </span>
+</button>

@@ -1845,6 +1845,48 @@ paths:
       - application/json
       x-tags:
       - tag: CalendarEventCategory
+  /notifications:
+    get:
+      description: |
+        Restituisce le notifiche calcolate lato backend a partire dallo stato corrente dei dati applicativi. Le notifiche non vengono salvate su DB.
+      operationId: getNotifications
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/notification"
+                type: array
+          description: Lista notifiche
+      summary: Recupera le notifiche calcolate del sistema
+      tags:
+      - Notifications
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Notifications
+  /notifications/item-delivery-risks:
+    get:
+      description: |
+        Restituisce le notifiche per gli articoli non consegnati e non archiviati la cui fine produzione prevista supera la data di consegna.
+      operationId: getItemDeliveryRiskNotifications
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/notification"
+                type: array
+          description: Lista notifiche di rischio consegna
+      summary: Recupera le notifiche per articoli con consegna a rischio
+      tags:
+      - Notifications
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Notifications
 components:
   schemas:
     loom:
@@ -2540,6 +2582,53 @@ components:
       required:
       - color
       - name
+      type: object
+    notification:
+      example:
+        severity: INFO
+        arrangementId: arrangementId
+        itemId: itemId
+        expectedEndDate: 2000-01-23T04:56:07.000+00:00
+        id: id
+        type: ITEM_DELIVERY_RISK
+        title: title
+        message: message
+        deliveryDate: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          description: Identificativo stabile della notifica calcolata
+          readOnly: true
+          type: string
+        type:
+          enum:
+          - ITEM_DELIVERY_RISK
+          type: string
+        severity:
+          enum:
+          - INFO
+          - WARNING
+          - ERROR
+          type: string
+        title:
+          type: string
+        message:
+          type: string
+        itemId:
+          type: string
+        arrangementId:
+          type: string
+        expectedEndDate:
+          format: date-time
+          type: string
+        deliveryDate:
+          format: date-time
+          type: string
+      required:
+      - id
+      - message
+      - severity
+      - title
+      - type
       type: object
     deleteMultiLooms_200_response:
       example:

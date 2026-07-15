@@ -10,6 +10,7 @@ import { CustomerDetailsPage } from './features/pages/customer-details-page/cust
 import { CustomerItemsHistoryPage } from './features/pages/customer-items-history-page/customer-items-history-page';
 import { ItemAddNewPage } from './features/pages/item-add-new-page/item-add-new-page';
 import { CalendarPage } from './features/pages/calendar-page/calendar-page';
+import { LoomHistoryPage } from './features/pages/loom-history-page/loom-history-page';
 
 
 export const routes: Routes = [
@@ -38,8 +39,7 @@ export const routes: Routes = [
       },
       {
         path: 'cronologia-produzione/:id',
-        loadComponent: () => import('./features/pages/loom-history-page/loom-history-page')
-          .then((component) => component.LoomHistoryPage),
+        component: LoomHistoryPage,
       },
       {
         path: 'articoli',

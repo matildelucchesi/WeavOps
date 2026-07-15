@@ -17,6 +17,7 @@ export class LoomCardComponent {
   @Input() loom: Loom | null = null;
   @Input() isDialogMode: boolean = false;
   @Input() days: string = '';
+  @Input() queueCount: number = 0;
 
   get serialNumber(): string {
     return this.loom?.serialNumber ?? 'Numero Seriale Mancante';

@@ -1,12 +1,80 @@
-<app-decorative-lines-component></app-decorative-lines-component>
+
 
 <div class="title">
   <h1 class="welcome-title">Benvenuto in</h1>
   <h1 class="weavops">WeavOps</h1>
 </div>
 <div class="content">
+  @if (deliveryRiskNotifications().length > 0) {
+    <section class="delivery-risk-panel" aria-label="Notifiche rischio consegna">
+      <div class="delivery-risk-header">
+        <div class="delivery-risk-title">
+          <mat-icon>warning</mat-icon>
+          <span>La data di completamento prevista supera la data di consegna per alcuni articoli</span>
+        </div>
+        <div class="delivery-risk-actions">
+          <button type="button" class="delivery-risk-action" (click)="openItems()">
+            <span>Vai a Articoli</span>
+            <mat-icon>list_alt</mat-icon>
+          </button>
+          <button
+            type="button"
+            class="delivery-risk-toggle"
+            [attr.aria-expanded]="deliveryRiskTableVisible()"
+            (click)="toggleDeliveryRiskTable()">
+            <mat-icon>{{ deliveryRiskTableVisible() ? 'expand_less' : 'expand_more' }}</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      @if (deliveryRiskTableVisible()) {
+        <div class="delivery-risk-table" role="table" aria-label="Articoli con consegna a rischio">
+          <div class="delivery-risk-row delivery-risk-table-head" role="row">
+            <span role="columnheader">Articolo</span>
+            <span role="columnheader">Giorni oltre consegna</span>
+          </div>
+          @for(notification of deliveryRiskNotifications(); track notification.id) {
+            <div class="delivery-risk-row" role="row">
+              <span role="cell">{{ getDeliveryRiskItemName(notification) }}</span>
+              <span role="cell">{{ getDeliveryRiskDelayDays(notification) }}</span>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
+
+  <section class="home-metrics" aria-label="Indicatori principali">
+    <app-home-metric-card-component
+      title="Tasso utilizzo telai"
+      [value]="getLoomUtilizationRate()"
+      [gaugeValue]="getLoomUtilizationValue()"
+      [subtitle]="getLoomUtilizationSubtitle()"
+      iconName="precision_manufacturing"
+      variant="blue">
+    </app-home-metric-card-component>
+
+    <app-home-metric-card-component
+      title="Consegne settimana"
+      [value]="currentWeekPendingDeliveryCount() ?? 0"
+      [subtitle]="getCurrentWeekPendingDeliverySubtitle()"
+      iconName="local_shipping"
+      variant="accent"
+      [showBodyIcon]="false">
+    </app-home-metric-card-component>
+
+    <app-home-metric-card-component
+      title="Consegne in ritardo"
+      [value]="overdueDeliveryCount() ?? 0"
+      [subtitle]="getOverdueDeliverySubtitle()"
+      iconName="assignment_late"
+      variant="danger"
+      [showBodyIcon]="false">
+    </app-home-metric-card-component>
+  </section>
+
   <div class="looms">
-    <div style="display: grid; width: 80%; justify-self: center;">
+    <div style="display: grid; width: 90%; justify-self: center;">
       <h2>I tuoi telai</h2>
       <div class="loom-wrapper">
         <div class="loom-section">
@@ -15,6 +83,7 @@
             <app-loom-card-component
               [loom]="loom"
               [days]="getLoomDays(loom)"
+              [queueCount]="getLoomQueueCount(loom)"
               [isDialogMode]="false"
               (click)="openLoomActions(loom)">
             </app-loom-card-component>

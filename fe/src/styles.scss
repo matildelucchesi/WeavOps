@@ -27,6 +27,7 @@ $weavops-color-success-bright: #16a34a;
 $weavops-color-success-soft: #d1fae5;
 $weavops-color-danger: #d90000;
 $weavops-color-danger-bright: #dd0000;
+$weavops-color-danger-deep: #c22626;
 $weavops-color-danger-soft: #ffe1e1;
 $weavops-color-black: #000000;
 $weavops-color-grey: #e4dfdf;
@@ -63,6 +64,7 @@ html {
   --weavops-color-success-bright: #{$weavops-color-success-bright};
   --weavops-color-danger: #{$weavops-color-danger};
   --weavops-color-danger-bright: #{$weavops-color-danger-bright};
+  --weavops-color-danger-deep: #{$weavops-color-danger-deep};
   --weavops-color-danger-soft: #{$weavops-color-danger-soft};
   --weavops-color-black: #{$weavops-color-black};
   --weavops-color-grey: #{$weavops-color-grey};

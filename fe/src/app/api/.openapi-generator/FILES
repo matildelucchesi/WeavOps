@@ -13,6 +13,7 @@ api/item.service.ts
 api/loom.service.ts
 api/loomItemAssignment.service.ts
 api/loomProcessHistory.service.ts
+api/notifications.service.ts
 api/process.service.ts
 api/referent.service.ts
 api/user.service.ts
@@ -36,6 +37,7 @@ model/loom.ts
 model/loomItemAssignment.ts
 model/loomProcessHistory.ts
 model/models.ts
+model/notification.ts
 model/process.ts
 model/productionAdvice.ts
 model/referent.ts

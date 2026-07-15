@@ -1,1 +1,30 @@
-<p>loom-history-page works!</p>
+<app-decorative-lines-component
+  [verticalPositions]="['54%', '55%', '83%', '86%', '50%', '16%', '15%']"
+  [horizontalPositions]="['11%', '17%', '53%', '56%', '94%']">
+</app-decorative-lines-component>
+
+
+<div class="title-wrapper">
+  <app-title-page-component
+  [title]="title()"
+  iconName="history"
+  [imageWidth]="40"
+  [imageHeight]="40">
+</app-title-page-component>
+</div>
+
+<app-exit-button-component></app-exit-button-component>
+
+<div class="body">
+  <div class="history-table-wrapper">
+    <app-table-component
+      [columns]="columns"
+      [rows]="rows()"
+      [filterButton]="filterButton"
+      [enableMultiSelection]="false"
+      [sortByCreationDate]="false"
+      actionColumnHeader=""
+      (filterSelected)="onFilterSelected($event)">
+    </app-table-component>
+  </div>
+</div>

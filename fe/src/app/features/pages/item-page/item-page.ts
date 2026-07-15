@@ -17,10 +17,11 @@ import { ItemNotArchivedTableService } from '../../../table/table-service/item-n
 import { ItemArchivedTableService } from '../../../table/table-service/item-archived-table.service';
 import type { FilterValues } from '../../reusable-components/button/filter-button-component/filter-button-component';
 import { WhitePanel } from "../../reusable-components/white-panel/white-panel";
-import { Item } from '../../../api';
+import { Arrangement, Item } from '../../../api';
 import { MatIcon } from "@angular/material/icon";
 import { ArrangementFacadeService } from '../../../services/arrangement-facade.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map, switchMap } from 'rxjs';
+import { CustomerItemHistoryFacadeService } from '../../../services/customer-item-history-facade.service';
 import { MatDialog } from '@angular/material/dialog';
 import {
   DialogAlertGeneric,
@@ -47,6 +48,7 @@ export class ItemPage implements OnInit {
   private readonly itemArchivedTableService = inject(ItemArchivedTableService);
   private readonly itemService = inject(ItemFacadeService);
   private readonly arrangementService = inject(ArrangementFacadeService);
+  private readonly customerItemHistoryService = inject(CustomerItemHistoryFacadeService);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
 
@@ -147,7 +149,7 @@ export class ItemPage implements OnInit {
       header: 'Consegnato',
       checkbox: {
         checked: (row) => row.item.isDelivered === true,
-        disabled: (row) => row.item.isDelivered === true,
+        disabled: (row) => row.item.isDelivered === true || this.isAbandonedItem(row),
         ariaLabel: (row) => `Articolo ${row.arrangement?.itemName ?? ''} consegnato`,
         onChange: (row, isDelivered) => this.updateItemDeliveryState(row, isDelivered),
       },
@@ -205,6 +207,38 @@ export class ItemPage implements OnInit {
       }
     ];
 
+  public archivedActions: TableAction<ItemTableRow>[] = [
+      {
+        id: 'details',
+        label: 'Visualizza dati',
+        icon: 'visibility',
+        imageAlt: 'Visualizza dati',
+      },
+      {
+        id: 'copy',
+        label: 'Copia',
+        icon: 'file_copy',
+        iconColor: 'var(--weavops-color-primary)',    
+      },
+      {
+        id: 'invoice',
+        label: 'Fattura',
+        icon: 'receipt_long',
+        iconColor: 'var(--weavops-color-primary)',
+      },
+      {
+        id: 'delete',
+        label: 'Elimina',
+        icon: 'delete',
+        iconColor: 'var(--weavops-color-danger-bright)',
+        deleteItem: (row) => this.deleteItem(row),
+        deleteItems: (rows) => this.deleteItems(rows),
+        deleteItemName: (row) => row.arrangement?.itemName,
+        deleteSuccessMessage: 'Articolo eliminato con successo',
+        deleteErrorMessage: "Errore durante l'eliminazione dell'articolo",
+      }
+    ];
+
   ngOnInit(): void {
     this.loadItemRows();
     this.loadArchivedItemRows();
@@ -239,6 +273,11 @@ export class ItemPage implements OnInit {
   }
 
   private updateItemDeliveryState(row: ItemTableRow, isDelivered: boolean): void {
+    if (isDelivered && this.isAbandonedItem(row)) {
+      this.resetDeliveredCheckbox(row);
+      return;
+    }
+
     if (isDelivered) {
       this.openDeliveredConfirmationDialog(row);
       return;
@@ -335,6 +374,10 @@ export class ItemPage implements OnInit {
     });
   }
 
+  private isAbandonedItem(row: ItemTableRow): boolean {
+    return (row.item.state ?? row.state) === Item.StateEnum.Abandoned;
+  }
+
   private isDeliveryDialogResult(result: DialogAlertGenericResult | undefined): result is DialogAlertGenericDeliveryResult {
     return typeof result === 'object'
       && result !== null
@@ -351,6 +394,9 @@ export class ItemPage implements OnInit {
         break;
       case 'edit':
         console.log('Modifica articolo', event.row);
+        break;
+      case 'copy':
+        this.openCopyArchivedItemConfirmationDialog(event.row);
         break;
       case 'delete':
         this.loadItemRows();
@@ -375,6 +421,108 @@ export class ItemPage implements OnInit {
         arrangement: row.arrangement,
       },
     });
+  }
+
+  private openCopyArchivedItemConfirmationDialog(row: ItemTableRow): void {
+    const itemName = row.arrangement?.itemName ?? 'selezionato';
+    const dialogRef = this.dialog.open<DialogAlertGeneric, DialogAlertGenericData, DialogAlertGenericResult>(DialogAlertGeneric, {
+      panelClass: 'item-alert-dialog-panel',
+      width: '520px',
+      maxWidth: 'calc(100vw - 48px)',
+      autoFocus: false,
+      data: {
+        text: `L'articolo ${itemName} verrà inserito nella lista degli Articoli, vuoi procedere?`,
+        subtext: "I dati dell'articolo verranno completamente copiati, successivamente si aprirà la pagina di dettaglio dove sarà possibile la modifica.",
+        icon: 'help',
+        iconColor: 'var(--weavops-color-primary)',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed === true) {
+        this.createNewItemFromArchived(row);
+      }
+    });
+  }
+
+  private createNewItemFromArchived(row: ItemTableRow): void {
+    const itemId = row.item.id ?? row.id;
+    const customerName = row.customer?.name?.trim();
+    const arrangement = row.arrangement;
+
+    if (!itemId) {
+      console.error('Impossibile copiare l\'articolo: id mancante', row);
+      return;
+    }
+
+    if (!customerName) {
+      console.error('Impossibile copiare l\'articolo: cliente mancante', row);
+      return;
+    }
+
+    if (!arrangement) {
+      console.error('Impossibile copiare l\'articolo: disposizione mancante', row);
+      return;
+    }
+
+    const copiedArrangement = this.buildCopiedArrangement(arrangement);
+
+    this.itemService.createItemWithArrangement({
+      customerName,
+      arrangement: copiedArrangement,
+    }).pipe(
+      switchMap((newItem) => {
+        const newItemId = newItem.id;
+        const customerId = newItem.customerId ?? row.item.customerId;
+
+        if (!newItemId || !customerId) {
+          throw new Error('Impossibile creare la cronologia articolo: id articolo o cliente mancante');
+        }
+
+        return this.customerItemHistoryService.create({
+          customerId,
+          itemId: newItemId,
+        }).pipe(map(() => newItem));
+      }),
+    ).subscribe({
+      next: (newItem) => {
+        const navigationArrangement: Arrangement = {
+          ...copiedArrangement,
+          id: newItem.arrangementId,
+        };
+
+        console.log('Nuovo articolo creato da articolo archiviato:', newItem);
+        this.loadItemRows();
+        this.router.navigate(['/dettaglio-articolo'], {
+          queryParams: { id: newItem.id },
+          state: {
+            item: {
+              ...newItem,
+              processing: [],
+            },
+            arrangement: navigationArrangement,
+          },
+        });
+      },
+      error: (error) => {
+        console.error('Errore durante la copia dell\'articolo archiviato:', error);
+      },
+    });
+  }
+
+  private buildCopiedArrangement(arrangement: Arrangement): Arrangement {
+    return {
+      itemName: arrangement.itemName,
+      reedCount: arrangement.reedCount,
+      reedCM: arrangement.reedCM,
+      reedHeight: arrangement.reedHeight,
+      warpLength: arrangement.warpLength,
+      piecesCount: arrangement.piecesCount,
+      pieceLength: arrangement.pieceLength,
+      warpEndCount: arrangement.warpEndCount,
+      hitsPerDm: arrangement.hitsPerDm,
+      deliveryDate: arrangement.deliveryDate,
+    };
   }
 
   public onTableBulkAction(event: TableBulkActionClick<ItemTableRow>): void {

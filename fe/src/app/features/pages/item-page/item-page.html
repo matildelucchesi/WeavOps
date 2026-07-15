@@ -37,7 +37,7 @@
     <app-table-component
     [columns]="archivedColumns"
     [rows]="archivedRows()"
-    [actions]="actions"
+    [actions]="archivedActions"
     [filterButton]="filterButton"
     actionColumnHeader=""
     (actionClick)="onTableAction($event)"
@@ -46,7 +46,11 @@
     </app-table-component>
   </div>
   
-  <app-white-panel style="display: flex;margin-top: 20px;" [title]="'Nota Bene'" [text]="'TODO'"></app-white-panel> 
+  <app-white-panel style="display: flex;margin-top: 20px;" [title]="'Nota Bene'">
+    <span class="item-note-copy-text">Una volta che la produzione di un articolo viene terminata, e quindi il suo stato sarà COMPLETATO o ABBANDONATO, l'articolo viene inserito all'interno della lista degli articoli ARCHIVIATI in modo irreversibile. <br> È possibile copiare i dati dell'articolo per poter creare una nuova produzione dello stesso cliccando su</span>
+    <mat-icon class="item-note-copy-icon material-icons-filled">file_copy</mat-icon>
+    <span>Si raccomanda di controllare i dati dell'articolo prima di procedere con la copia.</span>
+  </app-white-panel>
 
   <app-white-panel [iconName]="'category'" [title]="'Legenda'">
     <div class="item-legend">

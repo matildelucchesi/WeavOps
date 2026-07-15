@@ -1,0 +1,101 @@
+:host {
+    display: block;
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    border: 1px solid rgb(var(--weavops-rgb-warning, 244 169 55) / 0.55);
+    border-radius: 8px;
+    background: var(--weavops-color-surface, #fff);
+    box-shadow: 0 1px 1px rgba(255, 0, 0, 0.63);
+}
+
+.wrapper-danger {
+    border: 1.5px solid var(--weavops-color-danger);
+    background-color: var(--weavops-color-danger-soft);
+    color: var(--weavops-color-danger);
+}
+
+.wrapper-accent {
+    border: 1.5px solid var(--weavops-color-accent);
+    background-color: color-mix(in srgb, var(--weavops-color-accent-light) 14%, var(--weavops-color-surface, #fff));
+    color: var(--weavops-color-accent);
+}
+
+.row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    width: 100%;
+}
+
+.icon {
+    color: var(--weavops-color-warning, #f4a937);
+}
+
+.text {
+    min-width: 0;
+    color: inherit;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.action-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    border-radius: 8px;
+    padding: 8px 10px;
+    background: var(--weavops-color-primary);
+    color: var(--weavops-color-surface, #fff);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.wrapper-danger .icon {
+    color: var(--weavops-color-danger);
+}
+
+.wrapper-accent .icon {
+    color: var(--weavops-color-accent);
+}
+
+.action-button:hover {
+    opacity: 0.82;
+}
+
+.action-button mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+}
+
+@media (max-width: 640px) {
+    .row {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .action-button {
+        grid-column: 2;
+        justify-self: start;
+    }
+}
+
+.action-button-danger{
+    background-color: var(--weavops-color-danger);
+    color: var(--weavops-color-surface, #fff);
+}
+
+.action-button-accent{
+    background-color: var(--weavops-color-accent);
+    color: var(--weavops-color-surface, #fff);
+}

@@ -13,6 +13,7 @@ export * from './loginRequest';
 export * from './loom';
 export * from './loomItemAssignment';
 export * from './loomProcessHistory';
+export * from './notification';
 export * from './process';
 export * from './productionAdvice';
 export * from './referent';

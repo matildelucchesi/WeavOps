@@ -28,7 +28,6 @@ import { Loom } from '../../../api';
   imports: [
     TableComponent,
     TitlePageComponent,
-    DecorativeLinesComponent,
     LoaderComponent,
     WhitePanel,
 ],

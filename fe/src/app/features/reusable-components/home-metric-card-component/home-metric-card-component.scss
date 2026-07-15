@@ -1,0 +1,234 @@
+:host {
+    display: block;
+    min-width: 0;
+}
+
+.metric-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    gap: 14px;
+    width: 100%;
+    min-height: 104px;
+    padding: 16px;
+    border: 2px solid var(--metric-border-color);
+    border-bottom-width: 4px;
+    border-radius: 8px;
+    background-color: var(--metric-background-color);
+    color: var(--metric-text-color);
+    text-align: left;
+    font-family: 'Instrument Sans', sans-serif;
+}
+
+.metric-card:disabled {
+    cursor: default;
+}
+
+.metric-card-clickable {
+    cursor: pointer;
+}
+
+.metric-card-clickable:hover {
+    opacity: 0.86;
+}
+
+.metric-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.metric-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background-color: var(--metric-icon-background-color);
+    color: var(--metric-text-color);
+    flex: 0 0 auto;
+}
+
+.metric-icon mat-icon {
+    width: 17px;
+    height: 17px;
+    font-size: 17px;
+    line-height: 17px;
+}
+
+.metric-body {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: end;
+    gap: 12px;
+    min-width: 0;
+}
+
+.metric-body-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    background-color: var(--metric-icon-background-color);
+    color: var(--metric-text-color);
+}
+
+.metric-body-icon mat-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 28px;
+    line-height: 28px;
+}
+
+.metric-gauge {
+    position: relative;
+    display: block;
+    width: 74px;
+    height: 42px;
+    overflow: hidden;
+    align-self: end;
+}
+
+.gauge-arc {
+    position: absolute;
+    inset: 0;
+    border-radius: 74px 74px 0 0;
+    background: conic-gradient(
+        from 270deg at 50% 100%,
+        #2da85f 0deg,
+        var(--weavops-color-warning) 90deg,
+        var(--weavops-color-danger) 180deg,
+        transparent 180deg
+    );
+}
+
+.gauge-arc::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 0;
+    height: 30px;
+    border-radius: 54px 54px 0 0;
+    background-color: var(--metric-background-color);
+}
+
+.gauge-needle {
+    position: absolute;
+    left: 50%;
+    bottom: 2px;
+    width: 2px;
+    height: 33px;
+    border-radius: 999px;
+    background-color: var(--weavops-color-black);
+    transform-origin: 50% 100%;
+    z-index: 2;
+}
+
+.gauge-center {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background-color: var(--weavops-color-black);
+    transform: translateX(-50%);
+    z-index: 3;
+}
+
+.metric-content {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+    align-self: center;
+    grid-column: span 1;
+}
+
+.metric-body .metric-content:first-child {
+    grid-column: 1 / -1;
+}
+
+.metric-title {
+    color: var(--metric-title-color);
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.metric-value {
+    color: var(--metric-value-color);
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.metric-subtitle {
+    color: var(--metric-subtitle-color);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.metric-card-primary {
+    --metric-border-color: var(--weavops-color-primary);
+    --metric-background-color: color-mix(in srgb, var(--weavops-color-primary) 16%, var(--weavops-color-surface, #fff));
+    --metric-icon-background-color: var(--weavops-color-surface);
+    --metric-title-color: var(--weavops-color-primary);
+    --metric-text-color: var(--weavops-color-primary);
+    --metric-value-color: var(--weavops-color-primary);
+    --metric-subtitle-color: var(--weavops-color-black);
+}
+
+.metric-card-blue {
+    --metric-border-color: var(--weavops-color-blue);
+    --metric-background-color: color-mix(in srgb, var(--weavops-color-blue) 16%, var(--weavops-color-surface, #fff));
+    --metric-icon-background-color: var(--weavops-color-surface);
+    --metric-title-color: var(--weavops-color-blue);
+    --metric-text-color: var(--weavops-color-blue);
+    --metric-value-color: var(--weavops-color-blue);
+    --metric-subtitle-color: var(--weavops-color-black);
+}
+
+.metric-card-accent {
+    --metric-border-color: var(--weavops-color-accent);
+    --metric-background-color: var(--weavops-color-surface);
+    --metric-icon-background-color: var(--weavops-color-surface);
+    --metric-title-color: var(--weavops-color-accent);
+    --metric-text-color: var(--weavops-color-accent);
+    --metric-value-color: var(--weavops-color-accent);
+    --metric-subtitle-color: var(--weavops-color-accent-deep);
+}
+
+.metric-card-danger {
+    --metric-border-color: var(--weavops-color-danger);
+    --metric-background-color: var(--weavops-color-surface);
+    --metric-icon-background-color: var(--weavops-color-surface);
+    --metric-title-color: var(--weavops-color-danger);
+    --metric-text-color: var(--weavops-color-danger);
+    --metric-value-color: var(--weavops-color-danger);
+    --metric-subtitle-color: var(--weavops-color-black);
+}
+
+.metric-card-warning {
+    --metric-border-color: var(--weavops-color-warning);
+    --metric-background-color: color-mix(in srgb, var(--weavops-color-warning) 18%, var(--weavops-color-surface, #fff));
+    --metric-icon-background-color: var(--weavops-color-surface);
+    --metric-title-color: var(--weavops-color-warning);
+    --metric-text-color: var(--weavops-color-warning);
+    --metric-value-color: var(--weavops-color-warning);
+    --metric-subtitle-color: var(--weavops-color-black);
+}
+
+.metric-card-neutral {
+    --metric-border-color: var(--weavops-color-grey-dark);
+    --metric-background-color: var(--weavops-color-grey);
+    --metric-icon-background-color: var(--weavops-color-surface);
+    --metric-title-color: var(--weavops-color-grey-dark);
+    --metric-text-color: var(--weavops-color-grey-dark);
+    --metric-value-color: var(--weavops-color-grey-dark);
+    --metric-subtitle-color: var(--weavops-color-black);
+}

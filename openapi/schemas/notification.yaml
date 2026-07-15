@@ -1,0 +1,38 @@
+type: object
+
+required:
+  - id
+  - type
+  - severity
+  - title
+  - message
+
+properties:
+  id:
+    type: string
+    description: Identificativo stabile della notifica calcolata
+    readOnly: true
+  type:
+    type: string
+    enum:
+      - ITEM_DELIVERY_RISK
+  severity:
+    type: string
+    enum:
+      - INFO
+      - WARNING
+      - ERROR
+  title:
+    type: string
+  message:
+    type: string
+  itemId:
+    type: string
+  arrangementId:
+    type: string
+  expectedEndDate:
+    type: string
+    format: date-time
+  deliveryDate:
+    type: string
+    format: date-time

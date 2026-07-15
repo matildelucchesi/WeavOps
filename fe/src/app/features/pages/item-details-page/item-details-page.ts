@@ -515,7 +515,6 @@ export class ItemDetailsPage implements OnInit {
     if (navigationItem) {
       this.loadItemAssignments(navigationItem.id);
       this.loadRemainingMetersToAssign(navigationItem.id);
-      this.loadProductionAdvice(navigationItem.id);
       this.setArrangement(navigationArrangement);
       this.loadArrangement(navigationItem.arrangementId);
     }
@@ -528,7 +527,6 @@ export class ItemDetailsPage implements OnInit {
       this.item.set(item);
       this.loadItemAssignments(item.id);
       this.loadRemainingMetersToAssign(item.id);
-      this.loadProductionAdvice(item.id);
       this.loadArrangement(item.arrangementId);
     });
   }
@@ -572,12 +570,41 @@ export class ItemDetailsPage implements OnInit {
     this.assignmentService.getByItemId(itemId).subscribe({
       next: (assignments) => {
         this.itemAssignments.set(assignments);
+        if (this.hasForecastableAssignments(assignments)) {
+          this.loadProductionAdvice(itemId);
+          return;
+        }
+
+        this.productionAdvice.set(null);
       },
       error: (error) => {
         console.error('Error loading item assignments:', error);
         this.itemAssignments.set([]);
+        this.productionAdvice.set(null);
       },
     });
+  }
+
+  private hasForecastableAssignments(assignments: LoomItemAssignment[]): boolean {
+    return assignments.some((assignment) =>
+      Boolean(assignment.processId)
+      && this.isForecastableProcess(assignment.processId)
+      && (
+        assignment.status === LoomItemAssignment.StatusEnum.Running
+        || assignment.status === LoomItemAssignment.StatusEnum.Queued
+      )
+    );
+  }
+
+  private isForecastableProcess(processId: string | undefined): boolean {
+    if (!processId) {
+      return false;
+    }
+
+    const process = this.item()?.processing?.find((currentProcess) => currentProcess.id === processId);
+    return Boolean(process)
+      && Number(process?.speed) > 0
+      && Number(process?.efficiency) > 0;
   }
 
   public getNavigationItem(): Item | null {
@@ -1118,7 +1145,11 @@ export class ItemDetailsPage implements OnInit {
           next: (assignment) => {
             this.itemAssignments.set([...this.itemAssignments(), assignment]);
             this.loadRemainingMetersToAssign(item.id);
-            this.loadProductionAdvice(item.id);
+            if (this.hasForecastableAssignments(this.itemAssignments())) {
+              this.loadProductionAdvice(item.id);
+            } else {
+              this.productionAdvice.set(null);
+            }
             this.snackBar.open('Assegnazione avvenuta con successo', 'Chiudi', {
               duration: 4000,
               horizontalPosition: 'end',
