@@ -7,9 +7,11 @@
 @use '../src_theme-colors' as theme-colors;
 
 $weavops-color-primary: #3f177b;
+$weavops-color-primary-deep: #160333;
 $weavops-color-primary-hover: #7b5aac;
 $weavops-color-primary-soft: #e9e0ff;
 $weavops-color-blue: #1e40af;
+$weavops-color-blue-deep: rgb(8, 21, 64);
 $weavops-color-blue-soft: #dbeafe;
 $weavops-color-surface: #ffffff;
 $weavops-color-surface-muted: #f8f1ff;
@@ -27,7 +29,7 @@ $weavops-color-success-bright: #16a34a;
 $weavops-color-success-soft: #d1fae5;
 $weavops-color-danger: #d90000;
 $weavops-color-danger-bright: #dd0000;
-$weavops-color-danger-deep: #c22626;
+$weavops-color-danger-deep: #640808;
 $weavops-color-danger-soft: #ffe1e1;
 $weavops-color-black: #000000;
 $weavops-color-grey: #e4dfdf;
@@ -46,6 +48,7 @@ $calendar-color-event-low: #394b3f;
 html {
   height: 100%;
   --weavops-color-primary: #{$weavops-color-primary};
+  --weavops-color-primary-deep: #{$weavops-color-primary-deep};
   --weavops-color-primary-hover: #{$weavops-color-primary-hover};
   --weavops-color-primary-soft: #{$weavops-color-primary-soft};
   --weavops-color-surface: #{$weavops-color-surface};
@@ -71,6 +74,7 @@ html {
   --weavops-color-grey-intermediate: #{$weavops-color-grey-intermediate};
   --weavops-color-grey-dark: #{$weavops-color-grey-dark};
   --weavops-color-blue: #{$weavops-color-blue};
+  --weavops-color-blue-deep: #{$weavops-color-blue-deep};
   --weavops-color-blue-soft: #{$weavops-color-blue-soft};
   --calendar-color-generic: #{$calendar-color-generic};
   --calendar-color-text: #{$calendar-color-text};

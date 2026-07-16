@@ -1,6 +1,7 @@
 package org.openapitools.repository;
 
 import org.openapitools.domain.ItemEntity;
+import org.openapitools.model.Item;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,5 +16,7 @@ public interface ItemRepository extends MongoRepository<ItemEntity, String> {
 
     @Query("{ 'isArchived': false }")
     List<ItemEntity> findAllNotArchived();
+
+    int countByState(Item.StateEnum state);
 
 }

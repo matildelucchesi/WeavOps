@@ -14,6 +14,7 @@ import { LoomItemAssignmentFacadeService } from '../../../services/loom-item-ass
 import { ProcessFacadeService } from '../../../services/process-facade.service';
 import { ItemNotArchivedTableService } from '../../../table/table-service/item-not-archived-table.service';
 import { ItemTableRow } from '../../../table/table-row-interface/item-table-row';
+import { ItemFacadeService } from '../../../services/item-facade.service';
 import { HomeMetricCardComponent } from '../../reusable-components/home-metric-card-component/home-metric-card-component';
 
 @Component({
@@ -35,6 +36,7 @@ export class HomePage implements OnInit {
   private readonly processService = inject(ProcessFacadeService);
   private readonly notificationsService = inject(NotificationsService);
   private readonly calendarEventsService = inject(CalendarEventsService);
+  private readonly itemService = inject(ItemFacadeService);
   private readonly itemNotArchivedTableService = inject(ItemNotArchivedTableService);
 
   public readonly loomList = signal<Loom[]>([]);
@@ -43,6 +45,7 @@ export class HomePage implements OnInit {
   public readonly deliveryRiskNotifications = signal<Notification[]>([]);
   public readonly currentWeekPendingDeliveryCount = signal<number | null>(null);
   public readonly overdueDeliveryCount = signal<number | null>(null);
+  public readonly runningItemsCount = signal<number | null>(null);
   public readonly deliveryRiskTableVisible = signal<boolean>(false);
 
   ngOnInit(): void {
@@ -50,6 +53,7 @@ export class HomePage implements OnInit {
     this.loadDeliveryRiskNotifications();
     this.loadCurrentWeekPendingDeliveryCount();
     this.loadOverdueDeliveryCount();
+    this.loadRunningItemsCount();
   }
 
   public loadLoomList(): void {
@@ -185,6 +189,10 @@ export class HomePage implements OnInit {
       : 'Scadenze superate non consegnate';
   }
 
+  public getRunningItemsSubtitle(): string {
+    return 'Articoli in produzione';
+  }
+
   public openCalendar(): void {
     this.router.navigate(['/calendario']);
   }
@@ -209,6 +217,18 @@ export class HomePage implements OnInit {
       error: (error) => {
         console.error('Error loading overdue delivery count:', error);
         this.overdueDeliveryCount.set(null);
+      },
+    });
+  }
+
+  private loadRunningItemsCount(): void {
+    this.itemService.getRunningItemsCount().subscribe({
+      next: (count) => {
+        this.runningItemsCount.set(count ?? 0);
+      },
+      error: (error) => {
+        console.error('Error loading running items count:', error);
+        this.runningItemsCount.set(null);
       },
     });
   }
@@ -387,6 +407,7 @@ export class HomePage implements OnInit {
         this.loadDeliveryRiskNotifications();
         this.loadCurrentWeekPendingDeliveryCount();
         this.loadOverdueDeliveryCount();
+        this.loadRunningItemsCount();
       }
     });
   }

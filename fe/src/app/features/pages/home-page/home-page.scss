@@ -160,7 +160,7 @@ p{
     border: 0;
     border-radius: 8px;
     padding: 8px 10px;
-    background-color: var(--weavops-color-danger);
+    background-color: var(--weavops-color-primary);
     color: var(--weavops-color-surface);
     font-family: 'Instrument Sans', sans-serif;
     font-size: 13px;
@@ -184,7 +184,23 @@ p{
     overflow: hidden;
     border: 1px solid rgb(180 30 30 / 0.24);
     border-radius: 8px;
+    justify-self: center;
+    width: 90%;
     background-color: var(--weavops-color-surface);
+    animation: delivery-risk-table-enter 180ms ease-out;
+    transform-origin: top;
+}
+
+@keyframes delivery-risk-table-enter{
+    from{
+        opacity: 0;
+        transform: translateY(-6px) scaleY(0.98);
+    }
+
+    to{
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+    }
 }
 
 .delivery-risk-row{
@@ -204,7 +220,7 @@ p{
 }
 
 .delivery-risk-table-head{
-    background-color: var(--weavops-color-danger-deep);
+    background-color: var(--weavops-color-danger);
     color: var(--weavops-color-surface);
     font-size: 12px;
     font-weight: 900;
@@ -213,10 +229,19 @@ p{
 
 .home-metrics{
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(280px, 1.55fr) repeat(3, minmax(150px, 0.75fr));
     gap: 16px;
     width: 90%;
     justify-self: center;
+}
+
+.metric-card-large,
+.metric-card-small{
+    min-width: 0;
+}
+
+.metric-card-small{
+    width: 100%;
 }
 
 .button-style{
@@ -285,6 +310,6 @@ p{
 
 @media (max-width: 900px){
     .home-metrics{
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }

@@ -35,6 +35,20 @@
       '400':
         description: Richiesta non valida
 
+/items/running-count:
+  get:
+    summary: Conta gli item in lavorazione
+    operationId: getRunningItemsCount
+    tags:
+      - Item
+    responses:
+      '200':
+        description: Numero di item in stato RUNNING
+        content:
+          application/json:
+            schema:
+              type: integer
+
 /items/delete-multi:
   post:
     tags:

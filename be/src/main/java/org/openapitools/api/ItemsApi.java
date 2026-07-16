@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-15T15:46:57.800382600+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-16T09:40:37.966612300+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Item", description = "the Item API")
 public interface ItemsApi {
@@ -454,6 +454,38 @@ public interface ItemsApi {
     )
     default ResponseEntity<Integer> getRemainingMetersToAssign(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
+    ) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    String PATH_GET_RUNNING_ITEMS_COUNT = "/items/running-count";
+    /**
+     * GET /items/running-count : Conta gli item in lavorazione
+     *
+     * @return Numero di item in stato RUNNING (status code 200)
+     */
+    @Operation(
+        operationId = "getRunningItemsCount",
+        summary = "Conta gli item in lavorazione",
+        tags = { "Item" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Numero di item in stato RUNNING", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = ItemsApi.PATH_GET_RUNNING_ITEMS_COUNT,
+        produces = { "application/json" }
+    )
+    default ResponseEntity<Integer> getRunningItemsCount(
+        
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 

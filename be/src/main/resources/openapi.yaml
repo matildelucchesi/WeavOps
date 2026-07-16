@@ -257,6 +257,23 @@ paths:
       - application/json
       x-tags:
       - tag: Item
+  /items/running-count:
+    get:
+      operationId: getRunningItemsCount
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: integer
+          description: Numero di item in stato RUNNING
+      summary: Conta gli item in lavorazione
+      tags:
+      - Item
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Item
   /items/{id}:
     delete:
       operationId: deleteItem

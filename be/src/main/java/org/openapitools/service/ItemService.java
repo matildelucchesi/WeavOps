@@ -54,6 +54,10 @@ public class ItemService {
         return repository.findById(id);
     }
 
+    public int countRunningItems() {
+        return repository.countByState(Item.StateEnum.RUNNING);
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public Optional<ItemEntity> update(String id, ItemEntity entity){
         if (!repository.existsById(id)) {

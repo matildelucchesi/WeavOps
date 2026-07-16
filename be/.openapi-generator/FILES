@@ -12,7 +12,6 @@ src/main/java/org/openapitools/api/LoomItemAssignmentsApi.java
 src/main/java/org/openapitools/api/LoomProcessHistoriesApi.java
 src/main/java/org/openapitools/api/LoomsApi.java
 src/main/java/org/openapitools/api/NotificationsApi.java
-src/main/java/org/openapitools/api/NotificationsApiController.java
 src/main/java/org/openapitools/api/ProcessesApi.java
 src/main/java/org/openapitools/api/ReferentsApi.java
 src/main/java/org/openapitools/api/UsersApi.java

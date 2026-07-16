@@ -32,6 +32,11 @@ public class ItemController implements ItemsApi {
     }
 
     @Override
+    public ResponseEntity<Integer> getRunningItemsCount() {
+        return ResponseEntity.ok(service.countRunningItems());
+    }
+
+    @Override
     public ResponseEntity<Item> getItemById(@PathVariable("id") String id) {
         return service.findById(id)
                 .map(mapper::toDto)

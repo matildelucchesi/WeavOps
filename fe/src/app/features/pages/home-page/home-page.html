@@ -14,8 +14,8 @@
         </div>
         <div class="delivery-risk-actions">
           <button type="button" class="delivery-risk-action" (click)="openItems()">
-            <span>Vai a Articoli</span>
             <mat-icon>list_alt</mat-icon>
+            <span>Vai ad Articoli</span>
           </button>
           <button
             type="button"
@@ -50,14 +50,26 @@
       [value]="getLoomUtilizationRate()"
       [gaugeValue]="getLoomUtilizationValue()"
       [subtitle]="getLoomUtilizationSubtitle()"
+      class="metric-card-large"
       iconName="precision_manufacturing"
       variant="blue">
+    </app-home-metric-card-component>
+
+    <app-home-metric-card-component
+      title="Articoli in produzione"
+      [value]="runningItemsCount() ?? 0"
+      [subtitle]="getRunningItemsSubtitle()"
+      class="metric-card-small"
+      iconName="play_circle"
+      variant="primary"
+      [showBodyIcon]="false">
     </app-home-metric-card-component>
 
     <app-home-metric-card-component
       title="Consegne settimana"
       [value]="currentWeekPendingDeliveryCount() ?? 0"
       [subtitle]="getCurrentWeekPendingDeliverySubtitle()"
+      class="metric-card-small"
       iconName="local_shipping"
       variant="accent"
       [showBodyIcon]="false">
@@ -67,10 +79,13 @@
       title="Consegne in ritardo"
       [value]="overdueDeliveryCount() ?? 0"
       [subtitle]="getOverdueDeliverySubtitle()"
+      class="metric-card-small"
       iconName="assignment_late"
       variant="danger"
       [showBodyIcon]="false">
     </app-home-metric-card-component>
+
+    
   </section>
 
   <div class="looms">

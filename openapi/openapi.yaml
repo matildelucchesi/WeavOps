@@ -23,6 +23,8 @@ paths:
     $ref: './paths/item.yaml#/~1items'
   /items/delete-multi:
     $ref: './paths/item.yaml#/~1items~1delete-multi'
+  /items/running-count:
+    $ref: './paths/item.yaml#/~1items~1running-count'
   /items/{id}:
     $ref: './paths/item.yaml#/~1items~1{id}'
   /items/{id}/remaining-meters-to-assign:

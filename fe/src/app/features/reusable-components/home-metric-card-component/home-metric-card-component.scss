@@ -10,6 +10,8 @@
     gap: 14px;
     width: 100%;
     min-height: 104px;
+    height: 150px;
+    max-height: 150px;
     padding: 16px;
     border: 2px solid var(--metric-border-color);
     border-bottom-width: 4px;
@@ -42,8 +44,8 @@
 .metric-icon {
     display: inline-grid;
     place-items: center;
-    width: 26px;
-    height: 26px;
+    width: 30px;
+    height: 30px;
     border-radius: 8px;
     background-color: var(--metric-icon-background-color);
     color: var(--metric-text-color);
@@ -51,10 +53,10 @@
 }
 
 .metric-icon mat-icon {
-    width: 17px;
-    height: 17px;
-    font-size: 17px;
-    line-height: 17px;
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+    line-height: 24px;
 }
 
 .metric-body {
@@ -85,8 +87,8 @@
 .metric-gauge {
     position: relative;
     display: block;
-    width: 74px;
-    height: 42px;
+    width: 112px;
+    height: 64px;
     overflow: hidden;
     align-self: end;
 }
@@ -94,7 +96,7 @@
 .gauge-arc {
     position: absolute;
     inset: 0;
-    border-radius: 74px 74px 0 0;
+    border-radius: 112px 112px 0 0;
     background: conic-gradient(
         from 270deg at 50% 100%,
         #2da85f 0deg,
@@ -107,20 +109,20 @@
 .gauge-arc::after {
     content: '';
     position: absolute;
-    left: 10px;
-    right: 10px;
+    left: 15px;
+    right: 15px;
     bottom: 0;
-    height: 30px;
-    border-radius: 54px 54px 0 0;
+    height: 46px;
+    border-radius: 82px 82px 0 0;
     background-color: var(--metric-background-color);
 }
 
 .gauge-needle {
     position: absolute;
     left: 50%;
-    bottom: 2px;
-    width: 2px;
-    height: 33px;
+    bottom: 3px;
+    width: 3px;
+    height: 51px;
     border-radius: 999px;
     background-color: var(--weavops-color-black);
     transform-origin: 50% 100%;
@@ -131,8 +133,8 @@
     position: absolute;
     left: 50%;
     bottom: 0;
-    width: 8px;
-    height: 8px;
+    width: 12px;
+    height: 12px;
     border-radius: 999px;
     background-color: var(--weavops-color-black);
     transform: translateX(-50%);
@@ -140,11 +142,17 @@
 }
 
 .metric-content {
-    display: grid;
-    gap: 3px;
+    display: flex;
+    gap: 10px;
     min-width: 0;
     align-self: center;
     grid-column: span 1;
+}
+
+.metric-card-gauge .metric-content {
+    display: grid;
+    gap: 7px;
+    align-self: end;
 }
 
 .metric-body .metric-content:first-child {
@@ -161,7 +169,7 @@
 
 .metric-value {
     color: var(--metric-value-color);
-    font-size: 30px;
+    font-size: 35px;
     font-weight: 800;
     line-height: 1;
 }
@@ -175,12 +183,12 @@
 
 .metric-card-primary {
     --metric-border-color: var(--weavops-color-primary);
-    --metric-background-color: color-mix(in srgb, var(--weavops-color-primary) 16%, var(--weavops-color-surface, #fff));
+    --metric-background-color: var(--weavops-color-surface);
     --metric-icon-background-color: var(--weavops-color-surface);
     --metric-title-color: var(--weavops-color-primary);
     --metric-text-color: var(--weavops-color-primary);
     --metric-value-color: var(--weavops-color-primary);
-    --metric-subtitle-color: var(--weavops-color-black);
+    --metric-subtitle-color: var(--weavops-color-primary-deep);
 }
 
 .metric-card-blue {
@@ -190,7 +198,7 @@
     --metric-title-color: var(--weavops-color-blue);
     --metric-text-color: var(--weavops-color-blue);
     --metric-value-color: var(--weavops-color-blue);
-    --metric-subtitle-color: var(--weavops-color-black);
+    --metric-subtitle-color: var(--weavops-color-blue-deep);
 }
 
 .metric-card-accent {
@@ -210,7 +218,7 @@
     --metric-title-color: var(--weavops-color-danger);
     --metric-text-color: var(--weavops-color-danger);
     --metric-value-color: var(--weavops-color-danger);
-    --metric-subtitle-color: var(--weavops-color-black);
+    --metric-subtitle-color: var(--weavops-color-danger-deep);
 }
 
 .metric-card-warning {

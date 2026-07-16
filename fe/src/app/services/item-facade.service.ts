@@ -24,6 +24,10 @@ export class ItemFacadeService {
     );
   }
 
+  getRunningItemsCount() {
+    return this.itemApi.getRunningItemsCount();
+  }
+
   getProductionAdvice(id: string) {
     return this.itemApi.getProductionAdviceByItemId({ id });
   }

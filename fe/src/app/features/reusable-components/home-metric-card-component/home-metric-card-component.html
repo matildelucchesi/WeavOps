@@ -2,6 +2,7 @@
     type="button"
     class="metric-card metric-card-{{ variant }}"
     [class.metric-card-clickable]="clickable"
+    [class.metric-card-gauge]="hasGauge()"
     [disabled]="!clickable"
     (click)="onCardClick()">
     <span class="metric-header">
