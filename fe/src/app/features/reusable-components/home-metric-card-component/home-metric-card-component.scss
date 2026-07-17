@@ -58,8 +58,12 @@
     overflow: visible;
     border: 7px solid var(--weavops-color-surface);
     border-radius: 50%;
-    background-color: var(--weavops-color-surface);
-    box-shadow: 0 6px 12px rgb(var(--weavops-rgb-black) / 0.15);
+    background:
+        radial-gradient(circle at 50% 44%, rgb(var(--weavops-rgb-white) / 0.98) 0 58%, transparent 59%),
+        linear-gradient(145deg, rgb(var(--weavops-rgb-white) / 0.9), rgb(var(--weavops-rgb-primary) / 0.08));
+    box-shadow:
+        0 8px 18px rgb(var(--weavops-rgb-primary-shadow) / 0.26),
+        inset 0 0 0 1px rgb(var(--weavops-rgb-primary) / 0.16);
 }
 
 :host(.metric-card-large) .gauge-arc {
@@ -67,14 +71,14 @@
     border-radius: 50%;
     background: conic-gradient(
         from 225deg,
-        #94bb14 0deg,
-        #9dbd16 58deg,
-        #c4bf12 105deg,
-        var(--weavops-color-warning) 154deg,
-        #f58a06 210deg,
+        #2da85f 0deg,
+        #8fba19 72deg,
+        var(--weavops-color-warning) 142deg,
+        var(--weavops-color-accent) 208deg,
         var(--weavops-color-danger) 270deg,
         transparent 270deg
     );
+    box-shadow: inset 0 0 0 1px rgb(var(--weavops-rgb-white) / 0.38);
 }
 
 :host(.metric-card-large) .gauge-arc::after {
@@ -88,8 +92,8 @@
     width: 4px;
     height: 60px;
     border-radius: 4px 4px 0 0;
-    background-color: var(--weavops-color-grey-dark);
-    box-shadow: 2px 2px 0 rgb(var(--weavops-rgb-black) / 0.2);
+    background: linear-gradient(to top, var(--weavops-color-primary-deep), var(--weavops-color-primary-hover));
+    box-shadow: 2px 2px 0 rgb(var(--weavops-rgb-primary-shadow) / 0.25);
 }
 
 :host(.metric-card-large) .gauge-center {
@@ -98,17 +102,19 @@
     width: 34px;
     height: 34px;
     transform: translate(-50%, 50%);
-    background-color: var(--weavops-color-grey-deep);
-    box-shadow: inset 0 0 0 8px rgb(var(--weavops-rgb-black) / 0.1);
+    background-color: var(--weavops-color-primary);
+    box-shadow:
+        inset 0 0 0 8px rgb(var(--weavops-rgb-white) / 0.2),
+        0 2px 5px rgb(var(--weavops-rgb-primary-shadow) / 0.32);
 }
 
 :host(.metric-card-large) .gauge-brand {
     position: absolute;
-    bottom: 0px;
+    bottom: 33px;
     left: 50%;
     z-index: 4;
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     object-fit: contain;
     transform: translateX(-50%);
 }
