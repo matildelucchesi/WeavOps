@@ -65,7 +65,8 @@ type CalendarViewMode = 'calendar' | 'generic-event' | 'closure-editor' | 'setti
 
 @Component({
   selector: 'app-calendar-page',
-  imports: [FormsModule, MatIconModule, MatSnackBarModule, MatTooltipModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, DecorativeLinesComponent, TitlePageComponent, ButtonGeneralActionComponent, LoaderComponent, WhitePanel],
+  imports: [FormsModule, MatIconModule, MatSnackBarModule, MatTooltipModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, //DecorativeLinesComponent
+    TitlePageComponent, ButtonGeneralActionComponent, LoaderComponent, WhitePanel],
   providers: [
     provideNativeDateAdapter(),
     { provide: MAT_DATE_LOCALE, useValue: 'it-IT' },

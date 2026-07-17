@@ -5,7 +5,8 @@
     <span
         class="queue-badge"
         [class.queue-badge-empty]="queueCount === 0"
-        aria-label="Elementi in coda">
+        [matTooltip]="queueCount + ' telai in coda'"
+        [attr.aria-label]="queueCount + ' telai in coda'">
         {{ queueCount }}
     </span>
     <div>

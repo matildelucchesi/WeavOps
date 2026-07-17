@@ -3,12 +3,14 @@ import { NgOptimizedImage } from '@angular/common';
 import { Loom } from '../../../api';
 import { AddButtonComponent } from "../button/add-button-component/add-button-component";
 import { ButtonGeneralActionComponent } from "../button/button-general-action-component/button-general-action-component";
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-loom-card-component',
   imports: [
     NgOptimizedImage,
-    ButtonGeneralActionComponent
+    ButtonGeneralActionComponent,
+    MatTooltip
     ],
   templateUrl: './loom-card-component.html',
   styleUrl: './loom-card-component.scss',

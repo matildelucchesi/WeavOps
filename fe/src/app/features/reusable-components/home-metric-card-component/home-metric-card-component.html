@@ -13,10 +13,11 @@
     </span>
     <span class="metric-body">
         @if (hasGauge()) {
-            <span class="metric-gauge" aria-hidden="true">
+                <span class="metric-gauge" aria-hidden="true">
                 <span class="gauge-arc"></span>
                 <span class="gauge-needle" [style.transform]="getGaugeNeedleTransform()"></span>
                 <span class="gauge-center"></span>
+                <img class="gauge-brand" src="/images/W-logo.png" alt="" />
             </span>
         } @else if (showBodyIcon) {
             <span class="metric-body-icon">

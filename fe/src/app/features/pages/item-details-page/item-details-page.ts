@@ -54,7 +54,7 @@ interface ArrangementPdfSection {
 @Component({
   selector: 'app-item-details-page',
   imports: [
-    DecorativeLinesComponent,
+    //DecorativeLinesComponent,
     TitlePageComponent,
     WhitePanel,
     ExitButtonComponent,
@@ -969,7 +969,7 @@ export class ItemDetailsPage implements OnInit {
   }
 
   private createLoomProductionDetailsUrl(loomId: string): string {
-    return new URL(`/dettaglio-produzione/${encodeURIComponent(loomId)}`, window.location.origin).toString();
+    return `http://192.168.50.16:4200/telaio/${encodeURIComponent(loomId)}/mobile`;
   }
 
   private chunkArray<T>(items: T[], chunkSize: number): T[][] {
@@ -1020,13 +1020,19 @@ export class ItemDetailsPage implements OnInit {
 
   public getPercentage(): number | null {
     const item = this.item();
+    const totalPieces = this.arrangementData?.piecesCount;
 
-    if (!item || item.totalMeters === undefined || item.totalMeters === null || item.totalMeters <= 0) {
+    if (!item || totalPieces === undefined || totalPieces === null || totalPieces <= 0) {
       return null;
     }
 
-    const percentage = ((item.metersRun ?? 0) / item.totalMeters) * 100;
-    return Math.round(percentage * 100) / 100; // Round to two decimal places
+    const completedPieces = (item.processing ?? []).reduce(
+      (total, process) => total + Math.max(process.piecesRun ?? 0, 0),
+      0,
+    );
+    const percentage = Math.min((completedPieces / totalPieces) * 100, 100);
+
+    return Math.round(percentage * 100) / 100;
   }
 
   public openAssignLoomDialog(): void {

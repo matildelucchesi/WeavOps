@@ -44,7 +44,12 @@ interface LoomProcessHistoryRow {
 
 @Component({
   selector: 'app-loom-history-page',
-  imports: [DecorativeLinesComponent, TitlePageComponent, TableComponent, ExitButtonComponent],
+  imports: [
+    //DecorativeLinesComponent,
+    TitlePageComponent,
+    TableComponent,
+    ExitButtonComponent
+  ],
   standalone: true,
   templateUrl: './loom-history-page.html',
   styleUrl: './loom-history-page.scss',

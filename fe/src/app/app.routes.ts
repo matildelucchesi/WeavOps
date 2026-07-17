@@ -11,12 +11,18 @@ import { CustomerItemsHistoryPage } from './features/pages/customer-items-histor
 import { ItemAddNewPage } from './features/pages/item-add-new-page/item-add-new-page';
 import { CalendarPage } from './features/pages/calendar-page/calendar-page';
 import { LoomHistoryPage } from './features/pages/loom-history-page/loom-history-page';
+import { ProfilePage } from './features/pages/profile-page/profile-page';
+import { LoomMobilePage } from './features/pages/loom-mobile-page/loom-mobile-page';
 
 
 export const routes: Routes = [
   {
     path: 'login',
     component: LoginPage,
+  },
+  {
+    path: 'telaio/:id/mobile',
+    component: LoomMobilePage,
   },
   {
     path: '',
@@ -73,6 +79,10 @@ export const routes: Routes = [
       {
         path: 'calendario',
         component: CalendarPage,
+      },
+      {
+        path: 'profilo',
+        component: ProfilePage,
       },
       {
         path: '',

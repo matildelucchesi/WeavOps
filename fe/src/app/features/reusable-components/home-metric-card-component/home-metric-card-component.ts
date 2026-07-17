@@ -32,7 +32,7 @@ export class HomeMetricCardComponent {
 
   public getGaugeNeedleTransform(): string {
     const value = Math.min(Math.max(this.gaugeValue ?? 0, 0), 100);
-    const degrees = -90 + (value * 1.8);
+    const degrees = -120 + (value * 2.4);
 
     return `translateX(-50%) rotate(${degrees}deg)`;
   }

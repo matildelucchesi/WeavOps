@@ -2,6 +2,7 @@
     border: 2px solid var(--weavops-color-primary);
     border-radius: 10px;
     background-color: var(--weavops-color-primary-soft);
+    min-width: 152px;
 }
 
 .menu-row{
@@ -18,4 +19,15 @@
     justify-content: space-between;
     padding: 0.5rem 1rem;
     cursor: pointer;
+}
+
+.menu-button{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: transparent;
+    border: none;
+    color: var(--weavops-color-primary);
+    cursor: pointer;
+    min-width: 124px;
 }

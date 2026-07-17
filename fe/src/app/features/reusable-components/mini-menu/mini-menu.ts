@@ -19,4 +19,8 @@ export class MiniMenu {
     storage?.removeItem('access_token');
     this.router.navigate(['/login']);
   }
+
+  gotoProfilePage(): void {
+    this.router.navigate(['/profilo']);
+  }
 }

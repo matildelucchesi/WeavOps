@@ -1,0 +1,500 @@
+:host{
+    display: block;
+    min-height: 100dvh;
+    background-color: var(--weavops-color-primary-soft);
+}
+
+.header{
+    background-color: var(--weavops-color-primary);
+    height: 90px;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.content{
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100dvh - 90px);
+}
+
+.production-summary{
+    display: grid;
+    gap: 10px;
+    margin: 20px 20px 0;
+    padding: 14px;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    background-color: var(--weavops-color-surface);
+}
+
+.production-summary-row{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+}
+
+.production-summary-row span{
+    font-weight: 500;
+}
+
+.production-summary-row strong{
+    overflow-wrap: anywhere;
+    text-align: right;
+}
+
+.content-header{
+    padding: 20px;
+}
+
+.content-header h3{
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+    line-height: 1;
+}
+
+.content-header h3 mat-icon{
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 20px;
+}
+
+.dialog-title{
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--weavops-color-primary);
+    margin: 0;
+}
+
+.action{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.action-button{
+    cursor: pointer;
+    border-radius: 10px;
+    width: 90px;
+    height: 90px;
+    background-color: var(--weavops-color-surface);
+    border: var(--weavops-color-primary) 1px solid;
+}
+
+.action-button-icon{
+    width: 40px;
+    height: 40px;
+    font-size: 40px;
+    line-height: 40px;
+    color: var(--weavops-color-primary);
+}
+
+.action-button:hover:not(:disabled){
+    background-color: var(--weavops-color-primary-hover);
+    opacity: 0.8;
+}
+
+.action-button:hover:not(:disabled) img{
+    filter: brightness(0) invert(1);
+}
+
+.action-button:hover:not(:disabled) .action-button-icon{
+    color: var(--weavops-color-surface);
+}
+
+.action-button-label{
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--weavops-color-primary);
+    margin-top: 10px;
+    text-align: center;
+}
+
+.change-state-section{
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    justify-self: stretch;
+    width: 100%;
+    gap: 15px;
+}
+
+.options{
+    display: grid;
+    width: 100%;
+    gap: 10px;
+    justify-items: center;
+}
+
+.state-option{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+}
+
+.state-option-button{
+    cursor: pointer;
+    border-radius: 10px;
+    width: 100%;
+    height: 40px;
+    background-color: var(--weavops-color-surface);
+    border: var(--weavops-color-primary) 1.5px solid;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-weight: 800;
+    font-family: 'Instrument Sans', sans-serif;
+    color: var(--weavops-color-primary);
+}
+
+
+.state-option-button:hover:not(:focus):not(:active){
+    background-color: var(--weavops-color-primary-soft);
+}
+
+.state-option-button.current-state{
+    background-color: var(--weavops-color-primary-soft);
+    border-color: var(--weavops-color-accent);
+}
+
+.state-option-button:focus,
+.state-option-button:active,
+.state-option-button.selected{
+    background-color: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
+    outline: none;
+}
+
+.confirm-button{
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    width: 100px;
+    height: 30px;
+    background-color: var(--weavops-color-accent);
+    color: var(--weavops-color-surface);
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+    justify-self: end;
+}
+
+.confirm-button:hover{
+    background-color: var(--weavops-color-accent);
+    opacity: 0.8;
+}
+
+.section-buttons{
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+}
+
+.back-button{
+    cursor: pointer;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    width: 100px;
+    height: 30px;
+    background-color: var(--weavops-color-surface);
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+}
+
+.back-button:hover:not(:disabled){
+    background-color: var(--weavops-color-accent);
+    color: var(--weavops-color-surface);
+}
+
+.back-button:disabled,
+.confirm-button:disabled{
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.meters-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    padding: 15px;
+    gap: 20px;
+}
+
+.meters-form-group{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: min(100%, 320px);
+}
+
+.meters-form-group label{
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 550;
+}
+
+.meters-input-field{
+    width: 100%;
+    box-sizing: border-box;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    padding: 8px 16px;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.meters-input-field:focus{
+    outline: 1.5px solid var(--weavops-color-primary);
+    outline-offset: 2px;
+}
+
+.confirm-button-container{
+    width: min(100%, 320px);
+}
+
+.pending-action-section{
+    display: flex;
+    justify-content: flex-start;
+    width: 90%;
+    padding: 15px;
+}
+
+.confirm-button-container{
+    display: flex;
+    justify-content: space-between;
+    width: min(100%, 320px);
+}
+
+.text-pattern-inverse{
+    flex: 0 0 74px;
+    margin-top: auto;
+    height: 74px;
+    background-image: url("/images/tex-tile_04.png") !important;
+    background-repeat: repeat;
+    background-size: 90px 90px;
+    border-radius: 10px;
+    position: relative;
+    transform: rotate(180deg);
+    z-index: 0;
+}
+
+.end-production-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    padding: 15px;
+    gap: 20px;
+}
+
+.end-production-section p{
+    order: -1;
+    margin: 0;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+    text-align: center;
+}
+
+.end-production-actions{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.completed-button,
+.abandoned-button{
+    cursor: pointer;
+    border-radius: 10px;
+    min-width: 120px;
+    height: 38px;
+    padding: 0 14px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+}
+
+.completed-button{
+    border: 1.5px solid var(--weavops-color-success);
+    background-color: var(--weavops-color-success-soft);
+    color: var(--weavops-color-success);
+}
+
+.completed-button:hover:not(:disabled){
+    background-color: var(--weavops-color-success);
+    color: var(--weavops-color-surface);
+}
+
+.abandoned-button{
+    border: 1.5px solid var(--weavops-color-grey-dark);
+    background-color: var(--weavops-color-grey);
+    color: var(--weavops-color-grey-dark);
+}
+
+.abandoned-button:hover:not(:disabled){
+    background-color: var(--weavops-color-grey-dark);
+    color: var(--weavops-color-surface);
+}
+
+.completed-button:disabled,
+.abandoned-button:disabled{
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.queued-productions-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+    gap: 16px;
+}
+
+.queued-productions-section h4{
+    margin: 0;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 18px;
+}
+
+.queue-message{
+    margin: 0;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    text-align: center;
+}
+
+.queued-production-list{
+    display: grid;
+    width: 100%;
+    gap: 12px;
+}
+
+.queued-production-card{
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    background-color: var(--weavops-color-surface);
+}
+
+.queued-production-data{
+    display: grid;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 8px;
+}
+
+.queued-production-field{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+}
+
+.queued-production-field span{
+    font-weight: 500;
+}
+
+.queued-production-field strong{
+    overflow-wrap: anywhere;
+    text-align: right;
+}
+
+.queued-status{
+    color: var(--weavops-color-accent-deep);
+}
+
+.start-production-button{
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    border: 1.5px solid var(--weavops-color-accent);
+    border-radius: 10px;
+    background-color: var(--weavops-color-surface);
+    color: var(--weavops-color-accent);
+}
+
+.start-production-button:hover:not(:disabled){
+    background-color: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
+}
+
+.start-production-button:disabled{
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+@media (max-width: 480px){
+    .header{
+        height: 72px;
+    }
+
+    .header-image{
+        max-width: 160px;
+        height: auto;
+    }
+
+    .content{
+        min-height: calc(100dvh - 72px);
+    }
+
+    .production-summary{
+        margin: 16px 16px 0;
+    }
+
+    .content-header{
+        padding: 16px;
+    }
+
+    .content-header h3{
+        align-items: flex-start;
+        font-size: 18px;
+        line-height: 1.25;
+    }
+
+    .meters-section,
+    .pending-action-section,
+    .end-production-section{
+        width: 100%;
+        padding: 16px;
+        box-sizing: border-box;
+    }
+
+    .section-buttons{
+        width: 100%;
+    }
+}
+

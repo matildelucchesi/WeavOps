@@ -18,7 +18,8 @@ import { Referent } from '../../../api';
 
 @Component({
   selector: 'app-customer-details-page',
-  imports: [TitlePageComponent, ExitButtonComponent, MatIcon, ButtonGeneralActionComponent, FormsModule, MatFormFieldModule, LoaderComponent, DecorativeLinesComponent],
+  imports: [TitlePageComponent, ExitButtonComponent, MatIcon, ButtonGeneralActionComponent, FormsModule, MatFormFieldModule, LoaderComponent, //DecorativeLinesComponent
+  ],
   standalone: true,
   templateUrl: './customer-details-page.html',
   styleUrl: './customer-details-page.scss',

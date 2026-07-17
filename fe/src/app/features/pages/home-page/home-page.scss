@@ -10,12 +10,73 @@
 .title{
     display: flex;
     gap: 8px;
-    position: relative;
     z-index: 1;
-    width: 90%;
-    margin: 0 auto;
-    padding-top: 18px;
+    width: 100%;
     align-items: baseline;
+}
+
+.header-wrapper{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    justify-self: center;
+    box-sizing: border-box;
+}
+
+.profile-actions{
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 3;
+}
+
+.profile-image-button,
+.profile-menu-button{
+    display: inline-grid;
+    place-items: center;
+    border: 1.5px solid var(--weavops-color-primary);
+    background-color: var(--weavops-color-surface);
+    color: var(--weavops-color-primary);
+    cursor: pointer;
+}
+
+.profile-image-button{
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.profile-menu-button{
+    cursor: pointer;
+}
+
+.profile-image-button img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-menu-button{
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+}
+
+.profile-image-button:hover,
+.profile-menu-button:hover{
+    background-color: var(--weavops-color-primary-soft);
+}
+
+.profile-mini-menu{
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 4;
 }
 
 h1{
@@ -76,7 +137,7 @@ p{
     gap: 20px;
     flex-direction: column;
     align-items: center;
-    margin-top: 60px;
+    margin-top: 30px;
     position: relative;
     z-index: 1;
 }
@@ -99,6 +160,23 @@ p{
     color: var(--weavops-color-danger);
     padding: 14px;
     box-sizing: border-box;
+    overflow: hidden;
+    animation: delivery-risk-panel-enter 220ms ease-out;
+    transform-origin: top;
+}
+
+@keyframes delivery-risk-panel-enter{
+    from{
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-8px);
+    }
+
+    to{
+        opacity: 1;
+        max-height: 70vh;
+        transform: translateY(0);
+    }
 }
 
 .delivery-risk-header{
@@ -187,14 +265,14 @@ p{
     justify-self: center;
     width: 90%;
     background-color: var(--weavops-color-surface);
-    animation: delivery-risk-table-enter 180ms ease-out;
+    animation: delivery-risk-table-enter 120ms ease-out;
     transform-origin: top;
 }
 
 @keyframes delivery-risk-table-enter{
     from{
         opacity: 0;
-        transform: translateY(-6px) scaleY(0.98);
+        transform: translateY(-3px) scaleY(0.99);
     }
 
     to{
@@ -229,10 +307,12 @@ p{
 
 .home-metrics{
     display: grid;
-    grid-template-columns: minmax(280px, 1.55fr) repeat(3, minmax(150px, 0.75fr));
+    grid-template-areas: 'utilization summary';
+    grid-template-columns: minmax(280px, 1.55fr) minmax(0, 2.25fr);
     gap: 16px;
     width: 90%;
     justify-self: center;
+    align-items: stretch;
 }
 
 .metric-card-large,
@@ -242,6 +322,108 @@ p{
 
 .metric-card-small{
     width: 100%;
+}
+
+app-home-metric-card-component.metric-card-large{
+    grid-area: utilization;
+    height: 100%;
+}
+
+.second-part{
+    display: grid;
+    grid-area: summary;
+    gap: 16px;
+    min-width: 0;
+}
+
+.small-card-component{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.week-calendar{
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-bottom-width: 4px;
+    border-radius: 8px;
+    background-color: var(--weavops-color-surface-muted);
+}
+
+.week-calendar-month{
+    grid-column: 1 / -1;
+    margin: 0 0 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.week-calendar-day{
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    min-height: 76px;
+    padding: 7px 4px;
+    box-sizing: border-box;
+    border: 1px solid rgb(var(--weavops-rgb-primary) / 0.24);
+    border-radius: 6px;
+    background-color: var(--weavops-color-surface);
+    text-align: center;
+    font-family: 'Instrument Sans', sans-serif;
+}
+
+.week-calendar-day-today{
+    border-color: var(--weavops-color-primary);
+    box-shadow: inset 0 -2px 0 var(--weavops-color-primary);
+}
+
+.week-calendar-day-label{
+    color: var(--weavops-color-primary);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.week-calendar-day-number{
+    color: var(--weavops-color-black);
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.week-calendar-indicator{
+    display: inline-flex;
+    align-items: end;
+    justify-content: center;
+    gap: 2px;
+    min-height: 23px;
+    color: var(--weavops-color-black);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.week-calendar-indicator mat-icon{
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 20px;
+}
+
+.week-calendar-delivery{
+    color: var(--weavops-color-accent);
+}
+
+.week-calendar-alert{
+    color: var(--weavops-color-danger);
 }
 
 .button-style{
@@ -308,8 +490,15 @@ p{
     color: var(--weavops-color-black);
 }
 
-@media (max-width: 900px){
+@media (min-width: 960px) and (max-width: 1199px){
     .home-metrics{
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-areas:
+            'utilization'
+            'summary';
+        grid-template-columns: 1fr;
+    }
+
+    .second-part{
+        grid-column: auto;
     }
 }

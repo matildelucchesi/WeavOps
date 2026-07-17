@@ -21,7 +21,11 @@ import { ExitButtonComponent } from "../../reusable-components/button/exit-butto
 
 @Component({
   selector: 'app-customer-items-history-page',
-  imports: [DecorativeLinesComponent, TitlePageComponent, TableComponent, ExitButtonComponent],
+  imports: [//DecorativeLinesComponent,
+    TitlePageComponent,
+    TableComponent,
+    ExitButtonComponent
+  ],
   standalone: true,
   templateUrl: './customer-items-history-page.html',
   styleUrl: './customer-items-history-page.scss',

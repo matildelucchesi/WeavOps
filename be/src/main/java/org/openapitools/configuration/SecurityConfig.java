@@ -35,6 +35,20 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        // Operazioni disponibili dalla vista mobile aperta tramite QR code.
+                        .requestMatchers(HttpMethod.GET,
+                                "/looms/*",
+                                "/items/*",
+                                "/arrangements/*",
+                                "/processes/*",
+                                "/loom-item-assignments/loom/*",
+                                "/loom-item-assignments/loom/*/running"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.PUT,
+                                "/looms/*",
+                                "/looms/*/add-pieces",
+                                "/loom-item-assignments/*"
+                        ).permitAll()
                         .requestMatchers(
                                 "/",
                                 "/swagger-ui.html",

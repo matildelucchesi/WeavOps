@@ -20,7 +20,7 @@ import { WhitePanel } from "../../reusable-components/white-panel/white-panel";
 import { Arrangement, Item } from '../../../api';
 import { MatIcon } from "@angular/material/icon";
 import { ArrangementFacadeService } from '../../../services/arrangement-facade.service';
-import { forkJoin, map, switchMap } from 'rxjs';
+import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { CustomerItemHistoryFacadeService } from '../../../services/customer-item-history-facade.service';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -34,7 +34,7 @@ import {
   selector: 'app-item-page',
   imports: [
     TitlePageComponent,
-    DecorativeLinesComponent,
+    //DecorativeLinesComponent,
     TableComponent,
     WhitePanel,
     MatIcon
@@ -162,6 +162,7 @@ export class ItemPage implements OnInit {
   public readonly isRefreshingLooms = signal<boolean>(false);
   private readonly allRows = signal<ItemTableRow[]>([]);
   private readonly allArchivedRows = signal<ItemTableRow[]>([]);
+  private readonly deliveryForecastByItemId = signal<Record<string, boolean>>({});
 
   public readonly addButton: TableAddButtonConfig = {
       label: 'Aggiungi Nuovo',
@@ -249,11 +250,13 @@ export class ItemPage implements OnInit {
       next: (rows) => {
         this.allRows.set(rows);
         this.rows.set(rows);
+        this.loadDeliveryForecasts(rows);
       },
       error: (err) => {
         console.error('Error loading items:', err);
         this.allRows.set([]);
         this.rows.set([]);
+        this.deliveryForecastByItemId.set({});
       },
     });
   }
@@ -594,14 +597,17 @@ export class ItemPage implements OnInit {
     }
 
   private getCompletionPercentage(row: ItemTableRow): string {
-    const totalMeters = row.item.totalMeters;
-    const metersRun = row.item.metersRun;
+    const totalPieces = row.arrangement?.piecesCount;
 
-    if (!totalMeters || totalMeters <= 0 || metersRun === undefined || metersRun === null) {
+    if (totalPieces === undefined || totalPieces === null || totalPieces <= 0) {
       return '';
     }
 
-    const percentage = Math.min(Math.max((metersRun / totalMeters) * 100, 0), 100);
+    const completedPieces = (row.item.processing ?? []).reduce(
+      (total, process) => total + Math.max(process.piecesRun ?? 0, 0),
+      0,
+    );
+    const percentage = Math.min(Math.max((completedPieces / totalPieces) * 100, 0), 100);
 
     return `${Math.round(percentage)}%`;
   }
@@ -632,12 +638,48 @@ export class ItemPage implements OnInit {
   }
 
   private isExpectedEndDateAfterDeliveryDate(row: ItemTableRow): boolean {
+    const itemId = row.item.id ?? row.id;
+
+    if (itemId && Object.hasOwn(this.deliveryForecastByItemId(), itemId)) {
+      return !this.deliveryForecastByItemId()[itemId];
+    }
+
     const expectedEndDate = this.toDateOnlyTimestamp(row.item.expectedEndDate);
     const deliveryDate = this.toDateOnlyTimestamp(row.arrangement?.deliveryDate);
 
     return expectedEndDate !== null
       && deliveryDate !== null
       && expectedEndDate > deliveryDate;
+  }
+
+  private loadDeliveryForecasts(rows: ItemTableRow[]): void {
+    const forecastableRows = rows.filter((row): row is ItemTableRow & { item: Item & { id: string } } =>
+      Boolean(row.item.id ?? row.id),
+    );
+
+    if (forecastableRows.length === 0) {
+      this.deliveryForecastByItemId.set({});
+      return;
+    }
+
+    forkJoin(forecastableRows.map((row) => {
+      const itemId = row.item.id ?? row.id!;
+
+      return this.itemService.getProductionAdvice(itemId).pipe(
+        map((advice) => [itemId, advice.meetsDeliveryDate] as const),
+        catchError(() => of([itemId, null] as const)),
+      );
+    })).subscribe((forecasts) => {
+      const deliveryForecastByItemId: Record<string, boolean> = {};
+
+      for (const [itemId, meetsDeliveryDate] of forecasts) {
+        if (meetsDeliveryDate !== null) {
+          deliveryForecastByItemId[itemId] = meetsDeliveryDate;
+        }
+      }
+
+      this.deliveryForecastByItemId.set(deliveryForecastByItemId);
+    });
   }
 
   private toDateOnlyTimestamp(value: string | undefined): number | null {

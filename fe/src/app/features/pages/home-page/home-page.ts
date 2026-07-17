@@ -1,10 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit, signal } from '@angular/core';
 import { MatIcon } from "@angular/material/icon";
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
-import { CalendarEventsService, Loom, LoomItemAssignment, Notification, NotificationsService } from '../../../api';
+import { CalendarEvent, CalendarEventsService, Loom, LoomItemAssignment, Notification, NotificationsService } from '../../../api';
 import { LoomCardComponent } from "../../reusable-components/loom-card-component/loom-card-component";
 import { DialogLoomActionComponent } from '../../reusable-components/dialog/dialog-loom-action-component/dialog-loom-action-component';
 import { DialogAddNewLoomComponent } from '../../reusable-components/dialog/dialog-add-new-loom-component/dialog-add-new-loom-component';
@@ -16,6 +16,16 @@ import { ItemNotArchivedTableService } from '../../../table/table-service/item-n
 import { ItemTableRow } from '../../../table/table-row-interface/item-table-row';
 import { ItemFacadeService } from '../../../services/item-facade.service';
 import { HomeMetricCardComponent } from '../../reusable-components/home-metric-card-component/home-metric-card-component';
+import { MiniMenu } from '../../reusable-components/mini-menu/mini-menu';
+
+interface WeekCalendarDay {
+  label: string;
+  dayOfMonth: number;
+  dateKey: string;
+  deliveryCount: number;
+  overdueDeliveryCount: number;
+  isToday: boolean;
+}
 
 @Component({
   imports: [
@@ -23,6 +33,7 @@ import { HomeMetricCardComponent } from '../../reusable-components/home-metric-c
     MatIcon,
     LoomCardComponent,
     HomeMetricCardComponent,
+    MiniMenu,
 ],
   standalone: true,
   templateUrl: './home-page.html',
@@ -30,6 +41,7 @@ import { HomeMetricCardComponent } from '../../reusable-components/home-metric-c
 })
 export class HomePage implements OnInit {
   private readonly dialog = inject(MatDialog);
+  private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly router = inject(Router);
   private readonly loomService = inject(LoomFacadeService);
   private readonly assignmentService = inject(LoomItemAssignmentFacadeService);
@@ -47,13 +59,34 @@ export class HomePage implements OnInit {
   public readonly overdueDeliveryCount = signal<number | null>(null);
   public readonly runningItemsCount = signal<number | null>(null);
   public readonly deliveryRiskTableVisible = signal<boolean>(false);
+  public readonly profileImageUrl = signal<string | null>(null);
+  public readonly weekCalendarDays = signal<WeekCalendarDay[]>(this.createCurrentWeekCalendarDays());
+  public isProfileMenuOpen = false;
 
   ngOnInit(): void {
+    this.loadProfileImage();
     this.loadLoomList();
     this.loadDeliveryRiskNotifications();
     this.loadCurrentWeekPendingDeliveryCount();
     this.loadOverdueDeliveryCount();
     this.loadRunningItemsCount();
+    this.loadCurrentWeekCalendar();
+  }
+
+  public toggleProfileMenu(): void {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  public closeProfileMenuOnOutsideClick(event: MouseEvent): void {
+    if (!this.isProfileMenuOpen || !(event.target instanceof Node)) {
+      return;
+    }
+
+    const profileActions = this.elementRef.nativeElement.querySelector('.profile-actions');
+    if (!profileActions?.contains(event.target)) {
+      this.isProfileMenuOpen = false;
+    }
   }
 
   public loadLoomList(): void {
@@ -70,6 +103,14 @@ export class HomePage implements OnInit {
         this.loomQueueCountById.set({});
       },
     });
+  }
+
+  private loadProfileImage(): void {
+    try {
+      this.profileImageUrl.set(globalThis.localStorage?.getItem('weavops-profile-image') ?? null);
+    } catch (error) {
+      console.error('Unable to load profile image:', error);
+    }
   }
 
   public getLoomDays(loom: Loom): string {
@@ -193,6 +234,22 @@ export class HomePage implements OnInit {
     return 'Articoli in produzione';
   }
 
+  public getWeekCalendarDayTooltip(day: WeekCalendarDay): string {
+    if (day.overdueDeliveryCount > 0) {
+      return `${day.overdueDeliveryCount} consegne scadute`;
+    }
+
+    if (day.deliveryCount > 0) {
+      return `${day.deliveryCount} consegne previste`;
+    }
+
+    return 'Nessuna consegna prevista';
+  }
+
+  public getCurrentMonthName(): string {
+    return new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric' }).format(new Date());
+  }
+
   public openCalendar(): void {
     this.router.navigate(['/calendario']);
   }
@@ -231,6 +288,83 @@ export class HomePage implements OnInit {
         this.runningItemsCount.set(null);
       },
     });
+  }
+
+  private loadCurrentWeekCalendar(): void {
+    this.calendarEventsService.getCalendarEvents().subscribe({
+      next: (events) => {
+        const weekDays = this.createCurrentWeekCalendarDays();
+        const daysByDate = new Map(weekDays.map((day) => [day.dateKey, day]));
+        const today = this.toDateOnlyTimestamp(this.toLocalDateKey(new Date()));
+
+        events
+          .filter((event) => event.type === CalendarEvent.TypeEnum.Delivery)
+          .forEach((event) => {
+            const dateKey = this.toEventLocalDateKey(event.date);
+            const day = dateKey ? daysByDate.get(dateKey) : undefined;
+            const deliveryDate = this.toDateOnlyTimestamp(dateKey);
+
+            if (!day || deliveryDate === null) {
+              return;
+            }
+
+            if (today !== null && deliveryDate < today) {
+              day.overdueDeliveryCount += 1;
+              return;
+            }
+
+            day.deliveryCount += 1;
+          });
+
+        this.weekCalendarDays.set(weekDays);
+      },
+      error: (error) => {
+        console.error('Error loading current week calendar:', error);
+        this.weekCalendarDays.set(this.createCurrentWeekCalendarDays());
+      },
+    });
+  }
+
+  private createCurrentWeekCalendarDays(): WeekCalendarDay[] {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+    const labels = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+
+    return labels.map((label, index) => {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + index);
+
+      return {
+        label,
+        dayOfMonth: date.getDate(),
+        dateKey: this.toLocalDateKey(date),
+        deliveryCount: 0,
+        overdueDeliveryCount: 0,
+        isToday: date.getTime() === today.getTime(),
+      };
+    });
+  }
+
+  private toLocalDateKey(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private toEventLocalDateKey(value: string | undefined): string | null {
+    if (!value) {
+      return null;
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+
+    return this.toLocalDateKey(date);
   }
 
   private loadQueuedLoomAssignments(): void {
@@ -299,7 +433,7 @@ export class HomePage implements OnInit {
       && expectedEndDate > deliveryDate;
   }
 
-  private toDateOnlyTimestamp(value: string | undefined): number | null {
+  private toDateOnlyTimestamp(value: string | null | undefined): number | null {
     if (!value || value === '-') {
       return null;
     }
@@ -408,6 +542,7 @@ export class HomePage implements OnInit {
         this.loadCurrentWeekPendingDeliveryCount();
         this.loadOverdueDeliveryCount();
         this.loadRunningItemsCount();
+        this.loadCurrentWeekCalendar();
       }
     });
   }
@@ -419,5 +554,9 @@ export class HomePage implements OnInit {
     dialogRef.afterClosed().subscribe(() => {
       this.loadLoomList();
     });
+  }
+
+  gotoProfilePage(): void {
+    this.router.navigate(['/profilo']);
   }
 }

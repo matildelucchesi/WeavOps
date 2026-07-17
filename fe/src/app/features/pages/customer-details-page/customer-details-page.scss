@@ -16,11 +16,20 @@
   justify-content: flex-end;
 }
 
+.text-pattern{
+    height: 74px;
+    background-image: url("/images/tex-tile_04.png") !important;
+    background-repeat: repeat;
+    background-size: 90px 90px;
+    border-radius: 10px;
+}
+
 .body{
     width: 90%;
     justify-self: center;
     gap: 20px;
     display: grid;
+    margin: 0 auto;
 }
 
 .data{
@@ -28,7 +37,6 @@
     width: 100%;
     border: 1.5px solid var(--weavops-color-primary);
     border-radius: 10px;
-    padding: 16px;
     box-sizing: border-box;
     background: var(--weavops-color-surface-muted);
 }

@@ -16,12 +16,18 @@
         }
         @if(button){
             <div class="actions">
-                <button class="cancel-button" type="button" (click)="onCloseDialog()">
-                    Annulla
-                </button>
-                <button class="confirm-button" type="button" (click)="onConfirm()">
-                    Procedi
-                </button>
+                @if (closeOnly) {
+                    <button class="cancel-button" type="button" (click)="onCloseDialog()">
+                        {{ closeButtonLabel }}
+                    </button>
+                } @else {
+                    <button class="cancel-button" type="button" (click)="onCloseDialog()">
+                        Annulla
+                    </button>
+                    <button class="confirm-button" type="button" (click)="onConfirm()">
+                        Procedi
+                    </button>
+                }
             </div>
         }
     } @else {

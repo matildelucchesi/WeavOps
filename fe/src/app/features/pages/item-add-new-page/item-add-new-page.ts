@@ -23,7 +23,7 @@ import { CustomerItemHistoryFacadeService } from '../../../services/customer-ite
 @Component({
   selector: 'app-item-add-new-page',
   imports: [
-    DecorativeLinesComponent,
+    //DecorativeLinesComponent,
     TitlePageComponent,
     ExitButtonComponent,
     FormsModule,

@@ -1,0 +1,81 @@
+<div class="title-wrapper">
+  <app-title-page-component
+    title="Profilo"
+    iconName="person"
+    [imageWidth]="40"
+    [imageHeight]="40">
+  </app-title-page-component>
+</div>
+
+@if (isSaving || isUpdatingImage) {
+  <app-loader-component
+    [ariaLabel]="isUpdatingImage ? 'Aggiornamento immagine profilo in corso' : 'Salvataggio profilo in corso'">
+  </app-loader-component>
+}
+<app-exit-button-component></app-exit-button-component>
+<main class="profile-layout">
+  <section class="profile-panel" aria-labelledby="profile-details-title">
+    <div class="profile-panel-header">
+      <div class="avatar-control">
+        <input #profileImageInput type="file" accept="image/*" (change)="updateProfileImageWithLoader($event)">
+        <button type="button" class="avatar-button" aria-label="Modifica immagine profilo" (click)="profileImageInput.click()">
+          @if (profileImageUrl) {
+            <img [src]="profileImageUrl" alt="Immagine profilo" />
+          } @else {
+            <mat-icon>person</mat-icon>
+          }
+          <span class="avatar-edit"><mat-icon>edit</mat-icon></span>
+        </button>
+      </div>
+      <div>
+        <p class="section-kicker">Account WeavOps</p>
+        <h2 id="profile-details-title">Informazioni personali</h2>
+      </div>
+    </div>
+
+    <form class="profile-form" (ngSubmit)="saveProfile()">
+      <label>
+        <span>Username</span>
+        <input name="username" [(ngModel)]="profile.username" required autocomplete="username">
+      </label>
+      <label>
+        <span>Nome</span>
+        <input name="firstName" [(ngModel)]="profile.firstName" autocomplete="given-name">
+      </label>
+      <label>
+        <span>Cognome</span>
+        <input name="lastName" [(ngModel)]="profile.lastName" autocomplete="family-name">
+      </label>
+      <label>
+        <span>Email</span>
+        <input name="email" type="email" [(ngModel)]="profile.email" autocomplete="email">
+      </label>
+      <div class="form-actions">
+        <button class="primary-action" type="submit" [disabled]="isSaving || !userId">Salva modifiche</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="password-panel" aria-labelledby="password-title">
+    <div class="password-panel-header">
+      <mat-icon>lock</mat-icon>
+      <div>
+        <p class="section-kicker">Sicurezza</p>
+        <h2 id="password-title">Modifica password</h2>
+      </div>
+    </div>
+    <form class="password-form" (ngSubmit)="changePassword()">
+      <label>
+        <span>Nuova password</span>
+        <input name="newPassword" type="password" [(ngModel)]="newPassword" required minlength="8" autocomplete="new-password">
+      </label>
+      <label>
+        <span>Conferma nuova password</span>
+        <input name="confirmPassword" type="password" [(ngModel)]="confirmPassword" required minlength="8" autocomplete="new-password">
+      </label>
+      <div class="form-actions">
+        <button class="secondary-action" type="submit" [disabled]="isSaving || !userId">Aggiorna password</button>
+      </div>
+    </form>
+  </section>
+</main>

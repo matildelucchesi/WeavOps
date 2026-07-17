@@ -21,7 +21,6 @@ import type { FilterValues } from '../../reusable-components/button/filter-butto
   imports: [
     TitlePageComponent,
     TableComponent,
-    DecorativeLinesComponent
   ],
   templateUrl: './customer-page.html',
   styleUrl: './customer-page.scss',

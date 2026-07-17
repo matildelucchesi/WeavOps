@@ -349,6 +349,28 @@ app-root {
   min-height: 100%;
 }
 
+/* Tutte le pagine gestionali restano desktop-first; la rotta mobile è esclusa. */
+@media (max-width: 959px) {
+  app-login-page,
+  app-main-page,
+  app-home-page,
+  app-loom-page,
+  app-loom-production-details-page,
+  app-loom-history-page,
+  app-item-page,
+  app-item-add-new-page,
+  app-item-details-page,
+  app-customer-page,
+  app-customer-details-page,
+  app-customer-items-history-page,
+  app-calendar-page,
+  app-forecast-page,
+  app-profile-page {
+    display: block;
+    min-width: 960px;
+  }
+}
+
 .calendar-page {
   .calendar-wrapper { min-width: 0; }
   .calendar-add-event-menu { position: relative; width: 100%; }
@@ -383,8 +405,8 @@ app-root {
   .generic-event-field input { width: 100%; min-height: 40px; box-sizing: border-box; border: 1.5px solid var(--weavops-color-primary); border-radius: 6px; padding: 0 10px; background-color: var(--weavops-color-surface); color: var(--weavops-color-primary); font-family: 'Instrument Sans', sans-serif; font-size: 13px; }
   .generic-event-field input:focus { outline: none; border-color: var(--weavops-color-accent-deep); box-shadow: 0 0 0 2px var(--weavops-color-accent-lighter); }
 
-  @media (max-width: 960px) { .closure-year-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 760px) { .closure-editor-header { align-items: flex-start; flex-direction: column; } .closure-year-grid, .generic-event-form { grid-template-columns: 1fr; } .closure-year-navigation { align-self: flex-end; } }
+  @media (min-width: 960px) and (max-width: 1199px) { .closure-year-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 960px) and (max-width: 1199px) { .closure-editor-header { align-items: flex-start; flex-direction: column; } .closure-year-grid, .generic-event-form { grid-template-columns: 1fr; } .closure-year-navigation { align-self: flex-end; } }
 }
 
 .calendar-page-actions {

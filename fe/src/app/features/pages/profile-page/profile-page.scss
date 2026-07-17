@@ -1,0 +1,207 @@
+:host{
+    display: block;
+    min-height: 100%;
+}
+
+.title-wrapper,
+.profile-layout{
+    width: 100%;
+    margin: 0 auto;
+}
+
+.profile-layout{
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.85fr);
+    gap: 20px;
+    align-items: stretch;
+    margin-top: 28px;
+    padding-bottom: 30px;
+}
+
+.profile-panel,
+.password-panel{
+    height: 100%;
+    box-sizing: border-box;
+    border: 2px solid var(--weavops-color-primary);
+    border-bottom-width: 4px;
+    border-radius: 8px;
+    padding: 22px;
+    background-color: var(--weavops-color-primary-soft);
+}
+
+.password-panel{
+    border-color: var(--weavops-color-accent);
+    background-color: var(--weavops-color-surface);
+}
+
+.profile-panel-header,
+.password-panel-header{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.password-panel-header > mat-icon{
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background-color: var(--weavops-color-accent);
+    color: var(--weavops-color-surface);
+}
+
+.section-kicker{
+    margin: 0 0 3px;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.password-panel .section-kicker{
+    color: var(--weavops-color-accent);
+}
+
+h2{
+    margin: 0;
+    color: var(--weavops-color-black);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.avatar-control input{
+    display: none;
+}
+
+.avatar-button{
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    overflow: hidden;
+    border: 2px solid var(--weavops-color-primary);
+    border-radius: 50%;
+    padding: 0;
+    background-color: var(--weavops-color-primary-soft);
+    color: var(--weavops-color-primary);
+    cursor: pointer;
+}
+
+.avatar-button > mat-icon{
+    width: 38px;
+    height: 38px;
+    font-size: 38px;
+}
+
+.avatar-button img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-edit{
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: var(--weavops-color-primary);
+    color: var(--weavops-color-surface);
+}
+
+.avatar-edit mat-icon{
+    width: 15px;
+    height: 15px;
+    font-size: 15px;
+}
+
+.profile-form,
+.password-form{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.password-form{
+    grid-template-columns: 1fr;
+}
+
+label{
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    color: var(--weavops-color-black);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+input{
+    width: 100%;
+    height: 38px;
+    box-sizing: border-box;
+    border: 1px solid rgb(var(--weavops-rgb-primary) / 0.42);
+    border-radius: 6px;
+    padding: 0 10px;
+    background-color: var(--weavops-color-surface);
+    color: var(--weavops-color-black);
+    font: inherit;
+}
+
+input:focus{
+    outline: 2px solid rgb(var(--weavops-rgb-primary) / 0.3);
+    border-color: var(--weavops-color-primary);
+}
+
+.form-actions{
+    display: flex;
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+
+.primary-action,
+.secondary-action{
+    min-height: 38px;
+    border: 0;
+    border-radius: 6px;
+    padding: 0 14px;
+    color: var(--weavops-color-surface);
+    background-color: var(--weavops-color-accent);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.primary-action{ background-color: var(--weavops-color-primary); }
+.secondary-action{ background-color: var(--weavops-color-accent); }
+
+.primary-action:disabled,
+.secondary-action:disabled{
+    opacity: 0.55;
+    cursor: default;
+}
+
+.primary-action:hover,
+.secondary-action:hover{
+    opacity: 0.9;
+}
+
+@media (min-width: 960px) and (max-width: 1199px){
+    .profile-layout{ grid-template-columns: 1fr; }
+}
+
+@media (min-width: 960px) and (max-width: 1199px){
+    .profile-form{ grid-template-columns: 1fr; }
+    .profile-panel,
+    .password-panel{ padding: 16px; }
+}

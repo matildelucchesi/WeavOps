@@ -21,6 +21,8 @@ export interface DialogAlertGenericData {
   icon?: string;
   iconColor?: string;
   button?: boolean;
+  closeOnly?: boolean;
+  closeButtonLabel?: string;
   deliveryDetails?: boolean;
   deliveryDetailsTitle?: string;
   deliveryDate?: string | Date | null;
@@ -46,6 +48,8 @@ export class DialogAlertGeneric {
   @Input() icon: string = this.dialogData?.icon ?? 'error';
   @Input() iconColor: string = this.dialogData?.iconColor ?? 'red';
   @Input() button: boolean = this.dialogData?.button ?? true;
+  @Input() closeOnly: boolean = this.dialogData?.closeOnly ?? false;
+  @Input() closeButtonLabel: string = this.dialogData?.closeButtonLabel ?? 'Chiudi';
   @Input() deliveryDetails: boolean = this.dialogData?.deliveryDetails ?? false;
   @Input() deliveryDetailsTitle: string = this.dialogData?.deliveryDetailsTitle ?? 'Per favore indica la Data di consegna';
 

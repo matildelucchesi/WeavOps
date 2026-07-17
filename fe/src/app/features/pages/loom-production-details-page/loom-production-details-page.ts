@@ -43,7 +43,7 @@ interface QueuedProductionTableRow {
 @Component({
   selector: 'app-loom-production-details-page',
   imports: [
-    DecorativeLinesComponent,
+    //DecorativeLinesComponent,
     TitlePageComponent,
     ExitButtonComponent,
     TableComponent,
@@ -140,12 +140,18 @@ export class LoomProductionDetailsPage implements OnInit {
 
   public readonly percentage = computed((): number | null => {
     const item = this.item();
+    const totalPieces = this.arrangement()?.piecesCount;
 
-    if (!item?.totalMeters) {
+    if (!item || totalPieces === undefined || totalPieces === null || totalPieces <= 0) {
       return null;
     }
 
-    return Math.round(((item.metersRun ?? 0) / item.totalMeters) * 10000) / 100;
+    const completedPieces = (item.processing ?? []).reduce(
+      (total, process) => total + Math.max(process.piecesRun ?? 0, 0),
+      0,
+    );
+
+    return Math.round(Math.min((completedPieces / totalPieces) * 100, 100) * 100) / 100;
   });
 
   ngOnInit(): void {

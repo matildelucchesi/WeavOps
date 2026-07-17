@@ -1,0 +1,178 @@
+<div class="header">
+    <div class="header-content">
+        <img src="/images/W-logo.png" alt="" class="header-image" />
+    </div>
+</div>
+@if (isRefreshingMobileData) {
+    <app-loader-component ariaLabel="Salvataggio delle pezze e aggiornamento produzione in corso"></app-loader-component>
+}
+<div class="content">
+    @if(!changeState && !addPieces && !endProduction && !startProduction) {
+       
+    <section class="production-summary" aria-label="Riepilogo produzione">
+        <div class="production-summary-row">
+            <span>Articolo in produzione</span>
+            <strong>{{ productionSummary()?.itemName ?? '-' }}</strong>
+        </div>
+        <div class="production-summary-row">
+            <span>Pezze mancanti al completamento</span>
+            <strong>{{ productionSummary()?.remainingPieces ?? '-' }}</strong>
+        </div>
+        <div class="production-summary-row">
+            <span>Pezze fatte dal telaio</span>
+            <strong>{{ productionSummary()?.loomPiecesRun ?? '-' }}</strong>
+        </div>
+    </section>
+}
+    <div class="content-header">
+        <h3><mat-icon>help</mat-icon>{{ pageTitle() }}</h3>
+    </div>
+    <div class="content-actions">
+        @if(!changeState && !addPieces && !endProduction && !startProduction) {
+            <div class="action">
+            <!-- AGGIUNGI METRI -->
+            <button class="action-button" (click)="addPiecesTrue()">
+                <img src="/icon/meters-icon.png" width="40" height="40" alt="Meters Icon">
+            </button>
+            <p class="action-button-label">Aggiungi Pezze Prodotte</p>
+        </div>
+        
+        <div class="action">
+            <!-- CAMBIA STATO -->
+            <button class="action-button" (click)="changeStateTrue()">
+                <img src="/icon/change-state-icon.png" width="40" height="40" alt="Change State Icon">
+            </button>
+            <p class="action-button-label">Cambia Stato</p>
+        </div>
+        <div class="action">
+            <!-- TERMINA PRODUZIONE -->
+            <button
+                class="action-button"
+                type="button"
+                (click)="endProductionTrue()">
+                <mat-icon class="action-button-icon">flag</mat-icon>
+            </button>
+            <p class="action-button-label">Termina Produzione</p>
+        </div>
+        <div class="action">
+            <!-- METTI IN PRODUZIONE ARTICOLO IN CODA -->
+            <button
+                class="action-button"
+                type="button"
+                (click)="startProductionTrue()">
+                <mat-icon class="action-button-icon">hardware</mat-icon>
+            </button>
+            <p class="action-button-label">Metti in Produzione Articolo in Coda</p>
+        </div>
+        <div class="action">
+            <!-- VISUALIZZA AZIONI SU TELAIO -->
+            <button
+                class="action-button"
+                type="button"
+                (click)="startProductionTrue()">
+                <mat-icon class="action-button-icon">pending_actions</mat-icon>
+            </button>
+            <p class="action-button-label">Visualizza Azioni su Telaio</p>
+        </div>
+        }
+        @if (changeState) {
+            <div class="change-state-section">
+                <div class="options">
+                    <div class="state-option">
+                        <button class="state-option-button" [class.current-state]="isCurrentState(loomStatus.Stopped)" [class.selected]="loomState === loomStatus.Stopped" (click)="setLoomState(loomStatus.Stopped)">FERMO</button>
+                    </div>
+                    <div class="state-option">
+                        <button class="state-option-button" [class.current-state]="isCurrentState(loomStatus.Working)" [class.selected]="loomState === loomStatus.Working" (click)="setLoomState(loomStatus.Working)">IN LAVORAZIONE</button>
+                    </div>
+                    <div class="state-option">
+                        <button class="state-option-button" [class.current-state]="isCurrentState(loomStatus.Maintenance)" [class.selected]="loomState === loomStatus.Maintenance" (click)="setLoomState(loomStatus.Maintenance)">MANUTENZIONE</button>
+                    </div>
+                </div>
+                <div class="section-buttons">
+                    <button class="back-button" type="button" [disabled]="isChangingLoomState" (click)="returnToActionSelection()">Indietro</button>
+                    <button class="confirm-button" type="button" [disabled]="isChangingLoomState" (click)="changeLoomState()">Conferma</button>
+                </div>
+            </div>
+        }
+        @if (addPieces) {
+            <div class="meters-section">
+                <div class="meters-form-group">
+                    <label for="piecesProduced">Inserisci numero pezze prodotte</label>
+                    <input
+                        id="piecesProduced"
+                        name="piecesProduced"
+                        type="number"
+                        min="1"
+                        step="1"
+                        required
+                        [(ngModel)]="meters"
+                        class="meters-input-field">
+                </div>
+                <div class="section-buttons confirm-button-container">
+                    <button class="back-button" type="button" [disabled]="isAddingMeters" (click)="returnToActionSelection()">Indietro</button>
+                    <button class="confirm-button" type="button" [disabled]="isAddingMeters" (click)="addMeters()">Conferma</button>
+                </div>
+            </div>
+        }
+        @if (endProduction) {
+            <div class="end-production-section">
+                <div class="end-production-actions">
+                    <button class="abandoned-button" type="button" [disabled]="isTerminatingProduction" (click)="terminateProduction(assignmentStatus.Abandoned)">ABBANDONATO</button>
+                    <button class="completed-button" type="button" [disabled]="isTerminatingProduction" (click)="terminateProduction(assignmentStatus.Completed)">COMPLETATO</button>
+                </div>
+                <p>Perchè vuoi terminare la produzione?</p>
+                
+            </div>
+            <div class="pending-action-section">
+                <button class="back-button" type="button" (click)="returnToActionSelection()">Indietro</button>
+            </div>
+        }
+        @if (startProduction) {
+            <div class="queued-productions-section">
+                <h4>Produzioni in coda</h4>
+
+                @if (queuedProductions().length === 0 && !isQueueLoading) {
+                    <p class="queue-message">Non ci sono produzioni in coda per questo telaio.</p>
+                } @else {
+                    <div class="queued-production-list">
+                        @for (production of queuedProductions(); track production.assignment.id) {
+                            <article class="queued-production-card">
+                                <div class="queued-production-data">
+                                    <div class="queued-production-field">
+                                        <span>Articolo</span>
+                                        <strong>{{ production.itemName }}</strong>
+                                    </div>
+                                    <div class="queued-production-field">
+                                        <span>Metri mancanti</span>
+                                        <strong>{{ production.metersToGo }}</strong>
+                                    </div>
+                                    <div class="queued-production-field">
+                                        <span>Tempo stimato</span>
+                                        <strong>{{ production.completionDays }}</strong>
+                                    </div>
+                                    <div class="queued-production-field">
+                                        <span>Stato</span>
+                                        <strong class="queued-status">{{ production.status }}</strong>
+                                    </div>
+                                </div>
+                                <button
+                                    class="start-production-button"
+                                    type="button"
+                                    [disabled]="isStartingProduction"
+                                    [attr.aria-label]="'Metti in produzione ' + production.itemName"
+                                    (click)="startQueuedProduction(production)">
+                                    <mat-icon>hardware</mat-icon>
+                                </button>
+                            </article>
+                        }
+                    </div>
+                }
+
+                <div class="section-buttons">
+                    <button class="back-button" type="button" [disabled]="isStartingProduction" (click)="returnToActionSelection()">Indietro</button>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="text-pattern-inverse"></div>
+</div>
