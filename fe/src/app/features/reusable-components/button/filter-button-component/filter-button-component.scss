@@ -74,3 +74,25 @@ button:hover{
     display: flex;
     justify-content: flex-end;
 }
+
+.filter-select-label {
+    display: grid;
+    gap: 8px;
+    width: 450px;
+    max-width: 100%;
+    margin-bottom: 16px;
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+}
+
+.filter-select {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--weavops-color-primary);
+    border-radius: 6px;
+    background-color: var(--weavops-color-surface-muted);
+    color: var(--weavops-color-primary);
+    font: inherit;
+}

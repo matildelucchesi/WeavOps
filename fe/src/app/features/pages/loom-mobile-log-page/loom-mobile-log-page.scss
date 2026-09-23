@@ -1,0 +1,13 @@
+.header { display: flex; align-items: center; min-height: 64px; padding: 0 20px; background: var(--weavops-color-primary); }
+.header-image { width: 38px; height: auto; }
+.content { padding: 20px 16px; }
+.title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.title-row h1 { margin: 0; color: var(--weavops-color-primary); font: 600 22px 'Instrument Sans', sans-serif; }
+.back-button { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 0; border-radius: 50%; color: var(--weavops-color-primary); background: var(--weavops-color-primary-soft); }
+.table-wrapper { overflow-x: auto; border: 1px solid var(--weavops-color-primary-soft); border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; font-family: 'Instrument Sans', sans-serif; }
+th, td { padding: 12px 10px; text-align: left; vertical-align: top; }
+th { color: var(--weavops-color-surface); background: var(--weavops-color-primary); font-weight: 600; }
+td { color: var(--weavops-color-primary); border-top: 1px solid var(--weavops-color-primary-soft); font-size: 14px; }
+td:last-child { white-space: nowrap; }
+.message { color: var(--weavops-color-primary); font: 500 16px 'Instrument Sans', sans-serif; }

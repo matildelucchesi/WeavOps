@@ -9,6 +9,8 @@ src/main/java/org/openapitools/api/CustomerItemHistoriesApi.java
 src/main/java/org/openapitools/api/CustomersApi.java
 src/main/java/org/openapitools/api/ItemsApi.java
 src/main/java/org/openapitools/api/LoomItemAssignmentsApi.java
+src/main/java/org/openapitools/api/LoomLogsApi.java
+src/main/java/org/openapitools/api/LoomLogsApiController.java
 src/main/java/org/openapitools/api/LoomProcessHistoriesApi.java
 src/main/java/org/openapitools/api/LoomsApi.java
 src/main/java/org/openapitools/api/NotificationsApi.java
@@ -31,6 +33,7 @@ src/main/java/org/openapitools/model/Login200Response.java
 src/main/java/org/openapitools/model/LoginRequest.java
 src/main/java/org/openapitools/model/Loom.java
 src/main/java/org/openapitools/model/LoomItemAssignment.java
+src/main/java/org/openapitools/model/LoomLog.java
 src/main/java/org/openapitools/model/LoomProcessHistory.java
 src/main/java/org/openapitools/model/Notification.java
 src/main/java/org/openapitools/model/Process.java

@@ -25,16 +25,32 @@
                 
             </div>
             @for (filter of filters; track filter.id) {
-                <app-input-component
-                    [inputId]="filter.id"
-                    [label]="filter.label"
-                    [value]="getFilterValue(filter.id)"
-                    [width]="'450px'"
-                    [height]="'70px'"
-                    [required]="false"
-                    [minLength]="null"
-                    (valueChange)="setFilterValue(filter.id, $event)">
-                </app-input-component>
+                @if (filter.type === 'select') {
+                    <label class="filter-select-label" [for]="filter.id">
+                        <span>{{ filter.label }}</span>
+                        <select
+                            class="filter-select"
+                            [id]="filter.id"
+                            [value]="getFilterValue(filter.id)"
+                            (change)="setFilterValue(filter.id, $any($event.target).value)">
+                            <option value="">Tutti gli eventi</option>
+                            @for (option of filter.options ?? []; track option.value) {
+                                <option [value]="option.value">{{ option.label }}</option>
+                            }
+                        </select>
+                    </label>
+                } @else {
+                    <app-input-component
+                        [inputId]="filter.id"
+                        [label]="filter.label"
+                        [value]="getFilterValue(filter.id)"
+                        [width]="'450px'"
+                        [height]="'70px'"
+                        [required]="false"
+                        [minLength]="null"
+                        (valueChange)="setFilterValue(filter.id, $event)">
+                    </app-input-component>
+                }
             }
             <div class="footer">
                 <app-button-general-action-component

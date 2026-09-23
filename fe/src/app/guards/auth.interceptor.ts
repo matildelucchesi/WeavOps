@@ -4,7 +4,7 @@ import { environment } from '../../environments/environment';
 const TOKEN_KEY = 'access_token';
 
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
-  const token = getStoredToken();
+  const token = getMobileTokenFromUrl() ?? getStoredToken();
   const apiRequest = isApiRequest(request.url);
   const loginRequest = isLoginRequest(request.url);
 
@@ -20,6 +20,14 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
 };
 
 const getStoredToken = (): string | null => getStorage()?.getItem(TOKEN_KEY)?.trim() || null;
+
+const getMobileTokenFromUrl = (): string | null => {
+  if (typeof window === 'undefined' || !/^\/telaio\/[^/]+\/mobile(?:\/|$)/.test(window.location.pathname)) {
+    return null;
+  }
+
+  return new URLSearchParams(window.location.hash.replace(/^#/, '')).get('mobileToken')?.trim() || null;
+};
 
 const getStorage = (): Storage | null =>
   typeof globalThis.localStorage === 'undefined' ? null : globalThis.localStorage;

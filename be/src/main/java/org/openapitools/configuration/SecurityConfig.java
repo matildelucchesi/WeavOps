@@ -2,6 +2,7 @@ package org.openapitools.configuration;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.openapitools.security.JwtAuthenticationFilter;
+import org.openapitools.service.MobileTokenAuthorizationService;
 import org.openapitools.service.TokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            TokenService tokenService
+            TokenService tokenService,
+            MobileTokenAuthorizationService mobileTokenAuthorizationService
     ) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -41,14 +43,15 @@ public class SecurityConfig {
                                 "/items/*",
                                 "/arrangements/*",
                                 "/processes/*",
+                                "/loom-logs/loom/*",
                                 "/loom-item-assignments/loom/*",
                                 "/loom-item-assignments/loom/*/running"
-                        ).permitAll()
+                        ).access(mobileTokenAuthorizationService::authorize)
                         .requestMatchers(HttpMethod.PUT,
                                 "/looms/*",
                                 "/looms/*/add-pieces",
                                 "/loom-item-assignments/*"
-                        ).permitAll()
+                        ).access(mobileTokenAuthorizationService::authorize)
                         .requestMatchers(
                                 "/",
                                 "/swagger-ui.html",
@@ -56,7 +59,7 @@ public class SecurityConfig {
                                 "/v3/api-docs",
                                 "/v3/api-docs/**"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().hasAuthority("USER")
                 )
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(
                         (request, response, authException) ->

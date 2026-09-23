@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.openapitools.service.TokenService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -37,10 +38,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = authorizationHeader.substring(BEARER_PREFIX.length());
 
             tokenService.validateToken(token).ifPresent(payload -> {
+                boolean mobileToken = "loom-mobile".equals(payload.purpose());
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        payload.username(),
+                        payload,
                         null,
-                        List.of()
+                        List.of(new SimpleGrantedAuthority(mobileToken ? "LOOM_MOBILE" : "USER"))
                 );
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

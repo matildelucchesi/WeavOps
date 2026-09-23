@@ -160,7 +160,7 @@ export class LoomPage implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((created) => {
       if (created) {
-        this.loadLoomRows(true);
+        this.loadLoomRows();
       }
     });
   }

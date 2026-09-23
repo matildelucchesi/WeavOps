@@ -4,6 +4,7 @@ import org.openapitools.api.LoomItemAssignmentsApi;
 import org.openapitools.mapper.LoomItemAssignmentMapper;
 import org.openapitools.model.LoomItemAssignment;
 import org.openapitools.service.LoomItemAssignmentService;
+import org.openapitools.service.MobileTokenAuthorizationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,16 +13,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 public class LoomItemAssignmentController implements LoomItemAssignmentsApi {
 
     private final LoomItemAssignmentService service;
     private final LoomItemAssignmentMapper mapper;
+    private final MobileTokenAuthorizationService mobileTokenAuthorizationService;
 
-    public LoomItemAssignmentController(LoomItemAssignmentService service, LoomItemAssignmentMapper mapper) {
+    public LoomItemAssignmentController(
+            LoomItemAssignmentService service,
+            LoomItemAssignmentMapper mapper,
+            MobileTokenAuthorizationService mobileTokenAuthorizationService
+    ) {
         this.service = service;
         this.mapper = mapper;
+        this.mobileTokenAuthorizationService = mobileTokenAuthorizationService;
     }
 
     @Override
@@ -50,6 +59,12 @@ public class LoomItemAssignmentController implements LoomItemAssignmentsApi {
             @PathVariable("id") String id,
             @Valid @RequestBody LoomItemAssignment loomItemAssignment
     ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (mobileTokenAuthorizationService.isMobileToken(authentication)
+                && !mobileTokenAuthorizationService.canUpdateAssignment(authentication, id, loomItemAssignment)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         return service.update(id, mapper.toEntity(loomItemAssignment))
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)

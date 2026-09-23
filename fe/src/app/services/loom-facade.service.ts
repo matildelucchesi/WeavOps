@@ -1,11 +1,14 @@
 import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Loom, LoomService as LoomApiService } from '../api';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoomFacadeService {
   private readonly loomApi = inject(LoomApiService);
+  private readonly http = inject(HttpClient);
 
   getAll() {
     return this.loomApi.getLooms();
@@ -33,5 +36,12 @@ export class LoomFacadeService {
 
   addPieces(id: string, pieces: number) {
     return this.loomApi.addPieces({ id, pieces });
+  }
+
+  createMobileAccessToken(id: string) {
+    return this.http.post<{ token: string }>(
+      `${environment.apiUrl}/looms/${encodeURIComponent(id)}/mobile-access-token`,
+      {},
+    );
   }
 }

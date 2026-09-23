@@ -1,4 +1,7 @@
 <mat-form-field class="input-form" [style.width]="width" [style.height]="height" appearance="outline">
     <mat-label> {{ label }} </mat-label>
-    <input class="input-field" matInput [id]="inputId" [required]="required" [(ngModel)]="value" [ngModelOptions]="{ standalone: true }" [attr.minlength]="minLength" [type]="type" (ngModelChange)="valueChange.emit($event)">
+    <input class="input-field" matInput [id]="inputId" [required]="required" [(ngModel)]="value" [ngModelOptions]="{ standalone: true }" [attr.minlength]="minLength" [type]="showVisibilityToggle && passwordVisible ? 'text' : type" (ngModelChange)="valueChange.emit($event)">
+    <button *ngIf="showVisibilityToggle" mat-icon-button matSuffix type="button" class="visibility-toggle" [attr.aria-label]="passwordVisible ? 'Nascondi password' : 'Mostra password'" [attr.aria-pressed]="passwordVisible" (click)="togglePasswordVisibility()">
+        <mat-icon>{{ passwordVisible ? 'visibility_off' : 'visibility' }}</mat-icon>
+    </button>
 </mat-form-field>

@@ -959,6 +959,128 @@ paths:
       - application/json
       x-tags:
       - tag: LoomProcessHistory
+  /loom-logs:
+    get:
+      operationId: getLoomLogs
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/loom-log"
+                type: array
+          description: Lista log telaio
+      summary: Recupera tutti i log telaio
+      tags:
+      - LoomLog
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: LoomLog
+    post:
+      operationId: createLoomLog
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/loom-log"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/loom-log"
+          description: Log telaio creato
+        "400":
+          description: Richiesta non valida
+      summary: Crea un log telaio
+      tags:
+      - LoomLog
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: LoomLog
+  /loom-logs/{id}:
+    delete:
+      operationId: deleteLoomLog
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Log telaio eliminato
+        "404":
+          description: Log telaio non trovato
+      summary: Elimina un log telaio
+      tags:
+      - LoomLog
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: LoomLog
+    get:
+      operationId: getLoomLogById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/loom-log"
+          description: Log telaio trovato
+        "404":
+          description: Log telaio non trovato
+      summary: Recupera un log telaio tramite ID
+      tags:
+      - LoomLog
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: LoomLog
+    put:
+      operationId: updateLoomLog
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/loom-log"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/loom-log"
+          description: Log telaio aggiornato
+        "400":
+          description: Richiesta non valida
+        "404":
+          description: Log telaio non trovato
+      summary: Aggiorna un log telaio
+      tags:
+      - LoomLog
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: LoomLog
   /loom-item-assignments:
     get:
       operationId: getLoomItemAssignments
@@ -2304,6 +2426,20 @@ components:
       required:
       - loomId
       - processId
+      type: object
+    loom-log:
+      example:
+        id: id
+        key: key
+      properties:
+        id:
+          description: Identificativo MongoDB generato dal server
+          readOnly: true
+          type: string
+        key:
+          type: string
+      required:
+      - key
       type: object
     loom-item-assignment:
       example:

@@ -1,8 +1,10 @@
 package org.openapitools.service;
 
+import org.openapitools.constants.LoomLogEvent;
 import org.openapitools.domain.ItemEntity;
 import org.openapitools.domain.LoomEntity;
 import org.openapitools.domain.LoomItemAssignmentEntity;
+import org.openapitools.domain.LoomLogEntity;
 import org.openapitools.domain.ProcessEntity;
 import org.openapitools.mapper.LoomMapper;
 import org.openapitools.model.Item;
@@ -37,6 +39,12 @@ public class LoomItemAssignmentService {
 
     @Autowired
     private ProductionForecastService productionForecastService;
+
+    @Autowired
+    private LoomLogService loomLogService;
+
+    @Autowired
+    private ArrangementService arrangementService;
 
     private final LoomItemAssignmentRepository repository;
 
@@ -153,6 +161,7 @@ public class LoomItemAssignmentService {
 
         this.loomService.save(loomEntity);
         this.productionForecastService.recalculateProductionForecast(itemEntity, entity);
+        saveLoomLog(LoomLogEvent.PROCESS_STARTED, loomEntity, itemEntity, null);
 
         return true;
     }
@@ -190,6 +199,10 @@ public class LoomItemAssignmentService {
         updateItemStartDateFromProcesses(itemEntity);
         this.loomService.save(loomEntity);
         this.productionForecastService.recalculateProductionForecast(itemEntity, entity);
+
+        if (entity.getStatus() == LoomItemAssignment.StatusEnum.COMPLETED) {
+            saveLoomLog(LoomLogEvent.PROCESS_COMPLETED, loomEntity, itemEntity, null);
+        }
 
         return true;
     }
@@ -232,6 +245,27 @@ public class LoomItemAssignmentService {
 
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
+    }
+
+    private void saveLoomLog(LoomLogEvent event, LoomEntity loom, ItemEntity item, Integer metersAdded) {
+        LoomLogEntity loomLog = new LoomLogEntity();
+        loomLog.setKey(event.name());
+        loomLog.setLoomId(loom.getId());
+        loomLog.setLoomCode(loom.getSerialNumber());
+        loomLog.setItemId(item.getId());
+        loomLog.setItemName(itemName(item));
+        loomLog.setMetersAdded(metersAdded);
+        loomLogService.save(loomLog);
+    }
+
+    private String itemName(ItemEntity item) {
+        if (isBlank(item.getArrangementId())) {
+            return null;
+        }
+
+        return arrangementService.findById(item.getArrangementId())
+                .map(arrangement -> arrangement.getItemName())
+                .orElse(null);
     }
 
     @Transactional(rollbackFor = Exception.class)

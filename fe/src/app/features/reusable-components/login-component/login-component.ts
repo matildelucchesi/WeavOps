@@ -25,13 +25,13 @@ export class LoginComponent {
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
 
-  isLoading: boolean = false;
+  private isSubmitting = false;
   errorMessage: string = '';
   username: string = '';
   password: string = '';
 
   login(): void {
-    if (this.isLoading) {
+    if (this.isSubmitting) {
       return;
     }
 
@@ -43,7 +43,7 @@ export class LoginComponent {
       return;
     }
 
-    this.isLoading = true;
+    this.isSubmitting = true;
     this.errorMessage = '';
 
     this.authApi.login({
@@ -55,7 +55,7 @@ export class LoginComponent {
       httpHeaderAccept: 'application/json',
     }).pipe(
       finalize(() => {
-        this.isLoading = false;
+        this.isSubmitting = false;
       }),
     ).subscribe({
       next: response => {
@@ -80,7 +80,6 @@ export class LoginComponent {
   }
 
   private showError(): void {
-    this.isLoading = false;
     this.errorMessage = 'Credenziali non valide';
     this.snackBar.open(this.errorMessage, 'Chiudi', {
       duration: 4000,

@@ -26,7 +26,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoomItemAssignmentFacadeService } from '../../../services/loom-item-assignment-facade.service';
 import { DialogInformativeComponent, type DialogInformativeData } from '../../reusable-components/dialog/dialog-informative-component/dialog-informative-component';
 import { DialogAlertGeneric, type DialogAlertGenericData } from '../../reusable-components/dialog/dialog-alert-generic/dialog-alert-generic';
-import { forkJoin } from 'rxjs';
+import { firstValueFrom, forkJoin } from 'rxjs';
 import type { jsPDF as JsPdfDocument } from 'jspdf';
 
 interface ProcessTableRow {
@@ -767,6 +767,7 @@ export class ItemDetailsPage implements OnInit {
   private async createArrangementPdfSections(
     qrCode: typeof import('qrcode'),
   ): Promise<ArrangementPdfSection[]> {
+    const mobileTokensByLoom = new Map<string, Promise<string>>();
     const sections = await Promise.all(
       this.itemAssignments()
         .filter((assignment) => this.isExportableArrangementAssignment(assignment))
@@ -777,7 +778,14 @@ export class ItemDetailsPage implements OnInit {
             return null;
           }
 
-          const qrUrl = this.createLoomProductionDetailsUrl(assignment.loomId);
+          let mobileToken = mobileTokensByLoom.get(assignment.loomId);
+          if (!mobileToken) {
+            mobileToken = firstValueFrom(this.loomService.createMobileAccessToken(assignment.loomId))
+              .then((response) => response.token);
+            mobileTokensByLoom.set(assignment.loomId, mobileToken);
+          }
+
+          const qrUrl = this.createLoomProductionDetailsUrl(assignment.loomId, await mobileToken);
           const qrCodeDataUrl = await this.createLoomQrCodeWithLogo(qrCode, qrUrl);
 
           return {
@@ -968,8 +976,9 @@ export class ItemDetailsPage implements OnInit {
     ];
   }
 
-  private createLoomProductionDetailsUrl(loomId: string): string {
-    return `http://192.168.50.16:4200/telaio/${encodeURIComponent(loomId)}/mobile`;
+  private createLoomProductionDetailsUrl(loomId: string, mobileToken: string): string {
+    const query = new URLSearchParams({ mobileToken });
+    return `http://192.168.50.16:4200/telaio/${encodeURIComponent(loomId)}/mobile#${query.toString()}`;
   }
 
   private chunkArray<T>(items: T[], chunkSize: number): T[][] {

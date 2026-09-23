@@ -604,7 +604,10 @@ export class LoomProductionDetailsPage implements OnInit {
             verticalPosition: 'bottom',
           });
           this.dialog.closeAll();
-          this.router.navigate(['/home']);
+          const loomId = this.getCurrentLoomId();
+          if (loomId) {
+            this.router.navigate(['/dettaglio-produzione', loomId]);
+          }
         });
       },
       error: (error) => {

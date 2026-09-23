@@ -1,0 +1,35 @@
+type: object
+
+required:
+  - key
+
+properties:
+  id:
+    type: string
+    description: Identificativo MongoDB generato dal server
+    readOnly: true
+  key:
+    type: string
+  loomId:
+    type: string
+    description: Identificativo del telaio associato all'evento
+  loomCode:
+    type: string
+    description: Codice seriale del telaio al momento dell'evento
+  loomStatus:
+    type: string
+    description: Stato del telaio al momento dell'evento
+  itemId:
+    type: string
+    description: Identificativo dell'articolo associato all'evento
+  itemName:
+    type: string
+    description: Nome dell'articolo al momento dell'evento
+  metersAdded:
+    type: integer
+    description: Metri aggiunti al processo
+  createdAt:
+    type: string
+    format: date-time
+    description: Data e ora di registrazione del log
+    readOnly: true

@@ -42,7 +42,7 @@
             <div class="body-actions">
                 <div class="action">
                     <!-- CAMBIA STATO -->
-                    <button class="action-button" (click)="openChangeState()">
+                    <button class="action-button" type="button" [disabled]="areProductionActionsDisabled()" (click)="openChangeState()">
                         <img ngSrc="/icon/change-state-icon.png" width="40" height="40" alt="Change State Icon">
                     </button>
                     <p class="action-button-label">Cambia Stato</p>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="action">
                     <!-- AGGIUNGI METRI -->
-                    <button class="action-button" (click)="openMeters()">
+                    <button class="action-button" type="button" [disabled]="areProductionActionsDisabled()" (click)="openMeters()">
                         <img ngSrc="/icon/meters-icon.png" width="40" height="40" alt="Meters Icon">
                     </button>
                     <p class="action-button-label">Aggiungi Pezze Prodotte</p>

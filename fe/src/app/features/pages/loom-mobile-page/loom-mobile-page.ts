@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from "@angular/material/icon";
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
@@ -37,6 +37,8 @@ interface MobileProductionSummary {
   loomPiecesRun: string;
 }
 
+type MobileAction = 'change-state' | 'add-pieces' | 'end-production' | 'start-production';
+
 @Component({
   selector: 'app-loom-mobile-page',
   standalone: true,
@@ -46,6 +48,7 @@ interface MobileProductionSummary {
 })
 export class LoomMobilePage implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly loomService = inject(LoomFacadeService);
   private readonly assignmentService = inject(LoomItemAssignmentFacadeService);
   private readonly itemService = inject(ItemFacadeService);
@@ -81,19 +84,27 @@ export class LoomMobilePage implements OnInit {
   });
 
   ngOnInit(): void {
-    const loomId = this.route.snapshot.paramMap.get('id');
+    this.route.paramMap.subscribe((params) => {
+      const loomId = params.get('id');
 
-    if (!loomId) {
-      return;
-    }
+      this.applyAction(this.parseAction(params.get('action')));
 
-    this.refreshLoomData(loomId);
+      if (loomId) {
+        this.refreshLoomData(loomId);
+      }
+    });
   }
 
   private refreshLoomData(loomId: string): void {
     this.loomService.getById(loomId).subscribe({
       next: (loom) => {
         this.loom.set(loom);
+        if (this.changeState) {
+          this.loomState = loom.status ?? Loom.StatusEnum.Stopped;
+        }
+        if (this.startProduction) {
+          this.loadQueuedProductions();
+        }
         this.loadProductionSummary(loom.id ?? loomId);
       },
       error: (error) => {
@@ -104,15 +115,65 @@ export class LoomMobilePage implements OnInit {
 
   public changeStateTrue(){
     this.loomState = this.loom()?.status ?? Loom.StatusEnum.Stopped;
-    this.changeState = true;
+    this.openAction('change-state');
   }
 
   public returnToActionSelection(): void {
+    const loomId = this.loom()?.id ?? this.route.snapshot.paramMap.get('id');
+
+    if (!loomId) {
+      this.resetActionSelection();
+      return;
+    }
+
+    void this.router.navigate(['/telaio', loomId, 'mobile'], {
+      replaceUrl: true,
+      queryParamsHandling: 'preserve',
+      preserveFragment: true,
+    });
+  }
+
+  private resetActionSelection(): void {
     this.changeState = false;
     this.addPieces = false;
     this.endProduction = false;
     this.startProduction = false;
     this.meters = null;
+  }
+
+  private openAction(action: MobileAction): void {
+    const loomId = this.loom()?.id ?? this.route.snapshot.paramMap.get('id');
+
+    if (!loomId) {
+      return;
+    }
+
+    void this.router.navigate(['/telaio', loomId, 'mobile', action], {
+      queryParamsHandling: 'preserve',
+      preserveFragment: true,
+    });
+  }
+
+  private parseAction(action: string | null): MobileAction | null {
+    return action === 'change-state' || action === 'add-pieces' || action === 'end-production' || action === 'start-production'
+      ? action
+      : null;
+  }
+
+  private applyAction(action: MobileAction | null): void {
+    this.resetActionSelection();
+
+    if (action === 'change-state') {
+      this.loomState = this.loom()?.status ?? Loom.StatusEnum.Stopped;
+      this.changeState = true;
+    } else if (action === 'add-pieces') {
+      this.addPieces = true;
+    } else if (action === 'end-production') {
+      this.endProduction = true;
+    } else if (action === 'start-production') {
+      this.startProduction = true;
+      this.loadQueuedProductions();
+    }
   }
 
   public isCurrentState(state: Loom.StatusEnum): boolean {
@@ -139,8 +200,8 @@ export class LoomMobilePage implements OnInit {
     this.loomService.update(currentLoom.id, updatedLoom).subscribe({
       next: (loom) => {
         this.loom.set(loom);
-        this.changeState = false;
         this.isChangingLoomState = false;
+        this.returnToActionSelection();
       },
       error: (error) => {
         console.error('Errore durante l’aggiornamento dello stato del telaio:', error);
@@ -150,8 +211,7 @@ export class LoomMobilePage implements OnInit {
   }
 
   public addPiecesTrue() {
-    this.meters = null;
-    this.addPieces = true;
+    this.openAction('add-pieces');
   }
 
   public addMeters(): void {
@@ -298,7 +358,7 @@ export class LoomMobilePage implements OnInit {
   }
 
   public endProductionTrue() {
-    this.endProduction = true;
+    this.openAction('end-production');
   }
 
   public terminateProduction(status: LoomItemAssignment.StatusEnum): void {
@@ -340,8 +400,18 @@ export class LoomMobilePage implements OnInit {
   }
 
   public startProductionTrue() {
-    this.startProduction = true;
-    this.loadQueuedProductions();
+    this.openAction('start-production');
+  }
+
+  public viewLoomLogs(): void {
+    const loomId = this.loom()?.id ?? this.route.snapshot.paramMap.get('id');
+
+    if (loomId) {
+      void this.router.navigate(['/telaio', loomId, 'mobile', 'logs'], {
+        queryParamsHandling: 'preserve',
+        preserveFragment: true,
+      });
+    }
   }
 
   private loadQueuedProductions(): void {

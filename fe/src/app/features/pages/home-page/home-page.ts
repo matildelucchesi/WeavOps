@@ -533,6 +533,7 @@ export class HomePage implements OnInit {
       data: {
         loom,
         modify: false,
+        disableActionsWhenStoppedUnassigned: true,
       },
     });
     dialogRef.afterClosed().subscribe((updated) => {

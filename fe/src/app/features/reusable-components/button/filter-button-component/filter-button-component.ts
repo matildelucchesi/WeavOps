@@ -8,6 +8,13 @@ export interface FilterOption {
   label: string;
   active?: boolean;
   disabled?: boolean;
+  type?: 'text' | 'select';
+  options?: FilterSelectOption[];
+}
+
+export interface FilterSelectOption {
+  value: string;
+  label: string;
 }
 
 export type FilterValues = Record<string, string>;

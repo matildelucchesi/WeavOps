@@ -1,0 +1,39 @@
+<header class="header">
+  <img src="/images/W-logo.png" alt="WeavOps" class="header-image" />
+</header>
+
+<main class="content">
+  <div class="title-row">
+    <button type="button" class="back-button" aria-label="Torna alle azioni del telaio" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Azioni sul telaio</h1>
+  </div>
+
+  @if (isLoading) {
+    <app-loader-component ariaLabel="Caricamento log telaio"></app-loader-component>
+  } @else if (loadFailed) {
+    <p class="message">Impossibile caricare i log del telaio.</p>
+  } @else if (rows().length === 0) {
+    <p class="message">Non sono presenti log per questo telaio.</p>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Evento</th>
+            <th>Data e ora</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track $index) {
+            <tr>
+              <td>{{ row.event }}</td>
+              <td>{{ row.dateTime }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</main>

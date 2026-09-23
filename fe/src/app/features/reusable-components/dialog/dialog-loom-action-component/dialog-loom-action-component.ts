@@ -29,6 +29,7 @@ export interface DialogLoomActionData {
   process?: Process | null;
   modify?: boolean;
   initialView?: 'meters';
+  disableActionsWhenStoppedUnassigned?: boolean;
 }
 
 @Component({
@@ -61,6 +62,8 @@ export class DialogLoomActionComponent {
   readonly process = this.dialogData?.process ?? null;
   public readonly loomStatus = Loom.StatusEnum;
   public readonly isInitialMetersView = this.dialogData?.initialView === 'meters';
+  private readonly disableActionsWhenStoppedUnassigned =
+    this.dialogData?.disableActionsWhenStoppedUnassigned ?? false;
 
   public change: boolean = false;
   public meters: boolean = this.isInitialMetersView;
@@ -77,6 +80,10 @@ export class DialogLoomActionComponent {
   }
 
   openChangeState(): void {
+    if (this.areProductionActionsDisabled()) {
+      return;
+    }
+
     this.loomState = this.loom?.status ?? Loom.StatusEnum.Stopped;
     this.meters = false;
     this.serialNumberChange = false;
@@ -95,6 +102,10 @@ export class DialogLoomActionComponent {
   }
 
   openMeters(): void {
+    if (this.areProductionActionsDisabled()) {
+      return;
+    }
+
     this.change = false;
     this.serialNumberChange = false;
     this.meters = true;
@@ -102,6 +113,12 @@ export class DialogLoomActionComponent {
 
   isLoomArrangementActionDisabled(): boolean {
     return this.loom?.isAssigned === false;
+  }
+
+  public areProductionActionsDisabled(): boolean {
+    return this.disableActionsWhenStoppedUnassigned
+      && this.loom?.status === Loom.StatusEnum.Stopped
+      && this.loom.isAssigned === false;
   }
 
   goBack(): void {

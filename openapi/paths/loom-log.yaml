@@ -1,0 +1,126 @@
+/loom-logs:
+  get:
+    summary: Recupera tutti i log telaio
+    operationId: getLoomLogs
+    tags:
+      - LoomLog
+    responses:
+      '200':
+        description: Lista log telaio
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/loom-log.yaml'
+
+  post:
+    summary: Crea un log telaio
+    operationId: createLoomLog
+    tags:
+      - LoomLog
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/loom-log.yaml'
+    responses:
+      '201':
+        description: Log telaio creato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom-log.yaml'
+      '400':
+        description: Richiesta non valida
+
+/loom-logs/{id}:
+  get:
+    summary: Recupera un log telaio tramite ID
+    operationId: getLoomLogById
+    tags:
+      - LoomLog
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Log telaio trovato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom-log.yaml'
+      '404':
+        description: Log telaio non trovato
+
+  put:
+    summary: Aggiorna un log telaio
+    operationId: updateLoomLog
+    tags:
+      - LoomLog
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/loom-log.yaml'
+    responses:
+      '200':
+        description: Log telaio aggiornato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/loom-log.yaml'
+      '400':
+        description: Richiesta non valida
+      '404':
+        description: Log telaio non trovato
+
+  delete:
+    summary: Elimina un log telaio
+    operationId: deleteLoomLog
+    tags:
+      - LoomLog
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Log telaio eliminato
+      '404':
+        description: Log telaio non trovato
+
+/loom-logs/loom/{loomId}:
+  get:
+    summary: Recupera i log di un telaio dal più recente
+    operationId: getLoomLogsByLoomId
+    tags:
+      - LoomLog
+    parameters:
+      - name: loomId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Lista dei log del telaio ordinata per data decrescente
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/loom-log.yaml'

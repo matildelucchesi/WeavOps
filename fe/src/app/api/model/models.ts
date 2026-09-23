@@ -12,6 +12,7 @@ export * from './login200Response';
 export * from './loginRequest';
 export * from './loom';
 export * from './loomItemAssignment';
+export * from './loomLog';
 export * from './loomProcessHistory';
 export * from './notification';
 export * from './process';

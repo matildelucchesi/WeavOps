@@ -1,8 +1,10 @@
 package org.openapitools.service;
 
+import org.openapitools.constants.LoomLogEvent;
 import org.openapitools.domain.ItemEntity;
 import org.openapitools.domain.LoomEntity;
 import org.openapitools.domain.LoomItemAssignmentEntity;
+import org.openapitools.domain.LoomLogEntity;
 import org.openapitools.domain.ProcessEntity;
 import org.openapitools.model.LoomItemAssignment;
 import org.openapitools.repository.LoomItemAssignmentRepository;
@@ -30,6 +32,12 @@ public class LoomService {
     @Autowired
     private ProductionForecastService productionForecastService;
 
+    @Autowired
+    private LoomLogService loomLogService;
+
+    @Autowired
+    private ArrangementService arrangementService;
+
     private final LoomRepository repository;
 
     public LoomService(LoomRepository repository) {
@@ -53,11 +61,29 @@ public class LoomService {
     }
 
     public Optional<LoomEntity> update(String id, LoomEntity entity){
-        if (!repository.existsById(id)) {
-            return Optional.empty();
-        }
-        entity.setId(id);
-        return Optional.of(repository.save(entity));
+        return repository.findById(id).map(existing -> {
+            boolean statusChanged = !Objects.equals(existing.getStatus(), entity.getStatus());
+            entity.setId(id);
+            LoomEntity savedLoom = repository.save(entity);
+
+            if (statusChanged) {
+                saveLoomStatusChangedLog(savedLoom);
+            }
+
+            return savedLoom;
+        });
+    }
+
+    public Optional<LoomEntity> updateStatus(String id, org.openapitools.model.Loom.StatusEnum status) {
+        return repository.findById(id).map(existing -> {
+            if (!Objects.equals(existing.getStatus(), status)) {
+                existing.setStatus(status);
+                LoomEntity savedLoom = repository.save(existing);
+                saveLoomStatusChangedLog(savedLoom);
+                return savedLoom;
+            }
+            return existing;
+        });
     }
 
     public boolean deleteById(String id){
@@ -141,6 +167,7 @@ public class LoomService {
         item.getProcessing().set(processIndex, savedProcess);
         item.setMetersRun(valueOrZero(item.getMetersRun()) + metersToAdd);
         this.productionForecastService.recalculateProductionForecast(item, assignmentEntity);
+        saveLoomLog(LoomLogEvent.ADD_METERS, loom.get(), item, metersToAdd);
 
         return loom;
     }
@@ -179,6 +206,36 @@ public class LoomService {
 
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
+    }
+
+    private void saveLoomLog(LoomLogEvent event, LoomEntity loom, ItemEntity item, Integer metersAdded) {
+        LoomLogEntity loomLog = new LoomLogEntity();
+        loomLog.setKey(event.name());
+        loomLog.setLoomId(loom.getId());
+        loomLog.setLoomCode(loom.getSerialNumber());
+        loomLog.setItemId(item.getId());
+        loomLog.setItemName(itemName(item));
+        loomLog.setMetersAdded(metersAdded);
+        loomLogService.save(loomLog);
+    }
+
+    private void saveLoomStatusChangedLog(LoomEntity loom) {
+        LoomLogEntity loomLog = new LoomLogEntity();
+        loomLog.setKey(LoomLogEvent.LOOM_STATUS_CHANGED.name());
+        loomLog.setLoomId(loom.getId());
+        loomLog.setLoomCode(loom.getSerialNumber());
+        loomLog.setLoomStatus(loom.getStatus() != null ? loom.getStatus().getValue() : null);
+        loomLogService.save(loomLog);
+    }
+
+    private String itemName(ItemEntity item) {
+        if (isBlank(item.getArrangementId())) {
+            return null;
+        }
+
+        return arrangementService.findById(item.getArrangementId())
+                .map(arrangement -> arrangement.getItemName())
+                .orElse(null);
     }
 
     private Optional<LoomItemAssignmentEntity> getRunningAssignmentByLoomId(String loomId) {

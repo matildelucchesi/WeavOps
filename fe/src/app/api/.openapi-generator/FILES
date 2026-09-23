@@ -12,6 +12,7 @@ api/customerItemHistory.service.ts
 api/item.service.ts
 api/loom.service.ts
 api/loomItemAssignment.service.ts
+api/loomLog.service.ts
 api/loomProcessHistory.service.ts
 api/notifications.service.ts
 api/process.service.ts
@@ -35,6 +36,7 @@ model/login200Response.ts
 model/loginRequest.ts
 model/loom.ts
 model/loomItemAssignment.ts
+model/loomLog.ts
 model/loomProcessHistory.ts
 model/models.ts
 model/notification.ts

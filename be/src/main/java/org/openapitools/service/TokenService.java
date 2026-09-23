@@ -24,15 +24,18 @@ public class TokenService {
     private final ObjectMapper objectMapper;
     private final String jwtSecret;
     private final long expirationSeconds;
+    private final long mobileExpirationSeconds;
 
     public TokenService(
             ObjectMapper objectMapper,
             @Value("${app.auth.jwt-secret}") String jwtSecret,
-            @Value("${app.auth.jwt-expiration-seconds:86400}") long expirationSeconds
+            @Value("${app.auth.jwt-expiration-seconds:86400}") long expirationSeconds,
+            @Value("${app.auth.mobile-token-expiration-seconds:31536000}") long mobileExpirationSeconds
     ) {
         this.objectMapper = objectMapper;
         this.jwtSecret = jwtSecret;
         this.expirationSeconds = expirationSeconds;
+        this.mobileExpirationSeconds = mobileExpirationSeconds;
     }
 
     public String generateToken(UserEntity user) {
@@ -47,6 +50,24 @@ public class TokenService {
         payload.put("userId", user.getId());
         payload.put("iat", now.getEpochSecond());
         payload.put("exp", now.plusSeconds(expirationSeconds).getEpochSecond());
+
+        String unsignedToken = base64UrlEncode(header) + "." + base64UrlEncode(payload);
+        return unsignedToken + "." + sign(unsignedToken);
+    }
+
+    public String generateMobileToken(String loomId) {
+        Instant now = Instant.now();
+
+        Map<String, Object> header = new LinkedHashMap<>();
+        header.put("alg", "HS256");
+        header.put("typ", "JWT");
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("sub", "loom-mobile");
+        payload.put("purpose", "loom-mobile");
+        payload.put("loomId", loomId);
+        payload.put("iat", now.getEpochSecond());
+        payload.put("exp", now.plusSeconds(mobileExpirationSeconds).getEpochSecond());
 
         String unsignedToken = base64UrlEncode(header) + "." + base64UrlEncode(payload);
         return unsignedToken + "." + sign(unsignedToken);
@@ -76,13 +97,18 @@ public class TokenService {
             Map<String, Object> payload = readBase64UrlJson(parts[1]);
             String username = asString(payload.get("sub"));
             String userId = asString(payload.get("userId"));
+            String purpose = asString(payload.get("purpose"));
+            String loomId = asString(payload.get("loomId"));
             Long expiresAt = asLong(payload.get("exp"));
 
-            if (username == null || expiresAt == null || expiresAt <= Instant.now().getEpochSecond()) {
+            boolean validMobileToken = "loom-mobile".equals(purpose) && loomId != null && !loomId.isBlank();
+            boolean validUserToken = purpose == null && username != null;
+            if ((!validMobileToken && !validUserToken)
+                    || expiresAt == null || expiresAt <= Instant.now().getEpochSecond()) {
                 return Optional.empty();
             }
 
-            return Optional.of(new TokenPayload(username, userId));
+            return Optional.of(new TokenPayload(username, userId, purpose, loomId));
         } catch (Exception exception) {
             return Optional.empty();
         }
@@ -135,6 +161,6 @@ public class TokenService {
         return null;
     }
 
-    public record TokenPayload(String username, String userId) {
+    public record TokenPayload(String username, String userId, String purpose, String loomId) {
     }
 }
