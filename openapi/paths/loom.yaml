@@ -157,3 +157,21 @@
         description: Richiesta non valida
       '404':
         description: Loom non trovato
+
+/looms/{id}/knotting:
+  post:
+    summary: Registra un'annodatura sul telaio in produzione
+    operationId: recordKnotting
+    tags:
+      - Loom
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '201':
+        description: Annodatura registrata
+      '404':
+        description: Telaio o produzione attiva non trovati

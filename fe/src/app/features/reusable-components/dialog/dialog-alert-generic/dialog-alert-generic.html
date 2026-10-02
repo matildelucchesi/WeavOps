@@ -9,15 +9,26 @@
             <mat-icon class="icon" aria-hidden="true">{{ icon }}</mat-icon>
         </div>
         <p class="first-text">{{text}}</p>
-        @if(subtext){
+        @if(subtext || productionCertifications){
             <div class="body" style="padding:20px">
-                <p class="second-text">{{ subtext }}</p>
+                @if(subtext){<p class="second-text">{{ subtext }}</p>}
+                @if(productionCertifications){
+                    <div class="certifications">
+                        <label><input type="checkbox" name="grs" [(ngModel)]="grs"> GRS</label>
+                        <label><input type="checkbox" name="gots" [(ngModel)]="gots"> GOTS</label>
+                    </div>
+                }
             </div>
         }
         @if(button){
             <div class="actions">
                 @if (closeOnly) {
-                    <button class="cancel-button" type="button" (click)="onCloseDialog()">
+                    <button
+                        [class.cancel-button]="closeButtonVariant === 'cancel'"
+                        [class.confirm-button]="closeButtonVariant === 'primary'"
+                        [class.purple-button]="closeButtonVariant === 'purple'"
+                        type="button"
+                        (click)="onCloseDialog()">
                         {{ closeButtonLabel }}
                     </button>
                 } @else {
@@ -25,7 +36,7 @@
                         Annulla
                     </button>
                     <button class="confirm-button" type="button" (click)="onConfirm()">
-                        Procedi
+                        {{ confirmButtonLabel }}
                     </button>
                 }
             </div>

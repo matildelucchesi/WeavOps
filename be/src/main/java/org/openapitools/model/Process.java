@@ -61,6 +61,12 @@ public class Process {
 
   private @Nullable BigDecimal itemHitsPerDm;
 
+  private @Nullable Boolean grs;
+
+  private @Nullable Boolean gots;
+
+  private @Nullable String notes;
+
   public Process() {
     super();
   }
@@ -392,6 +398,42 @@ public class Process {
     this.itemHitsPerDm = itemHitsPerDm;
   }
 
+  public Process grs(@Nullable Boolean grs) {
+    this.grs = grs;
+    return this;
+  }
+
+  @Schema(name = "grs", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("grs")
+  public @Nullable Boolean getGrs() { return grs; }
+
+  @JsonProperty("grs")
+  public void setGrs(@Nullable Boolean grs) { this.grs = grs; }
+
+  public Process gots(@Nullable Boolean gots) {
+    this.gots = gots;
+    return this;
+  }
+
+  @Schema(name = "gots", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("gots")
+  public @Nullable Boolean getGots() { return gots; }
+
+  @JsonProperty("gots")
+  public void setGots(@Nullable Boolean gots) { this.gots = gots; }
+
+  public Process notes(@Nullable String notes) {
+    this.notes = notes;
+    return this;
+  }
+
+  @Schema(name = "notes", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("notes")
+  public @Nullable String getNotes() { return notes; }
+
+  @JsonProperty("notes")
+  public void setNotes(@Nullable String notes) { this.notes = notes; }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -415,12 +457,15 @@ public class Process {
         Objects.equals(this.days, process.days) &&
         Objects.equals(this.expectedEndDate, process.expectedEndDate) &&
         Objects.equals(this.loom, process.loom) &&
-        Objects.equals(this.itemHitsPerDm, process.itemHitsPerDm);
+        Objects.equals(this.itemHitsPerDm, process.itemHitsPerDm) &&
+        Objects.equals(this.grs, process.grs) &&
+        Objects.equals(this.gots, process.gots) &&
+        Objects.equals(this.notes, process.notes);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, speed, efficiency, totalMeters, metersRun, metersToGo, totalPieces, piecesRun, metersPerPiece, startDate, endDate, days, expectedEndDate, loom, itemHitsPerDm);
+    return Objects.hash(id, speed, efficiency, totalMeters, metersRun, metersToGo, totalPieces, piecesRun, metersPerPiece, startDate, endDate, days, expectedEndDate, loom, itemHitsPerDm, grs, gots, notes);
   }
 
   @Override
@@ -442,6 +487,9 @@ public class Process {
     sb.append("    expectedEndDate: ").append(toIndentedString(expectedEndDate)).append("\n");
     sb.append("    loom: ").append(toIndentedString(loom)).append("\n");
     sb.append("    itemHitsPerDm: ").append(toIndentedString(itemHitsPerDm)).append("\n");
+    sb.append("    grs: ").append(toIndentedString(grs)).append("\n");
+    sb.append("    gots: ").append(toIndentedString(gots)).append("\n");
+    sb.append("    notes: ").append(toIndentedString(notes)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -454,4 +502,3 @@ public class Process {
     return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
-

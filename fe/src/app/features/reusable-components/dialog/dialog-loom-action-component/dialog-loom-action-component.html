@@ -39,7 +39,7 @@
     </div>
     <div class="body">
         @if(!change && !meters && !serialNumberChange) {
-            <div class="body-actions">
+            <div class="body-actions body-actions-with-knotting">
                 <div class="action">
                     <!-- CAMBIA STATO -->
                     <button class="action-button" type="button" [disabled]="areProductionActionsDisabled()" (click)="openChangeState()">
@@ -63,6 +63,17 @@
                         <img ngSrc="/icon/meters-icon.png" width="40" height="40" alt="Meters Icon">
                     </button>
                     <p class="action-button-label">Aggiungi Pezze Prodotte</p>
+                </div>
+                <div class="action">
+                    <button
+                        class="action-button"
+                        type="button"
+                        [disabled]="areProductionActionsDisabled() || isRecordingKnotting"
+                        aria-label="Segna annodatura"
+                        (click)="markKnotting()">
+                        <mat-icon class="action-button-icon">commit</mat-icon>
+                    </button>
+                    <p class="action-button-label">Segna Annodatura</p>
                 </div>
             </div>
             @if (modify) {

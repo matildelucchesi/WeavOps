@@ -1,5 +1,6 @@
 package org.openapitools.service;
 
+import org.openapitools.domain.ArrangementEntity;
 import org.openapitools.domain.ItemEntity;
 import org.openapitools.domain.LoomEntity;
 import org.openapitools.domain.LoomItemAssignmentEntity;
@@ -17,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.DayOfWeek;
+import java.time.ZonedDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -134,7 +138,10 @@ public class ProductionForecastService {
 
         int remainingMeters = calculateRemainingMeters(item);
         float remainingDays = remainingMeters <= 0 ? 0 : remainingMeters / totalDailyCapacity;
-        Instant expectedEndDate = calculateExpectedEndDateFromNow(remainingDays);
+        ArrangementEntity arrangement = isBlank(item.getArrangementId()) ? null : arrangementRepository.findById(item.getArrangementId()).orElse(null);
+        Instant expectedEndDate = hasWeekendSchedule(arrangement)
+                ? calculateExpectedEndDateWithWeekendSchedule(Instant.now(), remainingDays * MILLIS_PER_DAY, arrangement)
+                : calculateExpectedEndDateFromNow(remainingDays);
 
         return saveForecast(item, runningProcesses, expectedEndDate, remainingDays);
     }
@@ -170,9 +177,8 @@ public class ProductionForecastService {
             return Optional.empty();
         }
 
-        Instant deliveryDate = arrangementRepository.findById(item.getArrangementId())
-                .map(arrangement -> arrangement.getDeliveryDate())
-                .orElse(null);
+        ArrangementEntity arrangement = arrangementRepository.findById(item.getArrangementId()).orElse(null);
+        Instant deliveryDate = arrangement == null ? null : arrangement.getDeliveryDate();
 
         if (deliveryDate == null) {
             return Optional.empty();
@@ -202,7 +208,9 @@ public class ProductionForecastService {
                 ? 0
                 : (int) Math.ceil(additionalDailyCapacity / referenceDailyCapacity);
         int recommendedTotalLooms = runningProcesses.size() + recommendedAdditionalLooms;
-        Instant estimatedCompletionDate = calculateExpectedEndDateFromNow(remainingMeters / currentDailyCapacity);
+        Instant estimatedCompletionDate = hasWeekendSchedule(arrangement)
+                ? calculateExpectedEndDateWithWeekendSchedule(now, (remainingMeters / currentDailyCapacity) * MILLIS_PER_DAY, arrangement)
+                : calculateExpectedEndDateFromNow(remainingMeters / currentDailyCapacity);
 
         return Optional.of(new ProductionAdvice(
                 remainingMeters,
@@ -297,6 +305,88 @@ public class ProductionForecastService {
         return Math.max(valueOrZero(item.getTotalMeters()) - valueOrZero(item.getMetersRun()), 0);
     }
 
+
+    private boolean hasWeekendSchedule(ArrangementEntity arrangement) {
+        return arrangement != null && (arrangement.getWorksSaturday() != null || arrangement.getWorksSunday() != null);
+    }
+
+    private Instant calculateExpectedEndDateWithWeekendSchedule(Instant start, double remainingWorkMillis, ArrangementEntity arrangement) {
+        if (remainingWorkMillis <= 0) return start;
+        Set<LocalDate> closures = calendarEventService.findClosureDates();
+        Instant cursor = start;
+        double remaining = remainingWorkMillis;
+        LocalDate date = start.atZone(BUSINESS_TIME_ZONE).toLocalDate();
+        for (int days = 0; days < 36500 && remaining > 0; days++, date = date.plusDays(1)) {
+            if (closures.contains(date)) continue;
+            for (TimeWindow window : getWorkWindows(date, arrangement, closures)) {
+                Instant from = window.start().isAfter(cursor) ? window.start() : cursor;
+                if (!window.end().isAfter(from)) continue;
+                long available = Duration.between(from, window.end()).toMillis();
+                if (remaining <= available) return from.plusMillis((long) Math.ceil(remaining));
+                remaining -= available;
+            }
+        }
+        return cursor;
+    }
+
+    private List<TimeWindow> getWorkWindows(LocalDate date, ArrangementEntity arrangement, Set<LocalDate> closures) {
+        List<TimeWindow> windows = new ArrayList<>();
+        ZonedDateTime dayStart = date.atStartOfDay(BUSINESS_TIME_ZONE);
+        ZonedDateTime nextDayStart = date.plusDays(1).atStartOfDay(BUSINESS_TIME_ZONE);
+        if (date.getDayOfWeek() != DayOfWeek.SATURDAY && date.getDayOfWeek() != DayOfWeek.SUNDAY) {
+            windows.add(new TimeWindow(dayStart.toInstant(), nextDayStart.toInstant()));
+            return windows;
+        }
+        if (closures.contains(date)) return windows;
+        addWeekendWindow(windows, date, arrangement, false);
+        LocalDate previousDate = date.minusDays(1);
+        if ((previousDate.getDayOfWeek() == DayOfWeek.SATURDAY || previousDate.getDayOfWeek() == DayOfWeek.SUNDAY)
+                && !closures.contains(previousDate)) {
+            addWeekendWindow(windows, previousDate, arrangement, true);
+        }
+        windows.sort(java.util.Comparator.comparing(TimeWindow::start));
+        return mergeTimeWindows(windows);
+    }
+
+
+    private List<TimeWindow> mergeTimeWindows(List<TimeWindow> sortedWindows) {
+        if (sortedWindows.size() < 2) return sortedWindows;
+        List<TimeWindow> merged = new ArrayList<>();
+        TimeWindow current = sortedWindows.get(0);
+        for (int index = 1; index < sortedWindows.size(); index++) {
+            TimeWindow next = sortedWindows.get(index);
+            if (!next.start().isAfter(current.end())) {
+                current = new TimeWindow(current.start(), next.end().isAfter(current.end()) ? next.end() : current.end());
+            } else {
+                merged.add(current);
+                current = next;
+            }
+        }
+        merged.add(current);
+        return merged;
+    }
+    private void addWeekendWindow(List<TimeWindow> windows, LocalDate shiftDate, ArrangementEntity arrangement, boolean overnightCarryOnly) {
+        DayOfWeek day = shiftDate.getDayOfWeek();
+        boolean saturday = day == DayOfWeek.SATURDAY;
+        boolean enabled = saturday ? Boolean.TRUE.equals(arrangement.getWorksSaturday()) : Boolean.TRUE.equals(arrangement.getWorksSunday());
+        if (!enabled) return;
+        String startValue = saturday ? arrangement.getSaturdayStartTime() : arrangement.getSundayStartTime();
+        String endValue = saturday ? arrangement.getSaturdayEndTime() : arrangement.getSundayEndTime();
+        if (startValue == null || endValue == null) return;
+        LocalTime startTime = LocalTime.parse(startValue);
+        LocalTime endTime = LocalTime.parse(endValue);
+        ZonedDateTime start = shiftDate.atTime(startTime).atZone(BUSINESS_TIME_ZONE);
+        ZonedDateTime end = shiftDate.atTime(endTime).atZone(BUSINESS_TIME_ZONE);
+        if (!end.isAfter(start)) end = end.plusDays(1);
+        if (overnightCarryOnly && !end.toLocalDate().isAfter(shiftDate)) return;
+        LocalDate targetDate = shiftDate.plusDays(1);
+        ZonedDateTime clipStart = overnightCarryOnly ? targetDate.atStartOfDay(BUSINESS_TIME_ZONE) : start;
+        ZonedDateTime clipEnd = overnightCarryOnly ? end : (end.toLocalDate().isAfter(shiftDate) ? targetDate.atStartOfDay(BUSINESS_TIME_ZONE) : end);
+        if (clipEnd.isAfter(clipStart)) windows.add(new TimeWindow(clipStart.toInstant(), clipEnd.toInstant()));
+        if (!overnightCarryOnly && end.toLocalDate().isAfter(shiftDate)) {
+            windows.add(new TimeWindow(targetDate.atStartOfDay(BUSINESS_TIME_ZONE).toInstant(), end.toInstant()));
+        }
+    }
     private Instant calculateExpectedEndDateFromNow(float productionDays) {
         Instant calculationStart = Instant.now();
         Instant expectedEndDate = calculationStart
@@ -417,6 +507,9 @@ public class ProductionForecastService {
 
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
+    }
+
+    private record TimeWindow(Instant start, Instant end) {
     }
 
     private record RunningProcessForecast(

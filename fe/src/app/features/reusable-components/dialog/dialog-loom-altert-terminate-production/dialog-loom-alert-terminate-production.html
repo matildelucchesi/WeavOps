@@ -16,6 +16,10 @@
             </button>
         </div>
     } @else {
+        <div class="notes-field">
+            <label for="productionNotes">Aggiungi qui eventuali note</label>
+            <textarea id="productionNotes" name="productionNotes" rows="4" [(ngModel)]="notes"></textarea>
+        </div>
         <div class="why">
             <p>Desideri terminare la produzione marcando il lavoro come...</p>
         </div>
@@ -29,4 +33,3 @@
         </div>
     }
 </div>
-

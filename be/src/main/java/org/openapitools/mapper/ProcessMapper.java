@@ -33,6 +33,9 @@ public class ProcessMapper {
         dto.setMetersPerPiece(toBigDecimal(entity.getMetersPerPiece()));
         dto.setPiecesRun(toBigDecimal(entity.getPiecesRun()));
         dto.setTotalPieces(toBigDecimal(entity.getTotalPieces()));
+        dto.setGrs(entity.getGrs());
+        dto.setGots(entity.getGots());
+        dto.setNotes(entity.getNotes());
         return dto;
     }
 
@@ -57,6 +60,9 @@ public class ProcessMapper {
         entity.setMetersPerPiece(toInteger(dto.getMetersPerPiece()));
         entity.setPiecesRun(toInteger(dto.getPiecesRun()));
         entity.setTotalPieces(toInteger(dto.getTotalPieces()));
+        entity.setGrs(dto.getGrs());
+        entity.setGots(dto.getGots());
+        entity.setNotes(dto.getNotes());
         return entity;
     }
 

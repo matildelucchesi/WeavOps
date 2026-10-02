@@ -25,7 +25,7 @@ import { TableAction, TableActionClick, TableComponent, type TableColumn } from 
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoomItemAssignmentFacadeService } from '../../../services/loom-item-assignment-facade.service';
 import { DialogInformativeComponent, type DialogInformativeData } from '../../reusable-components/dialog/dialog-informative-component/dialog-informative-component';
-import { DialogAlertGeneric, type DialogAlertGenericData } from '../../reusable-components/dialog/dialog-alert-generic/dialog-alert-generic';
+import { DialogProductionSchedule, type ProductionSchedule, type ProductionScheduleDialogData } from '../../reusable-components/dialog/dialog-production-schedule/dialog-production-schedule';
 import { firstValueFrom, forkJoin } from 'rxjs';
 import type { jsPDF as JsPdfDocument } from 'jspdf';
 
@@ -257,31 +257,35 @@ export class ItemDetailsPage implements OnInit {
     }
 
     const dialogRef = this.dialog.open<
-      DialogAlertGeneric,
-      DialogAlertGenericData,
-      boolean
-    >(DialogAlertGeneric, {
+      DialogProductionSchedule,
+      ProductionScheduleDialogData,
+      ProductionSchedule
+    >(DialogProductionSchedule, {
       panelClass: 'loom-alert-dialog-panel',
       width: '520px',
-      maxWidth: 'calc(100vw - 48px)',
+      maxWidth: 'calc(100vw - 32px)',
       autoFocus: false,
       data: {
-        text: 'Confermare le modifiche?',
-        subtext: "ATTENZIONE: prima di procedere assicurarsi che tutti i dati siano corretti.",
-        icon: 'save',
-        iconColor: 'var(--weavops-color-primary)',
+        title: 'Conferma modifiche e turni weekend',
+        description: 'ATTENZIONE: verificare i dati. Dal lunedì al venerdì la previsione considera 24 ore di lavoro al giorno.',
+        confirmLabel: 'Salva modifiche',
+        worksSaturday: currentArrangement.worksSaturday,
+        saturdayStartTime: currentArrangement.saturdayStartTime,
+        saturdayEndTime: currentArrangement.saturdayEndTime,
+        worksSunday: currentArrangement.worksSunday,
+        sundayStartTime: currentArrangement.sundayStartTime,
+        sundayEndTime: currentArrangement.sundayEndTime,
       },
     });
 
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (!confirmed) {
+    dialogRef.afterClosed().subscribe((schedule) => {
+      if (!schedule) {
         return;
       }
 
-      this.persistChanges(currentItem, currentArrangement);
+      this.persistChanges(currentItem, { ...currentArrangement, ...schedule });
     });
   }
-
   public cancelEditMode(): void {
     this.isEditEnabled = false;
 
@@ -978,7 +982,7 @@ export class ItemDetailsPage implements OnInit {
 
   private createLoomProductionDetailsUrl(loomId: string, mobileToken: string): string {
     const query = new URLSearchParams({ mobileToken });
-    return `http://192.168.50.16:4200/telaio/${encodeURIComponent(loomId)}/mobile#${query.toString()}`;
+    return `${window.location.origin}/telaio/${encodeURIComponent(loomId)}/mobile#${query.toString()}`;
   }
 
   private chunkArray<T>(items: T[], chunkSize: number): T[][] {

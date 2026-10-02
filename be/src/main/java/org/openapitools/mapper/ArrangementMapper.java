@@ -28,6 +28,12 @@ public class ArrangementMapper {
         dto.setWarpEndCount(entity.getWarpEndCount());
         dto.setHitsPerDm(entity.getHitsPerDm());
         dto.setDeliveryDate(toOffsetDateTime(entity.getDeliveryDate()));
+        dto.setWorksSaturday(entity.getWorksSaturday());
+        dto.setSaturdayStartTime(entity.getSaturdayStartTime());
+        dto.setSaturdayEndTime(entity.getSaturdayEndTime());
+        dto.setWorksSunday(entity.getWorksSunday());
+        dto.setSundayStartTime(entity.getSundayStartTime());
+        dto.setSundayEndTime(entity.getSundayEndTime());
         return dto;
     }
 
@@ -48,6 +54,12 @@ public class ArrangementMapper {
         entity.setWarpEndCount(dto.getWarpEndCount());
         entity.setHitsPerDm(dto.getHitsPerDm());
         entity.setDeliveryDate(toInstant(dto.getDeliveryDate()));
+        entity.setWorksSaturday(dto.getWorksSaturday());
+        entity.setSaturdayStartTime(dto.getSaturdayStartTime());
+        entity.setSaturdayEndTime(dto.getSaturdayEndTime());
+        entity.setWorksSunday(dto.getWorksSunday());
+        entity.setSundayStartTime(dto.getSundayStartTime());
+        entity.setSundayEndTime(dto.getSundayEndTime());
         return entity;
     }
 

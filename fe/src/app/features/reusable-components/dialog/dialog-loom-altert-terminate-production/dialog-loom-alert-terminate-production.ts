@@ -2,16 +2,22 @@ import { Component, inject } from '@angular/core';
 import { LoomItemAssignment } from '../../../../api';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIcon } from "@angular/material/icon";
+import { FormsModule } from '@angular/forms';
 
 export interface DialogLoomAlertTerminateProductionData {
   assignment?: LoomItemAssignment | null;
 }
 
-export type DialogLoomAlertTerminateProductionResult = LoomItemAssignment.StatusEnum | false;
+export interface DialogLoomAlertTerminateProductionResultValue {
+  status: LoomItemAssignment.StatusEnum;
+  notes: string;
+}
+
+export type DialogLoomAlertTerminateProductionResult = DialogLoomAlertTerminateProductionResultValue | false;
 
 @Component({
   selector: 'app-dialog-loom-alert-terminate-production',
-  imports: [MatIcon],
+  imports: [MatIcon, FormsModule],
   standalone: true,
   templateUrl: './dialog-loom-alert-terminate-production.html',
   styleUrl: './dialog-loom-alert-terminate-production.scss',
@@ -25,6 +31,7 @@ export class DialogLoomAlertTerminateProduction {
   public readonly state = LoomItemAssignment.StatusEnum;
 
   public isConfirmed: boolean = false;
+  public notes = '';
 
   public onConfirm(): void {
     this.isConfirmed = true;
@@ -34,8 +41,8 @@ export class DialogLoomAlertTerminateProduction {
     this.dialogRef?.close(false);
   }
 
-  public onSelectState(state: LoomItemAssignment.StatusEnum): void {
-    this.dialogRef?.close(state);
+  public onSelectState(status: LoomItemAssignment.StatusEnum): void {
+    this.dialogRef?.close({ status, notes: this.notes.trim() });
   }
 
 }

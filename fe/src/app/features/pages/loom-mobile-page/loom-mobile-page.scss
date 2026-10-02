@@ -51,7 +51,10 @@
     text-align: right;
 }
 
-.content-header{
+.content-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     padding: 20px;
 }
 
@@ -61,13 +64,6 @@
     gap: 5px;
     margin: 0;
     line-height: 1;
-}
-
-.content-header h3 mat-icon{
-    width: 20px;
-    height: 20px;
-    font-size: 20px;
-    line-height: 20px;
 }
 
 .dialog-title{
@@ -199,31 +195,33 @@
     opacity: 0.8;
 }
 
-.section-buttons{
+.section-buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     width: 90%;
 }
 
-.back-button{
-    cursor: pointer;
+.mobile-back-button {
+    display: inline-flex;
+    flex: 0 0 40px;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
     border: 1.5px solid var(--weavops-color-primary);
-    border-radius: 10px;
-    width: 100px;
-    height: 30px;
-    background-color: var(--weavops-color-surface);
+    border-radius: 50%;
     color: var(--weavops-color-primary);
-    font-family: 'Instrument Sans', sans-serif;
-    font-weight: 600;
+    background: var(--weavops-color-surface);
+    cursor: pointer;
 }
 
-.back-button:hover:not(:disabled){
-    background-color: var(--weavops-color-accent);
-    color: var(--weavops-color-surface);
+.mobile-back-button:hover:not(:disabled) {
+    background: var(--weavops-color-primary-soft);
 }
 
-.back-button:disabled,
-.confirm-button:disabled{
+.mobile-back-button:disabled,
+.confirm-button:disabled {
     cursor: not-allowed;
     opacity: 0.65;
 }
@@ -281,7 +279,7 @@
 
 .confirm-button-container{
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     width: min(100%, 320px);
 }
 
@@ -457,29 +455,29 @@
     opacity: 0.65;
 }
 
-@media (max-width: 480px){
-    .header{
+@media (max-width: 480px) {
+    .header {
         height: 72px;
     }
 
-    .header-image{
+    .header-image {
         max-width: 160px;
         height: auto;
     }
 
-    .content{
+    .content {
         min-height: calc(100dvh - 72px);
     }
 
-    .production-summary{
+    .production-summary {
         margin: 16px 16px 0;
     }
 
-    .content-header{
+    .content-header {
         padding: 16px;
     }
 
-    .content-header h3{
+    .content-header h3 {
         align-items: flex-start;
         font-size: 18px;
         line-height: 1.25;
@@ -487,14 +485,13 @@
 
     .meters-section,
     .pending-action-section,
-    .end-production-section{
+    .end-production-section {
         width: 100%;
         padding: 16px;
         box-sizing: border-box;
     }
 
-    .section-buttons{
+    .section-buttons {
         width: 100%;
     }
 }
-

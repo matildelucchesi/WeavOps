@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from "@angular/material/icon";
 import { ActivatedRoute, Router } from '@angular/router';
@@ -71,17 +71,29 @@ export class LoomMobilePage implements OnInit {
   public isTerminatingProduction: boolean = false;
   public isQueueLoading: boolean = false;
   public isStartingProduction: boolean = false;
+  public isRecordingKnotting: boolean = false;
 
   public readonly loom = signal<Loom | null>(null);
   public readonly queuedProductions = signal<QueuedProductionRow[]>([]);
   public readonly productionSummary = signal<MobileProductionSummary | null>(null);
-  public readonly pageTitle = computed(() => {
+  public pageTitle(): string {
     const serialNumber = this.loom()?.serialNumber;
 
-    return serialNumber
-      ? `Cosa vuoi fare per Telaio ${serialNumber}?`
-      : 'Cosa vuoi fare per Telaio?';
-  });
+    if (this.addPieces) {
+      return 'Aggiungi pezze prodotte';
+    }
+    if (this.changeState) {
+      return 'Cambia stato';
+    }
+    if (this.endProduction) {
+      return 'Termina produzione';
+    }
+    if (this.startProduction) {
+      return 'Metti in produzione articolo in coda';
+    }
+
+    return serialNumber ? `Azioni su telaio ${serialNumber}` : 'Azioni su telaio';
+  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -401,6 +413,66 @@ export class LoomMobilePage implements OnInit {
 
   public startProductionTrue() {
     this.openAction('start-production');
+  }
+
+  public markKnotting(): void {
+    const loomId = this.loom()?.id ?? this.route.snapshot.paramMap.get('id');
+
+    if (!loomId || this.isRecordingKnotting) {
+      return;
+    }
+
+    this.isRecordingKnotting = true;
+    this.resolveProductionContext(loomId).subscribe({
+      next: (productionContext) => {
+        if (!productionContext) {
+          this.isRecordingKnotting = false;
+          this.showErrorSnackbar('Non è disponibile un articolo in produzione per questo telaio');
+          return;
+        }
+
+        const itemName = productionContext.arrangement.itemName ?? productionContext.item.id ?? 'articolo non disponibile';
+        const dialogRef = this.dialog.open<DialogAlertGeneric, DialogAlertGenericData, boolean>(DialogAlertGeneric, {
+          panelClass: 'loom-alert-dialog-panel',
+          autoFocus: false,
+          data: {
+            text: `Vuoi segnare un'annodatura per ${itemName}?`,
+            icon: 'commit',
+            iconColor: 'var(--weavops-color-primary)',
+            confirmButtonLabel: 'Sì',
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((confirmed) => {
+          if (!confirmed) {
+            this.isRecordingKnotting = false;
+            return;
+          }
+
+          this.loomService.recordKnotting(loomId).subscribe({
+            next: () => {
+              this.isRecordingKnotting = false;
+              this.returnToActionSelection();
+              this.snackBar.open('Annodatura registrata', 'Chiudi', {
+                duration: 4000,
+                horizontalPosition: 'end',
+                verticalPosition: 'bottom',
+              });
+            },
+            error: (error) => {
+              console.error('Errore durante la registrazione dell’annodatura:', error);
+              this.isRecordingKnotting = false;
+              this.showErrorSnackbar('Impossibile registrare l’annodatura');
+            },
+          });
+        });
+      },
+      error: (error) => {
+        console.error('Errore durante il caricamento dell’articolo in produzione:', error);
+        this.isRecordingKnotting = false;
+        this.showErrorSnackbar('Impossibile caricare l’articolo in produzione');
+      },
+    });
   }
 
   public viewLoomLogs(): void {

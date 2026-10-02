@@ -106,6 +106,10 @@ public class MobileTokenAuthorizationService {
                 && "add-pieces".equals(path[3])) {
             return loomId.equals(path[2]);
         }
+        if ("POST".equals(method) && path.length == 4 && "looms".equals(path[1])
+                && "knotting".equals(path[3])) {
+            return loomId.equals(path[2]);
+        }
         if ("GET".equals(method) && path.length == 4 && "loom-item-assignments".equals(path[1])
                 && "loom".equals(path[2]) && loomId.equals(path[3])) {
             return true;

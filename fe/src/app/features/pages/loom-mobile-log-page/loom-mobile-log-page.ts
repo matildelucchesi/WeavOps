@@ -74,6 +74,8 @@ export class LoomMobileLogPage implements OnInit {
         return `Processo di ${log.itemName ?? 'articolo non disponibile'} completato`;
       case 'ADD_METERS':
         return `Aggiunti ${log.metersAdded ?? 0} metri`;
+      case 'KNOTTING':
+        return 'Annodatura';
       default:
         return log.key;
     }

@@ -13,6 +13,7 @@ import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { LoomItemAssignmentFacadeService } from '../../../../services/loom-item-assignment-facade.service';
 import { ItemFacadeService } from '../../../../services/item-facade.service';
 import { ProcessFacadeService } from '../../../../services/process-facade.service';
+import { ArrangementFacadeService } from '../../../../services/arrangement-facade.service';
 import {
   DialogAlertGeneric,
   type DialogAlertGenericData,
@@ -21,6 +22,10 @@ import {
 interface ProductionContext {
   item: Item;
   process: Process;
+}
+
+interface KnottingContext {
+  itemName: string;
 }
 
 export interface DialogLoomActionData {
@@ -55,6 +60,7 @@ export class DialogLoomActionComponent {
   private readonly assignmentService = inject(LoomItemAssignmentFacadeService);
   private readonly itemService = inject(ItemFacadeService);
   private readonly processService = inject(ProcessFacadeService);
+  private readonly arrangementService = inject(ArrangementFacadeService);
   private snackBar = inject(MatSnackBar);
 
   readonly loom = this.dialogData?.loom ?? null;
@@ -72,6 +78,7 @@ export class DialogLoomActionComponent {
   public serialNumber: string = this.loom?.serialNumber ?? '';
   public piecesProduced: number | null = null;
   public isAddingPieces: boolean = false;
+  public isRecordingKnotting: boolean = false;
 
   @Input() modify: boolean = this.dialogData?.modify ?? false;
 
@@ -109,6 +116,97 @@ export class DialogLoomActionComponent {
     this.change = false;
     this.serialNumberChange = false;
     this.meters = true;
+  }
+
+  public markKnotting(): void {
+    if (!this.loom?.id || this.isRecordingKnotting) {
+      return;
+    }
+
+    const loomId = this.loom.id;
+    this.isRecordingKnotting = true;
+    this.resolveKnottingContext().subscribe({
+      next: (context) => {
+        if (!context) {
+          this.isRecordingKnotting = false;
+          this.showErrorSnackbar('Non è disponibile un articolo in produzione per questo telaio');
+          return;
+        }
+
+        const dialogRef = this.dialog.open<DialogAlertGeneric, DialogAlertGenericData, boolean>(DialogAlertGeneric, {
+          panelClass: 'loom-alert-dialog-panel',
+          autoFocus: false,
+          data: {
+            text: `Vuoi segnare un'annodatura per ${context.itemName}?`,
+            icon: 'commit',
+            iconColor: 'var(--weavops-color-primary)',
+            confirmButtonLabel: 'Sì',
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((confirmed) => {
+          if (!confirmed) {
+            this.isRecordingKnotting = false;
+            return;
+          }
+
+          this.loomService.recordKnotting(loomId).subscribe({
+            next: () => {
+              this.isRecordingKnotting = false;
+              this.dialogRef?.close(true);
+              this.snackBar.open('Annodatura registrata', 'Chiudi', {
+                duration: 4000,
+                horizontalPosition: 'end',
+                verticalPosition: 'bottom',
+              });
+            },
+            error: (error) => {
+              console.error('Error recording loom knotting:', error);
+              this.isRecordingKnotting = false;
+              this.showErrorSnackbar('Impossibile registrare l’annodatura');
+            },
+          });
+        });
+      },
+      error: (error) => {
+        console.error('Error loading the active loom article:', error);
+        this.isRecordingKnotting = false;
+        this.showErrorSnackbar('Impossibile caricare l’articolo in produzione');
+      },
+    });
+  }
+
+  private resolveKnottingContext(): Observable<KnottingContext | null> {
+    const itemRequest = this.item
+      ? of(this.item)
+      : this.loom?.id
+        ? this.assignmentService.getRunningAssignmentByLoomId(this.loom.id).pipe(
+          switchMap((assignment) => assignment?.itemId
+            ? this.itemService.getById(assignment.itemId)
+            : of(null)),
+        )
+        : of(null);
+
+    return itemRequest.pipe(
+      switchMap((item) => {
+        if (!item) {
+          return of(null);
+        }
+
+        const fallbackName = item.id ?? 'articolo non disponibile';
+        if (!item.arrangementId) {
+          return of({ itemName: fallbackName });
+        }
+
+        return this.arrangementService.getById(item.arrangementId).pipe(
+          map((arrangement) => ({ itemName: arrangement.itemName || fallbackName })),
+        );
+      }),
+      catchError((error) => {
+        console.error('Error resolving active loom article:', error);
+        return of(null);
+      }),
+    );
   }
 
   isLoomArrangementActionDisabled(): boolean {

@@ -25,7 +25,17 @@
     </section>
 }
     <div class="content-header">
-        <h3><mat-icon>help</mat-icon>{{ pageTitle() }}</h3>
+        @if (changeState || addPieces || endProduction || startProduction) {
+            <button
+                class="mobile-back-button"
+                type="button"
+                aria-label="Torna alle azioni del telaio"
+                [disabled]="isChangingLoomState || isAddingMeters || isTerminatingProduction || isStartingProduction"
+                (click)="returnToActionSelection()">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+        }
+        <h3>{{ pageTitle() }}</h3>
     </div>
     <div class="content-actions">
         @if(!changeState && !addPieces && !endProduction && !startProduction) {
@@ -34,7 +44,7 @@
             <button class="action-button" (click)="addPiecesTrue()">
                 <img src="/icon/meters-icon.png" width="40" height="40" alt="Meters Icon">
             </button>
-            <p class="action-button-label">Aggiungi Pezze Prodotte</p>
+            <p class="action-button-label">Aggiungi pezze prodotte</p>
         </div>
         
         <div class="action">
@@ -42,7 +52,7 @@
             <button class="action-button" (click)="changeStateTrue()">
                 <img src="/icon/change-state-icon.png" width="40" height="40" alt="Change State Icon">
             </button>
-            <p class="action-button-label">Cambia Stato</p>
+            <p class="action-button-label">Cambia stato</p>
         </div>
         <div class="action">
             <!-- TERMINA PRODUZIONE -->
@@ -52,7 +62,7 @@
                 (click)="endProductionTrue()">
                 <mat-icon class="action-button-icon">flag</mat-icon>
             </button>
-            <p class="action-button-label">Termina Produzione</p>
+            <p class="action-button-label">Termina produzione</p>
         </div>
         <div class="action">
             <!-- METTI IN PRODUZIONE ARTICOLO IN CODA -->
@@ -62,7 +72,7 @@
                 (click)="startProductionTrue()">
                 <mat-icon class="action-button-icon">hardware</mat-icon>
             </button>
-            <p class="action-button-label">Metti in Produzione Articolo in Coda</p>
+            <p class="action-button-label">Metti in produzione articolo in coda</p>
         </div>
         <div class="action">
             <!-- VISUALIZZA AZIONI SU TELAIO -->
@@ -72,7 +82,17 @@
                 (click)="viewLoomLogs()">
                 <mat-icon class="action-button-icon">pending_actions</mat-icon>
             </button>
-            <p class="action-button-label">Visualizza Azioni su Telaio</p>
+            <p class="action-button-label">Visualizza azioni su telaio</p>
+        </div>
+        <div class="action">
+            <button
+                class="action-button"
+                type="button"
+                [disabled]="isRecordingKnotting"
+                (click)="markKnotting()">
+                <mat-icon class="action-button-icon">commit</mat-icon>
+            </button>
+            <p class="action-button-label">Segna annodatura</p>
         </div>
         }
         @if (changeState) {
@@ -89,7 +109,6 @@
                     </div>
                 </div>
                 <div class="section-buttons">
-                    <button class="back-button" type="button" [disabled]="isChangingLoomState" (click)="returnToActionSelection()">Indietro</button>
                     <button class="confirm-button" type="button" [disabled]="isChangingLoomState" (click)="changeLoomState()">Conferma</button>
                 </div>
             </div>
@@ -109,7 +128,6 @@
                         class="meters-input-field">
                 </div>
                 <div class="section-buttons confirm-button-container">
-                    <button class="back-button" type="button" [disabled]="isAddingMeters" (click)="returnToActionSelection()">Indietro</button>
                     <button class="confirm-button" type="button" [disabled]="isAddingMeters" (click)="addMeters()">Conferma</button>
                 </div>
             </div>
@@ -122,9 +140,6 @@
                 </div>
                 <p>Perchè vuoi terminare la produzione?</p>
                 
-            </div>
-            <div class="pending-action-section">
-                <button class="back-button" type="button" (click)="returnToActionSelection()">Indietro</button>
             </div>
         }
         @if (startProduction) {
@@ -167,10 +182,6 @@
                         }
                     </div>
                 }
-
-                <div class="section-buttons">
-                    <button class="back-button" type="button" [disabled]="isStartingProduction" (click)="returnToActionSelection()">Indietro</button>
-                </div>
             </div>
         }
     </div>

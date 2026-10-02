@@ -38,6 +38,13 @@ export class LoomFacadeService {
     return this.loomApi.addPieces({ id, pieces });
   }
 
+  recordKnotting(id: string) {
+    return this.http.post<void>(
+      `${environment.apiUrl}/looms/${encodeURIComponent(id)}/knotting`,
+      {},
+    );
+  }
+
   createMobileAccessToken(id: string) {
     return this.http.post<{ token: string }>(
       `${environment.apiUrl}/looms/${encodeURIComponent(id)}/mobile-access-token`,

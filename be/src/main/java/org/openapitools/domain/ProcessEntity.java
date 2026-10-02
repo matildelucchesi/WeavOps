@@ -26,6 +26,9 @@ public class ProcessEntity {
     private Integer totalPieces;
     private Integer piecesRun;
     private Integer metersPerPiece;
+    private Boolean grs;
+    private Boolean gots;
+    private String notes;
 
     //getter & setter
     public Integer getMetersPerPiece() {
@@ -147,5 +150,12 @@ public class ProcessEntity {
     public void setExpectedEndDate(Instant expectedEndDate) {
         this.expectedEndDate = expectedEndDate;
     }
+
+    public Boolean getGrs() { return grs; }
+    public void setGrs(Boolean grs) { this.grs = grs; }
+    public Boolean getGots() { return gots; }
+    public void setGots(Boolean gots) { this.gots = gots; }
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
 
 }

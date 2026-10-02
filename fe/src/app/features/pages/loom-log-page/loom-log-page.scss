@@ -1,3 +1,163 @@
-.body {
-  width: 100%;
+.page-shell {
+  width: 95%;
+  margin: 0 auto;
+}
+
+.page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.back-button,
+.mobile-back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 40px;
+  padding: 8px 16px;
+  border: 1.5px solid var(--weavops-color-primary);
+  border-radius: 10px;
+  color: var(--weavops-color-primary);
+  background: var(--weavops-color-surface);
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  color: var(--weavops-color-surface-muted);
+  background: var(--weavops-color-primary-hover);
+}
+
+.table-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.production-summary-section {
+  margin-top: 36px;
+}
+
+.production-summary-section h2 {
+  margin: 0 0 14px;
+  color: var(--weavops-color-primary);
+  font: 600 20px 'Instrument Sans', sans-serif;
+}
+
+.print-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 120px;
+  min-height: 42px;
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 10px;
+  color: var(--weavops-color-surface);
+  background: var(--weavops-color-primary);
+  box-shadow: 0 4px 12px rgb(63 23 123 / 24%);
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+}
+
+.print-button:hover:not(:disabled) {
+  background: var(--weavops-color-primary-hover);
+  box-shadow: 0 6px 16px rgb(63 23 123 / 32%);
+  transform: translateY(-1px);
+}
+
+.print-button:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.mobile-header {
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+  padding: 0 20px;
+  background: var(--weavops-color-primary);
+}
+
+.header-image {
+  width: 38px;
+  height: auto;
+}
+
+.mobile-shell {
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  min-height: calc(100dvh - 64px);
+  padding: 20px 16px 0;
+  box-sizing: border-box;
+  background: var(--weavops-color-primary-soft);
+}
+
+.mobile-footer-pattern {
+  flex: 0 0 74px;
+  height: 74px;
+  margin-top: auto;
+  margin-right: -16px;
+  margin-left: -16px;
+  background-image: url("/images/tex-tile_04.png");
+  background-repeat: repeat;
+  background-size: 90px 90px;
+  transform: rotate(180deg);
+}
+
+.mobile-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.mobile-title-row h1 {
+  margin: 0;
+  color: var(--weavops-color-primary);
+  font: 600 22px 'Instrument Sans', sans-serif;
+}
+
+.mobile-back-button {
+  width: 40px;
+  flex: 0 0 40px;
+  padding: 0;
+  border: 1.5px solid var(--weavops-color-primary);
+  border-radius: 50%;
+  color: var(--weavops-color-primary);
+  background: var(--weavops-color-surface);
+}
+
+.mobile-back-button:hover {
+  color: var(--weavops-color-primary);
+  background: var(--weavops-color-primary-soft);
+}
+
+@media (max-width: 600px) {
+  .page-heading {
+    align-items: flex-start;
+  }
+}
+
+:host ::ng-deep .mobile-shell app-table-component table {
+  border-radius: 10px;
+}
+
+:host ::ng-deep .mobile-shell app-table-component tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+
+:host ::ng-deep .mobile-shell app-table-component tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
 }

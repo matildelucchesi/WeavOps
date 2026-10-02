@@ -2,6 +2,7 @@ package org.openapitools.service;
 
 import org.openapitools.domain.ArrangementEntity;
 import org.openapitools.repository.ArrangementRepository;
+import org.openapitools.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +12,16 @@ import java.util.Optional;
 @Service
 public class ArrangementService {
     private final ArrangementRepository repository;
+    private final ItemRepository itemRepository;
+    private final ProductionForecastService productionForecastService;
 
     @Autowired
     public CalendarEventService calendarService;
 
-    public ArrangementService(ArrangementRepository repository) {
+    public ArrangementService(ArrangementRepository repository, ItemRepository itemRepository, ProductionForecastService productionForecastService) {
         this.repository = repository;
+        this.itemRepository = itemRepository;
+        this.productionForecastService = productionForecastService;
     }
 
     public List<ArrangementEntity> findAll() {
@@ -40,6 +45,7 @@ public class ArrangementService {
         entity.setId(id);
         ArrangementEntity savedArrangement = repository.save(entity);
         this.calendarService.createOrUpdateDeliveryDateEvent(savedArrangement);
+        itemRepository.findByArrangementId(id).forEach(item -> productionForecastService.recalculateProductionForecast(item.getId()));
         return Optional.of(savedArrangement);
     }
 

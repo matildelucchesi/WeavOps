@@ -50,6 +50,13 @@ public class Arrangement {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private @Nullable OffsetDateTime deliveryDate;
 
+  private @Nullable Boolean worksSaturday;
+  private @Nullable String saturdayStartTime;
+  private @Nullable String saturdayEndTime;
+  private @Nullable Boolean worksSunday;
+  private @Nullable String sundayStartTime;
+  private @Nullable String sundayEndTime;
+
   public Arrangement() {
     super();
   }
@@ -297,6 +304,48 @@ public class Arrangement {
     this.deliveryDate = deliveryDate;
   }
 
+
+  public Arrangement worksSaturday(@Nullable Boolean worksSaturday) { this.worksSaturday = worksSaturday; return this; }
+  @Schema(name = "worksSaturday", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("worksSaturday")
+  public @Nullable Boolean getWorksSaturday() { return worksSaturday; }
+  @JsonProperty("worksSaturday")
+  public void setWorksSaturday(@Nullable Boolean worksSaturday) { this.worksSaturday = worksSaturday; }
+
+  public Arrangement saturdayStartTime(@Nullable String saturdayStartTime) { this.saturdayStartTime = saturdayStartTime; return this; }
+  @Schema(name = "saturdayStartTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("saturdayStartTime")
+  public @Nullable String getSaturdayStartTime() { return saturdayStartTime; }
+  @JsonProperty("saturdayStartTime")
+  public void setSaturdayStartTime(@Nullable String saturdayStartTime) { this.saturdayStartTime = saturdayStartTime; }
+
+  public Arrangement saturdayEndTime(@Nullable String saturdayEndTime) { this.saturdayEndTime = saturdayEndTime; return this; }
+  @Schema(name = "saturdayEndTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("saturdayEndTime")
+  public @Nullable String getSaturdayEndTime() { return saturdayEndTime; }
+  @JsonProperty("saturdayEndTime")
+  public void setSaturdayEndTime(@Nullable String saturdayEndTime) { this.saturdayEndTime = saturdayEndTime; }
+
+  public Arrangement worksSunday(@Nullable Boolean worksSunday) { this.worksSunday = worksSunday; return this; }
+  @Schema(name = "worksSunday", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("worksSunday")
+  public @Nullable Boolean getWorksSunday() { return worksSunday; }
+  @JsonProperty("worksSunday")
+  public void setWorksSunday(@Nullable Boolean worksSunday) { this.worksSunday = worksSunday; }
+
+  public Arrangement sundayStartTime(@Nullable String sundayStartTime) { this.sundayStartTime = sundayStartTime; return this; }
+  @Schema(name = "sundayStartTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("sundayStartTime")
+  public @Nullable String getSundayStartTime() { return sundayStartTime; }
+  @JsonProperty("sundayStartTime")
+  public void setSundayStartTime(@Nullable String sundayStartTime) { this.sundayStartTime = sundayStartTime; }
+
+  public Arrangement sundayEndTime(@Nullable String sundayEndTime) { this.sundayEndTime = sundayEndTime; return this; }
+  @Schema(name = "sundayEndTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("sundayEndTime")
+  public @Nullable String getSundayEndTime() { return sundayEndTime; }
+  @JsonProperty("sundayEndTime")
+  public void setSundayEndTime(@Nullable String sundayEndTime) { this.sundayEndTime = sundayEndTime; }
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -316,12 +365,18 @@ public class Arrangement {
         Objects.equals(this.pieceLength, arrangement.pieceLength) &&
         Objects.equals(this.warpEndCount, arrangement.warpEndCount) &&
         Objects.equals(this.hitsPerDm, arrangement.hitsPerDm) &&
-        Objects.equals(this.deliveryDate, arrangement.deliveryDate);
+        Objects.equals(this.deliveryDate, arrangement.deliveryDate) &&
+        Objects.equals(this.worksSaturday, arrangement.worksSaturday) &&
+        Objects.equals(this.saturdayStartTime, arrangement.saturdayStartTime) &&
+        Objects.equals(this.saturdayEndTime, arrangement.saturdayEndTime) &&
+        Objects.equals(this.worksSunday, arrangement.worksSunday) &&
+        Objects.equals(this.sundayStartTime, arrangement.sundayStartTime) &&
+        Objects.equals(this.sundayEndTime, arrangement.sundayEndTime);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, itemName, reedCount, reedCM, reedHeight, warpLength, piecesCount, pieceLength, warpEndCount, hitsPerDm, deliveryDate);
+    return Objects.hash(id, itemName, reedCount, reedCM, reedHeight, warpLength, piecesCount, pieceLength, warpEndCount, hitsPerDm, deliveryDate, worksSaturday, saturdayStartTime, saturdayEndTime, worksSunday, sundayStartTime, sundayEndTime);
   }
 
   @Override
@@ -339,6 +394,12 @@ public class Arrangement {
     sb.append("    warpEndCount: ").append(toIndentedString(warpEndCount)).append("\n");
     sb.append("    hitsPerDm: ").append(toIndentedString(hitsPerDm)).append("\n");
     sb.append("    deliveryDate: ").append(toIndentedString(deliveryDate)).append("\n");
+    sb.append("    worksSaturday: ").append(toIndentedString(worksSaturday)).append("\n");
+    sb.append("    saturdayStartTime: ").append(toIndentedString(saturdayStartTime)).append("\n");
+    sb.append("    saturdayEndTime: ").append(toIndentedString(saturdayEndTime)).append("\n");
+    sb.append("    worksSunday: ").append(toIndentedString(worksSunday)).append("\n");
+    sb.append("    sundayStartTime: ").append(toIndentedString(sundayStartTime)).append("\n");
+    sb.append("    sundayEndTime: ").append(toIndentedString(sundayEndTime)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -1,3 +1,4 @@
 *.idea/*
 *.vscode/*
 be/.idea/*
+mongodb-weavops/data/

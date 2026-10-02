@@ -1,12 +1,12 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DecorativeLinesComponent } from "../../reusable-components/decorative-lines-component/decorative-lines-component";
 import { TitlePageComponent } from "../../reusable-components/title-page-component/title-page-component";
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { LoomFacadeService } from '../../../services/loom-facade.service';
 import { ItemFacadeService } from '../../../services/item-facade.service';
 import { ExitButtonComponent } from "../../reusable-components/button/exit-button-component/exit-button-component";
 import { MatIcon } from "@angular/material/icon";
-import { Arrangement, Item, Loom, LoomItemAssignment, Process } from '../../../api';
+import { Arrangement, Item, Loom, LoomItemAssignment, LoomLogService, Process } from '../../../api';
 import { ArrangementFacadeService } from '../../../services/arrangement-facade.service';
 import {
   TableComponent,
@@ -17,6 +17,8 @@ import {
 } from "../../reusable-components/table-component/table-component";
 import { LoomItemAssignmentFacadeService } from '../../../services/loom-item-assignment-facade.service';
 import { ProcessFacadeService } from '../../../services/process-facade.service';
+import { CustomerFacadeService } from '../../../services/customer-facade.service';
+import { ProductionSummaryPdfService } from '../../../services/production-summary-pdf.service';
 import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -29,6 +31,7 @@ import {
 import {
   DialogAlertGeneric,
   type DialogAlertGenericData,
+  type DialogAlertGenericCertificationResult,
 } from '../../reusable-components/dialog/dialog-alert-generic/dialog-alert-generic';
 import { LoaderComponent } from '../../reusable-components/loader-component/loader-component';
 
@@ -62,8 +65,10 @@ export class LoomProductionDetailsPage implements OnInit {
   private readonly assignmentService = inject(LoomItemAssignmentFacadeService);
   private readonly arrangementService = inject(ArrangementFacadeService);
   private readonly processService = inject(ProcessFacadeService);
+  private readonly customerService = inject(CustomerFacadeService);
+  private readonly productionSummaryPdfService = inject(ProductionSummaryPdfService);
+  private readonly loomLogService = inject(LoomLogService);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private startProductionLoaderTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -458,24 +463,25 @@ export class LoomProductionDetailsPage implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe((selectedStatus) => {
-      if (!selectedStatus) {
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) {
         return;
       }
 
-      this.updateAssignmentStatus(assignment, selectedStatus);
+      this.updateAssignmentStatus(assignment, result.status, result.notes);
     });
   }
 
   private updateAssignmentStatus(
     assignment: LoomItemAssignment,
     status: LoomItemAssignment.StatusEnum,
+    notes: string,
     onSuccess?: () => void,
     onError?: () => void,
     reloadAfterUpdate: boolean = true,
   ): void {
-    if (!assignment.id) {
-      console.error('Running assignment id is missing');
+    if (!assignment.id || !assignment.processId) {
+      console.error('Running assignment or process id is missing');
       return;
     }
 
@@ -484,17 +490,192 @@ export class LoomProductionDetailsPage implements OnInit {
       status,
     };
 
-    this.assignmentService.update(assignment.id, updatedAssignment).subscribe({
+    this.processService.getById(assignment.processId).pipe(
+      switchMap((process) => this.processService.update(assignment.processId!, { ...process, notes })),
+      switchMap(() => this.assignmentService.update(assignment.id!, updatedAssignment)),
+    ).subscribe({
       next: () => {
         if (reloadAfterUpdate) {
           this.reloadProductionsForCurrentLoom();
         }
+
+        this.generateProductionSummaryPdf(assignment);
 
         onSuccess?.();
       },
       error: (error) => {
         console.error(error);
         onError?.();
+      },
+    });
+  }
+
+  private generateProductionSummaryPdf(assignment: LoomItemAssignment): void {
+    const loomId = assignment.loomId ?? this.loom()?.id;
+    if (!assignment.processId || !assignment.itemId || !loomId) {
+      console.error('Dati del processo incompleti: impossibile creare il PDF riepilogativo');
+      return;
+    }
+
+    forkJoin({
+      process: this.processService.getById(assignment.processId),
+      item: this.itemService.getById(assignment.itemId),
+      logs: this.loomLogService.getLoomLogsByLoomId({ loomId }),
+    }).pipe(
+      switchMap(({ process, item, logs }) => forkJoin({
+        process: of(process),
+        item: of(item),
+        logs: of(logs),
+        arrangement: item.arrangementId ? this.arrangementService.getById(item.arrangementId) : of(null),
+        customer: item.customerId ? this.customerService.getById(item.customerId) : of(null),
+      })),
+    ).subscribe({
+      next: ({ process, item, arrangement, customer, logs }) => {
+        const startTime = process.startDate ? new Date(process.startDate).getTime() : Number.NEGATIVE_INFINITY;
+        const endDate = process.endDate ?? new Date().toISOString();
+        const endTime = new Date(endDate).getTime();
+        const knottingCount = logs.filter((log) =>
+          log.key === 'KNOTTING'
+          && log.itemId === item.id
+          && Boolean(log.createdAt)
+          && new Date(log.createdAt!).getTime() >= startTime
+          && new Date(log.createdAt!).getTime() <= endTime,
+        ).length;
+
+        void this.createProductionSummaryPdf({
+          loomId,
+          loomNumber: this.loom()?.serialNumber ?? loomId,
+          customerName: customer?.name ?? '-',
+          startDate: process.startDate ?? '',
+          endDate,
+          warpEndCount: arrangement?.warpEndCount,
+          grs: process.grs ?? false,
+          gots: process.gots ?? false,
+          knottingCount,
+          notes: process.notes ?? '',
+        });
+      },
+      error: (error) => console.error('Impossibile recuperare i dati per il PDF riepilogativo:', error),
+    });
+  }
+
+  private async createProductionSummaryPdf(data: {
+    loomId: string;
+    loomNumber: string | number;
+    customerName: string;
+    startDate: string;
+    endDate: string;
+    warpEndCount?: number;
+    grs: boolean;
+    gots: boolean;
+    knottingCount: number;
+    notes: string;
+  }): Promise<void> {
+    const { jsPDF } = await import('jspdf');
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const margin = 18;
+    const contentWidth = pageWidth - margin * 2;
+    let y = 22;
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const purple: [number, number, number] = [63, 23, 123];
+    pdf.setTextColor(...purple);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(15);
+    pdf.text(`TELAIO A PRODUZIONE N. ${data.loomNumber}`, margin, y);
+    y += 12;
+    pdf.setDrawColor(...purple);
+    pdf.setLineWidth(0.6);
+    pdf.line(margin, y, pageWidth - margin, y);
+    y += 10;
+
+    const drawField = (label: string, value: string, minimumHeight = 14): void => {
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(9);
+      const lines = pdf.splitTextToSize(value || '-', contentWidth - 8);
+      const height = Math.max(minimumHeight, 10 + lines.length * 4);
+      if (y + height > pageHeight - 14) {
+        pdf.addPage();
+        y = 20;
+      }
+      pdf.setFillColor(246, 242, 251);
+      pdf.setDrawColor(218, 208, 233);
+      pdf.roundedRect(margin, y, contentWidth, height, 2, 2, 'FD');
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(9);
+      pdf.setTextColor(...purple);
+      pdf.text(label, margin + 4, y + 5.5);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(45, 40, 52);
+      pdf.text(lines, margin + 4, y + 10.5);
+      y += height + 4;
+    };
+
+    const formatDate = (value: string): string => {
+      if (!value) return '-';
+      const date = new Date(value);
+      return Number.isNaN(date.getTime())
+        ? value
+        : new Intl.DateTimeFormat('it-IT', { dateStyle: 'short' }).format(date);
+    };
+
+    drawField('CLIENTE', data.customerName);
+    drawField('DAL  /  AL', `${formatDate(data.startDate)}  /  ${formatDate(data.endDate)}`);
+    drawField('MONTATURA', `${data.warpEndCount ?? '-'} fili`);
+
+    pdf.setFillColor(246, 242, 251);
+    pdf.setDrawColor(218, 208, 233);
+    pdf.roundedRect(margin, y, contentWidth, 18, 2, 2, 'FD');
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(9);
+    pdf.setTextColor(...purple);
+    pdf.text('CERTIFICAZIONI', margin + 4, y + 6);
+
+    const drawCheckbox = (x: number, label: string, checked: boolean): number => {
+      const boxY = y + 10;
+      pdf.setDrawColor(...purple);
+      pdf.setLineWidth(0.4);
+      pdf.rect(x, boxY - 3, 3.5, 3.5);
+      if (checked) {
+        pdf.setLineWidth(0.7);
+        pdf.line(x + 0.6, boxY - 1.2, x + 1.4, boxY - 0.2);
+        pdf.line(x + 1.4, boxY - 0.2, x + 3, boxY - 2.6);
+      }
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(45, 40, 52);
+      pdf.text(label, x + 5, boxY);
+      return x + 35;
+    };
+
+    let checkboxX = margin + 4;
+    checkboxX = drawCheckbox(checkboxX, 'GRS', data.grs);
+    drawCheckbox(checkboxX, 'GOTS', data.gots);
+    y += 22;
+    drawField('ANNODATURA', `${data.knottingCount} annodature`);
+    drawField('VARIE', data.notes || '-', 28);
+
+    const filenameDate = new Date(data.endDate).toISOString().slice(0, 10);
+    const safeLoomNumber = String(data.loomNumber).replace(/[^a-zA-Z0-9-_]/g, '_');
+    const fileName = `riepilogo-produzione-telaio-${safeLoomNumber}-${filenameDate}.pdf`;
+    const file = pdf.output('blob');
+    this.productionSummaryPdfService.upload(data.loomId, String(data.loomNumber), file, fileName).subscribe({
+      next: () => {
+        const downloadUrl = URL.createObjectURL(file);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = fileName;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+      },
+      error: (error) => {
+        console.error('Impossibile archiviare il PDF riepilogativo:', error);
+        this.snackBar.open('Il processo è stato chiuso, ma non è stato possibile archiviare il PDF.', 'Chiudi', {
+          duration: 6000,
+          horizontalPosition: 'end',
+          verticalPosition: 'bottom',
+          panelClass: ['error-snackbar'],
+        });
       },
     });
   }
@@ -551,6 +732,9 @@ export class LoomProductionDetailsPage implements OnInit {
           subtext: 'Non è possibile avviare una nuova produzione finché quella attuale non è terminata.',
           icon: 'report',
           iconColor: 'red',
+          closeOnly: true,
+          closeButtonLabel: 'Ok',
+          closeButtonVariant: 'purple',
         },
       });
       console.error('There is already a running assignment');
@@ -560,28 +744,30 @@ export class LoomProductionDetailsPage implements OnInit {
     const dialogRef = this.dialog.open<
       DialogAlertGeneric,
       DialogAlertGenericData,
-      boolean
+      boolean | DialogAlertGenericCertificationResult
     >(DialogAlertGeneric, {
       panelClass: 'loom-alert-dialog-panel',
       autoFocus: false,
       data: {
-        text: `Vuoi davvero mettere in produzione ${row.itemName}?`,
+        text: `Stai avviando su Telaio ${this.loom()?.serialNumber ?? ''} la produzione di ${row.itemName}.`,
+        subtext: 'Quale certificazione stai usando?',
+        productionCertifications: true,
         icon: 'help',
         iconColor: 'var(--weavops-color-primary)',
       },
     });
 
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (!confirmed) {
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result || typeof result !== 'object' || !('grs' in result) || !('gots' in result)) {
         return;
       }
 
-      this.startProduction(assignment);
+      this.startProduction(assignment, result);
     });
   }
 
-  private startProduction(assignment: LoomItemAssignment): void {
-    if (!assignment.id || this.isStartingProduction() || this.isStartProductionRequestPending) {
+  private startProduction(assignment: LoomItemAssignment, certifications: DialogAlertGenericCertificationResult): void {
+    if (!assignment.id || !assignment.processId || this.isStartingProduction() || this.isStartProductionRequestPending) {
       return;
     }
 
@@ -593,21 +779,24 @@ export class LoomProductionDetailsPage implements OnInit {
       status: LoomItemAssignment.StatusEnum.Running,
     };
 
-    this.assignmentService.update(assignment.id, updatedAssignment).subscribe({
+    this.processService.getById(assignment.processId).pipe(
+      switchMap((process) => this.processService.update(assignment.processId!, {
+        ...process,
+        grs: certifications.grs,
+        gots: certifications.gots,
+      })),
+      switchMap(() => this.assignmentService.update(assignment.id!, updatedAssignment)),
+    ).subscribe({
       next: () => {
         this.isStartProductionRequestPending = false;
         this.showStartProductionFeedbackAfterLoader(() => {
-          this.runningAssignment.set(updatedAssignment);
+          this.reloadProductionsForCurrentLoom();
           this.snackBar.open('Messa in produzione avvenuta con successo.', 'Chiudi', {
             duration: 4000,
             horizontalPosition: 'end',
             verticalPosition: 'bottom',
           });
           this.dialog.closeAll();
-          const loomId = this.getCurrentLoomId();
-          if (loomId) {
-            this.router.navigate(['/dettaglio-produzione', loomId]);
-          }
         });
       },
       error: (error) => {

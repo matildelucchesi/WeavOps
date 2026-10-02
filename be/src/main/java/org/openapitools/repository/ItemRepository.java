@@ -17,6 +17,8 @@ public interface ItemRepository extends MongoRepository<ItemEntity, String> {
     @Query("{ 'isArchived': false }")
     List<ItemEntity> findAllNotArchived();
 
+    List<ItemEntity> findByArrangementId(String arrangementId);
+
     int countByState(Item.StateEnum state);
 
 }

@@ -1,0 +1,66 @@
+@use '../dialog-alert' as dialogAlert;
+@include dialogAlert.shell($wrapper-selector: '.dialog-wrapper');
+
+.dialog-wrapper { gap: 14px; }
+.head { margin-bottom: 0; }
+.icon { color: var(--weavops-color-primary); }
+.dialog-title, .dialog-description, .schedule-hint {
+  color: var(--weavops-color-primary);
+  font-family: 'Instrument Sans', sans-serif;
+  margin: 0;
+  text-align: center;
+}
+.dialog-title { font-size: 18px; font-weight: 700; }
+.dialog-description { font-size: 13px; }
+.schedule-day {
+  background: var(--weavops-color-surface-muted);
+  border: 1px solid var(--weavops-color-primary);
+  border-radius: 10px;
+  box-sizing: border-box;
+  display: grid;
+  gap: 12px;
+  padding: 12px 16px;
+  width: 100%;
+}
+.day-toggle {
+  align-items: center;
+  color: var(--weavops-color-primary);
+  cursor: pointer;
+  display: flex;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  gap: 10px;
+}
+.day-toggle input { accent-color: var(--weavops-color-primary); height: 17px; margin: 0; width: 17px; }
+.time-range { align-items: end; display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+.time-field {
+  color: var(--weavops-color-primary);
+  display: grid;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  gap: 5px;
+}
+.time-field input {
+  background: var(--weavops-color-surface);
+  border: 1.5px solid var(--weavops-color-primary);
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: var(--weavops-color-primary);
+  font: inherit;
+  min-height: 36px;
+  padding: 5px 8px;
+  width: 100%;
+}
+.total-hours {
+  color: var(--weavops-color-primary);
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.schedule-hint { font-size: 11px; opacity: 0.8; }
+.actions { display: flex; gap: 12px; justify-content: center; width: 100%; }
+.actions button:disabled { cursor: not-allowed; opacity: 0.55; }

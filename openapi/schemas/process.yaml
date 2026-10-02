@@ -46,3 +46,9 @@ properties:
     $ref: './loom.yaml'
   itemHitsPerDm:
     type: number
+  grs:
+    type: boolean
+  gots:
+    type: boolean
+  notes:
+    type: string

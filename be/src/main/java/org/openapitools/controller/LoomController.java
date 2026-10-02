@@ -133,6 +133,13 @@ public class LoomController implements LoomsApi {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PostMapping("/looms/{id}/knotting")
+    public ResponseEntity<Void> recordKnotting(@PathVariable("id") String id) {
+        return service.recordKnotting(id).isPresent()
+                ? ResponseEntity.status(HttpStatus.CREATED).build()
+                : ResponseEntity.notFound().build();
+    }
+
     @PostMapping("/looms/{id}/mobile-access-token")
     public ResponseEntity<MobileAccessTokenResponse> createMobileAccessToken(@PathVariable("id") String id) {
         if (service.findById(id).isEmpty()) {

@@ -118,6 +118,12 @@ export class LoomPage implements OnInit, OnDestroy {
       iconColor: 'var(--weavops-color-primary)',
     },
     {
+      id: 'log',
+      label: 'Visualizza log giornalieri',
+      icon: 'pending_actions',
+      iconColor: 'var(--weavops-color-primary)',
+    },
+    {
       id: 'edit',
       label: 'Modifica',
       icon: 'edit',
@@ -184,6 +190,9 @@ export class LoomPage implements OnInit, OnDestroy {
       case 'history':
         this.goToHistoryPage(event);
         console.log('Visualizza cronologia articoli per telaio', event.row);
+        break;
+      case 'log':
+        this.goToLoomLogPage(event);
         break;
       case 'edit':
         this.openDialogLoomAction(event.row, event.action);
@@ -305,6 +314,10 @@ export class LoomPage implements OnInit, OnDestroy {
     this.router.navigate(['/dettaglio-produzione', loomId]);
   }
 
+  public goToLoomLogPage(event: TableActionClick<LoomTableRow>): void {
+    const loomId = this.getLoomId(event.row);
+    this.router.navigate(['/loom-log-page', loomId]);
+  }
   public goToHistoryPage(event: TableActionClick<LoomTableRow>): void {
     const loomId = this.getLoomId(event.row);
     this.router.navigate(['/cronologia-produzione', loomId]);

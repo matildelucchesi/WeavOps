@@ -14,7 +14,7 @@ import { LoomHistoryPage } from './features/pages/loom-history-page/loom-history
 import { ProfilePage } from './features/pages/profile-page/profile-page';
 import { LoomMobilePage } from './features/pages/loom-mobile-page/loom-mobile-page';
 import { LoomLogPage } from './features/pages/loom-log-page/loom-log-page';
-import { LoomMobileLogPage } from './features/pages/loom-mobile-log-page/loom-mobile-log-page';
+
 
 
 export const routes: Routes = [
@@ -24,7 +24,7 @@ export const routes: Routes = [
   },
   {
     path: 'telaio/:id/mobile/logs',
-    component: LoomMobileLogPage,
+    component: LoomLogPage,
   },
   {
     path: 'telaio/:id/mobile/:action',
@@ -56,6 +56,10 @@ export const routes: Routes = [
       {
         path: 'cronologia-produzione/:id',
         component: LoomHistoryPage,
+      },
+      {
+        path: 'loom-log-page/:id',
+        component: LoomLogPage,
       },
       {
         path: 'storico-lavoro-telai',

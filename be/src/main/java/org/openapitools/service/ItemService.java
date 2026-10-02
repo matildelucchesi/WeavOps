@@ -152,6 +152,12 @@ public class ItemService {
         arrangement.setPieceLenght(arrangementRequest.getPieceLength());
         arrangement.setHitsPerDm(arrangementRequest.getHitsPerDm());
         arrangement.setDeliveryDate(toInstant(arrangementRequest.getDeliveryDate()));
+        arrangement.setWorksSaturday(arrangementRequest.getWorksSaturday());
+        arrangement.setSaturdayStartTime(arrangementRequest.getSaturdayStartTime());
+        arrangement.setSaturdayEndTime(arrangementRequest.getSaturdayEndTime());
+        arrangement.setWorksSunday(arrangementRequest.getWorksSunday());
+        arrangement.setSundayStartTime(arrangementRequest.getSundayStartTime());
+        arrangement.setSundayEndTime(arrangementRequest.getSundayEndTime());
 
         ArrangementEntity savedArrangement = arrangementService.save(arrangement);
 

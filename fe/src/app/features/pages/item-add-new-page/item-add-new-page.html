@@ -227,23 +227,11 @@
           <div class="form-group">
             <label for="deliveryDate">Data di consegna</label>
             <mat-form-field appearance="outline" class="date-picker-field">
-              <input
-                      matInput
-                      id="deliveryDate"
-                      name="deliveryDate"
-                        [matDatepicker]="deliveryDatePicker"
-                        [(ngModel)]="deliveryDate"
-                        #deliveryDateModel="ngModel"
-                        required
-                        [class.input-invalid]="shouldShowControlError(deliveryDateModel)">
+              <input matInput id="deliveryDate" name="deliveryDate" [matDatepicker]="deliveryDatePicker" [(ngModel)]="deliveryDate">
                 <mat-datepicker-toggle matIconSuffix [for]="deliveryDatePicker"></mat-datepicker-toggle>
                 <mat-datepicker #deliveryDatePicker></mat-datepicker>
               </mat-form-field>
-                  @if (shouldShowControlError(deliveryDateModel)) {
-                      <mat-error class="validation-error">
-                          La data di consegna è obbligatoria
-                      </mat-error>
-                  }
+
           </div>
         </div>
       </div>

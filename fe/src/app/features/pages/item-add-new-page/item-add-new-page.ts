@@ -8,6 +8,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogProductionSchedule, type ProductionSchedule, type ProductionScheduleDialogData } from '../../reusable-components/dialog/dialog-production-schedule/dialog-production-schedule';
 import { Router } from '@angular/router';
 import { map, switchMap, timeout } from 'rxjs';
 import { DecorativeLinesComponent } from "../../reusable-components/decorative-lines-component/decorative-lines-component";
@@ -50,6 +52,7 @@ export class ItemAddNewPage implements OnInit, OnDestroy {
   private readonly customerService = inject(CustomerFacadeService);
   private readonly customerItemHistoryService = inject(CustomerItemHistoryFacadeService);
   private readonly navigationService = inject(Router);
+  private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private loaderTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private isLoaderFinished: boolean = false;
@@ -115,9 +118,35 @@ export class ItemAddNewPage implements OnInit, OnDestroy {
       return;
     }
 
-    this.showLoader();
     this.isRequestPending = true;
+    const dialogRef = this.dialog.open<
+      DialogProductionSchedule,
+      ProductionScheduleDialogData,
+      ProductionSchedule
+    >(DialogProductionSchedule, {
+      panelClass: 'loom-alert-dialog-panel',
+      width: '520px',
+      maxWidth: 'calc(100vw - 32px)',
+      autoFocus: false,
+      data: {
+        title: 'Turni di produzione nel weekend',
+        description: 'Dal lunedì al venerdì la previsione considera 24 ore di lavoro al giorno.',
+        confirmLabel: 'Crea articolo',
+      },
+    });
 
+    dialogRef.afterClosed().subscribe((schedule) => {
+      if (!schedule) {
+        this.isRequestPending = false;
+        return;
+      }
+
+      this.persistNewItem(schedule);
+    });
+  }
+
+  private persistNewItem(schedule: ProductionSchedule): void {
+    this.showLoader();
     this.itemService.createItemWithArrangement({
       customerName: this.customerName.trim(),
       arrangement: {
@@ -130,9 +159,8 @@ export class ItemAddNewPage implements OnInit, OnDestroy {
         reedHeight: Number(this.reedHeight),
         warpLength: Number(this.warpLength),
         warpEndCount: Number(this.warpEndCount),
-        deliveryDate: this.deliveryDate
-          ? this.deliveryDate.toISOString()
-          : undefined,
+        deliveryDate: this.deliveryDate ? this.deliveryDate.toISOString() : undefined,
+        ...schedule,
       },
     }).pipe(
       timeout(this.saveTimeoutMs),
@@ -165,7 +193,6 @@ export class ItemAddNewPage implements OnInit, OnDestroy {
       },
     });
   }
-
   private loadCustomers(): void {
     this.customerService.getAll().subscribe({
       next: (customers) => {

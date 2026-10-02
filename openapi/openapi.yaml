@@ -57,6 +57,10 @@ paths:
     $ref: './paths/loom-log.yaml#/~1loom-logs'
   /loom-logs/{id}:
     $ref: './paths/loom-log.yaml#/~1loom-logs~1{id}'
+  /production-summaries:
+    $ref: './paths/production-summary.yaml#/~1production-summaries'
+  /production-summaries/{id}/pdf:
+    $ref: './paths/production-summary.yaml#/~1production-summaries~1{id}~1pdf'
   /loom-item-assignments:
     $ref: './paths/loom-item-assignment.yaml#/~1loom-item-assignments'
   /loom-item-assignments/{id}:

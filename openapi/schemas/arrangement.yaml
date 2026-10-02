@@ -50,4 +50,26 @@ properties:
   deliveryDate:
     type: string
     format: date-time
+  worksSaturday:
+    type: boolean
+    description: Indica se la produzione è attiva il sabato.
+  saturdayStartTime:
+    type: string
+    pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$'
+    description: Ora di inizio della produzione del sabato nel fuso Europe/Rome.
+  saturdayEndTime:
+    type: string
+    pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$'
+    description: Ora di fine della produzione del sabato nel fuso Europe/Rome; se precedente o uguale all'inizio, termina il giorno successivo.
+  worksSunday:
+    type: boolean
+    description: Indica se la produzione è attiva la domenica.
+  sundayStartTime:
+    type: string
+    pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$'
+    description: Ora di inizio della produzione della domenica nel fuso Europe/Rome.
+  sundayEndTime:
+    type: string
+    pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$'
+    description: Ora di fine della produzione della domenica nel fuso Europe/Rome; se precedente o uguale all'inizio, termina il giorno successivo.
 

@@ -1,0 +1,39 @@
+<div class="dialog-wrapper">
+  <div class="head"><mat-icon class="icon" aria-hidden="true">schedule</mat-icon></div>
+  <h2 class="dialog-title">{{ title }}</h2>
+  <p class="dialog-description">{{ description }}</p>
+
+  <section class="schedule-day">
+    <label class="day-toggle">
+      <input type="checkbox" [checked]="worksSaturday" (change)="setSaturdayEnabled($any($event.target).checked)">
+      <span>Sabato</span>
+    </label>
+    @if (worksSaturday) {
+      <div class="time-range">
+        <label class="time-field"><span>Dalle</span><input type="time" name="saturdayStartTime" [(ngModel)]="saturdayStartTime"></label>
+        <label class="time-field"><span>Alle</span><input type="time" name="saturdayEndTime" [(ngModel)]="saturdayEndTime"></label>
+        <p class="total-hours">Ore totali: {{ saturdayHours }}</p>
+      </div>
+    }
+  </section>
+
+  <section class="schedule-day">
+    <label class="day-toggle">
+      <input type="checkbox" [checked]="worksSunday" (change)="setSundayEnabled($any($event.target).checked)">
+      <span>Domenica</span>
+    </label>
+    @if (worksSunday) {
+      <div class="time-range">
+        <label class="time-field"><span>Dalle</span><input type="time" name="sundayStartTime" [(ngModel)]="sundayStartTime"></label>
+        <label class="time-field"><span>Alle</span><input type="time" name="sundayEndTime" [(ngModel)]="sundayEndTime"></label>
+        <p class="total-hours">Ore totali: {{ sundayHours }}</p>
+      </div>
+    }
+  </section>
+
+  <p class="schedule-hint">Se l’orario finale è precedente a quello iniziale, la fascia termina il giorno successivo. Orari uguali indicano 24 ore.</p>
+  <div class="actions">
+    <button class="cancel-button" type="button" (click)="cancel()">Annulla</button>
+    <button class="confirm-button" type="button" [disabled]="!canConfirm" (click)="confirm()">{{ confirmLabel }}</button>
+  </div>
+</div>

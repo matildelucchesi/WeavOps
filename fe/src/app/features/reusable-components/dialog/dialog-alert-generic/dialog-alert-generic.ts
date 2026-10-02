@@ -13,7 +13,13 @@ export interface DialogAlertGenericDeliveryResult {
   isLate: boolean;
 }
 
-export type DialogAlertGenericResult = boolean | DialogAlertGenericDeliveryResult;
+export interface DialogAlertGenericCertificationResult {
+  confirmed: true;
+  grs: boolean;
+  gots: boolean;
+}
+
+export type DialogAlertGenericResult = boolean | DialogAlertGenericDeliveryResult | DialogAlertGenericCertificationResult;
 
 export interface DialogAlertGenericData {
   text?: string;
@@ -23,9 +29,12 @@ export interface DialogAlertGenericData {
   button?: boolean;
   closeOnly?: boolean;
   closeButtonLabel?: string;
+  closeButtonVariant?: 'cancel' | 'primary' | 'purple';
+  confirmButtonLabel?: string;
   deliveryDetails?: boolean;
   deliveryDetailsTitle?: string;
   deliveryDate?: string | Date | null;
+  productionCertifications?: boolean;
 }
 
 @Component({
@@ -50,12 +59,17 @@ export class DialogAlertGeneric {
   @Input() button: boolean = this.dialogData?.button ?? true;
   @Input() closeOnly: boolean = this.dialogData?.closeOnly ?? false;
   @Input() closeButtonLabel: string = this.dialogData?.closeButtonLabel ?? 'Chiudi';
+  @Input() closeButtonVariant: 'cancel' | 'primary' | 'purple' = this.dialogData?.closeButtonVariant ?? 'cancel';
+  @Input() confirmButtonLabel: string = this.dialogData?.confirmButtonLabel ?? 'Procedi';
   @Input() deliveryDetails: boolean = this.dialogData?.deliveryDetails ?? false;
+  @Input() productionCertifications: boolean = this.dialogData?.productionCertifications ?? false;
   @Input() deliveryDetailsTitle: string = this.dialogData?.deliveryDetailsTitle ?? 'Per favore indica la Data di consegna';
 
   public showDeliveryDetails = false;
   public deliveryDate: Date | null = this.toDate(this.dialogData?.deliveryDate) ?? new Date();
   public isLate = false;
+  public grs = false;
+  public gots = false;
 
   public get isDangerVariant(): boolean {
     return this.resolveColorVariant() === 'danger';
@@ -110,6 +124,11 @@ export class DialogAlertGeneric {
   public onConfirm(): void {
     if (this.deliveryDetails && !this.showDeliveryDetails) {
       this.showDeliveryDetails = true;
+      return;
+    }
+
+    if (this.productionCertifications) {
+      this.dialogRef?.close({ confirmed: true, grs: this.grs, gots: this.gots });
       return;
     }
 

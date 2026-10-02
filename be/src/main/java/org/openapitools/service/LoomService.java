@@ -86,6 +86,23 @@ public class LoomService {
         });
     }
 
+    public Optional<LoomEntity> recordKnotting(String id) {
+        Optional<LoomEntity> loom = findById(id);
+        Optional<LoomItemAssignmentEntity> assignment = getRunningAssignmentByLoomId(id);
+
+        if (loom.isEmpty() || assignment.isEmpty() || assignment.get().getItemId() == null) {
+            return Optional.empty();
+        }
+
+        Optional<ItemEntity> item = itemService.findById(assignment.get().getItemId());
+        if (item.isEmpty()) {
+            return Optional.empty();
+        }
+
+        saveLoomLog(LoomLogEvent.KNOTTING, loom.get(), item.get(), null);
+        return loom;
+    }
+
     public boolean deleteById(String id){
         if (!repository.existsById(id)) {
             return false;

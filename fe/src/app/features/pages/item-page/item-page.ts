@@ -384,6 +384,8 @@ export class ItemPage implements OnInit {
   private isDeliveryDialogResult(result: DialogAlertGenericResult | undefined): result is DialogAlertGenericDeliveryResult {
     return typeof result === 'object'
       && result !== null
+      && 'deliveryDate' in result
+      && 'isLate' in result
       && result.confirmed === true
       && typeof result.deliveryDate === 'string'
       && typeof result.isLate === 'boolean';
@@ -617,14 +619,14 @@ export class ItemPage implements OnInit {
       return '';
     }
 
-    const datePart = value.split('T')[0];
-    const dateParts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(datePart);
+    const trimmedValue = value.trim();
+    const dateParts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trimmedValue);
 
     if (dateParts) {
       return `${dateParts[3]}/${dateParts[2]}/${dateParts[1]}`;
     }
 
-    const date = new Date(value);
+    const date = new Date(trimmedValue);
 
     if (Number.isNaN(date.getTime())) {
       return '';

@@ -29,5 +29,7 @@ export interface Process {
     expectedEndDate?: string;
     loom?: Loom;
     itemHitsPerDm?: number;
+    grs?: boolean;
+    gots?: boolean;
+    notes?: string;
 }
-

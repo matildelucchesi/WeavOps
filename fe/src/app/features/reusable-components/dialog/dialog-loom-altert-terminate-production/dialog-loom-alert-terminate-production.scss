@@ -63,3 +63,30 @@ p{
     display: flex;
     justify-self: center;
 }
+
+.notes-field{
+    display: grid;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.notes-field label{
+    color: var(--weavops-color-primary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.notes-field textarea{
+    width: 100%;
+    min-height: 88px;
+    box-sizing: border-box;
+    resize: vertical;
+    border: 1.5px solid var(--weavops-color-primary);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: var(--weavops-color-surface);
+    color: var(--weavops-color-primary);
+    font: 13px 'Instrument Sans', sans-serif;
+}

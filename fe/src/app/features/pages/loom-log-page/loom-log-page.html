@@ -1,18 +1,73 @@
-<app-title-page-component
-  title="Log Giornaliero Telai"
-  iconName="pending_actions"
-  [imageWidth]="30"
-  [imageHeight]="30">
-</app-title-page-component>
+@if (isMobileView) {
+  <header class="mobile-header">
+    <img src="/images/W-logo.png" alt="WeavOps" class="header-image" />
+  </header>
+}
 
-<div class="body">
+<div class="page-shell" [class.mobile-shell]="isMobileView">
+  @if (isMobileView) {
+    <div class="mobile-title-row">
+      <button type="button" class="mobile-back-button" aria-label="Torna alle azioni del telaio" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1>Azioni sul telaio</h1>
+    </div>
+  } @else if (isLoomSpecific) {
+    <div class="page-heading">
+      <app-title-page-component
+        title="Azioni sul telaio"
+        iconName="pending_actions"
+        [imageWidth]="30"
+        [imageHeight]="30">
+      </app-title-page-component>
+      <button class="back-button" type="button" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        <span>Indietro</span>
+      </button>
+    </div>
+  } @else {
+    <app-title-page-component
+      title="Log Giornaliero Telai"
+      iconName="pending_actions"
+      [imageWidth]="30"
+      [imageHeight]="30">
+    </app-title-page-component>
+  }
+
   <app-table-component
     [columns]="columns"
     [rows]="rows()"
     [filterButton]="filterButton"
     [enableMultiSelection]="false"
     [sortByCreationDate]="false"
+    [showPagination]="!isMobileView"
     actionColumnHeader=""
     (filterSelected)="onFilterSelected($event)">
   </app-table-component>
+  @if (isLoomSpecific && !isMobileView) {
+    <div class="table-footer">
+      <button class="print-button" type="button" [disabled]="isPrintingPdf()" (click)="printLogs()">
+        <mat-icon>print</mat-icon>
+        <span>{{ isPrintingPdf() ? 'Preparazione PDF…' : 'Stampa' }}</span>
+      </button>
+    </div>
+  }
+  @if (!isMobileView) {
+    <section class="production-summary-section" aria-labelledby="production-summary-title">
+      <h2 id="production-summary-title">Riepilogo produzione</h2>
+      <app-table-component
+        [columns]="productionSummaryColumns"
+        [rows]="productionSummaryRows()"
+        [actions]="productionSummaryActions"
+        [enableMultiSelection]="false"
+        [sortByCreationDate]="false"
+        [showPagination]="true"
+        actionColumnHeader="PDF"
+        (actionClick)="onProductionSummaryAction($event)">
+      </app-table-component>
+    </section>
+  }
+  @if (isMobileView) {
+    <div class="mobile-footer-pattern" aria-hidden="true"></div>
+  }
 </div>

@@ -22,6 +22,12 @@ public class ArrangementEntity {
     private Float warpEndCount;
     private BigDecimal hitsPerDm;
     private Instant deliveryDate;
+    private Boolean worksSaturday;
+    private String saturdayStartTime;
+    private String saturdayEndTime;
+    private Boolean worksSunday;
+    private String sundayStartTime;
+    private String sundayEndTime;
 
     //getter & setter
 
@@ -112,4 +118,16 @@ public class ArrangementEntity {
     public void setDeliveryDate(Instant deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
+    public Boolean getWorksSaturday() { return worksSaturday; }
+    public void setWorksSaturday(Boolean worksSaturday) { this.worksSaturday = worksSaturday; }
+    public String getSaturdayStartTime() { return saturdayStartTime; }
+    public void setSaturdayStartTime(String saturdayStartTime) { this.saturdayStartTime = saturdayStartTime; }
+    public String getSaturdayEndTime() { return saturdayEndTime; }
+    public void setSaturdayEndTime(String saturdayEndTime) { this.saturdayEndTime = saturdayEndTime; }
+    public Boolean getWorksSunday() { return worksSunday; }
+    public void setWorksSunday(Boolean worksSunday) { this.worksSunday = worksSunday; }
+    public String getSundayStartTime() { return sundayStartTime; }
+    public void setSundayStartTime(String sundayStartTime) { this.sundayStartTime = sundayStartTime; }
+    public String getSundayEndTime() { return sundayEndTime; }
+    public void setSundayEndTime(String sundayEndTime) { this.sundayEndTime = sundayEndTime; }
 }

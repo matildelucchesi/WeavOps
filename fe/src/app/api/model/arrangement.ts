@@ -45,5 +45,11 @@ export interface Arrangement {
      */
     hitsPerDm: number;
     deliveryDate?: string;
+    worksSaturday?: boolean;
+    saturdayStartTime?: string;
+    saturdayEndTime?: string;
+    worksSunday?: boolean;
+    sundayStartTime?: string;
+    sundayEndTime?: string;
 }
 

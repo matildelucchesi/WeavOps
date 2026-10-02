@@ -1,0 +1,73 @@
+/production-summaries:
+  get:
+    summary: Elenca i PDF di riepilogo produzione
+    operationId: listProductionSummaryPdfs
+    tags:
+      - ProductionSummaryPdf
+    parameters:
+      - name: loomId
+        in: query
+        required: false
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Elenco dei riepiloghi produzione
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/production-summary-pdf.yaml'
+  post:
+    summary: Archivia un PDF di riepilogo produzione
+    operationId: createProductionSummaryPdf
+    tags:
+      - ProductionSummaryPdf
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            required: [loomId, loomNumber, file]
+            properties:
+              loomId:
+                type: string
+              loomNumber:
+                type: string
+              file:
+                type: string
+                format: binary
+    responses:
+      '201':
+        description: PDF archiviato
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/production-summary-pdf.yaml'
+      '400':
+        description: File PDF non valido
+
+/production-summaries/{id}/pdf:
+  get:
+    summary: Scarica un PDF di riepilogo produzione
+    operationId: downloadProductionSummaryPdf
+    tags:
+      - ProductionSummaryPdf
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: File PDF
+        content:
+          application/pdf:
+            schema:
+              type: string
+              format: binary
+      '404':
+        description: PDF non trovato
