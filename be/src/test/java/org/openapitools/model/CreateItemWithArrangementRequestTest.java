@@ -24,10 +24,10 @@ class CreateItemWithArrangementRequestTest {
                     "itemName": "Articolo 100",
                     "reedCount": 20,
                     "reedCM": 100,
-                    "reedHight": 1.5,
-                    "warpLenght": 200,
+                    "reedHeight": 1.5,
+                    "warpLength": 200,
                     "piecesCount": 3,
-                    "pieceLenght": 50,
+                    "pieceLength": 50,
                     "warpEndCount": 1200,
                     "hitsPerDm": 25
                   }
@@ -50,14 +50,11 @@ class CreateItemWithArrangementRequestTest {
                 "Articolo 100",
                 BigDecimal.valueOf(20),
                 BigDecimal.valueOf(100),
-                1.5F,
-                200F,
                 3F,
-                50F,
                 1200F,
                 BigDecimal.valueOf(25)
         );
-        CreateItemWithArrangementRequest request = new CreateItemWithArrangementRequest(" ", arrangement);
+        CreateItemWithArrangementRequest request = new CreateItemWithArrangementRequest("", arrangement);
 
         assertThat(validator.validate(request))
                 .anyMatch(violation -> violation.getPropertyPath().toString().equals("customerName"));

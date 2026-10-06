@@ -32,10 +32,22 @@ public class TokenService {
             @Value("${app.auth.jwt-expiration-seconds:86400}") long expirationSeconds,
             @Value("${app.auth.mobile-token-expiration-seconds:31536000}") long mobileExpirationSeconds
     ) {
+        validateJwtSecret(jwtSecret);
         this.objectMapper = objectMapper;
         this.jwtSecret = jwtSecret;
         this.expirationSeconds = expirationSeconds;
         this.mobileExpirationSeconds = mobileExpirationSeconds;
+    }
+
+    private void validateJwtSecret(String secret) {
+        int secretLength = secret == null ? 0 : secret.getBytes(StandardCharsets.UTF_8).length;
+        if (secret == null || secret.isBlank() || secretLength < 32
+                || "weavops-development-secret-change-before-production".equals(secret)
+                || "weavops-test-secret".equals(secret)) {
+            throw new IllegalStateException(
+                    "WEAVOPS_JWT_SECRET è obbligatorio e deve contenere almeno 32 byte UTF-8. "
+                            + "Genera un nuovo segreto e configuralo fuori dal repository.");
+        }
     }
 
     public String generateToken(UserEntity user) {

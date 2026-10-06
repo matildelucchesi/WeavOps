@@ -19,3 +19,36 @@ You can view the api documentation in swagger-ui by pointing to
 http://localhost:8080/swagger-ui.html
 
 Change default port value in application.properties
+
+## JWT secret
+
+The backend requires `WEAVOPS_JWT_SECRET` in every environment. Generate a different value for each environment from 32 cryptographically random bytes, encoded as Base64, and configure it in the environment of the process or service manager. Never commit it or put it in command-line arguments.
+
+PowerShell example for a local development session:
+
+```powershell
+$env:WEAVOPS_JWT_SECRET = [Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(32))
+```
+
+The value remains available to processes launched from that PowerShell session. Store production values in the protected configuration of the service manager or a secret manager.
+
+## First user provisioning
+
+The normal server startup does not create users. Build the executable JAR, configure `WEAVOPS_JWT_SECRET` and the intended MongoDB URI, then run this command interactively from the backend directory:
+
+```powershell
+mvn package -DskipTests
+java -jar target/openapi-spring-1.0.0.jar create-admin
+```
+
+The command displays the database name and MongoDB hosts, asks for confirmation, username, password and password confirmation, then exits. Username must contain at least five characters after trimming. Password must contain at least six characters and no more than 72 UTF-8 bytes; its input is hidden. The user is created only when the users collection is empty, and the password is stored with BCrypt. Run the server normally afterward:
+
+```powershell
+java -jar target/openapi-spring-1.0.0.jar
+```
+
+Before provisioning, stop the backend, verify the target database and make a backup. If it still contains the old default `admin` account, remove only that account manually. Provisioning deliberately refuses to alter databases that already contain users. Existing JWTs signed with the previous development secret become invalid after the key changes; users must log in again and mobile QR tokens must be regenerated.
+
+## Key rotation
+
+Generate and configure a new secret, then restart every backend instance with the same value. Tokens signed with the previous secret are rejected, including mobile tokens, so users need to log in again and loom QR tokens need to be regenerated. Mobile token lifetime remains one year from generation.
