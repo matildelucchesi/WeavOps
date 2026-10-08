@@ -83,7 +83,7 @@ public class ItemService {
         return repository.existsById(id);
     }
 
-    public Optional<Integer> calculateRemainingMetersToAssign(String itemId) {
+    public Optional<Double> calculateRemainingMetersToAssign(String itemId) {
         if (isBlank(itemId)) {
             return Optional.empty();
         }
@@ -96,12 +96,12 @@ public class ItemService {
         return productionForecastService.calculateProductionAdvice(itemId);
     }
 
-    private int getTotalMeters(ItemEntity item) {
-        return item.getTotalMeters() != null ? item.getTotalMeters() : 0;
+    private double getTotalMeters(ItemEntity item) {
+        return item.getTotalMeters() != null ? item.getTotalMeters() : 0d;
     }
 
-    private int getMetersRun(ItemEntity item) {
-        return item.getMetersRun() != null ? item.getMetersRun() : 0;
+    private double getMetersRun(ItemEntity item) {
+        return item.getMetersRun() != null ? item.getMetersRun() : 0d;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -168,8 +168,8 @@ public class ItemService {
         item.setIsArchived(false);
         item.setExpectedEndDate(TEMPORARY_ITEM_EXPECTED_END_DATE);
 
-        float totalMeters = arrangementRequest.getPiecesCount() * arrangementRequest.getPieceLength();
-        item.setTotalMeters(Math.round(totalMeters));
+        double totalMeters = arrangementRequest.getPiecesCount() * arrangementRequest.getPieceLength();
+        item.setTotalMeters(totalMeters);
 
         return repository.save(item);
     }
@@ -196,9 +196,9 @@ public class ItemService {
         return repository.findAllNotArchived();
     }
 
-    public void addMeters(String id, Integer meters){
+    public void addMeters(String id, Double meters){
         this.repository.findById(id).ifPresent(itemEntity -> {
-            Integer currentMetersRun = itemEntity.getMetersRun() != null ? itemEntity.getMetersRun() : 0;
+            Double currentMetersRun = itemEntity.getMetersRun() != null ? itemEntity.getMetersRun() : 0d;
             itemEntity.setMetersRun(currentMetersRun + meters);
             this.repository.save(itemEntity);
         });

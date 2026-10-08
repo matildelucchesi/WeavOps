@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -167,6 +168,17 @@ public class CalendarEventService {
 
         repository.deleteById(id);
         return true;
+    }
+
+    public void deleteLoomExpectedEndDateEvent(String processId) {
+        if (isBlank(processId)) {
+            return;
+        }
+
+        List<CalendarEventEntity> events = new ArrayList<>(
+                repository.findAllByTypeAndProcessId(getType(LOOM_EXPECTED_END), processId));
+        events.addAll(repository.findAllByProcessIdAndTypeIsNull(processId));
+        repository.deleteAll(events);
     }
 
     public int countCurrentWeekPendingDeliveries() {

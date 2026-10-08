@@ -1,14 +1,24 @@
 package org.openapitools.service;
 
 import org.openapitools.domain.ProcessEntity;
+import org.openapitools.domain.ItemEntity;
+import org.openapitools.domain.LoomItemAssignmentEntity;
+import org.openapitools.mapper.LoomMapper;
+import org.openapitools.model.LoomItemAssignment;
+import org.openapitools.repository.ItemRepository;
 import org.openapitools.repository.LoomItemAssignmentRepository;
+import org.openapitools.repository.LoomRepository;
 import org.openapitools.repository.ProcessRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Objects;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,13 +29,25 @@ public class ProcessService {
 
     private final ProcessRepository repository;
     private final LoomItemAssignmentRepository assignmentRepository;
+    private final ItemRepository itemRepository;
+    private final LoomRepository loomRepository;
+    private final LoomMapper loomMapper;
+    private final ProductionForecastService productionForecastService;
 
     public ProcessService(
             ProcessRepository repository,
-            LoomItemAssignmentRepository assignmentRepository
+            LoomItemAssignmentRepository assignmentRepository,
+            ItemRepository itemRepository,
+            LoomRepository loomRepository,
+            LoomMapper loomMapper,
+            @Lazy ProductionForecastService productionForecastService
     ) {
         this.repository = repository;
         this.assignmentRepository = assignmentRepository;
+        this.itemRepository = itemRepository;
+        this.loomRepository = loomRepository;
+        this.loomMapper = loomMapper;
+        this.productionForecastService = productionForecastService;
     }
 
     public List<ProcessEntity> findAll() {
@@ -35,6 +57,60 @@ public class ProcessService {
     public ProcessEntity save(ProcessEntity process) {
         return repository.save(process);
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public AssignedProcess createAssignedProcess(String itemId, ProcessEntity process) {
+        if (process == null || process.getLoom() == null || isBlank(process.getLoom().getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "È necessario selezionare un telaio.");
+        }
+
+        ItemEntity item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Articolo non trovato."));
+        var loom = loomRepository.findById(process.getLoom().getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Telaio non trovato."));
+
+        boolean alreadyAssigned = assignmentRepository.existsByItemIdAndLoomIdAndStatusIn(
+                item.getId(),
+                loom.getId(),
+                List.of(LoomItemAssignment.StatusEnum.QUEUED, LoomItemAssignment.StatusEnum.RUNNING)
+        );
+        if (alreadyAssigned) {
+            throw new DuplicateItemLoomAssignmentException(
+                    "Esiste già una produzione attiva o in coda per questo articolo su questo telaio."
+            );
+        }
+
+        process.setId(null);
+        process.setLoom(loomMapper.toDto(loom));
+        process.setDays(calculateDays(process));
+        ProcessEntity savedProcess = repository.save(process);
+
+        item.setProcessing(item.getProcessing() == null
+                ? new java.util.ArrayList<>()
+                : new java.util.ArrayList<>(item.getProcessing()));
+        item.getProcessing().add(savedProcess);
+        itemRepository.save(item);
+
+        LoomItemAssignmentEntity assignment = new LoomItemAssignmentEntity();
+        assignment.setLoomId(loom.getId());
+        assignment.setItemId(item.getId());
+        assignment.setProcessId(savedProcess.getId());
+        assignment.setStatus(LoomItemAssignment.StatusEnum.QUEUED);
+        LoomItemAssignmentEntity savedAssignment = assignmentRepository.save(assignment);
+
+        productionForecastService.recalculateProductionForecast(item.getId());
+        return new AssignedProcess(
+                repository.findById(savedProcess.getId()).orElse(savedProcess),
+                assignmentRepository.findById(savedAssignment.getId()).orElse(savedAssignment),
+                itemRepository.findById(item.getId()).orElse(item)
+        );
+    }
+
+    public record AssignedProcess(
+            ProcessEntity process,
+            LoomItemAssignmentEntity assignment,
+            ItemEntity item
+    ) {}
 
     public Optional<ProcessEntity> findById(String id){
         return repository.findById(id);
@@ -99,7 +175,7 @@ public class ProcessService {
         return calculateDaysForMeters(entity, entity.getMetersToGo());
     }
 
-    public float calculateDaysForMeters(ProcessEntity entity, int meters) {
+    public float calculateDaysForMeters(ProcessEntity entity, double meters) {
         if (entity == null || meters <= 0) {
             return 0;
         }
@@ -110,7 +186,7 @@ public class ProcessService {
             return 0;
         }
 
-        return meters / dailyCapacity;
+        return (float) (meters / dailyCapacity);
     }
 
     public float calculateDailyCapacity(ProcessEntity entity) {
@@ -124,10 +200,10 @@ public class ProcessService {
             return 0;
         }
 
-        return entity.getSpeed()
-                * (entity.getEfficiency() / 100.f)
+        return entity.getSpeed().floatValue()
+                * (entity.getEfficiency().floatValue() / 100.f)
                 * MINUTES_PER_DAY
-                / (entity.getItemHitsPerDm() * DECIMETERS_PER_METER);
+                / (entity.getItemHitsPerDm().floatValue() * DECIMETERS_PER_METER);
     }
 
     public OffsetDateTime calculateExpectedEndDate(ProcessEntity entity) {
@@ -154,9 +230,15 @@ public class ProcessService {
 
     public void addPieces(String processId, Integer piecesToAdd){
         this.findById(processId).ifPresent(process -> {
-            if (process.getTotalPieces() != null) {
-                process.setPiecesRun(process.getPiecesRun() + piecesToAdd);
-                process.setMetersRun(process.getMetersRun() + piecesToAdd * process.getMetersPerPiece());
+            if (process.getTotalPieces() != null && piecesToAdd != null && piecesToAdd > 0) {
+                process.setPiecesRun(Objects.requireNonNullElse(process.getPiecesRun(), 0) + piecesToAdd);
+                process.setMetersRun(Objects.requireNonNullElse(process.getMetersRun(), 0d)
+                        + piecesToAdd * Objects.requireNonNullElse(process.getMetersPerPiece(), 0d));
+                process.setMetersToGo(Math.max(
+                        Objects.requireNonNullElse(process.getTotalMeters(), 0d)
+                                - process.getMetersRun(),
+                        0d
+                ));
             }
             this.save(process);
         });

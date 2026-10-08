@@ -16,7 +16,7 @@ public class LoomLogEntity {
     private String loomStatus;
     private String itemId;
     private String itemName;
-    private Integer metersAdded;
+    private Double metersAdded;
     private Instant createdAt;
 
     public String getId() {
@@ -75,11 +75,11 @@ public class LoomLogEntity {
         this.itemName = itemName;
     }
 
-    public Integer getMetersAdded() {
+    public Double getMetersAdded() {
         return metersAdded;
     }
 
-    public void setMetersAdded(Integer metersAdded) {
+    public void setMetersAdded(Double metersAdded) {
         this.metersAdded = metersAdded;
     }
 

@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.openapitools.security.JwtAuthenticationFilter;
 import org.openapitools.service.MobileTokenAuthorizationService;
 import org.openapitools.service.TokenService;
+import org.openapitools.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,6 +26,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             TokenService tokenService,
+            UserRepository userRepository,
             MobileTokenAuthorizationService mobileTokenAuthorizationService
     ) throws Exception {
         return http
@@ -52,6 +54,8 @@ public class SecurityConfig {
                                 "/looms/*/add-pieces",
                                 "/loom-item-assignments/*"
                         ).access(mobileTokenAuthorizationService::authorize)
+                        .requestMatchers(HttpMethod.POST, "/looms/*/knotting")
+                        .access(mobileTokenAuthorizationService::authorize)
                         .requestMatchers(
                                 "/",
                                 "/swagger-ui.html",
@@ -65,7 +69,7 @@ public class SecurityConfig {
                         (request, response, authException) ->
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
                 ))
-                .addFilterBefore(new JwtAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(tokenService, userRepository), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

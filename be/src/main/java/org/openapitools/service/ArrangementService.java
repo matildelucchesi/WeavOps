@@ -1,10 +1,14 @@
 package org.openapitools.service;
 
 import org.openapitools.domain.ArrangementEntity;
+import org.openapitools.domain.ItemEntity;
 import org.openapitools.repository.ArrangementRepository;
 import org.openapitools.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +52,45 @@ public class ArrangementService {
         itemRepository.findByArrangementId(id).forEach(item -> productionForecastService.recalculateProductionForecast(item.getId()));
         return Optional.of(savedArrangement);
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Optional<ItemAndArrangement> updateItemAndArrangement(
+            String itemId,
+            ItemEntity item,
+            String arrangementId,
+            ArrangementEntity arrangement
+    ) {
+        ItemEntity existingItem = itemRepository.findById(itemId).orElse(null);
+        if (existingItem == null || !repository.existsById(arrangementId)) {
+            return Optional.empty();
+        }
+        if (!arrangementId.equals(existingItem.getArrangementId())
+                || (item.getArrangementId() != null && !arrangementId.equals(item.getArrangementId()))) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "La disposizione non è associata all'articolo indicato."
+            );
+        }
+
+        arrangement.setId(arrangementId);
+        ArrangementEntity savedArrangement = repository.save(arrangement);
+        calendarService.createOrUpdateDeliveryDateEvent(savedArrangement);
+
+        item.setId(itemId);
+        item.setArrangementId(arrangementId);
+        if (item.getExpectedEndDate() == null) {
+            item.setExpectedEndDate(java.time.Instant.EPOCH);
+        }
+        ItemEntity savedItem = itemRepository.save(item);
+
+        for (ItemEntity relatedItem : itemRepository.findByArrangementId(arrangementId)) {
+            productionForecastService.recalculateProductionForecast(relatedItem.getId());
+        }
+        ItemEntity refreshedItem = itemRepository.findById(itemId).orElse(savedItem);
+        return Optional.of(new ItemAndArrangement(refreshedItem, savedArrangement));
+    }
+
+    public record ItemAndArrangement(ItemEntity item, ArrangementEntity arrangement) {}
 
     public boolean deleteById(String id){
         if (!repository.existsById(id)) {

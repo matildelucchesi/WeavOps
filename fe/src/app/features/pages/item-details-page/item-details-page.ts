@@ -26,7 +26,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoomItemAssignmentFacadeService } from '../../../services/loom-item-assignment-facade.service';
 import { DialogInformativeComponent, type DialogInformativeData } from '../../reusable-components/dialog/dialog-informative-component/dialog-informative-component';
 import { DialogProductionSchedule, type ProductionSchedule, type ProductionScheduleDialogData } from '../../reusable-components/dialog/dialog-production-schedule/dialog-production-schedule';
-import { firstValueFrom, forkJoin } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
+import { AssignedProcessResponse } from '../../../services/process-facade.service';
 import type { jsPDF as JsPdfDocument } from 'jspdf';
 
 interface ProcessTableRow {
@@ -36,6 +37,7 @@ interface ProcessTableRow {
   loomId?: string;
   status?: LoomItemAssignment.StatusEnum;
   loomName: string;
+  loomState: string;
   piecesRun: string;
   totalPieces: string;
   state: string;
@@ -79,6 +81,7 @@ export class ItemDetailsPage implements OnInit {
   private readonly item = signal<Item | null>(null);
   private readonly arrangement = signal<Arrangement | null>(null);
   private readonly loomNamesById = signal<Record<string, string>>({});
+  private readonly loomStatusesById = signal<Record<string, Loom.StatusEnum>>({});
   private readonly itemAssignments = signal<LoomItemAssignment[]>([]);
   private readonly remainingMetersToAssign = signal<number>(0);
   public readonly productionAdvice = signal<ProductionAdvice | null>(null);
@@ -126,6 +129,43 @@ export class ItemDetailsPage implements OnInit {
         },
       },
     },
+    {
+      header: 'Stato Telaio',
+      field: 'loomState',
+      chip: {
+        defaultStyle: {
+          width: '132px',
+          minWidth: '132px',
+          height: '28px',
+        },
+        styles: {
+          'In lavorazione': {
+            label: 'In lavorazione',
+            backgroundColor: 'var(--weavops-color-blue-soft)',
+            color: 'var(--weavops-color-blue)',
+            borderColor: 'var(--weavops-color-blue)',
+          },
+          'Fermo': {
+            label: 'Fermo',
+            backgroundColor: 'var(--weavops-color-grey)',
+            color: 'var(--weavops-color-grey-dark)',
+            borderColor: 'var(--weavops-color-grey-dark)',
+          },
+          'Manutenzione': {
+            label: 'Manutenzione',
+            backgroundColor: 'var(--weavops-color-accent-lighter)',
+            color: 'var(--weavops-color-accent-deep)',
+            borderColor: 'var(--weavops-color-accent-deep)',
+          },
+          'Non disponibile': {
+            label: 'Non disponibile',
+            backgroundColor: 'var(--weavops-color-grey)',
+            color: 'var(--weavops-color-grey-dark)',
+            borderColor: 'var(--weavops-color-grey-dark)',
+          },
+        },
+      },
+    },
   ];
   public readonly rows = computed<ProcessTableRow[]>(() => this.itemAssignments().map((assignment) => {
     const process = this.getAssignmentProcess(assignment);
@@ -137,6 +177,7 @@ export class ItemDetailsPage implements OnInit {
       loomId: assignment.loomId,
       status: assignment.status,
       loomName: this.getAssignmentLoomName(assignment, process),
+      loomState: this.getAssignmentLoomState(assignment),
       piecesRun: this.formatTablePieces(process?.piecesRun),
       totalPieces: this.formatTablePieces(process?.totalPieces),
       state: this.getAssignmentState(assignment),
@@ -337,13 +378,11 @@ export class ItemDetailsPage implements OnInit {
       return;
     }
 
-    forkJoin({
-      item: this.itemService.update(currentItem.id, this.buildItemSavePayload(currentItem)),
-      arrangement: this.arrangementService.update(
-        currentArrangement.id,
-        this.buildArrangementSavePayload(currentArrangement),
-      ),
-    }).subscribe({
+    this.itemService.updateItemAndArrangement(
+      currentItem.id,
+      this.buildItemSavePayload(currentItem),
+      this.buildArrangementSavePayload(currentArrangement),
+    ).subscribe({
       next: ({ item, arrangement }) => {
         this.item.set(item);
         this.setArrangement(arrangement);
@@ -656,8 +695,16 @@ export class ItemDetailsPage implements OnInit {
 
         return accumulator;
       }, {});
+      const loomStatusesById = looms.reduce<Record<string, Loom.StatusEnum>>((accumulator, loom) => {
+        if (loom.id) {
+          accumulator[loom.id] = loom.status;
+        }
+
+        return accumulator;
+      }, {});
 
       this.loomNamesById.set(loomNamesById);
+      this.loomStatusesById.set(loomStatusesById);
     });
   }
 
@@ -1049,7 +1096,7 @@ export class ItemDetailsPage implements OnInit {
   }
 
   public openAssignLoomDialog(): void {
-    const dialogRef = this.dialog.open<DialogAssignLoomComponent, DialogAssignLoomData, Process | false>(
+    const dialogRef = this.dialog.open<DialogAssignLoomComponent, DialogAssignLoomData, AssignedProcessResponse | false>(
       DialogAssignLoomComponent,
       {
         panelClass: 'assign-loom-dialog-panel',
@@ -1065,12 +1112,12 @@ export class ItemDetailsPage implements OnInit {
       },
     );
 
-    dialogRef.afterClosed().subscribe((process) => {
-      if (!process) {
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) {
         return;
       }
 
-      this.addProcessToItem(process);
+      this.addProcessToItem(result);
     });
   }
 
@@ -1141,7 +1188,7 @@ export class ItemDetailsPage implements OnInit {
     });
   }
 
-  private addProcessToItem(process: Process): void {
+  private addProcessToItem(result: AssignedProcessResponse): void {
     const currentItem = this.item();
 
     if (!currentItem?.id) {
@@ -1149,42 +1196,18 @@ export class ItemDetailsPage implements OnInit {
       return;
     }
 
-    const updatedItem: Item = {
-      ...currentItem,
-      processing: [...(currentItem.processing ?? []), process],
-    };
-
-    this.item.set(updatedItem);
-
-    this.itemService.update(currentItem.id, updatedItem).subscribe({
-      next: (item) => {
-        this.item.set(item);
-        if(process.id && item.id && process.loom?.id) {
-        this.assignmentService.create(process.loom?.id ?? '', item.id, process.id, LoomItemAssignment.StatusEnum.Queued).subscribe({
-          next: (assignment) => {
-            this.itemAssignments.set([...this.itemAssignments(), assignment]);
-            this.loadRemainingMetersToAssign(item.id);
-            if (this.hasForecastableAssignments(this.itemAssignments())) {
-              this.loadProductionAdvice(item.id);
-            } else {
-              this.productionAdvice.set(null);
-            }
-            this.snackBar.open('Assegnazione avvenuta con successo', 'Chiudi', {
-              duration: 4000,
-              horizontalPosition: 'end',
-              verticalPosition: 'bottom',
-            });
-          },
-          error: (error) => {
-            console.error("Errore durante l'assegnazione del processo:", error);
-          }
-        });
-      }
-      },
-      error: (error) => {
-        this.item.set(currentItem);
-        console.error("Errore durante l'aggiornamento dell'item:", error);
-      },
+    this.item.set(result.item);
+    this.itemAssignments.set([...this.itemAssignments(), result.assignment]);
+    this.loadRemainingMetersToAssign(currentItem.id);
+    if (this.hasForecastableAssignments(this.itemAssignments())) {
+      this.loadProductionAdvice(currentItem.id);
+    } else {
+      this.productionAdvice.set(null);
+    }
+    this.snackBar.open('Assegnazione avvenuta con successo', 'Chiudi', {
+      duration: 4000,
+      horizontalPosition: 'end',
+      verticalPosition: 'bottom',
     });
   }
 
@@ -1489,6 +1512,21 @@ export class ItemDetailsPage implements OnInit {
     return 'Telaio non disponibile';
   }
 
+  private getAssignmentLoomState(assignment: LoomItemAssignment): string {
+    const status = assignment.loomId ? this.loomStatusesById()[assignment.loomId] : undefined;
+
+    switch (status) {
+      case Loom.StatusEnum.Working:
+        return 'In lavorazione';
+      case Loom.StatusEnum.Stopped:
+        return 'Fermo';
+      case Loom.StatusEnum.Maintenance:
+        return 'Manutenzione';
+      default:
+        return 'Non disponibile';
+    }
+  }
+
   private getAssignmentState(assignment: LoomItemAssignment): string {
     switch (assignment.status) {
       case LoomItemAssignment.StatusEnum.Queued:
@@ -1531,10 +1569,17 @@ export class ItemDetailsPage implements OnInit {
 
 
   public getProductionAdviceMessage(advice: ProductionAdvice): string {
-    if (advice.meetsDeliveryDate || advice.recommendedAdditionalLooms === 0) {
-      const sufficientLoomsMessage = `I ${advice.currentRunningLooms} telai già assegnati sono sufficienti per rispettare la data di consegna.`;
+    const productionStarted = this.itemAssignments().some(
+      assignment => assignment.status === LoomItemAssignment.StatusEnum.Running,
+    );
+    const loomCountDescription = productionStarted
+      ? 'telai in produzione o liberi che possono iniziare subito'
+      : 'telai assegnati, considerati disponibili nella stima iniziale';
 
-      if (this.isRealStartDate(this.itemData?.startDate)) {
+    if (advice.meetsDeliveryDate || advice.recommendedAdditionalLooms === 0) {
+      const sufficientLoomsMessage = `I ${advice.currentRunningLooms} ${loomCountDescription} sono sufficienti per rispettare la data di consegna.`;
+
+      if (productionStarted) {
         return sufficientLoomsMessage;
       }
 
@@ -1555,7 +1600,7 @@ export class ItemDetailsPage implements OnInit {
     const additionalLoomLabel = advice.recommendedAdditionalLooms === 1 ? 'telaio' : 'telai';
     const totalLoomLabel = advice.recommendedTotalLooms === 1 ? 'telaio' : 'telai';
 
-    return `Per rispettare la data di consegna, si consiglia di aggiungere almeno ${advice.recommendedAdditionalLooms} ${additionalLoomLabel} alla produzione.`;
+    return `Per rispettare la data di consegna si consiglia di aggiungere almeno altri ${advice.recommendedAdditionalLooms} ${additionalLoomLabel} alla produzione.`;
   }
 
   private getProductionAdviceMarginDays(advice: ProductionAdvice): number | null {

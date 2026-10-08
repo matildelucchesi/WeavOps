@@ -48,4 +48,5 @@ public class LoomEntity {
     public void setStatus(Loom.StatusEnum status) {
         this.status = status;
     }
+
 }

@@ -27,7 +27,7 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-20T09:27:07.285474300+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
 public class ProductionAdvice {
 
-  private Integer remainingMeters;
+  private Double remainingMeters;
 
   private Float daysUntilDelivery;
 
@@ -60,7 +60,7 @@ public class ProductionAdvice {
   /**
    * Constructor with only required parameters
    */
-  public ProductionAdvice(Integer remainingMeters, Float daysUntilDelivery, Integer currentRunningLooms, Float currentDailyCapacity, Float requiredDailyCapacity, Float additionalDailyCapacity, Float referenceDailyCapacity, Integer recommendedAdditionalLooms, Integer recommendedTotalLooms, OffsetDateTime estimatedCompletionDate, OffsetDateTime deliveryDate, Boolean meetsDeliveryDate) {
+  public ProductionAdvice(Double remainingMeters, Float daysUntilDelivery, Integer currentRunningLooms, Float currentDailyCapacity, Float requiredDailyCapacity, Float additionalDailyCapacity, Float referenceDailyCapacity, Integer recommendedAdditionalLooms, Integer recommendedTotalLooms, OffsetDateTime estimatedCompletionDate, OffsetDateTime deliveryDate, Boolean meetsDeliveryDate) {
     this.remainingMeters = remainingMeters;
     this.daysUntilDelivery = daysUntilDelivery;
     this.currentRunningLooms = currentRunningLooms;
@@ -75,7 +75,7 @@ public class ProductionAdvice {
     this.meetsDeliveryDate = meetsDeliveryDate;
   }
 
-  public ProductionAdvice remainingMeters(Integer remainingMeters) {
+  public ProductionAdvice remainingMeters(Double remainingMeters) {
     this.remainingMeters = remainingMeters;
     return this;
   }
@@ -85,15 +85,15 @@ public class ProductionAdvice {
    * minimum: 0
    * @return remainingMeters
    */
-  @NotNull @Min(value = 0) 
+  @NotNull @DecimalMin(value = "0")
   @Schema(name = "remainingMeters", description = "Metri ancora da produrre per completare l'articolo.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("remainingMeters")
-  public Integer getRemainingMeters() {
+  public Double getRemainingMeters() {
     return remainingMeters;
   }
 
   @JsonProperty("remainingMeters")
-  public void setRemainingMeters(Integer remainingMeters) {
+  public void setRemainingMeters(Double remainingMeters) {
     this.remainingMeters = remainingMeters;
   }
 
@@ -127,10 +127,10 @@ public class ProductionAdvice {
   /**
    * Numero di telai attualmente in produzione per l'articolo.
    * minimum: 0
-   * @return currentRunningLooms
+   * Number of looms considered available for the current estimate.
    */
   @NotNull @Min(value = 0) 
-  @Schema(name = "currentRunningLooms", description = "Numero di telai attualmente in produzione per l'articolo.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "currentRunningLooms", description = "Numero di telai considerati disponibili nella stima; prima dell'avvio include i telai assegnati, dopo l'avvio include quelli in produzione o liberi.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("currentRunningLooms")
   public Integer getCurrentRunningLooms() {
     return currentRunningLooms;
@@ -392,4 +392,3 @@ public class ProductionAdvice {
     return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
-

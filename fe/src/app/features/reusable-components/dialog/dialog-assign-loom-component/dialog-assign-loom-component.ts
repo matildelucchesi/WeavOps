@@ -3,13 +3,15 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { catchError, finalize, map, of, switchMap } from 'rxjs';
 import { ButtonGeneralActionComponent } from "../../button/button-general-action-component/button-general-action-component";
 import { LoomFacadeService } from '../../../../services/loom-facade.service';
-import { Arrangement, Loom, Process } from '../../../../api';
+import { Arrangement, Loom, LoomItemAssignment, Process } from '../../../../api';
 import { LoomCardComponent } from "../../loom-card-component/loom-card-component";
 import { MatIcon } from '@angular/material/icon';
 import { LoaderComponent } from '../../loader-component/loader-component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ProcessFacadeService } from '../../../../services/process-facade.service';
+import { AssignedProcessResponse } from '../../../../services/process-facade.service';
 import { DialogLoomAlertComponent, type DialogLoomAlertData } from '../dialog-loom-alert-component/dialog-loom-alert-component';
+import { DialogAlertGeneric, type DialogAlertGenericData } from '../dialog-alert-generic/dialog-alert-generic';
 import { MatError } from "@angular/material/form-field";
 import { LoomItemAssignmentFacadeService } from '../../../../services/loom-item-assignment-facade.service';
 
@@ -57,7 +59,7 @@ export class DialogAssignLoomComponent implements OnInit {
     expectedEndDate: undefined,
   };
 
-  private readonly dialogRef = inject(MatDialogRef<DialogAssignLoomComponent, Process | false>, { optional: true });
+  private readonly dialogRef = inject(MatDialogRef<DialogAssignLoomComponent, AssignedProcessResponse | false>, { optional: true });
 
   public get paginatedLooms(): Loom[] {
     const startIndex = (this.currentPage() - 1) * this.pageSize;
@@ -89,7 +91,7 @@ export class DialogAssignLoomComponent implements OnInit {
       return 0;
     }
 
-    return totalMeters / metersPerPiece;
+    return Math.ceil(totalMeters / metersPerPiece);
   }
 
   public get isSpeedBelowMinimum(): boolean {
@@ -146,12 +148,13 @@ export class DialogAssignLoomComponent implements OnInit {
     if (itemId && loom.id) {
       this.assignmentService.getByItemId(itemId).subscribe({
         next: (assignments) => {
-          if (assignments.some((assignment) => assignment.loomId === loom.id)) {
-            this.openLoomAlert(
-              loom,
-              undefined,
-              'Questo telaio è stato già assegnato per questo articolo, vuoi procedere?',
-            );
+          const hasActiveAssignment = assignments.some((assignment) =>
+            assignment.loomId === loom.id
+            && (assignment.status === LoomItemAssignment.StatusEnum.Queued
+              || assignment.status === LoomItemAssignment.StatusEnum.Running),
+          );
+          if (hasActiveAssignment) {
+            this.openAssignmentConflictDialog();
             return;
           }
 
@@ -159,7 +162,9 @@ export class DialogAssignLoomComponent implements OnInit {
         },
         error: (error) => {
           console.error('Errore durante il controllo delle assegnazioni del telaio:', error);
-          this.openAssignmentAlert(loom);
+          this.openAssignmentConflictDialog(
+            'Non è stato possibile verificare le produzioni già associate. Riprova prima di assegnare il telaio.',
+          );
         },
       });
       return;
@@ -216,6 +221,25 @@ export class DialogAssignLoomComponent implements OnInit {
     });
   }
 
+  private openAssignmentConflictDialog(
+    message = 'Esiste già una produzione attiva o in coda per questo articolo su questo telaio.',
+  ): void {
+    const data: DialogAlertGenericData = {
+      text: message,
+      icon: 'error',
+      iconColor: 'red',
+      button: true,
+      closeOnly: true,
+      closeButtonLabel: 'Chiudi',
+    };
+
+    this.dialog.open(DialogAlertGeneric, {
+      panelClass: 'informative-dialog-panel',
+      autoFocus: false,
+      data,
+    });
+  }
+
   private confirmLoomAssignment(loom: Loom): void {
     const assignedLoom: Loom = {
       ...loom,
@@ -245,15 +269,24 @@ export class DialogAssignLoomComponent implements OnInit {
 
     this.isSavingProcess = true;
 
-    this.processService.create(this.createProcessPayload()).subscribe({
-      next: (process) => {
+    const itemId = this.data?.itemId;
+    if (!itemId) {
+      this.isSavingProcess = false;
+      return;
+    }
+
+    this.processService.createAssigned(itemId, this.createProcessPayload()).subscribe({
+      next: (result) => {
         setTimeout(() => {
-          this.dialogRef?.close(process);
+          this.dialogRef?.close(result);
         }, 1000);
       },
       error: (error) => {
         this.isSavingProcess = false;
         console.error('Error creating process:', error);
+        if (error?.status === 409) {
+          this.openAssignmentConflictDialog();
+        }
       }
     });
   }

@@ -1,9 +1,12 @@
 package org.openapitools.controller;
 
+import com.mongodb.MongoException;
 import org.openapitools.api.LoomItemAssignmentsApi;
 import org.openapitools.mapper.LoomItemAssignmentMapper;
 import org.openapitools.model.LoomItemAssignment;
 import org.openapitools.service.LoomItemAssignmentService;
+import org.openapitools.service.LoomAlreadyRunningException;
+import org.openapitools.service.DuplicateItemLoomAssignmentException;
 import org.openapitools.service.MobileTokenAuthorizationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,8 +53,19 @@ public class LoomItemAssignmentController implements LoomItemAssignmentsApi {
     public ResponseEntity<LoomItemAssignment> createLoomItemAssignment(
             @Valid @RequestBody LoomItemAssignment loomItemAssignment
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mapper.toDto(service.save(mapper.toEntity(loomItemAssignment))));
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(mapper.toDto(service.save(mapper.toEntity(loomItemAssignment))));
+        } catch (LoomAlreadyRunningException exception) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (DuplicateItemLoomAssignmentException exception) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (RuntimeException exception) {
+            if (isConcurrentMongoWriteConflict(exception)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+            throw exception;
+        }
     }
 
     @Override
@@ -65,10 +79,19 @@ public class LoomItemAssignmentController implements LoomItemAssignmentsApi {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        return service.update(id, mapper.toEntity(loomItemAssignment))
-                .map(mapper::toDto)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return service.update(id, mapper.toEntity(loomItemAssignment))
+                    .map(mapper::toDto)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (LoomAlreadyRunningException exception) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (RuntimeException exception) {
+            if (isConcurrentMongoWriteConflict(exception)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+            throw exception;
+        }
     }
 
     @Override
@@ -98,5 +121,17 @@ public class LoomItemAssignmentController implements LoomItemAssignmentsApi {
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    private boolean isConcurrentMongoWriteConflict(Throwable error) {
+        Throwable current = error;
+        while (current != null) {
+            if (current instanceof MongoException mongoException
+                    && (mongoException.getCode() == 112 || mongoException.getCode() == 251)) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 }

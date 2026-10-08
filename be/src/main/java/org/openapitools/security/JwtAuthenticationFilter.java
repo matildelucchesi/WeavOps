@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.openapitools.domain.UserEntity;
+import org.openapitools.repository.UserRepository;
 import org.openapitools.service.TokenService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,9 +23,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final TokenService tokenService;
+    private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(TokenService tokenService) {
+    public JwtAuthenticationFilter(TokenService tokenService, UserRepository userRepository) {
         this.tokenService = tokenService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -39,6 +43,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             tokenService.validateToken(token).ifPresent(payload -> {
                 boolean mobileToken = "loom-mobile".equals(payload.purpose());
+                if (!mobileToken && !isCurrentUserToken(payload)) {
+                    return;
+                }
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         payload,
                         null,
@@ -53,5 +60,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private boolean isCurrentUserToken(TokenService.TokenPayload payload) {
+        if (payload.userId() == null || payload.credentialVersion() == null) {
+            return false;
+        }
+        return userRepository.findById(payload.userId())
+                .filter(user -> user.getCredentialVersion() == payload.credentialVersion())
+                .map(UserEntity::getUsername)
+                .filter(payload.username()::equals)
+                .isPresent();
     }
 }

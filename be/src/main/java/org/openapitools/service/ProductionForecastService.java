@@ -5,6 +5,7 @@ import org.openapitools.domain.ItemEntity;
 import org.openapitools.domain.LoomEntity;
 import org.openapitools.domain.LoomItemAssignmentEntity;
 import org.openapitools.domain.ProcessEntity;
+import org.openapitools.model.Loom;
 import org.openapitools.model.LoomItemAssignment;
 import org.openapitools.model.ProductionAdvice;
 import org.openapitools.repository.ArrangementRepository;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -81,6 +83,24 @@ public class ProductionForecastService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public void recalculateQueuedForecastsForLoom(String loomId) {
+        if (isBlank(loomId)) {
+            return;
+        }
+
+        Set<String> queuedItemIds = new HashSet<>();
+        for (LoomItemAssignmentEntity assignment : assignmentRepository.findByLoomId(loomId)) {
+            if (assignment != null
+                    && assignment.getStatus() == LoomItemAssignment.StatusEnum.QUEUED
+                    && !isBlank(assignment.getItemId())) {
+                queuedItemIds.add(assignment.getItemId());
+            }
+        }
+
+        queuedItemIds.forEach(this::recalculateProductionForecast);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public void recalculateProductionForecastForProcess(String processId) {
         if (isBlank(processId)) {
             return;
@@ -127,23 +147,23 @@ public class ProductionForecastService {
         List<RunningProcessForecast> runningProcesses = getRunningProcessForecasts(assignments);
 
         if (runningProcesses.isEmpty()) {
-            return saveForecast(item, runningProcesses, null, 0);
+            return saveForecast(item, assignments, runningProcesses, null, 0);
         }
 
         float totalDailyCapacity = calculateTotalDailyCapacity(runningProcesses);
 
         if (totalDailyCapacity <= 0) {
-            return saveForecast(item, runningProcesses, null, 0);
+            return saveForecast(item, assignments, runningProcesses, null, 0);
         }
 
-        int remainingMeters = calculateRemainingMeters(item);
-        float remainingDays = remainingMeters <= 0 ? 0 : remainingMeters / totalDailyCapacity;
+        double remainingMeters = calculateRemainingMeters(item);
+        float remainingDays = remainingMeters <= 0 ? 0 : (float) (remainingMeters / totalDailyCapacity);
         ArrangementEntity arrangement = isBlank(item.getArrangementId()) ? null : arrangementRepository.findById(item.getArrangementId()).orElse(null);
         Instant expectedEndDate = hasWeekendSchedule(arrangement)
                 ? calculateExpectedEndDateWithWeekendSchedule(Instant.now(), remainingDays * MILLIS_PER_DAY, arrangement)
                 : calculateExpectedEndDateFromNow(remainingDays);
 
-        return saveForecast(item, runningProcesses, expectedEndDate, remainingDays);
+        return saveForecast(item, assignments, runningProcesses, expectedEndDate, remainingDays);
     }
 
     private List<LoomItemAssignmentEntity> getAssignmentsWithCurrentUpdate(
@@ -191,6 +211,11 @@ public class ProductionForecastService {
             return Optional.empty();
         }
 
+        float availableWorkingDays = calculateAvailableWorkingDays(now, deliveryDate, arrangement);
+        if (availableWorkingDays <= 0) {
+            return Optional.empty();
+        }
+
         List<RunningProcessForecast> runningProcesses = getRunningProcessForecasts(
                 assignmentRepository.findByItemId(item.getId())
         );
@@ -200,8 +225,8 @@ public class ProductionForecastService {
             return Optional.empty();
         }
 
-        int remainingMeters = calculateRemainingMeters(item);
-        float requiredDailyCapacity = remainingMeters / daysUntilDelivery;
+        double remainingMeters = calculateRemainingMeters(item);
+        float requiredDailyCapacity = (float) (remainingMeters / availableWorkingDays);
         float additionalDailyCapacity = Math.max(requiredDailyCapacity - currentDailyCapacity, 0);
         float referenceDailyCapacity = currentDailyCapacity / runningProcesses.size();
         int recommendedAdditionalLooms = additionalDailyCapacity == 0
@@ -210,7 +235,7 @@ public class ProductionForecastService {
         int recommendedTotalLooms = runningProcesses.size() + recommendedAdditionalLooms;
         Instant estimatedCompletionDate = hasWeekendSchedule(arrangement)
                 ? calculateExpectedEndDateWithWeekendSchedule(now, (remainingMeters / currentDailyCapacity) * MILLIS_PER_DAY, arrangement)
-                : calculateExpectedEndDateFromNow(remainingMeters / currentDailyCapacity);
+                : calculateExpectedEndDateFromNow((float) (remainingMeters / currentDailyCapacity));
 
         return Optional.of(new ProductionAdvice(
                 remainingMeters,
@@ -228,6 +253,44 @@ public class ProductionForecastService {
         ));
     }
 
+    /**
+     * Converts the actual production windows before delivery into 24-hour capacity days.
+     * Weekdays are modeled as continuous production, matching the forecast calculation;
+     * configured weekend shifts and calendar closure dates reduce the available time.
+     */
+    float calculateAvailableWorkingDays(Instant start, Instant end, ArrangementEntity arrangement) {
+        Set<LocalDate> closures = calendarEventService.findClosureDates();
+        LocalDate firstDate = start.atZone(BUSINESS_TIME_ZONE).toLocalDate();
+        LocalDate lastDate = end.atZone(BUSINESS_TIME_ZONE).toLocalDate();
+        long availableMillis = 0;
+
+        for (LocalDate date = firstDate; !date.isAfter(lastDate); date = date.plusDays(1)) {
+            if (closures.contains(date)) {
+                continue;
+            }
+
+            List<TimeWindow> windows;
+            if (hasWeekendSchedule(arrangement)) {
+                windows = getWorkWindows(date, arrangement, closures);
+            } else {
+                windows = List.of(new TimeWindow(
+                        date.atStartOfDay(BUSINESS_TIME_ZONE).toInstant(),
+                        date.plusDays(1).atStartOfDay(BUSINESS_TIME_ZONE).toInstant()
+                ));
+            }
+
+            for (TimeWindow window : windows) {
+                Instant from = window.start().isAfter(start) ? window.start() : start;
+                Instant until = window.end().isBefore(end) ? window.end() : end;
+                if (until.isAfter(from)) {
+                    availableMillis += Duration.between(from, until).toMillis();
+                }
+            }
+        }
+
+        return (float) availableMillis / MILLIS_PER_DAY;
+    }
+
     private boolean isSameAssignment(
             LoomItemAssignmentEntity assignment,
             LoomItemAssignmentEntity currentAssignment
@@ -240,15 +303,37 @@ public class ProductionForecastService {
 
     private List<RunningProcessForecast> getRunningProcessForecasts(List<LoomItemAssignmentEntity> assignments) {
         List<RunningProcessForecast> runningProcesses = new ArrayList<>();
-        Set<String> processIds = new HashSet<>();
+        boolean productionHasStarted = assignments.stream()
+                .filter(Objects::nonNull)
+                .anyMatch(assignment -> assignment.getStatus() == LoomItemAssignment.StatusEnum.RUNNING);
+        List<LoomItemAssignmentEntity> prioritizedAssignments = new ArrayList<>();
+        assignments.stream()
+                .filter(assignment -> assignment != null
+                        && assignment.getStatus() == LoomItemAssignment.StatusEnum.RUNNING)
+                .forEach(prioritizedAssignments::add);
+        assignments.stream()
+                .filter(assignment -> assignment != null
+                        && assignment.getStatus() == LoomItemAssignment.StatusEnum.QUEUED)
+                .forEach(prioritizedAssignments::add);
 
-        for (LoomItemAssignmentEntity assignment : assignments) {
+        Set<String> processIds = new HashSet<>();
+        Set<String> loomIds = new HashSet<>();
+
+        for (LoomItemAssignmentEntity assignment : prioritizedAssignments) {
             if (assignment == null
                     || !isForecastAssignment(assignment)
+                    || isBlank(assignment.getLoomId())
                     || isBlank(assignment.getProcessId())
-                    || !processIds.add(assignment.getProcessId())) {
+                    || (assignment.getStatus() == LoomItemAssignment.StatusEnum.QUEUED
+                        && productionHasStarted
+                        && !isQueuedLoomAvailableNow(assignment))
+                    || loomIds.contains(assignment.getLoomId())
+                    || processIds.contains(assignment.getProcessId())) {
                 continue;
             }
+
+            loomIds.add(assignment.getLoomId());
+            processIds.add(assignment.getProcessId());
 
             processRepository.findById(assignment.getProcessId())
                     .map(process -> ensureProcessHitsPerDm(process, assignment))
@@ -260,6 +345,25 @@ public class ProductionForecastService {
         }
 
         return runningProcesses;
+    }
+
+    private boolean isQueuedLoomAvailableNow(LoomItemAssignmentEntity queuedAssignment) {
+        boolean hasRunningAssignment = assignmentRepository.findByLoomIdAndStatus(
+                        queuedAssignment.getLoomId(),
+                        LoomItemAssignment.StatusEnum.RUNNING
+                ).stream()
+                .anyMatch(assignment -> !Objects.equals(
+                        queuedAssignment.getId(),
+                        assignment.getId()
+                ));
+        if (hasRunningAssignment) {
+            return false;
+        }
+
+        return loomRepository.findById(queuedAssignment.getLoomId())
+                .map(LoomEntity::getStatus)
+                .filter(status -> status == Loom.StatusEnum.STOPPED)
+                .isPresent();
     }
 
     private ProcessEntity ensureProcessHitsPerDm(ProcessEntity process, LoomItemAssignmentEntity assignment) {
@@ -276,16 +380,12 @@ public class ProductionForecastService {
                 .map(arrangement -> arrangement.getHitsPerDm())
                 .filter(hitsPerDm -> hitsPerDm != null && hitsPerDm.signum() > 0)
                 .map(hitsPerDm -> {
-                    process.setItemHitsPerDm(hitsPerDm.intValue());
+                    process.setItemHitsPerDm(hitsPerDm.doubleValue());
                     return processRepository.save(process);
                 })
                 .orElse(process);
     }
 
-    /**
-     * A queued process already reserves a loom and has all the production parameters
-     * required for a forecast, so it must contribute before production actually starts.
-     */
     private boolean isForecastAssignment(LoomItemAssignmentEntity assignment) {
         return assignment.getStatus() == LoomItemAssignment.StatusEnum.RUNNING
                 || assignment.getStatus() == LoomItemAssignment.StatusEnum.QUEUED;
@@ -301,8 +401,8 @@ public class ProductionForecastService {
         return totalDailyCapacity;
     }
 
-    private int calculateRemainingMeters(ItemEntity item) {
-        return Math.max(valueOrZero(item.getTotalMeters()) - valueOrZero(item.getMetersRun()), 0);
+    private double calculateRemainingMeters(ItemEntity item) {
+        return Math.max(valueOrZero(item.getTotalMeters()) - valueOrZero(item.getMetersRun()), 0d);
     }
 
 
@@ -424,10 +524,13 @@ public class ProductionForecastService {
 
     private Optional<ItemEntity> saveForecast(
             ItemEntity item,
+            List<LoomItemAssignmentEntity> assignments,
             List<RunningProcessForecast> runningProcesses,
             Instant expectedEndDate,
             float remainingDays
     ) {
+        clearExcludedAssignmentForecasts(item, assignments, runningProcesses);
+
         for (RunningProcessForecast runningProcess : runningProcesses) {
             ProcessEntity process = runningProcess.process();
 
@@ -449,6 +552,34 @@ public class ProductionForecastService {
         calendarEventService.createOrUpdateItemExpectedEndDateEvent(savedItem);
 
         return Optional.of(savedItem);
+    }
+
+    private void clearExcludedAssignmentForecasts(
+            ItemEntity item,
+            List<LoomItemAssignmentEntity> assignments,
+            List<RunningProcessForecast> runningProcesses
+    ) {
+        Set<String> forecastedProcessIds = new HashSet<>();
+        for (RunningProcessForecast runningProcess : runningProcesses) {
+            forecastedProcessIds.add(runningProcess.process().getId());
+        }
+
+        for (LoomItemAssignmentEntity assignment : assignments) {
+            if (assignment == null
+                    || !isForecastAssignment(assignment)
+                    || isBlank(assignment.getProcessId())
+                    || forecastedProcessIds.contains(assignment.getProcessId())) {
+                continue;
+            }
+
+            processRepository.findById(assignment.getProcessId()).ifPresent(process -> {
+                process.setDays(0f);
+                process.setExpectedEndDate(null);
+                ProcessEntity savedProcess = processRepository.save(process);
+                updateItemProcess(item, savedProcess);
+                updateLoomExpectedEndDateEvent(assignment, savedProcess);
+            });
+        }
     }
 
     private void clearCurrentNonRunningForecast(
@@ -501,8 +632,8 @@ public class ProductionForecastService {
         );
     }
 
-    private int valueOrZero(Integer value) {
-        return value != null ? value : 0;
+    private double valueOrZero(Double value) {
+        return value != null ? value : 0d;
     }
 
     private boolean isBlank(String value) {

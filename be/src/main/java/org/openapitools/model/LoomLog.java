@@ -38,7 +38,7 @@ public class LoomLog {
 
   private @Nullable String itemName;
 
-  private @Nullable Integer metersAdded;
+  private @Nullable Double metersAdded;
 
   private @Nullable OffsetDateTime createdAt;
 
@@ -179,19 +179,19 @@ public class LoomLog {
     this.itemName = itemName;
   }
 
-  public LoomLog metersAdded(@Nullable Integer metersAdded) {
+  public LoomLog metersAdded(@Nullable Double metersAdded) {
     this.metersAdded = metersAdded;
     return this;
   }
 
   @Schema(name = "metersAdded", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("metersAdded")
-  public @Nullable Integer getMetersAdded() {
+  public @Nullable Double getMetersAdded() {
     return metersAdded;
   }
 
   @JsonProperty("metersAdded")
-  public void setMetersAdded(@Nullable Integer metersAdded) {
+  public void setMetersAdded(@Nullable Double metersAdded) {
     this.metersAdded = metersAdded;
   }
 

@@ -5,6 +5,8 @@ import org.openapitools.domain.ItemEntity;
 import org.openapitools.model.Customer;
 import org.openapitools.model.Item;
 import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -78,8 +80,8 @@ public class ItemMapper {
         if (includeCustomer) {
             entity.setCustomerId(dto.getCustomerId());
         }
-        entity.setTotalMeters(toInteger(dto.getTotalMeters()));
-        entity.setMetersRun(toInteger(dto.getMetersRun()));
+        entity.setTotalMeters(toDouble(dto.getTotalMeters()));
+        entity.setMetersRun(toDouble(dto.getMetersRun()));
         if (dto.getProcessing() != null) {
             entity.setProcessing(dto.getProcessing().stream().map(processMapper::toEntity).toList());
         }
@@ -124,12 +126,19 @@ public class ItemMapper {
         return entity;
     }
 
-    private BigDecimal toBigDecimal(Integer value) {
+    private BigDecimal toBigDecimal(Double value) {
         return value == null ? null : BigDecimal.valueOf(value);
     }
 
-    private Integer toInteger(BigDecimal value) {
-        return value == null ? null : value.intValue();
+    private Double toDouble(BigDecimal value) {
+        if (value == null) {
+            return null;
+        }
+        double converted = value.doubleValue();
+        if (!Double.isFinite(converted)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Valore numerico fuori dai limiti supportati.");
+        }
+        return converted;
     }
 
     private OffsetDateTime toOffsetDateTime(Instant value) {

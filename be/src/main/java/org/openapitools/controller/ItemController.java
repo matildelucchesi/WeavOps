@@ -8,9 +8,12 @@ import org.openapitools.service.ItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.openapitools.mapper.ArrangementMapper;
+import org.openapitools.service.ArrangementService;
 
 import jakarta.validation.Valid;
 import java.util.List;
@@ -20,10 +23,19 @@ public class ItemController implements ItemsApi {
 
     private final ItemService service;
     private final ItemMapper mapper;
+    private final ArrangementMapper arrangementMapper;
+    private final ArrangementService arrangementService;
 
-    public ItemController(ItemService service, ItemMapper mapper) {
+    public ItemController(
+            ItemService service,
+            ItemMapper mapper,
+            ArrangementMapper arrangementMapper,
+            ArrangementService arrangementService
+    ) {
         this.service = service;
         this.mapper = mapper;
+        this.arrangementMapper = arrangementMapper;
+        this.arrangementService = arrangementService;
     }
 
     @Override
@@ -45,7 +57,7 @@ public class ItemController implements ItemsApi {
     }
 
     @GetMapping("/items/{id}/remaining-meters-to-assign")
-    public ResponseEntity<Integer> getRemainingMetersToAssign(@PathVariable("id") String id) {
+    public ResponseEntity<Double> getRemainingMetersToAssign(@PathVariable("id") String id) {
         return service.calculateRemainingMetersToAssign(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -73,6 +85,27 @@ public class ItemController implements ItemsApi {
         return service.update(id, mapper.toEntity(item))
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/items/{id}/with-arrangement")
+    public ResponseEntity<ItemAndArrangementResponse> updateItemAndArrangement(
+            @PathVariable("id") String id,
+            @Valid @RequestBody UpdateItemAndArrangementRequest request
+    ) {
+        if (request.getItem().getArrangementId() == null || request.getArrangement().getId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return arrangementService.updateItemAndArrangement(
+                        id,
+                        mapper.toEntity(request.getItem()),
+                        request.getArrangement().getId(),
+                        arrangementMapper.toEntity(request.getArrangement())
+                )
+                .map(updated -> ResponseEntity.ok(new ItemAndArrangementResponse(
+                        mapper.toDto(updated.item()),
+                        arrangementMapper.toDto(updated.arrangement())
+                )))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

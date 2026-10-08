@@ -22,4 +22,16 @@ public interface LoomItemAssignmentRepository extends MongoRepository<LoomItemAs
 
     Optional<LoomItemAssignmentEntity> findByProcessId(String processId);
 
+    boolean existsByItemIdAndLoomIdAndStatusIn(
+            String itemId,
+            String loomId,
+            List<LoomItemAssignment.StatusEnum> statuses
+    );
+
+    List<LoomItemAssignmentEntity> findByItemIdAndLoomIdAndStatusIn(
+            String itemId,
+            String loomId,
+            List<LoomItemAssignment.StatusEnum> statuses
+    );
+
 }

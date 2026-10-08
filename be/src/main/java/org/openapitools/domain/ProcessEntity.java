@@ -4,7 +4,6 @@ import org.openapitools.model.Loom;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 
 @Document(collection = "processes")
@@ -12,30 +11,30 @@ public class ProcessEntity {
     @Id
     private String id;
 
-    private Integer speed;
-    private Integer efficiency;
-    private Integer totalMeters;
-    private Integer metersRun;
-    private Integer metersToGo;
+    private Double speed;
+    private Double efficiency;
+    private Double totalMeters;
+    private Double metersRun;
+    private Double metersToGo;
     private Instant startDate;
     private Instant endDate;
     private Instant expectedEndDate;
     private Float days;
     private Loom loom;
-    private Integer itemHitsPerDm;
+    private Double itemHitsPerDm;
     private Integer totalPieces;
     private Integer piecesRun;
-    private Integer metersPerPiece;
+    private Double metersPerPiece;
     private Boolean grs;
     private Boolean gots;
     private String notes;
 
     //getter & setter
-    public Integer getMetersPerPiece() {
+    public Double getMetersPerPiece() {
         return metersPerPiece;
     }
 
-    public void setMetersPerPiece(Integer metersPerPiece) {
+    public void setMetersPerPiece(Double metersPerPiece) {
         this.metersPerPiece = metersPerPiece;
     }
 
@@ -55,11 +54,11 @@ public class ProcessEntity {
         this.piecesRun = piecesRun;
     }
 
-    public Integer getItemHitsPerDm() {
+    public Double getItemHitsPerDm() {
         return itemHitsPerDm;
     }
 
-    public void setItemHitsPerDm(Integer itemHitsPerDm) {
+    public void setItemHitsPerDm(Double itemHitsPerDm) {
         this.itemHitsPerDm = itemHitsPerDm;
     }
 
@@ -87,43 +86,43 @@ public class ProcessEntity {
         this.id = id;
     }
 
-    public Integer getSpeed() {
+    public Double getSpeed() {
         return speed;
     }
 
-    public void setSpeed(Integer speed) {
+    public void setSpeed(Double speed) {
         this.speed = speed;
     }
 
-    public Integer getEfficiency() {
+    public Double getEfficiency() {
         return efficiency;
     }
 
-    public void setEfficiency(Integer efficiency) {
+    public void setEfficiency(Double efficiency) {
         this.efficiency = efficiency;
     }
 
-    public Integer getTotalMeters() {
+    public Double getTotalMeters() {
         return totalMeters;
     }
 
-    public void setTotalMeters(Integer totalMeters) {
+    public void setTotalMeters(Double totalMeters) {
         this.totalMeters = totalMeters;
     }
 
-    public Integer getMetersRun() {
+    public Double getMetersRun() {
         return metersRun;
     }
 
-    public void setMetersRun(Integer metersRun) {
+    public void setMetersRun(Double metersRun) {
         this.metersRun = metersRun;
     }
 
-    public Integer getMetersToGo() {
+    public Double getMetersToGo() {
         return metersToGo;
     }
 
-    public void setMetersToGo(Integer metersToGo) {
+    public void setMetersToGo(Double metersToGo) {
         this.metersToGo = metersToGo;
     }
 

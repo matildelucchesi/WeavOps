@@ -49,6 +49,8 @@ java -jar target/openapi-spring-1.0.0.jar
 
 Before provisioning, stop the backend, verify the target database and make a backup. If it still contains the old default `admin` account, remove only that account manually. Provisioning deliberately refuses to alter databases that already contain users. Existing JWTs signed with the previous development secret become invalid after the key changes; users must log in again and mobile QR tokens must be regenerated.
 
+User JWTs are checked against the current account on every authenticated request. Deleting an account immediately invalidates its user tokens; changing its password increments the credential version and invalidates tokens issued before that change. Users need to log in again afterward. Mobile loom tokens are separate and are not revoked by user password changes.
+
 ## Key rotation
 
 Generate and configure a new secret, then restart every backend instance with the same value. Tokens signed with the previous secret are rejected, including mobile tokens, so users need to log in again and loom QR tokens need to be regenerated. Mobile token lifetime remains one year from generation.

@@ -439,7 +439,7 @@ public interface ItemsApi {
         tags = { "Item" },
         responses = {
             @ApiResponse(responseCode = "200", description = "Metri ancora da assegnare", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = Double.class))
             }),
             @ApiResponse(responseCode = "404", description = "Item non trovato")
         },
@@ -452,7 +452,7 @@ public interface ItemsApi {
         value = ItemsApi.PATH_GET_REMAINING_METERS_TO_ASSIGN,
         produces = { "application/json" }
     )
-    default ResponseEntity<Integer> getRemainingMetersToAssign(
+    default ResponseEntity<Double> getRemainingMetersToAssign(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);

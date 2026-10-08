@@ -60,6 +60,7 @@ public class TokenService {
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("sub", user.getUsername());
         payload.put("userId", user.getId());
+        payload.put("credentialVersion", user.getCredentialVersion());
         payload.put("iat", now.getEpochSecond());
         payload.put("exp", now.plusSeconds(expirationSeconds).getEpochSecond());
 
@@ -112,15 +113,17 @@ public class TokenService {
             String purpose = asString(payload.get("purpose"));
             String loomId = asString(payload.get("loomId"));
             Long expiresAt = asLong(payload.get("exp"));
+            Long credentialVersion = asLong(payload.get("credentialVersion"));
 
             boolean validMobileToken = "loom-mobile".equals(purpose) && loomId != null && !loomId.isBlank();
-            boolean validUserToken = purpose == null && username != null;
+            boolean validUserToken = purpose == null && username != null && userId != null
+                    && credentialVersion != null;
             if ((!validMobileToken && !validUserToken)
                     || expiresAt == null || expiresAt <= Instant.now().getEpochSecond()) {
                 return Optional.empty();
             }
 
-            return Optional.of(new TokenPayload(username, userId, purpose, loomId));
+            return Optional.of(new TokenPayload(username, userId, purpose, loomId, credentialVersion));
         } catch (Exception exception) {
             return Optional.empty();
         }
@@ -173,6 +176,12 @@ public class TokenService {
         return null;
     }
 
-    public record TokenPayload(String username, String userId, String purpose, String loomId) {
+    public record TokenPayload(
+            String username,
+            String userId,
+            String purpose,
+            String loomId,
+            Long credentialVersion
+    ) {
     }
 }

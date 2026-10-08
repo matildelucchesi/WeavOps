@@ -15,6 +15,9 @@ public class UserEntity {
 
     private String password;
 
+    /** Incremented whenever credentials change so previously issued JWTs can be revoked. */
+    private long credentialVersion;
+
     private String firstName;
 
     private String lastName;
@@ -45,6 +48,14 @@ public class UserEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public long getCredentialVersion() {
+        return credentialVersion;
+    }
+
+    public void setCredentialVersion(long credentialVersion) {
+        this.credentialVersion = credentialVersion;
     }
 
     public String getFirstName() {

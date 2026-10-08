@@ -17,8 +17,8 @@ public class ItemEntity {
     private String arrangementId;
     private Item.StateEnum state;
     private String customerId;
-    private Integer totalMeters;
-    private Integer metersRun;
+    private Double totalMeters;
+    private Double metersRun;
     private List<ProcessEntity> processing = new ArrayList<>();
     private Instant expectedEndDate;
     private Instant endDate;
@@ -92,19 +92,19 @@ public class ItemEntity {
         this.state = state;
     }
 
-    public Integer getTotalMeters() {
+    public Double getTotalMeters() {
         return totalMeters;
     }
 
-    public void setTotalMeters(Integer totalMeters) {
+    public void setTotalMeters(Double totalMeters) {
         this.totalMeters = totalMeters;
     }
 
-    public Integer getMetersRun() {
+    public Double getMetersRun() {
         return metersRun;
     }
 
-    public void setMetersRun(Integer metersRun) {
+    public void setMetersRun(Double metersRun) {
         this.metersRun = metersRun;
     }
 

@@ -23,6 +23,10 @@ public class UserService {
     }
 
     public UserEntity save(UserEntity user) {
+        if (user.getId() != null) {
+            repository.findById(user.getId()).ifPresent(existing ->
+                    user.setCredentialVersion(existing.getCredentialVersion() + 1));
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return repository.save(user);
     }
@@ -47,8 +51,10 @@ public class UserService {
 
             if (entity.getPassword() == null || entity.getPassword().isBlank()) {
                 entity.setPassword(existing.getPassword());
+                entity.setCredentialVersion(existing.getCredentialVersion());
             } else {
                 entity.setPassword(passwordEncoder.encode(entity.getPassword()));
+                entity.setCredentialVersion(existing.getCredentialVersion() + 1);
             }
 
             return repository.save(entity);

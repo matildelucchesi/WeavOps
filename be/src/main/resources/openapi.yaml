@@ -265,7 +265,8 @@ paths:
           content:
             application/json:
               schema:
-                type: integer
+                format: double
+                type: number
           description: Numero di item in stato RUNNING
       summary: Conta gli item in lavorazione
       tags:
@@ -366,7 +367,8 @@ paths:
           content:
             application/json:
               schema:
-                type: integer
+                format: double
+                type: number
           description: Metri ancora da assegnare
         "404":
           description: Item non trovato
@@ -377,6 +379,64 @@ paths:
       - application/json
       x-tags:
       - tag: Item
+  /items/{id}/with-arrangement:
+    put:
+      operationId: updateItemAndArrangement
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/update-item-and-arrangement-request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/item-and-arrangement-response"
+          description: Articolo e disposizione aggiornati atomicamente
+        "404":
+          description: Articolo o disposizione non trovati
+        "400":
+          description: Disposizione non associata all'articolo
+      summary: Aggiorna articolo e disposizione in un'unica transazione
+      tags:
+      - Item
+  /items/{itemId}/processes:
+    post:
+      operationId: createAssignedProcess
+      parameters:
+      - in: path
+        name: itemId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/create-assigned-process-request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/assigned-process-response"
+          description: Processo creato, collegato all'articolo e assegnato atomicamente
+        "404":
+          description: Articolo o telaio non trovati
+        "400":
+          description: Richiesta non valida
+      summary: Crea processo, collegamento all'articolo e assegnamento in un'unica transazione
+      tags:
+      - Process
   /items/{id}/production-advice:
     get:
       operationId: getProductionAdviceByItemId
@@ -2066,14 +2126,14 @@ components:
         totalMeters: 0.8008281904610115
         customerId: customerId
         processing:
-        - totalPieces: 9.301444243932576
+        - totalPieces: 9
           efficiency: 5.962133916683182
           metersRun: 2.3021358869347655
           endDate: 2000-01-23T04:56:07.000+00:00
           metersToGo: 7.061401241503109
           itemHitsPerDm: 7.386281948385884
           speed: 1.4658129805029452
-          piecesRun: 3.616076749251911
+          piecesRun: 3
           expectedEndDate: 2000-01-23T04:56:07.000+00:00
           loom:
             serialNumber: serialNumber
@@ -2085,14 +2145,14 @@ components:
           id: id
           metersPerPiece: 2.027123023002322
           startDate: 2000-01-23T04:56:07.000+00:00
-        - totalPieces: 9.301444243932576
+        - totalPieces: 9
           efficiency: 5.962133916683182
           metersRun: 2.3021358869347655
           endDate: 2000-01-23T04:56:07.000+00:00
           metersToGo: 7.061401241503109
           itemHitsPerDm: 7.386281948385884
           speed: 1.4658129805029452
-          piecesRun: 3.616076749251911
+          piecesRun: 3
           expectedEndDate: 2000-01-23T04:56:07.000+00:00
           loom:
             serialNumber: serialNumber
@@ -2124,8 +2184,10 @@ components:
         customerId:
           type: string
         totalMeters:
+          format: double
           type: number
         metersRun:
+          format: double
           type: number
         processing:
           items:
@@ -2174,14 +2236,15 @@ components:
         remainingMeters:
           description: Metri ancora da produrre per completare l'articolo.
           minimum: 0
-          type: integer
+          format: double
+          type: number
         daysUntilDelivery:
           description: Giorni disponibili fino alla data di consegna.
           format: float
           minimum: 0
           type: number
         currentRunningLooms:
-          description: Numero di telai attualmente in produzione per l'articolo.
+          description: Numero di telai considerati disponibili nella stima; prima dell'avvio include i telai assegnati, dopo l'avvio include quelli in produzione o liberi.
           minimum: 0
           type: integer
         currentDailyCapacity:
@@ -2255,6 +2318,46 @@ components:
       required:
       - arrangement
       - customerName
+      type: object
+    create-assigned-process-request:
+      properties:
+        process:
+          $ref: "#/components/schemas/process"
+      required:
+      - process
+      type: object
+    update-item-and-arrangement-request:
+      properties:
+        item:
+          $ref: "#/components/schemas/item"
+        arrangement:
+          $ref: "#/components/schemas/arrangement"
+      required:
+      - item
+      - arrangement
+      type: object
+    item-and-arrangement-response:
+      properties:
+        item:
+          $ref: "#/components/schemas/item"
+        arrangement:
+          $ref: "#/components/schemas/arrangement"
+      required:
+      - item
+      - arrangement
+      type: object
+    assigned-process-response:
+      properties:
+        process:
+          $ref: "#/components/schemas/process"
+        assignment:
+          $ref: "#/components/schemas/loom-item-assignment"
+        item:
+          $ref: "#/components/schemas/item"
+      required:
+      - item
+      - process
+      - assignment
       type: object
     arrangement:
       example:
@@ -2345,14 +2448,14 @@ components:
       type: object
     process:
       example:
-        totalPieces: 9.301444243932576
+        totalPieces: 9
         efficiency: 5.962133916683182
         metersRun: 2.3021358869347655
         endDate: 2000-01-23T04:56:07.000+00:00
         metersToGo: 7.061401241503109
         itemHitsPerDm: 7.386281948385884
         speed: 1.4658129805029452
-        piecesRun: 3.616076749251911
+        piecesRun: 3
         expectedEndDate: 2000-01-23T04:56:07.000+00:00
         loom:
           serialNumber: serialNumber
@@ -2370,20 +2473,30 @@ components:
           readOnly: true
           type: string
         speed:
+          format: double
           type: number
         efficiency:
+          format: double
           type: number
         totalMeters:
+          format: double
           type: number
         metersRun:
+          format: double
           type: number
         metersToGo:
+          format: double
           type: number
         totalPieces:
-          type: number
+          format: int32
+          minimum: 0
+          type: integer
         piecesRun:
-          type: number
+          format: int32
+          minimum: 0
+          type: integer
         metersPerPiece:
+          format: double
           type: number
         startDate:
           format: date-time
@@ -2400,6 +2513,7 @@ components:
         loom:
           $ref: "#/components/schemas/loom"
         itemHitsPerDm:
+          format: double
           type: number
       required:
       - efficiency
@@ -2431,6 +2545,7 @@ components:
       example:
         id: id
         key: key
+        metersAdded: 12.5
       properties:
         id:
           description: Identificativo MongoDB generato dal server
@@ -2438,6 +2553,10 @@ components:
           type: string
         key:
           type: string
+        metersAdded:
+          description: Metri aggiunti alla produzione, anche frazionari.
+          format: double
+          type: number
       required:
       - key
       type: object
@@ -2496,14 +2615,14 @@ components:
           totalMeters: 0.8008281904610115
           customerId: customerId
           processing:
-          - totalPieces: 9.301444243932576
+          - totalPieces: 9
             efficiency: 5.962133916683182
             metersRun: 2.3021358869347655
             endDate: 2000-01-23T04:56:07.000+00:00
             metersToGo: 7.061401241503109
             itemHitsPerDm: 7.386281948385884
             speed: 1.4658129805029452
-            piecesRun: 3.616076749251911
+            piecesRun: 3
             expectedEndDate: 2000-01-23T04:56:07.000+00:00
             loom:
               serialNumber: serialNumber
@@ -2515,14 +2634,14 @@ components:
             id: id
             metersPerPiece: 2.027123023002322
             startDate: 2000-01-23T04:56:07.000+00:00
-          - totalPieces: 9.301444243932576
+          - totalPieces: 9
             efficiency: 5.962133916683182
             metersRun: 2.3021358869347655
             endDate: 2000-01-23T04:56:07.000+00:00
             metersToGo: 7.061401241503109
             itemHitsPerDm: 7.386281948385884
             speed: 1.4658129805029452
-            piecesRun: 3.616076749251911
+            piecesRun: 3
             expectedEndDate: 2000-01-23T04:56:07.000+00:00
             loom:
               serialNumber: serialNumber
@@ -2547,14 +2666,14 @@ components:
           totalMeters: 0.8008281904610115
           customerId: customerId
           processing:
-          - totalPieces: 9.301444243932576
+          - totalPieces: 9
             efficiency: 5.962133916683182
             metersRun: 2.3021358869347655
             endDate: 2000-01-23T04:56:07.000+00:00
             metersToGo: 7.061401241503109
             itemHitsPerDm: 7.386281948385884
             speed: 1.4658129805029452
-            piecesRun: 3.616076749251911
+            piecesRun: 3
             expectedEndDate: 2000-01-23T04:56:07.000+00:00
             loom:
               serialNumber: serialNumber
@@ -2566,14 +2685,14 @@ components:
             id: id
             metersPerPiece: 2.027123023002322
             startDate: 2000-01-23T04:56:07.000+00:00
-          - totalPieces: 9.301444243932576
+          - totalPieces: 9
             efficiency: 5.962133916683182
             metersRun: 2.3021358869347655
             endDate: 2000-01-23T04:56:07.000+00:00
             metersToGo: 7.061401241503109
             itemHitsPerDm: 7.386281948385884
             speed: 1.4658129805029452
-            piecesRun: 3.616076749251911
+            piecesRun: 3
             expectedEndDate: 2000-01-23T04:56:07.000+00:00
             loom:
               serialNumber: serialNumber

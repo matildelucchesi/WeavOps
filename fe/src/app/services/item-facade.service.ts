@@ -3,6 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { CreateItemWithArrangementRequest, Item, ItemService as ItemApiService, ProductionAdvice } from '../api';
 import { environment } from '../../environments/environment';
 
+export interface ItemAndArrangementResponse {
+  item: Item;
+  arrangement: import('../api').Arrangement;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -38,6 +43,13 @@ export class ItemFacadeService {
 
   update(id: string, item: Item) {
     return this.itemApi.updateItem({ id, item });
+  }
+
+  updateItemAndArrangement(id: string, item: Item, arrangement: import('../api').Arrangement) {
+    return this.http.put<ItemAndArrangementResponse>(
+      `${environment.apiUrl}/items/${encodeURIComponent(id)}/with-arrangement`,
+      { item, arrangement },
+    );
   }
 
   remove(id: string) {

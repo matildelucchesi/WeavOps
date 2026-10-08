@@ -1,52 +1,36 @@
 import { Routes } from '@angular/router';
-import { LoginPage } from './features/pages/login-page/login-page';
-import { MainPage } from './features/pages/main-page/main-page';
-import { LoomPage } from './features/pages/loom-page/loom-page';
-import { HomePage } from './features/pages/home-page/home-page';
 import { authGuard } from './guards/auth.guard';
-import { ItemPage } from './features/pages/item-page/item-page';
-import { CustomerPage } from './features/pages/customer-page/customer-page';
-import { CustomerDetailsPage } from './features/pages/customer-details-page/customer-details-page';
-import { CustomerItemsHistoryPage } from './features/pages/customer-items-history-page/customer-items-history-page';
-import { ItemAddNewPage } from './features/pages/item-add-new-page/item-add-new-page';
-import { CalendarPage } from './features/pages/calendar-page/calendar-page';
-import { LoomHistoryPage } from './features/pages/loom-history-page/loom-history-page';
-import { ProfilePage } from './features/pages/profile-page/profile-page';
-import { LoomMobilePage } from './features/pages/loom-mobile-page/loom-mobile-page';
-import { LoomLogPage } from './features/pages/loom-log-page/loom-log-page';
-
-
 
 export const routes: Routes = [
   {
     path: 'login',
-    component: LoginPage,
+    loadComponent: () => import('./features/pages/login-page/login-page').then((page) => page.LoginPage),
   },
   {
     path: 'telaio/:id/mobile/logs',
-    component: LoomLogPage,
+    loadComponent: () => import('./features/pages/loom-log-page/loom-log-page').then((page) => page.LoomLogPage),
   },
   {
     path: 'telaio/:id/mobile/:action',
-    component: LoomMobilePage,
+    loadComponent: () => import('./features/pages/loom-mobile-page/loom-mobile-page').then((page) => page.LoomMobilePage),
   },
   {
     path: 'telaio/:id/mobile',
-    component: LoomMobilePage,
+    loadComponent: () => import('./features/pages/loom-mobile-page/loom-mobile-page').then((page) => page.LoomMobilePage),
   },
   {
     path: '',
-    component: MainPage,
+    loadComponent: () => import('./features/pages/main-page/main-page').then((page) => page.MainPage),
     canActivate: [authGuard],
     canActivateChild: [authGuard],
     children: [
       {
         path: 'home',
-        component: HomePage,
+        loadComponent: () => import('./features/pages/home-page/home-page').then((page) => page.HomePage),
       },
       {
         path: 'telai',
-        component: LoomPage,
+        loadComponent: () => import('./features/pages/loom-page/loom-page').then((page) => page.LoomPage),
       },
       {
         path: 'dettaglio-produzione/:id',
@@ -55,23 +39,23 @@ export const routes: Routes = [
       },
       {
         path: 'cronologia-produzione/:id',
-        component: LoomHistoryPage,
+        loadComponent: () => import('./features/pages/loom-history-page/loom-history-page').then((page) => page.LoomHistoryPage),
       },
       {
         path: 'loom-log-page/:id',
-        component: LoomLogPage,
+        loadComponent: () => import('./features/pages/loom-log-page/loom-log-page').then((page) => page.LoomLogPage),
       },
       {
         path: 'storico-lavoro-telai',
-        component: LoomLogPage,
+        loadComponent: () => import('./features/pages/loom-log-page/loom-log-page').then((page) => page.LoomLogPage),
       },
       {
         path: 'articoli',
-        component: ItemPage,
+        loadComponent: () => import('./features/pages/item-page/item-page').then((page) => page.ItemPage),
       },
       {
         path: 'aggiungi-articolo',
-        component: ItemAddNewPage,
+        loadComponent: () => import('./features/pages/item-add-new-page/item-add-new-page').then((page) => page.ItemAddNewPage),
       },
       {
         path: 'dettaglio-articolo',
@@ -80,27 +64,27 @@ export const routes: Routes = [
       },
       {
         path: 'clienti',
-        component: CustomerPage,
+        loadComponent: () => import('./features/pages/customer-page/customer-page').then((page) => page.CustomerPage),
       },
       {
         path: 'aggiungi-cliente',
-        component: CustomerDetailsPage,
+        loadComponent: () => import('./features/pages/customer-details-page/customer-details-page').then((page) => page.CustomerDetailsPage),
       },
       {
         path: 'cronologia-articoli',
-        component: CustomerItemsHistoryPage,
+        loadComponent: () => import('./features/pages/customer-items-history-page/customer-items-history-page').then((page) => page.CustomerItemsHistoryPage),
       },
       {
         path: 'modifica-cliente',
-        component: CustomerDetailsPage,
+        loadComponent: () => import('./features/pages/customer-details-page/customer-details-page').then((page) => page.CustomerDetailsPage),
       },
       {
         path: 'calendario',
-        component: CalendarPage,
+        loadComponent: () => import('./features/pages/calendar-page/calendar-page').then((page) => page.CalendarPage),
       },
       {
         path: 'profilo',
-        component: ProfilePage,
+        loadComponent: () => import('./features/pages/profile-page/profile-page').then((page) => page.ProfilePage),
       },
       {
         path: '',

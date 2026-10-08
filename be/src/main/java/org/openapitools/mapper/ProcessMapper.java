@@ -3,6 +3,8 @@ package org.openapitools.mapper;
 import org.openapitools.domain.ProcessEntity;
 import org.openapitools.model.Process;
 import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -46,32 +48,61 @@ public class ProcessMapper {
 
         ProcessEntity entity = new ProcessEntity();
         entity.setId(dto.getId());
-        entity.setSpeed(toInteger(dto.getSpeed()));
-        entity.setEfficiency(toInteger(dto.getEfficiency()));
-        entity.setTotalMeters(toInteger(dto.getTotalMeters()));
-        entity.setMetersRun(toInteger(dto.getMetersRun()));
-        entity.setMetersToGo(toInteger(dto.getMetersToGo()));
+        entity.setSpeed(toDouble(dto.getSpeed()));
+        entity.setEfficiency(toDouble(dto.getEfficiency()));
+        entity.setTotalMeters(toDouble(dto.getTotalMeters()));
+        entity.setMetersRun(toDouble(dto.getMetersRun()));
+        entity.setMetersToGo(toDouble(dto.getMetersToGo()));
         entity.setStartDate(toInstant(dto.getStartDate()));
         entity.setEndDate(toInstant(dto.getEndDate()));
         entity.setExpectedEndDate(toInstant(dto.getExpectedEndDate()));
         entity.setLoom(dto.getLoom());
         entity.setDays(dto.getDays());
-        entity.setItemHitsPerDm(toInteger(dto.getItemHitsPerDm()));
-        entity.setMetersPerPiece(toInteger(dto.getMetersPerPiece()));
-        entity.setPiecesRun(toInteger(dto.getPiecesRun()));
-        entity.setTotalPieces(toInteger(dto.getTotalPieces()));
+        entity.setItemHitsPerDm(toDouble(dto.getItemHitsPerDm()));
+        entity.setMetersPerPiece(toDouble(dto.getMetersPerPiece()));
+        entity.setPiecesRun(toIntegerExact(dto.getPiecesRun(), "piecesRun"));
+        entity.setTotalPieces(toIntegerExact(dto.getTotalPieces(), "totalPieces"));
         entity.setGrs(dto.getGrs());
         entity.setGots(dto.getGots());
         entity.setNotes(dto.getNotes());
         return entity;
     }
 
+    private BigDecimal toBigDecimal(Double value) {
+        return value == null ? null : BigDecimal.valueOf(value);
+    }
+
     private BigDecimal toBigDecimal(Integer value) {
         return value == null ? null : BigDecimal.valueOf(value);
     }
 
-    private Integer toInteger(BigDecimal value) {
-        return value == null ? null : value.intValue();
+    private Double toDouble(BigDecimal value) {
+        if (value == null) {
+            return null;
+        }
+        double converted = value.doubleValue();
+        if (!Double.isFinite(converted)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Valore numerico fuori dai limiti supportati.");
+        }
+        return converted;
+    }
+
+    private Integer toIntegerExact(BigDecimal value, String field) {
+        if (value == null) {
+            return null;
+        }
+        try {
+            int converted = value.intValueExact();
+            if (converted < 0) {
+                throw new ArithmeticException("negative counter");
+            }
+            return converted;
+        } catch (ArithmeticException exception) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    field + " deve essere un numero intero compreso nei limiti supportati."
+            );
+        }
     }
 
     private OffsetDateTime toOffsetDateTime(Instant value) {

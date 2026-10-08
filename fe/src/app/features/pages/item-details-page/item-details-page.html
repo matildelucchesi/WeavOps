@@ -340,7 +340,7 @@
                           </mat-icon>
                         }
                       </div>
-                      @if(productionAdvice(); as advice) {
+                      @if(isExpectedEndDateAfterDeliveryDate() && productionAdvice(); as advice) {
                         <div class="advice" [class.advice-success]="isExpectedEndDateOnSchedule()">
                           <p>{{ getProductionAdviceMessage(advice) }}</p>
                         </div>
