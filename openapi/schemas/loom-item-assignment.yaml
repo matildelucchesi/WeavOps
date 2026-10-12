@@ -21,3 +21,12 @@ properties:
       - RUNNING
       - COMPLETED
       - ABANDONED
+
+  fabricCode:
+    type: string
+    writeOnly: true
+    description: Codice Tela obbligatorio alla chiusura con pezze prodotte.
+  fabricCertificationId:
+    type: string
+    writeOnly: true
+    description: Certificazione della Tela scelta solo per articoli PARTIAL; assente per Tela non certificata.

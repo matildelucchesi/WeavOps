@@ -87,7 +87,7 @@
                   [style.--chip-height]="getChipHeight(row, col, columnIndex)">
                   {{ getChipLabel(row, col, columnIndex) }}
                 </span>
-              } @else if (isIconColumn(col)) {
+               } @else if (isIconColumn(col)) {
                 @if (isColumnIconVisible(row, col)) {
                   <mat-icon
                     class="table-column-icon material-symbols-outlined"
@@ -107,8 +107,16 @@
                   (click)="$event.stopPropagation()"
                   (change)="handleColumnCheckboxChange(row, col, $event.checked)">
                 </mat-checkbox>
-              } @else {
-                {{ getCellValue(row, col, columnIndex) }}
+                } @else {
+                  {{ getCellValue(row, col, columnIndex) }}
+                  @if (getColumnCellAction(col); as cellAction) {
+                    @if (!cellAction.visible || cellAction.visible(row)) {
+                    <button type="button" class="table-cell-action" [attr.aria-label]="cellAction.label" [matTooltip]="cellAction.label"
+                      (click)="$event.stopPropagation(); cellAction.onClick(row)">
+                      <mat-icon class="material-symbols-outlined" fontSet="material-symbols-outlined">{{ cellAction.icon }}</mat-icon>
+                    </button>
+                    }
+                  }
               }
             </td>
           }
@@ -127,7 +135,8 @@
                       [matTooltip]="action.label"
                       matTooltipPosition="above"
                       matTooltipClass="weavops-action-tooltip"
-                      [style.--action-icon-color]="getActionIconColor(action)"
+                      [style.--action-icon-color]="getActionIconColor(action, row)"
+                      [style.--action-hover-color]="action.hoverColor ? action.hoverColor(row) : null"
                       (click)="handleActionClick(action, row, rowIndex)"
                     >
                       @if (getActionImageIcon(action, row)) {

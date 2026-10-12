@@ -11,6 +11,22 @@ security:
   - bearerAuth: []
 
 paths:
+  /services:
+    $ref: './paths/service.yaml#/~1services'
+  /rates:
+    $ref: './paths/rate.yaml#/~1rates'
+  /rates/{id}:
+    $ref: './paths/rate.yaml#/~1rates~1{id}'
+  /destinations:
+    $ref: './paths/destination.yaml#/~1destinations'
+  /destinations/{id}:
+    $ref: './paths/destination.yaml#/~1destinations~1{id}'
+  /fabrics:
+    $ref: './paths/fabric.yaml#/~1fabrics'
+  /fabrics/{id}:
+    $ref: './paths/fabric.yaml#/~1fabrics~1{id}'
+  /certifications:
+    $ref: './paths/certification.yaml#/~1certifications'
   /looms:
     $ref: './paths/loom.yaml#/~1looms'
   /looms/delete-multi:

@@ -27,6 +27,26 @@ export interface Item {
     isArchived?: boolean;
     isDelivered?: boolean;
     isLate?: boolean;
+    /**
+     * Peso di ordito dell\'intero articolo in kg.
+     */
+    warpWeight?: number;
+    /**
+     * Peso di trama dell\'intero articolo in kg.
+     */
+    weftWeight?: number;
+    /**
+     * Tutte, nessuna o alcune pezze certificate.
+     */
+    isCertified?: Item.IsCertifiedEnum;
+    /**
+     * Identificativo della Certification selezionata.
+     */
+    certificationId?: string;
+    /**
+     * Somma del peso di ordito e trama in kg; assente se uno dei pesi non è specificato.
+     */
+    readonly totalWeight?: number;
 }
 export namespace Item {
     export const StateEnum = {
@@ -36,6 +56,12 @@ export namespace Item {
         Abandoned: 'ABANDONED'
     } as const;
     export type StateEnum = typeof StateEnum[keyof typeof StateEnum];
+    export const IsCertifiedEnum = {
+        All: 'ALL',
+        None: 'NONE',
+        Partial: 'PARTIAL'
+    } as const;
+    export type IsCertifiedEnum = typeof IsCertifiedEnum[keyof typeof IsCertifiedEnum];
 }
 
 

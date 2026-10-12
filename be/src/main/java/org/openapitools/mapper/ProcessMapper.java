@@ -1,15 +1,14 @@
 package org.openapitools.mapper;
 
-import org.openapitools.domain.ProcessEntity;
-import org.openapitools.model.Process;
-import org.springframework.stereotype.Component;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import org.openapitools.domain.ProcessEntity;
+import org.openapitools.model.Process;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 @Component
 public class ProcessMapper {
@@ -38,6 +37,7 @@ public class ProcessMapper {
         dto.setGrs(entity.getGrs());
         dto.setGots(entity.getGots());
         dto.setNotes(entity.getNotes());
+        dto.setFabricCode(entity.getFabricCode());
         return dto;
     }
 
@@ -65,6 +65,7 @@ public class ProcessMapper {
         entity.setGrs(dto.getGrs());
         entity.setGots(dto.getGots());
         entity.setNotes(dto.getNotes());
+        entity.setFabricCode(dto.getFabricCode());
         return entity;
     }
 
@@ -82,7 +83,8 @@ public class ProcessMapper {
         }
         double converted = value.doubleValue();
         if (!Double.isFinite(converted)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Valore numerico fuori dai limiti supportati.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Valore numerico fuori dai limiti supportati.");
         }
         return converted;
     }
@@ -100,8 +102,7 @@ public class ProcessMapper {
         } catch (ArithmeticException exception) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    field + " deve essere un numero intero compreso nei limiti supportati."
-            );
+                    field + " deve essere un numero intero compreso nei limiti supportati.");
         }
     }
 

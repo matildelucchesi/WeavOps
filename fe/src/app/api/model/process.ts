@@ -32,4 +32,6 @@ export interface Process {
     grs?: boolean;
     gots?: boolean;
     notes?: string;
+    /** Numero Tela riservato quando si crea il processo */
+    fabricCode?: string;
 }

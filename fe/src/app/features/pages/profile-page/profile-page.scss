@@ -28,10 +28,19 @@
     padding: 22px;
     background-color: var(--weavops-color-primary-soft);
 }
+.profile-panel { grid-column: 1; grid-row: 1; }
+.company-panel { grid-column: 1; grid-row: 2; }
+.company-icon { width: 76px; height: 76px; font-size: 42px; display: grid; place-items: center; color: var(--weavops-color-primary); flex-shrink: 0; }
 
 .password-panel{
+    grid-column: 2;
+    grid-row: 1;
     border-color: var(--weavops-color-accent);
     background-color: var(--weavops-color-surface);
+}
+@media (max-width: 1199px) {
+    .profile-layout { grid-template-columns: 1fr; }
+    .password-panel { grid-column: 1; grid-row: 3; }
 }
 
 .profile-panel-header,

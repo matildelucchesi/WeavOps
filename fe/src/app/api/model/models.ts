@@ -19,3 +19,11 @@ export * from './process';
 export * from './productionAdvice';
 export * from './referent';
 export * from './user';
+
+export * from './certification';
+
+export * from './fabric';
+
+export * from './destination';
+export * from './service';
+export * from './rate';

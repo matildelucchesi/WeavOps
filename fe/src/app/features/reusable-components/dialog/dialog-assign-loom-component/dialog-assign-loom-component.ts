@@ -262,6 +262,9 @@ export class DialogAssignLoomComponent implements OnInit {
       return;
     }
 
+    this.process.fabricCode = this.process.fabricCode?.trim();
+    form.controls['fabricCode']?.setValue(this.process.fabricCode ?? '');
+
     if (form.invalid || this.hasActiveMatError || !this.process.loom) {
       form.form.markAllAsTouched();
       return;
@@ -285,7 +288,7 @@ export class DialogAssignLoomComponent implements OnInit {
         this.isSavingProcess = false;
         console.error('Error creating process:', error);
         if (error?.status === 409) {
-          this.openAssignmentConflictDialog();
+          this.openAssignmentConflictDialog(error.error?.message ?? 'Numero Tela già prenotato o processo già assegnato. Verifica i dati e riprova.');
         }
       }
     });
@@ -308,6 +311,7 @@ export class DialogAssignLoomComponent implements OnInit {
       metersToGo: Math.max(totalMeters - metersRun, 0),
       startDate: this.toApiDateTime(this.process.startDate) || TEMPORARY_PROCESS_START_DATE,
       loom: this.process.loom,
+      fabricCode: this.process.fabricCode,
       ...(itemHitsPerDm !== undefined ? { itemHitsPerDm } : {}),
       ...(expectedEndDate ? { expectedEndDate } : {}),
     };

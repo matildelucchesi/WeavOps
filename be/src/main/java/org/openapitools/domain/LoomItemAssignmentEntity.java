@@ -6,15 +6,33 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "loom_item_assignments")
 public class LoomItemAssignmentEntity {
-    @Id
-    private String id;
+    @Id private String id;
 
     private String loomId;
     private String itemId;
     private String processId;
     private LoomItemAssignment.StatusEnum status;
 
-    //getter & setter
+    @org.springframework.data.annotation.Transient private String fabricCode;
+    @org.springframework.data.annotation.Transient private String fabricCertificationId;
+
+    public String getFabricCode() {
+        return fabricCode;
+    }
+
+    public void setFabricCode(String code) {
+        this.fabricCode = code;
+    }
+
+    public String getFabricCertificationId() {
+        return fabricCertificationId;
+    }
+
+    public void setFabricCertificationId(String certificationId) {
+        this.fabricCertificationId = certificationId;
+    }
+
+    // getter & setter
     public String getProcessId() {
         return processId;
     }

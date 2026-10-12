@@ -1,5 +1,8 @@
 package org.openapitools.controller;
 
+import java.io.IOException;
+import java.time.Instant;
+import java.util.List;
 import org.openapitools.domain.ProductionSummaryPdfEntity;
 import org.openapitools.service.ProductionSummaryPdfService;
 import org.springframework.core.io.ByteArrayResource;
@@ -16,10 +19,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.time.Instant;
-import java.util.List;
-
 @RestController
 @RequestMapping("/production-summaries")
 public class ProductionSummaryPdfController {
@@ -33,9 +32,10 @@ public class ProductionSummaryPdfController {
     public ResponseEntity<ProductionSummaryPdfResponse> create(
             @RequestParam String loomId,
             @RequestParam String loomNumber,
-            @RequestPart("file") MultipartFile file
-    ) throws IOException {
-        if (file.isEmpty() || !MediaType.APPLICATION_PDF_VALUE.equalsIgnoreCase(file.getContentType())) {
+            @RequestPart("file") MultipartFile file)
+            throws IOException {
+        if (file.isEmpty()
+                || !MediaType.APPLICATION_PDF_VALUE.equalsIgnoreCase(file.getContentType())) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -44,28 +44,36 @@ public class ProductionSummaryPdfController {
         entity.setLoomNumber(loomNumber);
         entity.setFileName(sanitizeFileName(file.getOriginalFilename()));
         entity.setContent(file.getBytes());
-        return ResponseEntity.status(201).body(ProductionSummaryPdfResponse.from(service.save(entity)));
+        return ResponseEntity.status(201)
+                .body(ProductionSummaryPdfResponse.from(service.save(entity)));
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductionSummaryPdfResponse>> list(@RequestParam(required = false) String loomId) {
-        List<ProductionSummaryPdfEntity> entities = loomId == null || loomId.isBlank()
-                ? service.findAll()
-                : service.findByLoomId(loomId);
-        return ResponseEntity.ok(entities.stream().map(ProductionSummaryPdfResponse::from).toList());
+    public ResponseEntity<List<ProductionSummaryPdfResponse>> list(
+            @RequestParam(required = false) String loomId) {
+        List<ProductionSummaryPdfEntity> entities =
+                loomId == null || loomId.isBlank()
+                        ? service.findAll()
+                        : service.findByLoomId(loomId);
+        return ResponseEntity.ok(
+                entities.stream().map(ProductionSummaryPdfResponse::from).toList());
     }
 
     @GetMapping(value = "/{id}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<ByteArrayResource> download(@PathVariable String id) {
         return service.findById(id)
-                .map(entity -> ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_PDF)
-                        .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()
-                                .filename(entity.getFileName())
-                                .build()
-                                .toString())
-                        .contentLength(entity.getContent().length)
-                        .body(new ByteArrayResource(entity.getContent())))
+                .map(
+                        entity ->
+                                ResponseEntity.ok()
+                                        .contentType(MediaType.APPLICATION_PDF)
+                                        .header(
+                                                HttpHeaders.CONTENT_DISPOSITION,
+                                                ContentDisposition.attachment()
+                                                        .filename(entity.getFileName())
+                                                        .build()
+                                                        .toString())
+                                        .contentLength(entity.getContent().length)
+                                        .body(new ByteArrayResource(entity.getContent())))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -77,15 +85,14 @@ public class ProductionSummaryPdfController {
     }
 
     public record ProductionSummaryPdfResponse(
-            String id,
-            String loomId,
-            String loomNumber,
-            String fileName,
-            Instant createdAt
-    ) {
+            String id, String loomId, String loomNumber, String fileName, Instant createdAt) {
         static ProductionSummaryPdfResponse from(ProductionSummaryPdfEntity entity) {
             return new ProductionSummaryPdfResponse(
-                    entity.getId(), entity.getLoomId(), entity.getLoomNumber(), entity.getFileName(), entity.getCreatedAt());
+                    entity.getId(),
+                    entity.getLoomId(),
+                    entity.getLoomNumber(),
+                    entity.getFileName(),
+                    entity.getCreatedAt());
         }
     }
 }

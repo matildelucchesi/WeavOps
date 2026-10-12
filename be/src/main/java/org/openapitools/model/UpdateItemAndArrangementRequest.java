@@ -4,13 +4,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 public class UpdateItemAndArrangementRequest {
-    @NotNull
-    @Valid
-    private Item item;
+    @NotNull @Valid private Item item;
 
-    @NotNull
-    @Valid
-    private Arrangement arrangement;
+    @NotNull @Valid private Arrangement arrangement;
 
     public Item getItem() {
         return item;

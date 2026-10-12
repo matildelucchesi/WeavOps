@@ -1,5 +1,10 @@
 package org.openapitools.service;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.openapitools.constants.LoomLogEvent;
 import org.openapitools.domain.ItemEntity;
 import org.openapitools.domain.LoomEntity;
@@ -7,7 +12,6 @@ import org.openapitools.domain.LoomItemAssignmentEntity;
 import org.openapitools.domain.LoomLogEntity;
 import org.openapitools.domain.ProcessEntity;
 import org.openapitools.mapper.LoomMapper;
-import org.openapitools.model.Item;
 import org.openapitools.model.Loom;
 import org.openapitools.model.LoomItemAssignment;
 import org.openapitools.repository.LoomItemAssignmentRepository;
@@ -22,43 +26,27 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.time.Instant;
-
 @Service
 public class LoomService {
-    @Autowired
-    private LoomItemAssignmentRepository assignmentRepository;
+    @Autowired private LoomItemAssignmentRepository assignmentRepository;
 
-    @Autowired
-    private ItemService itemService;
+    @Autowired private ItemService itemService;
 
-    @Autowired
-    private ProcessService processService;
+    @Autowired private ProcessService processService;
 
-    @Autowired
-    private ProductionForecastService productionForecastService;
+    @Autowired private ProductionForecastService productionForecastService;
 
-    @Autowired
-    private LoomLogService loomLogService;
+    @Autowired private LoomLogService loomLogService;
 
-    @Autowired
-    private ArrangementService arrangementService;
+    @Autowired private ArrangementService arrangementService;
 
-    @Autowired
-    private LoomMapper loomMapper;
+    @Autowired private LoomMapper loomMapper;
 
-    @Autowired
-    private CalendarEventService calendarEventService;
+    @Autowired private CalendarEventService calendarEventService;
 
-    @Autowired
-    private LoomProcessHistoryRepository loomProcessHistoryRepository;
+    @Autowired private LoomProcessHistoryRepository loomProcessHistoryRepository;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    @Autowired private MongoTemplate mongoTemplate;
 
     private final LoomRepository repository;
 
@@ -74,51 +62,59 @@ public class LoomService {
         return repository.save(loom);
     }
 
-    public Optional<LoomEntity> findById(String id){
+    public Optional<LoomEntity> findById(String id) {
         return repository.findById(id);
     }
 
     /** Atomically reserves a non-working loom for a production start. */
     public Optional<LoomEntity> claimForProduction(String id) {
-        Query availableLoom = Query.query(Criteria.where("_id").is(id)
-                .and("status").ne(Loom.StatusEnum.WORKING));
-        LoomEntity claimedLoom = mongoTemplate.findAndModify(
-                availableLoom,
-                new Update().set("status", Loom.StatusEnum.WORKING),
-                FindAndModifyOptions.options().returnNew(true),
-                LoomEntity.class
-        );
+        Query availableLoom =
+                Query.query(Criteria.where("_id").is(id).and("status").ne(Loom.StatusEnum.WORKING));
+        LoomEntity claimedLoom =
+                mongoTemplate.findAndModify(
+                        availableLoom,
+                        new Update().set("status", Loom.StatusEnum.WORKING),
+                        FindAndModifyOptions.options().returnNew(true),
+                        LoomEntity.class);
         return Optional.ofNullable(claimedLoom);
     }
 
-    public Optional<LoomEntity> findBySerialNumber(String serialNumber){
+    public Optional<LoomEntity> findBySerialNumber(String serialNumber) {
         return repository.findBySerialNumber(serialNumber);
     }
 
-    public Optional<LoomEntity> update(String id, LoomEntity entity){
-        return repository.findById(id).map(existing -> {
-            boolean statusChanged = !Objects.equals(existing.getStatus(), entity.getStatus());
-            entity.setId(id);
-            LoomEntity savedLoom = repository.save(entity);
+    public Optional<LoomEntity> update(String id, LoomEntity entity) {
+        return repository
+                .findById(id)
+                .map(
+                        existing -> {
+                            boolean statusChanged =
+                                    !Objects.equals(existing.getStatus(), entity.getStatus());
+                            entity.setId(id);
+                            LoomEntity savedLoom = repository.save(entity);
 
-            if (statusChanged) {
-                saveLoomStatusChangedLog(savedLoom);
-            }
+                            if (statusChanged) {
+                                saveLoomStatusChangedLog(savedLoom);
+                            }
 
-            return savedLoom;
-        });
+                            return savedLoom;
+                        });
     }
 
-    public Optional<LoomEntity> updateStatus(String id, org.openapitools.model.Loom.StatusEnum status) {
-        return repository.findById(id).map(existing -> {
-            if (!Objects.equals(existing.getStatus(), status)) {
-                existing.setStatus(status);
-                LoomEntity savedLoom = repository.save(existing);
-                saveLoomStatusChangedLog(savedLoom);
-                return savedLoom;
-            }
-            return existing;
-        });
+    public Optional<LoomEntity> updateStatus(
+            String id, org.openapitools.model.Loom.StatusEnum status) {
+        return repository
+                .findById(id)
+                .map(
+                        existing -> {
+                            if (!Objects.equals(existing.getStatus(), status)) {
+                                existing.setStatus(status);
+                                LoomEntity savedLoom = repository.save(existing);
+                                saveLoomStatusChangedLog(savedLoom);
+                                return savedLoom;
+                            }
+                            return existing;
+                        });
     }
 
     public Optional<LoomEntity> recordKnotting(String id) {
@@ -139,7 +135,7 @@ public class LoomService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public boolean deleteById(String id){
+    public boolean deleteById(String id) {
         if (isBlank(id)) {
             return false;
         }
@@ -153,7 +149,7 @@ public class LoomService {
         return true;
     }
 
-    public boolean existsById(String id){
+    public boolean existsById(String id) {
         return repository.existsById(id);
     }
 
@@ -163,12 +159,13 @@ public class LoomService {
             return 0;
         }
 
-        List<String> sanitizedIds = ids.stream()
-                .filter(Objects::nonNull)
-                .map(String::trim)
-                .filter(id -> !id.isEmpty())
-                .distinct()
-                .toList();
+        List<String> sanitizedIds =
+                ids.stream()
+                        .filter(Objects::nonNull)
+                        .map(String::trim)
+                        .filter(id -> !id.isEmpty())
+                        .distinct()
+                        .toList();
 
         if (sanitizedIds.isEmpty()) {
             return 0;
@@ -185,7 +182,8 @@ public class LoomService {
     }
 
     private void prepareLoomDeletion(LoomEntity loom) {
-        List<LoomItemAssignmentEntity> assignments = assignmentRepository.findByLoomId(loom.getId());
+        List<LoomItemAssignmentEntity> assignments =
+                assignmentRepository.findByLoomId(loom.getId());
         for (LoomItemAssignmentEntity assignment : assignments) {
             if (assignment.getStatus() == LoomItemAssignment.StatusEnum.QUEUED) {
                 removeQueuedAssignment(assignment);
@@ -195,27 +193,46 @@ public class LoomService {
                 detachHistoricalAssignment(loom, assignment);
             }
         }
-        loomProcessHistoryRepository.deleteAll(loomProcessHistoryRepository.findByLoomId(loom.getId()));
+        loomProcessHistoryRepository.deleteAll(
+                loomProcessHistoryRepository.findByLoomId(loom.getId()));
     }
 
-    private void closeRunningAssignmentForDeletion(LoomEntity loom, LoomItemAssignmentEntity assignment) {
+    private void closeRunningAssignmentForDeletion(
+            LoomEntity loom, LoomItemAssignmentEntity assignment) {
         if (isBlank(assignment.getItemId()) || isBlank(assignment.getProcessId())) {
             throw new IllegalStateException(
-                    "Impossibile conservare lo storico: riferimenti incompleti per l'assegnazione " + assignment.getId());
+                    "Impossibile conservare lo storico: riferimenti incompleti per l'assegnazione "
+                            + assignment.getId());
         }
-        ItemEntity item = itemService.findById(assignment.getItemId())
-                .orElseThrow(() -> new IllegalStateException(
-                        "Impossibile conservare lo storico: articolo non trovato per l'assegnazione " + assignment.getId()));
-        ProcessEntity process = processService.findById(assignment.getProcessId())
-                .orElseThrow(() -> new IllegalStateException(
-                        "Impossibile conservare lo storico: processo non trovato per l'assegnazione " + assignment.getId()));
+        ItemEntity item =
+                itemService
+                        .findById(assignment.getItemId())
+                        .orElseThrow(
+                                () ->
+                                        new IllegalStateException(
+                                                "Impossibile conservare lo storico: articolo non trovato per l'assegnazione "
+                                                        + assignment.getId()));
+        ProcessEntity process =
+                processService
+                        .findById(assignment.getProcessId())
+                        .orElseThrow(
+                                () ->
+                                        new IllegalStateException(
+                                                "Impossibile conservare lo storico: processo non trovato per l'assegnazione "
+                                                        + assignment.getId()));
         int processIndex = findProcessIndex(item, process.getId());
         if (processIndex < 0) {
             throw new IllegalStateException(
-                    "Impossibile conservare lo storico: processo non presente nell'articolo " + item.getId());
+                    "Impossibile conservare lo storico: processo non presente nell'articolo "
+                            + item.getId());
         }
 
         Loom loomSnapshot = loomMapper.toDto(loom);
+        if (process.getPiecesRun() != null && process.getPiecesRun() > 0) {
+            throw new FabricValidationException(
+                    org.springframework.http.HttpStatus.CONFLICT,
+                    "Sono presenti pezze prodotte: terminare la produzione inserendo il codice Tela prima di eliminare il telaio.");
+        }
         loomSnapshot.setStatus(Loom.StatusEnum.STOPPED);
         process.setTotalMeters(valueOrZero(process.getMetersRun()));
         process.setTotalPieces(valueOrZero(process.getPiecesRun()));
@@ -238,18 +255,30 @@ public class LoomService {
     private void detachHistoricalAssignment(LoomEntity loom, LoomItemAssignmentEntity assignment) {
         if (isBlank(assignment.getItemId()) || isBlank(assignment.getProcessId())) {
             throw new IllegalStateException(
-                    "Impossibile conservare lo storico: riferimenti incompleti per l'assegnazione " + assignment.getId());
+                    "Impossibile conservare lo storico: riferimenti incompleti per l'assegnazione "
+                            + assignment.getId());
         }
-        ItemEntity item = itemService.findById(assignment.getItemId())
-                .orElseThrow(() -> new IllegalStateException(
-                        "Impossibile conservare lo storico: articolo non trovato per l'assegnazione " + assignment.getId()));
-        ProcessEntity process = processService.findById(assignment.getProcessId())
-                .orElseThrow(() -> new IllegalStateException(
-                        "Impossibile conservare lo storico: processo non trovato per l'assegnazione " + assignment.getId()));
+        ItemEntity item =
+                itemService
+                        .findById(assignment.getItemId())
+                        .orElseThrow(
+                                () ->
+                                        new IllegalStateException(
+                                                "Impossibile conservare lo storico: articolo non trovato per l'assegnazione "
+                                                        + assignment.getId()));
+        ProcessEntity process =
+                processService
+                        .findById(assignment.getProcessId())
+                        .orElseThrow(
+                                () ->
+                                        new IllegalStateException(
+                                                "Impossibile conservare lo storico: processo non trovato per l'assegnazione "
+                                                        + assignment.getId()));
         int processIndex = findProcessIndex(item, process.getId());
         if (processIndex < 0) {
             throw new IllegalStateException(
-                    "Impossibile conservare lo storico: processo non presente nell'articolo " + item.getId());
+                    "Impossibile conservare lo storico: processo non presente nell'articolo "
+                            + item.getId());
         }
 
         if (process.getLoom() == null || process.getLoom().getId() == null) {
@@ -266,13 +295,22 @@ public class LoomService {
 
     private void removeQueuedAssignment(LoomItemAssignmentEntity assignment) {
         if (!isBlank(assignment.getItemId())) {
-            itemService.findById(assignment.getItemId()).ifPresent(item -> {
-                if (item.getProcessing() != null) {
-                    item.getProcessing().removeIf(process -> process != null
-                            && Objects.equals(process.getId(), assignment.getProcessId()));
-                }
-                itemService.save(item);
-            });
+            itemService
+                    .findById(assignment.getItemId())
+                    .ifPresent(
+                            item -> {
+                                if (item.getProcessing() != null) {
+                                    item.getProcessing()
+                                            .removeIf(
+                                                    process ->
+                                                            process != null
+                                                                    && Objects.equals(
+                                                                            process.getId(),
+                                                                            assignment
+                                                                                    .getProcessId()));
+                                }
+                                itemService.save(item);
+                            });
         }
         if (!isBlank(assignment.getProcessId())) {
             processService.deleteStoredProcessById(assignment.getProcessId());
@@ -302,12 +340,13 @@ public class LoomService {
             item.setStartDate(null);
             return;
         }
-        item.setStartDate(item.getProcessing().stream()
-                .filter(Objects::nonNull)
-                .map(ProcessEntity::getStartDate)
-                .filter(startDate -> startDate != null && !Instant.EPOCH.equals(startDate))
-                .min(Instant::compareTo)
-                .orElse(null));
+        item.setStartDate(
+                item.getProcessing().stream()
+                        .filter(Objects::nonNull)
+                        .map(ProcessEntity::getStartDate)
+                        .filter(startDate -> startDate != null && !Instant.EPOCH.equals(startDate))
+                        .min(Instant::compareTo)
+                        .orElse(null));
     }
 
     private int valueOrZero(Integer value) {
@@ -337,7 +376,8 @@ public class LoomService {
         }
 
         LoomItemAssignmentEntity assignmentEntity = assignment.get();
-        ProcessEntity process = this.processService.findById(assignmentEntity.getProcessId()).orElse(null);
+        ProcessEntity process =
+                this.processService.findById(assignmentEntity.getProcessId()).orElse(null);
         ItemEntity item = this.itemService.findById(assignmentEntity.getItemId()).orElse(null);
 
         if (process == null || item == null || process.getMetersPerPiece() == null) {
@@ -368,7 +408,8 @@ public class LoomService {
         return loom;
     }
 
-    private double calculateMetersToGo(ProcessEntity process, double updatedMetersRun, double metersToAdd) {
+    private double calculateMetersToGo(
+            ProcessEntity process, double updatedMetersRun, double metersToAdd) {
         if (process.getTotalMeters() != null) {
             return Math.max(process.getTotalMeters() - updatedMetersRun, 0d);
         }
@@ -384,7 +425,8 @@ public class LoomService {
         return value == null || value.isBlank();
     }
 
-    private void saveLoomLog(LoomLogEvent event, LoomEntity loom, ItemEntity item, Double metersAdded) {
+    private void saveLoomLog(
+            LoomLogEvent event, LoomEntity loom, ItemEntity item, Double metersAdded) {
         LoomLogEntity loomLog = new LoomLogEntity();
         loomLog.setKey(event.name());
         loomLog.setLoomId(loom.getId());
@@ -409,22 +451,22 @@ public class LoomService {
             return null;
         }
 
-        return arrangementService.findById(item.getArrangementId())
+        return arrangementService
+                .findById(item.getArrangementId())
                 .map(arrangement -> arrangement.getItemName())
                 .orElse(null);
     }
 
     private Optional<LoomItemAssignmentEntity> getRunningAssignmentByLoomId(String loomId) {
-        List<LoomItemAssignmentEntity> runningAssignments = assignmentRepository.findByLoomIdAndStatus(
-                loomId,
-                LoomItemAssignment.StatusEnum.RUNNING
-        );
+        List<LoomItemAssignmentEntity> runningAssignments =
+                assignmentRepository.findByLoomIdAndStatus(
+                        loomId, LoomItemAssignment.StatusEnum.RUNNING);
 
         if (runningAssignments.size() > 1) {
-            throw new IllegalStateException("Esiste piu di un assignment RUNNING per il loomId: " + loomId);
+            throw new IllegalStateException(
+                    "Esiste piu di un assignment RUNNING per il loomId: " + loomId);
         }
 
         return runningAssignments.stream().findFirst();
     }
-
 }

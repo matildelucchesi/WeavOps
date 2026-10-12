@@ -1,0 +1,38 @@
+<header class="dialog-heading">
+  <h2 mat-dialog-title><img src="/icon/itemicon-violet.png" alt="" />Aggiungi Tela</h2>
+  <button class="action" mat-dialog-close>Annulla</button>
+</header>
+<mat-dialog-content>
+  <p class="customer">{{ data.customerName }}</p>
+  <label class="search">Cerca tela o articolo
+    <input [(ngModel)]="search" placeholder="Codice tela o descrizione" autocomplete="off" />
+  </label>
+  <h3>Disponibili</h3>
+  <div class="fabric-grid" role="group" aria-label="Tele disponibili">
+    @for (row of filtered; track row.key) {
+      <button type="button" class="fabric-card" [class.selected]="selected.has(row.key)" [attr.aria-pressed]="selected.has(row.key)" [attr.aria-label]="'Tela ' + row.fabricCode" (click)="toggle(row.key, !selected.has(row.key))">
+        <strong>{{ row.code ?? row.fabricCode }}</strong>
+        <img src="/icon/itemicon-violet.png" alt="" />
+        <span class="description">{{ row.description }}</span>
+        <span class="totals">{{ row.pieces }} colli · {{ row.meters | number:'1.2-2':'it' }} m</span>
+        <span class="selection-state">{{ selected.has(row.key) ? '✓ Selezionata' : 'Seleziona' }}</span>
+      </button>
+    } @empty { <p class="empty">Nessuna tela disponibile corrisponde alla ricerca.</p> }
+  </div>
+  <h3>Già inserite in un DDT</h3>
+  <div class="fabric-grid assigned-grid" role="group" aria-label="Tele già inserite in un DDT">
+    @for (row of filteredAssigned; track row.key) {
+      <button type="button" class="fabric-card assigned-card" disabled>
+        <strong>{{ row.code ?? row.fabricCode }}</strong>
+        <img src="/icon/itemicon-violet.png" alt="" />
+        <span class="description">{{ row.description }}</span>
+        <span class="totals">{{ row.pieces }} colli · {{ row.meters | number:'1.2-2':'it' }} m</span>
+        <span class="document-state">Già nel DDT {{ row.deliveryNote.number }}/{{ row.deliveryNote.year }} · {{ row.deliveryNote.date | date:'dd/MM/yyyy' }}</span>
+      </button>
+    } @empty { <p class="empty">Nessuna tela già inserita in un DDT corrisponde alla ricerca.</p> }
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <span aria-live="polite">{{ selected.size }} tele selezionate</span>
+  <button class="action confirm-action" (click)="confirm()">Conferma</button>
+</mat-dialog-actions>

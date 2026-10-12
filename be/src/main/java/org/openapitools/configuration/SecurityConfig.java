@@ -1,10 +1,11 @@
 package org.openapitools.configuration;
 
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
+import org.openapitools.repository.UserRepository;
 import org.openapitools.security.JwtAuthenticationFilter;
 import org.openapitools.service.MobileTokenAuthorizationService;
 import org.openapitools.service.TokenService;
-import org.openapitools.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -27,49 +28,61 @@ public class SecurityConfig {
             HttpSecurity http,
             TokenService tokenService,
             UserRepository userRepository,
-            MobileTokenAuthorizationService mobileTokenAuthorizationService
-    ) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
+            MobileTokenAuthorizationService mobileTokenAuthorizationService)
+            throws Exception {
+        return http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        // Operazioni disponibili dalla vista mobile aperta tramite QR code.
-                        .requestMatchers(HttpMethod.GET,
-                                "/looms/*",
-                                "/items/*",
-                                "/arrangements/*",
-                                "/processes/*",
-                                "/loom-logs/loom/*",
-                                "/loom-item-assignments/loom/*",
-                                "/loom-item-assignments/loom/*/running"
-                        ).access(mobileTokenAuthorizationService::authorize)
-                        .requestMatchers(HttpMethod.PUT,
-                                "/looms/*",
-                                "/looms/*/add-pieces",
-                                "/loom-item-assignments/*"
-                        ).access(mobileTokenAuthorizationService::authorize)
-                        .requestMatchers(HttpMethod.POST, "/looms/*/knotting")
-                        .access(mobileTokenAuthorizationService::authorize)
-                        .requestMatchers(
-                                "/",
-                                "/swagger-ui.html",
-                                "/swagger-ui/**",
-                                "/v3/api-docs",
-                                "/v3/api-docs/**"
-                        ).permitAll()
-                        .anyRequest().hasAuthority("USER")
-                )
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(
-                        (request, response, authException) ->
-                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
-                ))
-                .addFilterBefore(new JwtAuthenticationFilter(tokenService, userRepository), UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(
+                        auth ->
+                                auth.dispatcherTypeMatchers(DispatcherType.ERROR)
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.OPTIONS, "/**")
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.POST, "/auth/login")
+                                        .permitAll()
+                                        // Operazioni disponibili dalla vista mobile aperta tramite
+                                        // QR code.
+                                        .requestMatchers(
+                                                HttpMethod.GET,
+                                                "/looms/*",
+                                                "/items/*",
+                                                "/arrangements/*",
+                                                "/processes/*",
+                                                "/loom-logs/loom/*",
+                                                "/loom-item-assignments/loom/*",
+                                                "/loom-item-assignments/loom/*/running")
+                                        .access(mobileTokenAuthorizationService::authorize)
+                                        .requestMatchers(
+                                                HttpMethod.PUT,
+                                                "/looms/*",
+                                                "/looms/*/add-pieces",
+                                                "/loom-item-assignments/*")
+                                        .access(mobileTokenAuthorizationService::authorize)
+                                        .requestMatchers(HttpMethod.POST, "/looms/*/knotting")
+                                        .access(mobileTokenAuthorizationService::authorize)
+                                        .requestMatchers(
+                                                "/",
+                                                "/swagger-ui.html",
+                                                "/swagger-ui/**",
+                                                "/v3/api-docs",
+                                                "/v3/api-docs/**")
+                                        .permitAll()
+                                        .anyRequest()
+                                        .hasAuthority("USER"))
+                .exceptionHandling(
+                        exception ->
+                                exception.authenticationEntryPoint(
+                                        (request, response, authException) ->
+                                                response.sendError(
+                                                        HttpServletResponse.SC_UNAUTHORIZED)))
+                .addFilterBefore(
+                        new JwtAuthenticationFilter(tokenService, userRepository),
+                        UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

@@ -16,5 +16,30 @@ export interface CreateItemWithArrangementRequest {
      */
     customerName: string;
     arrangement: Arrangement;
+    /**
+     * Peso di ordito dell\'intero articolo in kg.
+     */
+    warpWeight?: number;
+    /**
+     * Peso di trama dell\'intero articolo in kg.
+     */
+    weftWeight?: number;
+    /**
+     * Tutte, nessuna o alcune pezze certificate.
+     */
+    isCertified?: CreateItemWithArrangementRequest.IsCertifiedEnum;
+    /**
+     * Identificativo della Certification selezionata.
+     */
+    certificationId?: string;
 }
+export namespace CreateItemWithArrangementRequest {
+    export const IsCertifiedEnum = {
+        All: 'ALL',
+        None: 'NONE',
+        Partial: 'PARTIAL'
+    } as const;
+    export type IsCertifiedEnum = typeof IsCertifiedEnum[keyof typeof IsCertifiedEnum];
+}
+
 

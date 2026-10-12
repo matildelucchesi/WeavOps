@@ -1,16 +1,14 @@
 package org.openapitools.domain;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "customers")
 public class CustomerEntity {
 
-    @Id
-    private String id;
+    @Id private String id;
 
     private String name;
 
@@ -22,8 +20,76 @@ public class CustomerEntity {
 
     private String email;
 
-    //getter & setter
+    private String vatNumber;
+    private List<String> destinationIds = new ArrayList<>();
 
+    public String getVatNumber() {
+        return vatNumber;
+    }
+
+    public void setVatNumber(String value) {
+        this.vatNumber = value;
+    }
+
+    public List<String> getDestinationIds() {
+        return destinationIds;
+    }
+
+    public void setDestinationIds(List<String> value) {
+        this.destinationIds = value;
+    }
+
+    private String street;
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String value) {
+        this.street = value;
+    }
+
+    private String streetNumber;
+
+    public String getStreetNumber() {
+        return streetNumber;
+    }
+
+    public void setStreetNumber(String value) {
+        this.streetNumber = value;
+    }
+
+    private String postalCode;
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String value) {
+        this.postalCode = value;
+    }
+
+    private String city;
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String value) {
+        this.city = value;
+    }
+
+    private String provinceCode;
+
+    public String getProvinceCode() {
+        return provinceCode;
+    }
+
+    public void setProvinceCode(String value) {
+        this.provinceCode = value;
+    }
+
+    // getter & setter
 
     public String getId() {
         return id;

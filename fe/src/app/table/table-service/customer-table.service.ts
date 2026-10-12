@@ -1,5 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { DestinationFacadeService } from '../../services/destination-facade.service';
+import { Destination } from '../../api/model/destination';
+import { catchError, forkJoin, map, Observable, of } from 'rxjs';
 import { Customer, Referent } from '../../api';
 import { CustomerFacadeService } from '../../services/customer-facade.service';
 import { CustomerTableRow } from '../table-row-interface/customer-table-row';
@@ -9,14 +11,15 @@ import { CustomerTableRow } from '../table-row-interface/customer-table-row';
 })
 export class CustomerTableService {
   private readonly customerService = inject(CustomerFacadeService);
+  private readonly destinationService = inject(DestinationFacadeService);
 
   public getRows(): Observable<CustomerTableRow[]> {
-    return this.customerService.getAll().pipe(
-      map((customers) => customers.map((customer) => this.toTableRow(customer))),
+    return forkJoin({customers: this.customerService.getAll(), destinations: this.destinationService.getAll().pipe(catchError(() => of([])))}).pipe(
+      map(({customers, destinations}) => customers.map(customer => this.toTableRow(customer, destinations))),
     );
   }
 
-  private toTableRow(customer: Customer): CustomerTableRow {
+  private toTableRow(customer: Customer, destinations: Destination[]): CustomerTableRow {
     const referents = customer.referents ?? [];
 
     return {
@@ -24,6 +27,11 @@ export class CustomerTableService {
       customer,
       name: customer.name,
       email: customer.email,
+      vatNumber: customer.vatNumber ?? '',
+      destinationNames: (customer.destinationIds ?? []).map(id => {
+        const destination = destinations.find(value => value.id === id);
+        return destination ? `${destination.name} — ${destination.city} (${destination.provinceCode})` : 'Destinazione non disponibile';
+      }).join('\n'),
       referent: this.formatReferents(referents),
       phoneNumber: this.formatPhoneNumbers(referents),
       note: customer.note ?? '',

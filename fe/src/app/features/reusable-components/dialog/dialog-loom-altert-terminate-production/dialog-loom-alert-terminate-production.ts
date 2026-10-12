@@ -1,23 +1,30 @@
-import { Component, inject } from '@angular/core';
-import { LoomItemAssignment } from '../../../../api';
+import { FabricCompletionFields } from '../../fabric-completion-fields/fabric-completion-fields';
+import { Component, inject, ViewChild } from '@angular/core';
+import { LoomItemAssignment, Item, Process, Arrangement } from '../../../../api';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIcon } from "@angular/material/icon";
 import { FormsModule } from '@angular/forms';
 
 export interface DialogLoomAlertTerminateProductionData {
   assignment?: LoomItemAssignment | null;
+  item?: Item | null;
+  process?: Process | null;
+  arrangement?: Arrangement | null;
+  selectedStatus?: LoomItemAssignment.StatusEnum;
 }
 
 export interface DialogLoomAlertTerminateProductionResultValue {
   status: LoomItemAssignment.StatusEnum;
   notes: string;
+  fabricCode?: string;
+  fabricCertificationId?: string;
 }
 
 export type DialogLoomAlertTerminateProductionResult = DialogLoomAlertTerminateProductionResultValue | false;
 
 @Component({
   selector: 'app-dialog-loom-alert-terminate-production',
-  imports: [MatIcon, FormsModule],
+  imports: [MatIcon, FormsModule, FabricCompletionFields],
   standalone: true,
   templateUrl: './dialog-loom-alert-terminate-production.html',
   styleUrl: './dialog-loom-alert-terminate-production.scss',
@@ -30,7 +37,12 @@ export class DialogLoomAlertTerminateProduction {
   public readonly assignment = this.dialogData?.assignment ?? null;
   public readonly state = LoomItemAssignment.StatusEnum;
 
-  public isConfirmed: boolean = false;
+  @ViewChild(FabricCompletionFields) private fabricFields?: FabricCompletionFields;
+  public readonly item = this.dialogData?.item ?? null;
+  public readonly process = this.dialogData?.process ?? null;
+  public readonly arrangement = this.dialogData?.arrangement ?? null;
+  public readonly selectedStatus = this.dialogData?.selectedStatus;
+  public isConfirmed: boolean = Boolean(this.selectedStatus);
   public notes = '';
 
   public onConfirm(): void {
@@ -42,7 +54,8 @@ export class DialogLoomAlertTerminateProduction {
   }
 
   public onSelectState(status: LoomItemAssignment.StatusEnum): void {
-    this.dialogRef?.close({ status, notes: this.notes.trim() });
+    if (!this.fabricFields?.validate()) return;
+    this.dialogRef?.close({ status, notes: this.notes.trim(), fabricCode: this.fabricFields.code.trim(), fabricCertificationId: this.fabricFields.certificationId });
   }
 
 }

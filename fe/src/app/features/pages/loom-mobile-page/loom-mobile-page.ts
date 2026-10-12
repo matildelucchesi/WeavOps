@@ -1,3 +1,4 @@
+import { DialogLoomAlertTerminateProduction, DialogLoomAlertTerminateProductionResult } from '../../reusable-components/dialog/dialog-loom-altert-terminate-production/dialog-loom-alert-terminate-production';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from "@angular/material/icon";
@@ -375,6 +376,30 @@ export class LoomMobilePage implements OnInit {
 
   public terminateProduction(status: LoomItemAssignment.StatusEnum): void {
     const loomId = this.loom()?.id;
+    if (!loomId || this.isTerminatingProduction) return;
+    this.isTerminatingProduction = true;
+    this.resolveProductionContext(loomId).subscribe({
+      next: context => {
+        if (!context) {
+          this.isTerminatingProduction = false;
+          this.showErrorSnackbar('Nessuna produzione attiva trovata');
+          return;
+        }
+        const dialogRef = this.dialog.open<DialogLoomAlertTerminateProduction, unknown, DialogLoomAlertTerminateProductionResult>(DialogLoomAlertTerminateProduction, {
+          panelClass: 'loom-alert-dialog-panel', autoFocus: false, width: '520px', maxWidth: 'calc(100vw - 32px)',
+          data: { ...context, selectedStatus: status },
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          this.isTerminatingProduction = false;
+          if (result) this.persistTermination(result.status, result.fabricCode, result.fabricCertificationId);
+        });
+      },
+      error: () => { this.isTerminatingProduction = false; this.showErrorSnackbar('Impossibile caricare i dati della produzione'); },
+    });
+  }
+
+  private persistTermination(status: LoomItemAssignment.StatusEnum, fabricCode?: string, fabricCertificationId?: string): void {
+    const loomId = this.loom()?.id;
 
     if (!loomId || this.isTerminatingProduction) {
       return;
@@ -390,6 +415,8 @@ export class LoomMobilePage implements OnInit {
         return this.assignmentService.update(assignment.id, {
           ...assignment,
           status,
+          fabricCode,
+          fabricCertificationId,
         });
       }),
     ).subscribe({
@@ -406,7 +433,7 @@ export class LoomMobilePage implements OnInit {
       error: (error) => {
         console.error('Errore durante la terminazione della produzione:', error);
         this.isTerminatingProduction = false;
-        this.showErrorSnackbar('Impossibile terminare la produzione');
+        this.showErrorSnackbar(error.error?.message ?? 'Impossibile terminare la produzione: verificare codice Tela e dati articolo.');
       },
     });
   }

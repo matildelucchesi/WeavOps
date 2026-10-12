@@ -1,5 +1,10 @@
 package org.openapitools.service;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.openapitools.constants.LoomLogEvent;
 import org.openapitools.domain.ItemEntity;
 import org.openapitools.domain.LoomEntity;
@@ -15,37 +20,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 @Service
 public class LoomItemAssignmentService {
 
     private static final Instant TEMPORARY_PROCESS_START_DATE = Instant.EPOCH;
 
-    @Autowired
-    private LoomService loomService;
+    @Autowired private LoomService loomService;
 
-    @Autowired
-    private LoomMapper loomMapper;
+    @Autowired private LoomMapper loomMapper;
 
-    @Autowired
-    private ItemService itemService;
+    @Autowired private ItemService itemService;
 
-    @Autowired
-    private ProcessService processService;
+    @Autowired private ProcessService processService;
 
-    @Autowired
-    private ProductionForecastService productionForecastService;
+    @Autowired private ProductionForecastService productionForecastService;
 
-    @Autowired
-    private LoomLogService loomLogService;
+    @Autowired private LoomLogService loomLogService;
 
-    @Autowired
-    private ArrangementService arrangementService;
+    @Autowired private ArrangementService arrangementService;
+
+    @Autowired private FabricService fabricService;
 
     private final LoomItemAssignmentRepository repository;
 
@@ -62,6 +56,11 @@ public class LoomItemAssignmentService {
             throw new LoomAlreadyRunningException(
                     "Una lavorazione può passare a RUNNING solo tramite la transizione di avvio.");
         }
+        if (isEndProductionStatus(entity.getStatus())) {
+            throw new FabricValidationException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Terminare una produzione tramite la sua assegnazione esistente.");
+        }
         ensureNoOtherActiveAssignmentForItemAndLoom(entity, null);
         return repository.save(entity);
     }
@@ -72,43 +71,73 @@ public class LoomItemAssignmentService {
 
     @Transactional(rollbackFor = Exception.class)
     public Optional<LoomItemAssignmentEntity> update(String id, LoomItemAssignmentEntity entity) {
-        return repository.findById(id).flatMap(existing -> {
-            LoomItemAssignmentEntity updatedEntity = mergeWithExistingAssignment(existing, entity);
+        return repository
+                .findById(id)
+                .flatMap(
+                        existing -> {
+                            LoomItemAssignmentEntity updatedEntity =
+                                    mergeWithExistingAssignment(existing, entity);
 
-            ensureNoOtherActiveAssignmentForItemAndLoom(updatedEntity, existing.getId());
+                            if (isEndProductionStatus(existing.getStatus())
+                                    && (existing.getStatus() != updatedEntity.getStatus()
+                                            || !Objects.equals(
+                                                    existing.getItemId(), updatedEntity.getItemId())
+                                            || !Objects.equals(
+                                                    existing.getProcessId(),
+                                                    updatedEntity.getProcessId())
+                                            || !Objects.equals(
+                                                    existing.getLoomId(),
+                                                    updatedEntity.getLoomId()))) {
+                                throw new FabricValidationException(
+                                        org.springframework.http.HttpStatus.CONFLICT,
+                                        "La produzione è già terminata.");
+                            }
+                            ensureNoOtherActiveAssignmentForItemAndLoom(
+                                    updatedEntity, existing.getId());
 
-            if (existing.getStatus() == LoomItemAssignment.StatusEnum.RUNNING) {
-                boolean assignmentIdentityChanged = !Objects.equals(existing.getLoomId(), updatedEntity.getLoomId())
-                        || !Objects.equals(existing.getItemId(), updatedEntity.getItemId())
-                        || !Objects.equals(existing.getProcessId(), updatedEntity.getProcessId());
-                if (assignmentIdentityChanged
-                        || (updatedEntity.getStatus() != LoomItemAssignment.StatusEnum.RUNNING
-                        && !isEndProductionStatus(updatedEntity.getStatus()))) {
-                    throw new LoomAlreadyRunningException(
-                            "Una lavorazione in corso non può essere riassegnata o riportata in coda.");
-                }
-            }
+                            if (existing.getStatus() == LoomItemAssignment.StatusEnum.RUNNING) {
+                                boolean assignmentIdentityChanged =
+                                        !Objects.equals(
+                                                        existing.getLoomId(),
+                                                        updatedEntity.getLoomId())
+                                                || !Objects.equals(
+                                                        existing.getItemId(),
+                                                        updatedEntity.getItemId())
+                                                || !Objects.equals(
+                                                        existing.getProcessId(),
+                                                        updatedEntity.getProcessId());
+                                if (assignmentIdentityChanged
+                                        || (updatedEntity.getStatus()
+                                                        != LoomItemAssignment.StatusEnum.RUNNING
+                                                && !isEndProductionStatus(
+                                                        updatedEntity.getStatus()))) {
+                                    throw new LoomAlreadyRunningException(
+                                            "Una lavorazione in corso non può essere riassegnata o riportata in coda.");
+                                }
+                            }
 
-            if (isStartingProduction(existing, updatedEntity) && !startProduction(updatedEntity)) {
-                return Optional.empty();
-            }
+                            if (isStartingProduction(existing, updatedEntity)
+                                    && !startProduction(updatedEntity)) {
+                                return Optional.empty();
+                            }
 
-            if (isEndingProduction(existing, updatedEntity) && !endProduction(updatedEntity)) {
-                return Optional.empty();
-            }
+                            if (isEndingProduction(existing, updatedEntity)
+                                    && !endProduction(updatedEntity)) {
+                                return Optional.empty();
+                            }
 
-            LoomItemAssignmentEntity savedEntity = repository.save(updatedEntity);
-            if (isStartingProduction(existing, updatedEntity) || isEndingProduction(existing, updatedEntity)) {
-                productionForecastService.recalculateQueuedForecastsForLoom(updatedEntity.getLoomId());
-            }
-            return Optional.of(savedEntity);
-        });
+                            LoomItemAssignmentEntity savedEntity = repository.save(updatedEntity);
+                            if (isStartingProduction(existing, updatedEntity)
+                                    || isEndingProduction(existing, updatedEntity)) {
+                                productionForecastService.recalculateQueuedForecastsForLoom(
+                                        updatedEntity.getLoomId());
+                            }
+                            return Optional.of(savedEntity);
+                        });
     }
 
     private LoomItemAssignmentEntity mergeWithExistingAssignment(
-            LoomItemAssignmentEntity existing,
-            LoomItemAssignmentEntity entity
-    ) {
+            LoomItemAssignmentEntity existing, LoomItemAssignmentEntity entity) {
         entity.setId(existing.getId());
 
         if (entity.getLoomId() == null) {
@@ -131,17 +160,13 @@ public class LoomItemAssignmentService {
     }
 
     private boolean isStartingProduction(
-            LoomItemAssignmentEntity existing,
-            LoomItemAssignmentEntity updatedEntity
-    ) {
+            LoomItemAssignmentEntity existing, LoomItemAssignmentEntity updatedEntity) {
         return updatedEntity.getStatus() == LoomItemAssignment.StatusEnum.RUNNING
                 && existing.getStatus() != LoomItemAssignment.StatusEnum.RUNNING;
     }
 
     private boolean isEndingProduction(
-            LoomItemAssignmentEntity existing,
-            LoomItemAssignmentEntity updatedEntity
-    ) {
+            LoomItemAssignmentEntity existing, LoomItemAssignmentEntity updatedEntity) {
         return isEndProductionStatus(updatedEntity.getStatus())
                 && existing.getStatus() != updatedEntity.getStatus();
     }
@@ -152,9 +177,7 @@ public class LoomItemAssignmentService {
     }
 
     private void ensureNoOtherActiveAssignmentForItemAndLoom(
-            LoomItemAssignmentEntity assignment,
-            String excludedAssignmentId
-    ) {
+            LoomItemAssignmentEntity assignment, String excludedAssignmentId) {
         if (assignment.getStatus() != LoomItemAssignment.StatusEnum.QUEUED
                 && assignment.getStatus() != LoomItemAssignment.StatusEnum.RUNNING) {
             return;
@@ -164,12 +187,18 @@ public class LoomItemAssignmentService {
             return;
         }
 
-        boolean duplicateExists = repository.findByItemIdAndLoomIdAndStatusIn(
-                        assignment.getItemId(),
-                        assignment.getLoomId(),
-                        List.of(LoomItemAssignment.StatusEnum.QUEUED, LoomItemAssignment.StatusEnum.RUNNING)
-                ).stream()
-                .anyMatch(existing -> !Objects.equals(excludedAssignmentId, existing.getId()));
+        boolean duplicateExists =
+                repository
+                        .findByItemIdAndLoomIdAndStatusIn(
+                                assignment.getItemId(),
+                                assignment.getLoomId(),
+                                List.of(
+                                        LoomItemAssignment.StatusEnum.QUEUED,
+                                        LoomItemAssignment.StatusEnum.RUNNING))
+                        .stream()
+                        .anyMatch(
+                                existing ->
+                                        !Objects.equals(excludedAssignmentId, existing.getId()));
 
         if (duplicateExists) {
             throw new DuplicateItemLoomAssignmentException(
@@ -178,7 +207,9 @@ public class LoomItemAssignmentService {
     }
 
     private boolean startProduction(LoomItemAssignmentEntity entity) {
-        if (isBlank(entity.getLoomId()) || isBlank(entity.getItemId()) || isBlank(entity.getProcessId())) {
+        if (isBlank(entity.getLoomId())
+                || isBlank(entity.getItemId())
+                || isBlank(entity.getProcessId())) {
             return false;
         }
 
@@ -189,7 +220,8 @@ public class LoomItemAssignmentService {
 
         LoomEntity loomEntity = this.loomService.findById(entity.getLoomId()).orElse(null);
         ItemEntity itemEntity = this.itemService.findById(entity.getItemId()).orElse(null);
-        ProcessEntity processEntity = this.processService.findById(entity.getProcessId()).orElse(null);
+        ProcessEntity processEntity =
+                this.processService.findById(entity.getProcessId()).orElse(null);
 
         if (loomEntity == null || itemEntity == null || processEntity == null) {
             return false;
@@ -201,9 +233,13 @@ public class LoomItemAssignmentService {
             return false;
         }
 
-        loomEntity = this.loomService.claimForProduction(entity.getLoomId())
-                .orElseThrow(() -> new LoomAlreadyRunningException(
-                        "Il telaio è già in uso. Terminare la lavorazione corrente prima di avviarne un'altra."));
+        loomEntity =
+                this.loomService
+                        .claimForProduction(entity.getLoomId())
+                        .orElseThrow(
+                                () ->
+                                        new LoomAlreadyRunningException(
+                                                "Il telaio è già in uso. Terminare la lavorazione corrente prima di avviarne un'altra."));
 
         Instant now = OffsetDateTime.now().toInstant();
 
@@ -234,7 +270,8 @@ public class LoomItemAssignmentService {
 
         LoomEntity loomEntity = this.loomService.findById(entity.getLoomId()).orElse(null);
         ItemEntity itemEntity = this.itemService.findById(entity.getItemId()).orElse(null);
-        ProcessEntity processEntity = this.processService.findById(entity.getProcessId()).orElse(null);
+        ProcessEntity processEntity =
+                this.processService.findById(entity.getProcessId()).orElse(null);
 
         if (loomEntity == null || itemEntity == null || processEntity == null) {
             return false;
@@ -247,9 +284,19 @@ public class LoomItemAssignmentService {
         }
 
         Instant now = OffsetDateTime.now().toInstant();
+        fabricService.createFromProduction(
+                itemEntity,
+                processEntity,
+                processEntity.getFabricCode() != null
+                        ? processEntity.getFabricCode()
+                        : entity.getFabricCode(),
+                entity.getFabricCertificationId(),
+                now);
 
-        boolean anotherProcessIsRunning = hasOtherRunningAssignments(entity.getLoomId(), entity.getId());
-        loomEntity.setStatus(anotherProcessIsRunning ? Loom.StatusEnum.WORKING : Loom.StatusEnum.STOPPED);
+        boolean anotherProcessIsRunning =
+                hasOtherRunningAssignments(entity.getLoomId(), entity.getId());
+        loomEntity.setStatus(
+                anotherProcessIsRunning ? Loom.StatusEnum.WORKING : Loom.StatusEnum.STOPPED);
 
         processEntity.setEndDate(now);
         processEntity.setLoom(loomMapper.toDto(loomEntity));
@@ -272,12 +319,13 @@ public class LoomItemAssignmentService {
             return;
         }
 
-        Instant oldestProcessStartDate = item.getProcessing().stream()
-                .filter(process -> process != null)
-                .map(ProcessEntity::getStartDate)
-                .filter(this::isRealProcessStartDate)
-                .min(Instant::compareTo)
-                .orElse(null);
+        Instant oldestProcessStartDate =
+                item.getProcessing().stream()
+                        .filter(process -> process != null)
+                        .map(ProcessEntity::getStartDate)
+                        .filter(this::isRealProcessStartDate)
+                        .min(Instant::compareTo)
+                        .orElse(null);
 
         item.setStartDate(oldestProcessStartDate);
     }
@@ -307,12 +355,14 @@ public class LoomItemAssignmentService {
     }
 
     private boolean hasOtherRunningAssignments(String loomId, String excludedAssignmentId) {
-        return repository.findByLoomIdAndStatus(loomId, LoomItemAssignment.StatusEnum.RUNNING)
+        return repository
+                .findByLoomIdAndStatus(loomId, LoomItemAssignment.StatusEnum.RUNNING)
                 .stream()
                 .anyMatch(assignment -> !Objects.equals(excludedAssignmentId, assignment.getId()));
     }
 
-    private void saveLoomLog(LoomLogEvent event, LoomEntity loom, ItemEntity item, Double metersAdded) {
+    private void saveLoomLog(
+            LoomLogEvent event, LoomEntity loom, ItemEntity item, Double metersAdded) {
         LoomLogEntity loomLog = new LoomLogEntity();
         loomLog.setKey(event.name());
         loomLog.setLoomId(loom.getId());
@@ -328,7 +378,8 @@ public class LoomItemAssignmentService {
             return null;
         }
 
-        return arrangementService.findById(item.getArrangementId())
+        return arrangementService
+                .findById(item.getArrangementId())
                 .map(arrangement -> arrangement.getItemName())
                 .orElse(null);
     }
@@ -367,7 +418,8 @@ public class LoomItemAssignmentService {
 
         LoomEntity loomEntity = this.loomService.findById(assignment.getLoomId()).orElse(null);
         ItemEntity itemEntity = this.itemService.findById(assignment.getItemId()).orElse(null);
-        ProcessEntity processEntity = this.processService.findById(assignment.getProcessId()).orElse(null);
+        ProcessEntity processEntity =
+                this.processService.findById(assignment.getProcessId()).orElse(null);
 
         if (loomEntity == null || itemEntity == null || processEntity == null) {
             return false;
@@ -379,11 +431,18 @@ public class LoomItemAssignmentService {
             return false;
         }
 
+        if (processEntity.getPiecesRun() != null && processEntity.getPiecesRun() > 0) {
+            throw new FabricValidationException(
+                    org.springframework.http.HttpStatus.CONFLICT,
+                    "Sono presenti pezze prodotte: terminare la produzione come Abbandonato inserendo il codice Tela.");
+        }
         assignment.setStatus(LoomItemAssignment.StatusEnum.ABANDONED);
         repository.save(assignment);
 
-        boolean anotherProcessIsRunning = hasOtherRunningAssignments(assignment.getLoomId(), assignment.getId());
-        loomEntity.setStatus(anotherProcessIsRunning ? Loom.StatusEnum.WORKING : Loom.StatusEnum.STOPPED);
+        boolean anotherProcessIsRunning =
+                hasOtherRunningAssignments(assignment.getLoomId(), assignment.getId());
+        loomEntity.setStatus(
+                anotherProcessIsRunning ? Loom.StatusEnum.WORKING : Loom.StatusEnum.STOPPED);
 
         processEntity.setTotalMeters(toNonNullValue(processEntity.getMetersRun()));
         processEntity.setTotalPieces(toNonNullValue(processEntity.getPiecesRun()));
@@ -408,10 +467,13 @@ public class LoomItemAssignmentService {
         String itemId = assignment.getItemId();
 
         if (!isBlank(assignment.getItemId())) {
-            this.itemService.findById(assignment.getItemId()).ifPresent(item -> {
-                removeProcessFromItem(item, assignment.getProcessId());
-                this.itemService.save(item);
-            });
+            this.itemService
+                    .findById(assignment.getItemId())
+                    .ifPresent(
+                            item -> {
+                                removeProcessFromItem(item, assignment.getProcessId());
+                                this.itemService.save(item);
+                            });
         }
 
         if (!isBlank(assignment.getProcessId())) {
@@ -432,7 +494,8 @@ public class LoomItemAssignmentService {
             return;
         }
 
-        item.getProcessing().removeIf(process -> process != null && processId.equals(process.getId()));
+        item.getProcessing()
+                .removeIf(process -> process != null && processId.equals(process.getId()));
     }
 
     private Integer toNonNullValue(Integer value) {
@@ -464,16 +527,14 @@ public class LoomItemAssignmentService {
             return Optional.empty();
         }
 
-        List<LoomItemAssignmentEntity> runningAssignments = repository.findByLoomIdAndStatus(
-                loomId,
-                LoomItemAssignment.StatusEnum.RUNNING
-        );
+        List<LoomItemAssignmentEntity> runningAssignments =
+                repository.findByLoomIdAndStatus(loomId, LoomItemAssignment.StatusEnum.RUNNING);
 
         if (runningAssignments.size() > 1) {
-            throw new IllegalStateException("Esiste piu di un assignment RUNNING per il loomId: " + loomId);
+            throw new IllegalStateException(
+                    "Esiste piu di un assignment RUNNING per il loomId: " + loomId);
         }
 
         return runningAssignments.stream().findFirst();
     }
-
 }

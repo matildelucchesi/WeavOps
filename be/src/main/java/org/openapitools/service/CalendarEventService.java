@@ -1,5 +1,17 @@
 package org.openapitools.service;
 
+import static org.openapitools.constants.CalendarEventConstants.DELIVERY_DATE;
+import static org.openapitools.constants.CalendarEventConstants.ITEM_EXPECTED_END;
+import static org.openapitools.constants.CalendarEventConstants.LOOM_EXPECTED_END;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.openapitools.constants.CalendarEventConstants;
 import org.openapitools.domain.ArrangementEntity;
 import org.openapitools.domain.CalendarEventEntity;
@@ -13,19 +25,6 @@ import org.openapitools.repository.CalendarEventRepository;
 import org.openapitools.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.openapitools.constants.CalendarEventConstants.DELIVERY_DATE;
-import static org.openapitools.constants.CalendarEventConstants.ITEM_EXPECTED_END;
-import static org.openapitools.constants.CalendarEventConstants.LOOM_EXPECTED_END;
-
 @Service
 public class CalendarEventService {
     private static final Instant TEMPORARY_EXPECTED_END_DATE = Instant.EPOCH;
@@ -38,8 +37,7 @@ public class CalendarEventService {
     public CalendarEventService(
             CalendarEventRepository repository,
             ArrangementRepository arrangementRepository,
-            ItemRepository itemRepository
-    ) {
+            ItemRepository itemRepository) {
         this.repository = repository;
         this.arrangementRepository = arrangementRepository;
         this.itemRepository = itemRepository;
@@ -61,7 +59,8 @@ public class CalendarEventService {
         return repository.save(entity);
     }
 
-    public Optional<CalendarEventEntity> createOrUpdateDeliveryDateEvent(ArrangementEntity arrangement) {
+    public Optional<CalendarEventEntity> createOrUpdateDeliveryDateEvent(
+            ArrangementEntity arrangement) {
         if (arrangement == null || isBlank(arrangement.getId())) {
             return Optional.empty();
         }
@@ -88,10 +87,7 @@ public class CalendarEventService {
     }
 
     public Optional<CalendarEventEntity> createOrUpdateLoomExpectedEndDateEvent(
-            LoomItemAssignmentEntity assignment,
-            LoomEntity loom,
-            ProcessEntity process
-    ) {
+            LoomItemAssignmentEntity assignment, LoomEntity loom, ProcessEntity process) {
         if (assignment == null
                 || loom == null
                 || process == null
@@ -175,8 +171,10 @@ public class CalendarEventService {
             return;
         }
 
-        List<CalendarEventEntity> events = new ArrayList<>(
-                repository.findAllByTypeAndProcessId(getType(LOOM_EXPECTED_END), processId));
+        List<CalendarEventEntity> events =
+                new ArrayList<>(
+                        repository.findAllByTypeAndProcessId(
+                                getType(LOOM_EXPECTED_END), processId));
         events.addAll(repository.findAllByProcessIdAndTypeIsNull(processId));
         repository.deleteAll(events);
     }
@@ -185,27 +183,28 @@ public class CalendarEventService {
         LocalDate today = LocalDate.now(BUSINESS_TIME_ZONE);
         LocalDate weekStartDate = today.minusDays(today.getDayOfWeek().getValue() - 1L);
         Instant weekStart = weekStartDate.atStartOfDay(BUSINESS_TIME_ZONE).toInstant();
-        Instant nextWeekStart = weekStartDate.plusWeeks(1).atStartOfDay(BUSINESS_TIME_ZONE).toInstant();
+        Instant nextWeekStart =
+                weekStartDate.plusWeeks(1).atStartOfDay(BUSINESS_TIME_ZONE).toInstant();
 
         return countPendingDeliveriesBetween(weekStart, nextWeekStart);
     }
 
     public int countOverdueDeliveries() {
-        Instant todayStart = LocalDate.now(BUSINESS_TIME_ZONE).atStartOfDay(BUSINESS_TIME_ZONE).toInstant();
+        Instant todayStart =
+                LocalDate.now(BUSINESS_TIME_ZONE).atStartOfDay(BUSINESS_TIME_ZONE).toInstant();
 
-        return (int) itemRepository.findAll().stream()
-                .filter(this::isPendingDelivery)
-                .map(this::getDeliveryDate)
-                .flatMap(Optional::stream)
-                .filter(deliveryDate -> deliveryDate.isBefore(todayStart))
-                .count();
+        return (int)
+                itemRepository.findAll().stream()
+                        .filter(this::isPendingDelivery)
+                        .map(this::getDeliveryDate)
+                        .flatMap(Optional::stream)
+                        .filter(deliveryDate -> deliveryDate.isBefore(todayStart))
+                        .count();
     }
 
     private Optional<CalendarEventEntity> findDeliveryDateEvent(String arrangementId) {
-        Optional<CalendarEventEntity> event = repository.findFirstByTypeAndArrangementId(
-                getType(DELIVERY_DATE),
-                arrangementId
-        );
+        Optional<CalendarEventEntity> event =
+                repository.findFirstByTypeAndArrangementId(getType(DELIVERY_DATE), arrangementId);
 
         return event.isPresent()
                 ? event
@@ -213,34 +212,30 @@ public class CalendarEventService {
     }
 
     private Optional<CalendarEventEntity> findLoomExpectedEndDateEvent(String processId) {
-        Optional<CalendarEventEntity> event = repository.findFirstByTypeAndProcessId(
-                getType(LOOM_EXPECTED_END),
-                processId
-        );
+        Optional<CalendarEventEntity> event =
+                repository.findFirstByTypeAndProcessId(getType(LOOM_EXPECTED_END), processId);
 
-        return event.isPresent()
-                ? event
-                : repository.findFirstByProcessIdAndTypeIsNull(processId);
+        return event.isPresent() ? event : repository.findFirstByProcessIdAndTypeIsNull(processId);
     }
 
     private Optional<CalendarEventEntity> findItemExpectedEndDateEvent(String itemId) {
-        Optional<CalendarEventEntity> event = repository.findFirstByTypeAndItemId(
-                getType(ITEM_EXPECTED_END),
-                itemId
-        );
+        Optional<CalendarEventEntity> event =
+                repository.findFirstByTypeAndItemId(getType(ITEM_EXPECTED_END), itemId);
 
-        return event.isPresent()
-                ? event
-                : repository.findFirstByItemIdAndTypeIsNull(itemId);
+        return event.isPresent() ? event : repository.findFirstByItemIdAndTypeIsNull(itemId);
     }
 
     private int countPendingDeliveriesBetween(Instant startInclusive, Instant endExclusive) {
-        return (int) itemRepository.findAll().stream()
-                .filter(this::isPendingDelivery)
-                .map(this::getDeliveryDate)
-                .flatMap(Optional::stream)
-                .filter(deliveryDate -> !deliveryDate.isBefore(startInclusive) && deliveryDate.isBefore(endExclusive))
-                .count();
+        return (int)
+                itemRepository.findAll().stream()
+                        .filter(this::isPendingDelivery)
+                        .map(this::getDeliveryDate)
+                        .flatMap(Optional::stream)
+                        .filter(
+                                deliveryDate ->
+                                        !deliveryDate.isBefore(startInclusive)
+                                                && deliveryDate.isBefore(endExclusive))
+                        .count();
     }
 
     private boolean isPendingDelivery(ItemEntity item) {
@@ -252,13 +247,16 @@ public class CalendarEventService {
             return Optional.empty();
         }
 
-        return arrangementRepository.findById(item.getArrangementId())
+        return arrangementRepository
+                .findById(item.getArrangementId())
                 .map(ArrangementEntity::getDeliveryDate)
                 .filter(this::hasEventDate);
     }
 
     private String buildDescription(String eventType, String detail) {
-        String description = CalendarEventConstants.EVENT_DESCRIPTIONS.getOrDefault(eventType, "Evento calendario");
+        String description =
+                CalendarEventConstants.EVENT_DESCRIPTIONS.getOrDefault(
+                        eventType, "Evento calendario");
 
         return isBlank(detail) ? description.trim() : description + detail;
     }
@@ -268,16 +266,15 @@ public class CalendarEventService {
             return null;
         }
 
-        return arrangementRepository.findById(item.getArrangementId())
+        return arrangementRepository
+                .findById(item.getArrangementId())
                 .map(ArrangementEntity::getItemName)
                 .orElse(null);
     }
 
     private CalendarEvent.TypeEnum getType(String eventType) {
         return CalendarEventConstants.EVENT_TYPE.getOrDefault(
-                eventType,
-                CalendarEvent.TypeEnum.GENERIC
-        );
+                eventType, CalendarEvent.TypeEnum.GENERIC);
     }
 
     private boolean hasEventDate(Instant date) {

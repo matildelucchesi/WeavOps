@@ -1,18 +1,16 @@
 package org.openapitools.domain;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import org.openapitools.model.Item;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-
 @Document(collection = "items")
 public class ItemEntity {
 
-    @Id
-    private String id;
+    @Id private String id;
 
     private String arrangementId;
     private Item.StateEnum state;
@@ -26,8 +24,12 @@ public class ItemEntity {
     private Boolean isArchived;
     private Boolean isDelivered;
     private Boolean isLate;
+    private java.math.BigDecimal warpWeight;
+    private java.math.BigDecimal weftWeight;
+    private Item.IsCertifiedEnum isCertified;
+    private String certificationId;
 
-    //getter & setter
+    // getter & setter
     public Boolean getLate() {
         return isLate;
     }
@@ -138,5 +140,41 @@ public class ItemEntity {
 
     public void setEndDate(Instant endDate) {
         this.endDate = endDate;
+    }
+
+    public java.math.BigDecimal getWarpWeight() {
+        return warpWeight;
+    }
+
+    public void setWarpWeight(java.math.BigDecimal value) {
+        this.warpWeight = value;
+    }
+
+    public java.math.BigDecimal getWeftWeight() {
+        return weftWeight;
+    }
+
+    public void setWeftWeight(java.math.BigDecimal value) {
+        this.weftWeight = value;
+    }
+
+    public Item.IsCertifiedEnum getIsCertified() {
+        return isCertified;
+    }
+
+    public void setIsCertified(Item.IsCertifiedEnum value) {
+        this.isCertified = value;
+    }
+
+    public String getCertificationId() {
+        return certificationId;
+    }
+
+    public void setCertificationId(String value) {
+        this.certificationId = value;
+    }
+
+    public java.math.BigDecimal getTotalWeight() {
+        return warpWeight == null || weftWeight == null ? null : warpWeight.add(weftWeight);
     }
 }

@@ -1,0 +1,31 @@
+type: object
+description: Azienda di destinazione italiana condivisibile tra più clienti.
+required: [name, street, streetNumber, postalCode, city, provinceCode]
+properties:
+  id:
+    type: string
+    readOnly: true
+  name:
+    type: string
+    minLength: 1
+    description: Nome dell'azienda di destinazione.
+  street:
+    type: string
+    minLength: 1
+    description: Via, piazza o altra denominazione stradale.
+  streetNumber:
+    type: string
+    minLength: 1
+    description: Numero civico, inclusi suffissi o SNC.
+  postalCode:
+    type: string
+    pattern: '^[0-9]{5}$'
+    description: CAP italiano, inclusi gli eventuali zeri iniziali.
+  city:
+    type: string
+    minLength: 1
+    description: Comune.
+  provinceCode:
+    type: string
+    pattern: '^[A-Za-z]{2}$'
+    description: Sigla provincia, normalizzata in maiuscolo dal server.

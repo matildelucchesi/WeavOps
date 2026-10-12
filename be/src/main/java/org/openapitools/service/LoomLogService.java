@@ -1,12 +1,11 @@
 package org.openapitools.service;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 import org.openapitools.domain.LoomLogEntity;
 import org.openapitools.repository.LoomLogRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.time.Instant;
 
 @Service
 public class LoomLogService {
@@ -36,11 +35,14 @@ public class LoomLogService {
     }
 
     public Optional<LoomLogEntity> update(String id, LoomLogEntity entity) {
-        return repository.findById(id).map(existing -> {
-            entity.setId(id);
-            entity.setCreatedAt(existing.getCreatedAt());
-            return repository.save(entity);
-        });
+        return repository
+                .findById(id)
+                .map(
+                        existing -> {
+                            entity.setId(id);
+                            entity.setCreatedAt(existing.getCreatedAt());
+                            return repository.save(entity);
+                        });
     }
 
     public boolean deleteById(String id) {

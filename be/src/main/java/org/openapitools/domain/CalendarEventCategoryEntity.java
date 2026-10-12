@@ -5,8 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "calendar-event-category")
 public class CalendarEventCategoryEntity {
-    @Id
-    private String id;
+    @Id private String id;
 
     private String name;
     private String color;

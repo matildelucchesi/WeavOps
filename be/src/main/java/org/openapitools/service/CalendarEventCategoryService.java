@@ -1,13 +1,12 @@
 package org.openapitools.service;
 
+import java.util.List;
+import java.util.Optional;
 import org.openapitools.domain.CalendarEventCategoryEntity;
 import org.openapitools.domain.CalendarEventEntity;
 import org.openapitools.repository.CalendarEventCategoryRepository;
 import org.openapitools.repository.CalendarEventRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CalendarEventCategoryService {
@@ -16,8 +15,7 @@ public class CalendarEventCategoryService {
 
     public CalendarEventCategoryService(
             CalendarEventCategoryRepository repository,
-            CalendarEventRepository calendarEventRepository
-    ) {
+            CalendarEventRepository calendarEventRepository) {
         this.repository = repository;
         this.calendarEventRepository = calendarEventRepository;
     }
@@ -35,23 +33,26 @@ public class CalendarEventCategoryService {
         return repository.save(entity);
     }
 
-    public Optional<CalendarEventCategoryEntity> update(String id, CalendarEventCategoryEntity entity) {
+    public Optional<CalendarEventCategoryEntity> update(
+            String id, CalendarEventCategoryEntity entity) {
         if (isBlank(id) || entity == null) {
             return Optional.empty();
         }
 
-        return repository.findById(id)
+        return repository
+                .findById(id)
                 .filter(existingEntity -> !Boolean.TRUE.equals(existingEntity.getStandard()))
-                .map(existingEntity -> {
-                    entity.setId(id);
-                    entity.setStandard(false);
-                    return repository.save(entity);
-                });
+                .map(
+                        existingEntity -> {
+                            entity.setId(id);
+                            entity.setStandard(false);
+                            return repository.save(entity);
+                        });
     }
 
     public boolean deleteById(String id) {
-        Optional<CalendarEventCategoryEntity> category = findById(id)
-                .filter(entity -> !Boolean.TRUE.equals(entity.getStandard()));
+        Optional<CalendarEventCategoryEntity> category =
+                findById(id).filter(entity -> !Boolean.TRUE.equals(entity.getStandard()));
 
         if (category.isEmpty()) {
             return false;

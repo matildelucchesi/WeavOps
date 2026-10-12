@@ -46,3 +46,22 @@ properties:
   isLate:
     type: boolean
     default: false
+  warpWeight:
+    type: number
+    minimum: 0
+    description: Peso di ordito dell'intero articolo in kg.
+  weftWeight:
+    type: number
+    minimum: 0
+    description: Peso di trama dell'intero articolo in kg.
+  isCertified:
+    type: string
+    enum: [ALL, NONE, PARTIAL]
+    description: Tutte, nessuna o alcune pezze certificate.
+  certificationId:
+    type: string
+    description: Identificativo della Certification selezionata.
+  totalWeight:
+    type: number
+    readOnly: true
+    description: Somma del peso di ordito e trama in kg; assente se uno dei pesi non è specificato.

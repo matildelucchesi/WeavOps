@@ -1,5 +1,7 @@
 package org.openapitools.controller;
 
+import jakarta.validation.Valid;
+import java.util.List;
 import org.openapitools.api.ArrangementsApi;
 import org.openapitools.mapper.ArrangementMapper;
 import org.openapitools.model.Arrangement;
@@ -9,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
-import java.util.List;
 
 @RestController
 public class ArrangementController implements ArrangementsApi {
@@ -38,13 +37,15 @@ public class ArrangementController implements ArrangementsApi {
     }
 
     @Override
-    public ResponseEntity<Arrangement> createArrangement(@Valid @RequestBody Arrangement arrangement) {
+    public ResponseEntity<Arrangement> createArrangement(
+            @Valid @RequestBody Arrangement arrangement) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(mapper.toDto(service.save(mapper.toEntity(arrangement))));
     }
 
     @Override
-    public ResponseEntity<Arrangement> updateArrangement(@PathVariable("id") String id, @Valid @RequestBody Arrangement arrangement) {
+    public ResponseEntity<Arrangement> updateArrangement(
+            @PathVariable("id") String id, @Valid @RequestBody Arrangement arrangement) {
         return service.update(id, mapper.toEntity(arrangement))
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)

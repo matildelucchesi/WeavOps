@@ -22,8 +22,7 @@ public class CorsConfig {
                                 "http://192.168.1.16:4200",
                                 "http://10.210.253.26:4200",
                                 "http://127.0.0.1:3000",
-                                "http://127.0.0.1:4200"
-                        )
+                                "http://127.0.0.1:4200")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*");
             }

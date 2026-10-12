@@ -1,11 +1,16 @@
 package org.openapitools.service;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.openapitools.domain.ArrangementEntity;
 import org.openapitools.domain.CustomerEntity;
 import org.openapitools.domain.ItemEntity;
 import org.openapitools.model.Arrangement;
 import org.openapitools.model.CreateItemWithArrangementRequest;
-import org.openapitools.model.Customer;
 import org.openapitools.model.Item;
 import org.openapitools.model.ProductionAdvice;
 import org.openapitools.repository.ItemRepository;
@@ -13,30 +18,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 @Service
 public class ItemService {
     private static final Instant TEMPORARY_ITEM_EXPECTED_END_DATE = Instant.EPOCH;
 
-    @Autowired
-    private CustomerService customerService;
+    @Autowired private CustomerService customerService;
 
-    @Autowired
-    private ArrangementService arrangementService;
+    @Autowired private ArrangementService arrangementService;
+
+    @Autowired private org.openapitools.repository.CertificationRepository certificationRepository;
 
     private final ItemRepository repository;
     private final ProductionForecastService productionForecastService;
 
     public ItemService(
-            ItemRepository repository,
-            ProductionForecastService productionForecastService
-    ) {
+            ItemRepository repository, ProductionForecastService productionForecastService) {
         this.repository = repository;
         this.productionForecastService = productionForecastService;
     }
@@ -46,11 +42,12 @@ public class ItemService {
     }
 
     public ItemEntity save(ItemEntity item) {
+        validateCertification(item);
         ensureExpectedEndDate(item);
         return repository.save(item);
     }
 
-    public Optional<ItemEntity> findById(String id){
+    public Optional<ItemEntity> findById(String id) {
         return repository.findById(id);
     }
 
@@ -59,19 +56,21 @@ public class ItemService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Optional<ItemEntity> update(String id, ItemEntity entity){
+    public Optional<ItemEntity> update(String id, ItemEntity entity) {
         if (!repository.existsById(id)) {
             return Optional.empty();
         }
         entity.setId(id);
+        validateCertification(entity);
         ensureExpectedEndDate(entity);
         ItemEntity savedItem = repository.save(entity);
 
-        return productionForecastService.recalculateProductionForecast(savedItem.getId())
+        return productionForecastService
+                .recalculateProductionForecast(savedItem.getId())
                 .or(() -> Optional.of(savedItem));
     }
 
-    public boolean deleteById(String id){
+    public boolean deleteById(String id) {
         if (!repository.existsById(id)) {
             return false;
         }
@@ -79,7 +78,7 @@ public class ItemService {
         return true;
     }
 
-    public boolean existsById(String id){
+    public boolean existsById(String id) {
         return repository.existsById(id);
     }
 
@@ -88,7 +87,8 @@ public class ItemService {
             return Optional.empty();
         }
 
-        return repository.findById(itemId)
+        return repository
+                .findById(itemId)
                 .map(item -> Math.max(getTotalMeters(item) - getMetersRun(item), 0));
     }
 
@@ -110,12 +110,13 @@ public class ItemService {
             return 0;
         }
 
-        List<String> sanitizedIds = ids.stream()
-                .filter(Objects::nonNull)
-                .map(String::trim)
-                .filter(id -> !id.isEmpty())
-                .distinct()
-                .toList();
+        List<String> sanitizedIds =
+                ids.stream()
+                        .filter(Objects::nonNull)
+                        .map(String::trim)
+                        .filter(id -> !id.isEmpty())
+                        .distinct()
+                        .toList();
 
         if (sanitizedIds.isEmpty()) {
             return 0;
@@ -134,12 +135,14 @@ public class ItemService {
 
         String customerName = request.getCustomerName().trim();
 
-        CustomerEntity customer = customerService.findByName(customerName)
-                .orElseGet(() -> {
-                    CustomerEntity newCustomer = new CustomerEntity();
-                    newCustomer.setName(customerName);
-                    return customerService.save(newCustomer);
-                });
+        CustomerEntity customer =
+                customerService
+                        .findByName(customerName)
+                        .orElseThrow(
+                                () ->
+                                        new DestinationValidationException(
+                                                org.springframework.http.HttpStatus.BAD_REQUEST,
+                                                "Creare prima il cliente con la partita IVA nella sezione Clienti."));
 
         ArrangementEntity arrangement = new ArrangementEntity();
         arrangement.setItemName(arrangementRequest.getItemName().trim());
@@ -162,16 +165,42 @@ public class ItemService {
         ArrangementEntity savedArrangement = arrangementService.save(arrangement);
 
         ItemEntity item = new ItemEntity();
+        item.setWarpWeight(request.getWarpWeight());
+        item.setWeftWeight(request.getWeftWeight());
+        item.setIsCertified(
+                request.getIsCertified() == null
+                        ? null
+                        : Item.IsCertifiedEnum.fromValue(request.getIsCertified().getValue()));
+        item.setCertificationId(request.getCertificationId());
+        validateCertification(item);
         item.setArrangementId(savedArrangement.getId());
         item.setCustomerId(customer.getId());
         item.setState(Item.StateEnum.INITIALIZED);
         item.setIsArchived(false);
         item.setExpectedEndDate(TEMPORARY_ITEM_EXPECTED_END_DATE);
 
-        double totalMeters = arrangementRequest.getPiecesCount() * arrangementRequest.getPieceLength();
+        double totalMeters =
+                arrangementRequest.getPiecesCount() * arrangementRequest.getPieceLength();
         item.setTotalMeters(totalMeters);
 
         return repository.save(item);
+    }
+
+    private void validateCertification(ItemEntity item) {
+        if ((item.getWarpWeight() != null && item.getWarpWeight().signum() < 0)
+                || (item.getWeftWeight() != null && item.getWeftWeight().signum() < 0)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "I pesi devono essere non negativi");
+        }
+        if (item.getIsCertified() == Item.IsCertifiedEnum.NONE) {
+            item.setCertificationId(null);
+        }
+        if (item.getCertificationId() != null
+                && !certificationRepository.existsById(item.getCertificationId())) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST, "Certificazione inesistente");
+        }
     }
 
     private void ensureExpectedEndDate(ItemEntity item) {
@@ -196,12 +225,17 @@ public class ItemService {
         return repository.findAllNotArchived();
     }
 
-    public void addMeters(String id, Double meters){
-        this.repository.findById(id).ifPresent(itemEntity -> {
-            Double currentMetersRun = itemEntity.getMetersRun() != null ? itemEntity.getMetersRun() : 0d;
-            itemEntity.setMetersRun(currentMetersRun + meters);
-            this.repository.save(itemEntity);
-        });
+    public void addMeters(String id, Double meters) {
+        this.repository
+                .findById(id)
+                .ifPresent(
+                        itemEntity -> {
+                            Double currentMetersRun =
+                                    itemEntity.getMetersRun() != null
+                                            ? itemEntity.getMetersRun()
+                                            : 0d;
+                            itemEntity.setMetersRun(currentMetersRun + meters);
+                            this.repository.save(itemEntity);
+                        });
     }
-
 }

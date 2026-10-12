@@ -1,0 +1,30 @@
+@if (piecesCount > 0) {
+  <section class="fabric-fields" aria-label="Dati della Tela prodotta">
+    <h3>Tela prodotta</h3>
+    <label for="fabricCode">Codice Tela</label>
+    <input id="fabricCode" name="fabricCode" [(ngModel)]="code" [ngModelOptions]="{standalone: true}" required autocomplete="off" [readonly]="!!process?.fabricCode">
+    <div class="quantities">
+      <div><span>Pezze prodotte</span><strong>{{ piecesCount }}</strong></div>
+      <div><span>Metri per pezza</span><strong>{{ metersPerPiece | number:'1.0-3' }} m</strong></div>
+      <div><span>Peso per pezza</span><strong>{{ weightPerPiece | number:'1.0-3' }} kg</strong></div>
+      <div><span>Metri totali</span><strong>{{ totalMeters | number:'1.0-3' }} m</strong></div>
+      <div><span>Peso totale</span><strong>{{ totalWeight | number:'1.0-3' }} kg</strong></div>
+    </div>
+    @if (item?.isCertified === 'PARTIAL') {
+      <label for="fabricCertificationId">Certificazione della Tela</label>
+      <select id="fabricCertificationId" name="fabricCertificationId" [(ngModel)]="certificationId" [ngModelOptions]="{standalone: true}">
+        <option [ngValue]="undefined">Nessuna certificazione</option>
+        @for (certification of certifications; track certification.id) {
+          <option [ngValue]="certification.id">{{ certification.value }} — {{ certification.description }}</option>
+        }
+      </select>
+    } @else {
+      <p>Certificazione: {{ certificationLabel }}</p>
+    }
+  </section>
+} @else {
+  <p>Non sono state prodotte pezze: la chiusura non genera una Tela.</p>
+}
+@if (submitted && validationMessage) {
+  <p class="validation-error" role="alert">{{ validationMessage }}</p>
+}

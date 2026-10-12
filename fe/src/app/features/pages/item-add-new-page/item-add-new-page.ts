@@ -1,4 +1,6 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { CertificationFacadeService } from '../../../services/certification-facade.service';
+import { Certification } from '../../../api/model/certification';
 import { FormsModule, NgForm, NgModel } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -48,6 +50,8 @@ import { CustomerItemHistoryFacadeService } from '../../../services/customer-ite
 export class ItemAddNewPage implements OnInit, OnDestroy {
   private readonly loaderDurationMs: number = 1200;
   private readonly saveTimeoutMs: number = 15000;
+  private readonly certificationService = inject(CertificationFacadeService);
+  public certifications: Certification[] = [];
   private readonly itemService = inject(ItemFacadeService);
   private readonly customerService = inject(CustomerFacadeService);
   private readonly customerItemHistoryService = inject(CustomerItemHistoryFacadeService);
@@ -58,6 +62,26 @@ export class ItemAddNewPage implements OnInit, OnDestroy {
   private isLoaderFinished: boolean = false;
   private pendingSnackBar: (() => void) | null = null;
 
+  public warpWeight: number | null = null;
+  public weftWeight: number | null = null;
+  public isCertified: Item.IsCertifiedEnum | undefined;
+  public certificationId: string | undefined;
+  public readonly displayCertificationState = (state: Item.IsCertifiedEnum | undefined): string =>
+    state === 'ALL' ? 'Tutte' : state === 'NONE' ? 'Nessuna' : state === 'PARTIAL' ? 'Alcune' : 'Non specificato';
+
+  public get certificationStateLabel(): string {
+    return this.displayCertificationState(this.isCertified);
+  }
+
+  public selectCertificationState(state: Item.IsCertifiedEnum | undefined): void {
+    this.isCertified = state;
+    if (state !== 'ALL' && state !== 'PARTIAL') this.certificationId = undefined;
+  }
+
+  public get totalWeight(): number | null {
+    if (this.warpWeight == null || this.weftWeight == null) return null;
+    return Number((Number(this.warpWeight) + Number(this.weftWeight)).toPrecision(15));
+  }
   public itemName: string = '';
   public customerName: string = '';
   public piecesCount: number | null = null; //numero pezze
@@ -78,6 +102,7 @@ export class ItemAddNewPage implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.loadCustomers();
+    this.certificationService.getAll().subscribe({next: values => this.certifications = values, error: () => this.snackBar.open('Impossibile caricare le certificazioni', 'Chiudi')});
   }
 
   public ngOnDestroy(): void {
@@ -148,6 +173,10 @@ export class ItemAddNewPage implements OnInit, OnDestroy {
   private persistNewItem(schedule: ProductionSchedule): void {
     this.showLoader();
     this.itemService.createItemWithArrangement({
+      warpWeight: this.warpWeight ?? undefined,
+      weftWeight: this.weftWeight ?? undefined,
+      isCertified: this.isCertified,
+      certificationId: this.isCertified === 'ALL' || this.isCertified === 'PARTIAL' ? this.certificationId : undefined,
       customerName: this.customerName.trim(),
       arrangement: {
         itemName: this.itemName.trim(),

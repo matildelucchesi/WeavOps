@@ -1,15 +1,13 @@
 package org.openapitools.domain;
 
+import java.time.Instant;
 import org.openapitools.model.CalendarEvent;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
-
 @Document(collection = "calendar-event")
 public class CalendarEventEntity {
-    @Id
-    private String id;
+    @Id private String id;
 
     String description;
     Instant date;
@@ -21,7 +19,7 @@ public class CalendarEventEntity {
     String arrangementId;
     String categoryId;
 
-    //getter & setter
+    // getter & setter
     public String getCategoryId() {
         return categoryId;
     }

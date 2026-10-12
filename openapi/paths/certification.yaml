@@ -1,0 +1,33 @@
+/certifications:
+  get:
+    tags: [Certification]
+    operationId: getCertifications
+    responses:
+      '200':
+        description: Elenco delle certificazioni disponibili.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/certification.yaml'
+  post:
+    tags: [Certification]
+    operationId: createCertification
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/certification.yaml'
+    responses:
+      '201':
+        description: Certificazione creata.
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/certification.yaml'
+      '400':
+        description: Codice e descrizione obbligatori.
+      '409':
+        description: Codice certificazione già presente.

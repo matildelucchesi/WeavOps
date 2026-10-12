@@ -1,11 +1,10 @@
 package org.openapitools.service;
 
+import java.util.List;
+import java.util.Optional;
 import org.openapitools.domain.ReferentEntity;
 import org.openapitools.repository.ReferentRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ReferentService {
@@ -23,11 +22,11 @@ public class ReferentService {
         return repository.save(referent);
     }
 
-    public Optional<ReferentEntity> findById(String id){
+    public Optional<ReferentEntity> findById(String id) {
         return repository.findById(id);
     }
 
-    public Optional<ReferentEntity> update(String id, ReferentEntity entity){
+    public Optional<ReferentEntity> update(String id, ReferentEntity entity) {
         if (!repository.existsById(id)) {
             return Optional.empty();
         }
@@ -35,7 +34,7 @@ public class ReferentService {
         return Optional.of(repository.save(entity));
     }
 
-    public boolean deleteById(String id){
+    public boolean deleteById(String id) {
         if (!repository.existsById(id)) {
             return false;
         }
@@ -43,7 +42,7 @@ public class ReferentService {
         return true;
     }
 
-    public boolean existsById(String id){
+    public boolean existsById(String id) {
         return repository.existsById(id);
     }
 }

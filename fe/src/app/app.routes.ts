@@ -67,6 +67,37 @@ export const routes: Routes = [
         loadComponent: () => import('./features/pages/customer-page/customer-page').then((page) => page.CustomerPage),
       },
       {
+        path: 'destinazioni',
+        loadComponent: () => import('./features/pages/destinations-page/destinations-page').then(page => page.DestinationsPage),
+      },
+      {
+        path: 'certificazioni',
+        loadComponent: () => import('./features/pages/certifications-page/certifications-page').then(page => page.CertificationsPage),
+      },
+      {
+        path: 'audit',
+        loadComponent: () => import('./features/pages/audit-page/audit-page').then(page => page.AuditPage),
+      },
+      {
+        path: 'tariffe',
+        loadComponent: () => import('./features/pages/rates-page/rates-page').then(page => page.RatesPage),
+      },
+      {
+        path: 'documenti',
+        redirectTo: 'documenti/documenti-di-trasporto',
+        pathMatch: 'full',
+      },
+      {
+        path: 'documenti/documenti-di-trasporto',
+        data: {title: 'DDT', icon: 'local_shipping'},
+        loadComponent: () => import('./features/pages/documents-page/delivery-notes-page').then(page => page.DeliveryNotesPage),
+      },
+      {
+        path: 'documenti/fatture',
+        data: {title: 'Fatture', icon: 'receipt_long'},
+        loadComponent: () => import('./features/pages/documents-page/documents-page').then(page => page.DocumentsPage),
+      },
+      {
         path: 'aggiungi-cliente',
         loadComponent: () => import('./features/pages/customer-details-page/customer-details-page').then((page) => page.CustomerDetailsPage),
       },

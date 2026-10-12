@@ -1,6 +1,8 @@
 package org.openapitools.configuration;
 
 import com.mongodb.ConnectionString;
+import java.io.Console;
+import java.util.Arrays;
 import org.openapitools.domain.UserEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
@@ -14,9 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Console;
-import java.util.Arrays;
-
 @Component
 public class AdminProvisioningService {
     private static final String COORDINATION_COLLECTION = "weavops_provisioning";
@@ -28,8 +27,7 @@ public class AdminProvisioningService {
     public AdminProvisioningService(
             MongoTemplate mongoTemplate,
             PasswordEncoder passwordEncoder,
-            @Value("${spring.data.mongodb.uri}") String mongoUri
-    ) {
+            @Value("${spring.data.mongodb.uri}") String mongoUri) {
         this.mongoTemplate = mongoTemplate;
         this.passwordEncoder = passwordEncoder;
         this.mongoUri = mongoUri;
@@ -37,11 +35,13 @@ public class AdminProvisioningService {
 
     public void runInteractive(Console console) {
         if (console == null) {
-            throw new IllegalStateException("Il comando create-admin richiede un terminale interattivo.");
+            throw new IllegalStateException(
+                    "Il comando create-admin richiede un terminale interattivo.");
         }
 
         ConnectionString connection = new ConnectionString(mongoUri);
-        console.printf("Database: %s%nDestinazione MongoDB: %s%n",
+        console.printf(
+                "Database: %s%nDestinazione MongoDB: %s%n",
                 mongoTemplate.getDb().getName(), String.join(", ", connection.getHosts()));
         String confirmation = console.readLine("Confermi la creazione del primo utente? (s/N): ");
         if (!"s".equalsIgnoreCase(confirmation == null ? "" : confirmation.strip())) {
@@ -51,7 +51,8 @@ public class AdminProvisioningService {
         ensureUsernameIndex();
         ensureCoordinationCollection();
 
-        String username = AdminCredentialsValidator.normalizeUsername(console.readLine("Username: "));
+        String username =
+                AdminCredentialsValidator.normalizeUsername(console.readLine("Username: "));
         char[] password = console.readPassword("Password: ");
         char[] repeatedPassword = console.readPassword("Conferma password: ");
         try {
@@ -62,14 +63,19 @@ public class AdminProvisioningService {
             provisionUser(username, password);
             console.printf("Utente %s creato correttamente.%n", username);
         } finally {
-            if (password != null) Arrays.fill(password, '\0');
-            if (repeatedPassword != null) Arrays.fill(repeatedPassword, '\0');
+            if (password != null) {
+                Arrays.fill(password, '\0');
+            }
+            if (repeatedPassword != null) {
+                Arrays.fill(repeatedPassword, '\0');
+            }
         }
     }
 
     private void ensureUsernameIndex() {
-        mongoTemplate.indexOps(UserEntity.class).ensureIndex(
-                new Index().on("username", Sort.Direction.ASC).unique());
+        mongoTemplate
+                .indexOps(UserEntity.class)
+                .ensureIndex(new Index().on("username", Sort.Direction.ASC).unique());
     }
 
     private void ensureCoordinationCollection() {
@@ -95,11 +101,11 @@ public class AdminProvisioningService {
         mongoTemplate.upsert(
                 Query.query(Criteria.where("_id").is("first-admin")),
                 new Update().inc("generation", 1),
-                COORDINATION_COLLECTION
-        );
+                COORDINATION_COLLECTION);
 
         if (mongoTemplate.count(new Query(), UserEntity.class) != 0) {
-            throw new IllegalStateException("Esistono già utenti. Nessun account è stato modificato.");
+            throw new IllegalStateException(
+                    "Esistono già utenti. Nessun account è stato modificato.");
         }
 
         UserEntity user = new UserEntity();
@@ -108,7 +114,8 @@ public class AdminProvisioningService {
         try {
             mongoTemplate.insert(user);
         } catch (DuplicateKeyException exception) {
-            throw new IllegalStateException("Username già presente o provisioning concorrente. Riprova.");
+            throw new IllegalStateException(
+                    "Username già presente o provisioning concorrente. Riprova.");
         }
     }
 }

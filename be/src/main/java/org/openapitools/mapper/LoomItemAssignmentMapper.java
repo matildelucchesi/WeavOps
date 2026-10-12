@@ -1,8 +1,6 @@
 package org.openapitools.mapper;
 
-import org.openapitools.domain.LoomEntity;
 import org.openapitools.domain.LoomItemAssignmentEntity;
-import org.openapitools.model.Loom;
 import org.openapitools.model.LoomItemAssignment;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +32,8 @@ public class LoomItemAssignmentMapper {
         entity.setItemId(dto.getItemId());
         entity.setProcessId(dto.getProcessId());
         entity.setStatus(dto.getStatus());
+        entity.setFabricCode(dto.getFabricCode());
+        entity.setFabricCertificationId(dto.getFabricCertificationId());
         return entity;
     }
 }
-

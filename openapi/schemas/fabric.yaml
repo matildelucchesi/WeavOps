@@ -1,0 +1,42 @@
+type: object
+description: Tela prodotta alla chiusura di un processo con almeno una pezza prodotta.
+properties:
+  id:
+    type: string
+    readOnly: true
+  code:
+    type: string
+    description: Codice univoco inserito manualmente alla chiusura.
+  itemId:
+    type: string
+  processId:
+    type: string
+    description: Processo di origine; una sola Tela per processo.
+  certificationId:
+    type: string
+  certificationValue:
+    type: string
+    description: Sigla della certificazione al momento della produzione.
+  piecesCount:
+    type: integer
+    minimum: 1
+  metersPerPiece:
+    type: number
+    description: Metri per pezza dalla disposizione al momento della chiusura.
+  weightPerPiece:
+    type: number
+    description: Kg per pezza = peso totale articolo / pezze previste nella disposizione.
+  totalMeters:
+    type: number
+    readOnly: true
+    description: Numero pezze prodotte moltiplicato per metri per pezza.
+  totalWeight:
+    type: number
+    readOnly: true
+    description: Numero pezze prodotte moltiplicato per kg per pezza.
+  producedAt:
+    type: string
+    format: date-time
+  status:
+    type: string
+    enum: [AVAILABLE, RESERVED, DELIVERED]

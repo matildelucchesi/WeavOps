@@ -56,6 +56,18 @@
     </form>
   </section>
 
+  <section class="profile-panel company-panel" aria-labelledby="company-title">
+    <div class="profile-panel-header">
+      <mat-icon class="company-icon">factory</mat-icon>
+      <h2 id="company-title">Informazioni azienda</h2>
+    </div>
+    <form class="profile-form" #companyForm="ngForm" (ngSubmit)="saveCompany()">
+      <label><span>Nome azienda</span><input name="companyName" [(ngModel)]="company.name" required maxlength="200" autocomplete="organization" [disabled]="isSaving || isLoadingCompany"></label>
+      <label><span>Partita IVA</span><input name="companyVatNumber" [(ngModel)]="company.vatNumber" required maxlength="100" pattern="[A-Za-z0-9]+" [disabled]="isSaving || isLoadingCompany"></label>
+      <div class="form-actions"><button class="primary-action" type="submit" [disabled]="isSaving || isLoadingCompany || !userId || companyForm.invalid">Salva modifiche</button></div>
+    </form>
+  </section>
+
   <section class="password-panel" aria-labelledby="password-title">
     <div class="password-panel-header">
       <mat-icon>lock</mat-icon>

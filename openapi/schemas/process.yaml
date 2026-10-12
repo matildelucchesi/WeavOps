@@ -50,5 +50,8 @@ properties:
     type: boolean
   gots:
     type: boolean
+  fabricCode:
+    type: string
+    description: Numero Tela prenotato alla creazione del processo.
   notes:
     type: string

@@ -3,6 +3,7 @@
   [horizontalPositions]="['2%','15%', '17%', '30%', '53%', '56%', '94%']">
 </app-decorative-lines-component>-->
 
+@if (!isDialog) {
 <div class="title-wrapper">
     @if (!isEditMode) {
       <app-title-page-component
@@ -13,7 +14,7 @@
         </app-title-page-component>  
     }@else {
         <app-title-page-component
-            title="Modifica Cliente"
+            title="Dati Cliente"
             iconName="group"
             [imageWidth]="40"
             [imageHeight]="40">
@@ -21,13 +22,12 @@
     }
 </div>
 
+}
 @if (isSaving()) {
   <app-loader-component [ariaLabel]="'Salvataggio cliente in corso'"></app-loader-component>
 }
 <div class="body">
-  <div class="button-wrapper">
-    <app-exit-button-component></app-exit-button-component>
-  </div>
+@if (!isDialog) { <div class="button-wrapper"><app-exit-button-component></app-exit-button-component></div> }
   <div class="data">
     <div class="text-pattern"></div>
     <div style="padding: 20px; padding-top: 0px;">
@@ -36,20 +36,27 @@
             <mat-icon class="icon">person_add</mat-icon>    
             <h3>Inserisci Dati Nuovo Cliente</h3>
         }@else{
-            <mat-icon class="icon">edit</mat-icon>    
-            <h3>Modifica Dati Cliente</h3>
+            <mat-icon class="icon">person</mat-icon>
+            <h3>Dati Cliente</h3>
+        }
+        @if (isEditMode && !isDialog && !isDirectEdit) {
+          <button type="button" class="toggle-modifications" [attr.aria-pressed]="modificationsEnabled"
+            [disabled]="isSaving() || isRequestPending" (click)="toggleModifications()">
+            {{ modificationsEnabled ? 'Disabilita modifiche' : 'Abilita modifiche' }}
+          </button>
         }
   </div>
     <div style="padding: 20px;">
         <form class="data-form" #customerForm="ngForm" novalidate>
-        <div class="customer-data">
+        <fieldset class="customer-fields" [disabled]="!canEdit || isSaving() || isRequestPending">
+        <div class="customer-data customer-identity">
             <div class="form-group">
                 <label for="name">Nome</label>
                 <input
                     type="text"
                     id="name"
                     name="customerName"
-                    [(ngModel)]="customerName"
+                    [ngModel]="customerName" (ngModelChange)="customerName = $event.toLocaleUpperCase('it')" class="uppercase-name"
                     #customerNameModel="ngModel"
                     required
                     [class.input-invalid]="shouldShowControlError(customerNameModel)">
@@ -81,6 +88,71 @@
                     </div>
                 </div>
             </div>
+          <div class="form-group">
+            <label for="vatNumber">Partita IVA</label>
+            <input id="vatNumber" name="vatNumber" [(ngModel)]="vatNumber" #vatNumberModel="ngModel"
+              required pattern="[A-Za-z0-9]+" [class.input-invalid]="shouldShowControlError(vatNumberModel)">
+            @if (shouldShowControlError(vatNumberModel)) { <mat-error class="validation-error">Inserire una partita IVA composta da lettere e cifre.</mat-error> }
+          </div>
+        </div>
+        <div class="customer-data customer-extra-data">
+          <div class="form-group destination-field">
+            <label id="destinationsLabel">Aziende di destinazione</label>
+            <mat-form-field appearance="outline">
+              <mat-select multiple name="destinationIds" [(ngModel)]="selectedDestinationIds" aria-labelledby="destinationsLabel"
+                [disabled]="!canEdit || isSaving() || isRequestPending || destinationsLoading || destinationsLoadError" (openedChange)="destinationSearch = ''"
+                placeholder="Seleziona aziende di destinazione">
+                <mat-select-trigger>{{ destinationSelectionLabel }}</mat-select-trigger>
+                <div class="destination-search" (click)="$event.stopPropagation()" (keydown)="onDestinationSearchKeydown($event)">
+                  <input aria-label="Cerca aziende di destinazione" placeholder="Cerca per nome o indirizzo"
+                    [(ngModel)]="destinationSearch" [ngModelOptions]="{standalone: true}" autocomplete="off">
+                </div>
+                @for (destination of destinations; track destination.id) {
+                  <mat-option [value]="destination.id" [style.display]="destinationMatchesSearch(destination) ? '' : 'none'">
+                    {{ destination.name }} — {{ destination.street }} {{ destination.streetNumber }}, {{ destination.postalCode }} {{ destination.city }} ({{ destination.provinceCode }})
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            @if (destinationsLoadError) { <p class="validation-error" role="alert">Impossibile caricare le destinazioni.</p> }
+            @else if (!destinationsLoading && !destinations.length) { <small>Crea le aziende nella sezione Destinazioni della pagina Clienti.</small> }
+
+          </div>
+          <div class="destination-summary">
+            @if (selectedDestinationIds.length) {
+              <div class="selected-destinations">
+                @for (destination of destinations; track destination.id) {
+                  @if (selectedDestinationIds.includes(destination.id!)) {
+                    <span>
+                      {{ destination.name }} — {{ destination.city }} ({{ destination.provinceCode }})
+                      <button type="button" class="remove-destination" [attr.aria-label]="'Rimuovi destinazione ' + destination.name"
+                        [disabled]="!canEdit || isSaving() || isRequestPending" (click)="removeDestination(destination.id!)">×</button>
+                    </span>
+                  }
+                }
+              </div>
+            }
+          </div>
+        </div>
+        <h3 style="font-size: 17px;">Indirizzo cliente</h3>
+        <div class="customer-address">
+          <div class="form-group"><label for="customer-street">Via/piazza</label>
+            <input id="customer-street" name="street" [ngModel]="street" (ngModelChange)="street = $event.toLocaleUpperCase('it')" style="text-transform: uppercase"  #streetModel="ngModel" [class.input-invalid]="shouldShowControlError(streetModel)">
+          </div>
+          <div class="form-group"><label for="customer-streetNumber">Numero civico</label>
+            <input id="customer-streetNumber" name="streetNumber" [ngModel]="streetNumber" (ngModelChange)="streetNumber = $event.toLocaleUpperCase('it')" style="text-transform: uppercase" placeholder="Numero o SNC" #streetNumberModel="ngModel" [class.input-invalid]="shouldShowControlError(streetNumberModel)">
+          </div>
+          <div class="form-group"><label for="customer-postalCode">CAP</label>
+            <input id="customer-postalCode" name="postalCode" [(ngModel)]="postalCode" pattern="([0-9]{5})?" maxlength="5" inputmode="numeric" #postalCodeModel="ngModel" [class.input-invalid]="shouldShowControlError(postalCodeModel)">
+            @if (shouldShowControlError(postalCodeModel)) { <mat-error class="validation-error">Inserire un CAP di 5 cifre.</mat-error> }
+          </div>
+          <div class="form-group"><label for="customer-city">Comune</label>
+            <input id="customer-city" name="city" [ngModel]="city" (ngModelChange)="city = $event.toLocaleUpperCase('it')" style="text-transform: uppercase"  #cityModel="ngModel" [class.input-invalid]="shouldShowControlError(cityModel)">
+          </div>
+          <div class="form-group"><label for="customer-provinceCode">Sigla provincia</label>
+            <input id="customer-provinceCode" name="provinceCode" [ngModel]="provinceCode" (ngModelChange)="provinceCode = $event.toUpperCase()" pattern="([A-Za-z]{2})?" maxlength="2" #provinceCodeModel="ngModel" [class.input-invalid]="shouldShowControlError(provinceCodeModel)">
+            @if (shouldShowControlError(provinceCodeModel)) { <mat-error class="validation-error">Inserire una provincia di 2 lettere.</mat-error> }
+          </div>
         </div>
         <h3 style="font-size: 17px;">Referenti</h3>
         <div class="referents-data-wrapper">
@@ -219,13 +291,17 @@
                 </span>
             </div>
         </div>
+        </fieldset>
     </form>
+    @if (canEdit) {
     <div class="button-wrapper">
+        @if (isDialog) { <button type="button" class="dialog-cancel" [disabled]="isSaving() || isRequestPending" (click)="dialogRef?.close(false)">Annulla</button> }
         <app-button-general-action-component
         label="Salva"
         className="save-button"
         (click)="createNewCustomer(customerForm)"></app-button-general-action-component>
     </div>
+    }
     </div>
     </div>
   </div>

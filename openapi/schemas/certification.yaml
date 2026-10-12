@@ -1,0 +1,12 @@
+type: object
+required: [value, description]
+properties:
+  id:
+    type: string
+    readOnly: true
+    description: Identificativo MongoDB generato dal server.
+  value:
+    type: string
+    minLength: 1
+  description:
+    type: string

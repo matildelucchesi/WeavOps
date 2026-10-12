@@ -1,12 +1,18 @@
 package org.openapitools.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.openapitools.domain.ItemEntity;
 import org.openapitools.domain.LoomEntity;
 import org.openapitools.domain.LoomItemAssignmentEntity;
 import org.openapitools.domain.ProcessEntity;
 import org.openapitools.mapper.LoomMapper;
-import org.openapitools.model.Item;
 import org.openapitools.model.Loom;
 import org.openapitools.model.LoomItemAssignment;
 import org.openapitools.repository.LoomItemAssignmentRepository;
@@ -14,19 +20,15 @@ import org.openapitools.repository.LoomProcessHistoryRepository;
 import org.openapitools.repository.LoomRepository;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 class LoomDeletionServiceTest {
     @Test
-    void closingRunningAssignmentKeepsProductionAndLoomSnapshotInItemHistory() {
+    void
+            refusesLoomDeletionUntilProducedPiecesHaveBeenRegisteredAndPreservesEmptyProductionHistory() {
         LoomRepository loomRepository = mock(LoomRepository.class);
-        LoomItemAssignmentRepository assignmentRepository = mock(LoomItemAssignmentRepository.class);
-        LoomProcessHistoryRepository loomProcessHistoryRepository = mock(LoomProcessHistoryRepository.class);
+        LoomItemAssignmentRepository assignmentRepository =
+                mock(LoomItemAssignmentRepository.class);
+        LoomProcessHistoryRepository loomProcessHistoryRepository =
+                mock(LoomProcessHistoryRepository.class);
         ItemService itemService = mock(ItemService.class);
         ProcessService processService = mock(ProcessService.class);
         ProductionForecastService forecastService = mock(ProductionForecastService.class);
@@ -64,22 +66,33 @@ class LoomDeletionServiceTest {
         ReflectionTestUtils.setField(service, "processService", processService);
         ReflectionTestUtils.setField(service, "productionForecastService", forecastService);
         ReflectionTestUtils.setField(service, "calendarEventService", calendarEventService);
-        ReflectionTestUtils.setField(service, "loomProcessHistoryRepository", loomProcessHistoryRepository);
+        ReflectionTestUtils.setField(
+                service, "loomProcessHistoryRepository", loomProcessHistoryRepository);
         ReflectionTestUtils.setField(service, "loomMapper", new LoomMapper());
 
+        assertThatThrownBy(() -> service.deleteById("loom-1"))
+                .isInstanceOf(org.springframework.web.server.ResponseStatusException.class)
+                .hasMessageContaining("codice Tela");
+        verify(processService, never()).save(any());
+        verify(loomRepository, never()).delete(any());
+        assertThat(assignment.getStatus()).isEqualTo(LoomItemAssignment.StatusEnum.RUNNING);
+        process.setPiecesRun(0);
+        process.setMetersRun(0d);
         assertThat(service.deleteById("loom-1")).isTrue();
 
         assertThat(assignment.getStatus()).isEqualTo(LoomItemAssignment.StatusEnum.ABANDONED);
         assertThat(assignment.getLoomId()).isNull();
-        assertThat(process.getTotalMeters()).isEqualTo(125d);
-        assertThat(process.getTotalPieces()).isEqualTo(5);
+        assertThat(process.getTotalMeters()).isEqualTo(0d);
+        assertThat(process.getTotalPieces()).isEqualTo(0);
         assertThat(process.getEndDate()).isNotNull();
         assertThat(process.getExpectedEndDate()).isNull();
-        assertThat(process.getLoom()).satisfies(snapshot -> {
-            assertThat(snapshot.getId()).isEqualTo("loom-1");
-            assertThat(snapshot.getSerialNumber()).isEqualTo("TEL-42");
-            assertThat(snapshot.getStatus()).isEqualTo(Loom.StatusEnum.STOPPED);
-        });
+        assertThat(process.getLoom())
+                .satisfies(
+                        snapshot -> {
+                            assertThat(snapshot.getId()).isEqualTo("loom-1");
+                            assertThat(snapshot.getSerialNumber()).isEqualTo("TEL-42");
+                            assertThat(snapshot.getStatus()).isEqualTo(Loom.StatusEnum.STOPPED);
+                        });
         assertThat(item.getProcessing()).containsExactly(process);
         verify(itemService).save(item);
         verify(assignmentRepository).save(assignment);

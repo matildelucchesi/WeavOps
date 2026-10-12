@@ -5,35 +5,32 @@
  */
 package org.openapitools.api;
 
-import org.openapitools.model.CalendarEventCategory;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.util.List;
+import java.util.Optional;
+import org.openapitools.model.CalendarEventCategory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import jakarta.annotation.Generated;
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-20T09:27:07.285474300+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(
+        value = "org.openapitools.codegen.languages.SpringCodegen",
+        date = "2026-07-20T09:27:07.285474300+02:00[Europe/Rome]",
+        comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "CalendarEventCategory", description = "the CalendarEventCategory API")
 public interface CalendarEventCategoriesApi {
@@ -43,213 +40,252 @@ public interface CalendarEventCategoriesApi {
     }
 
     String PATH_CREATE_CALENDAR_EVENT_CATEGORY = "/calendar-event-categories";
+
     /**
      * POST /calendar-event-categories : Crea una categoria evento calendario
      *
-     * @param calendarEventCategory  (required)
-     * @return Categoria evento calendario creata (status code 201)
-     *         or Richiesta non valida (status code 400)
+     * @param calendarEventCategory (required)
+     * @return Categoria evento calendario creata (status code 201) or Richiesta non valida (status
+     *     code 400)
      */
     @Operation(
-        operationId = "createCalendarEventCategory",
-        summary = "Crea una categoria evento calendario",
-        tags = { "CalendarEventCategory" },
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Categoria evento calendario creata", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = CalendarEventCategory.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "createCalendarEventCategory",
+            summary = "Crea una categoria evento calendario",
+            tags = {"CalendarEventCategory"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Categoria evento calendario creata",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CalendarEventCategory.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.POST,
-        value = CalendarEventCategoriesApi.PATH_CREATE_CALENDAR_EVENT_CATEGORY,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.POST,
+            value = CalendarEventCategoriesApi.PATH_CREATE_CALENDAR_EVENT_CATEGORY,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<CalendarEventCategory> createCalendarEventCategory(
-        @Parameter(name = "CalendarEventCategory", description = "", required = true) @Valid @RequestBody CalendarEventCategory calendarEventCategory
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"standard\" : true, \"color\" : \"color\", \"name\" : \"name\", \"id\" : \"id\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "CalendarEventCategory", description = "", required = true)
+                    @Valid
+                    @RequestBody
+                    CalendarEventCategory calendarEventCategory) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"standard\" : true, \"color\" : \"color\", \"name\" : \"name\", \"id\" : \"id\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_DELETE_CALENDAR_EVENT_CATEGORY = "/calendar-event-categories/{id}";
+
     /**
      * DELETE /calendar-event-categories/{id} : Elimina una categoria evento calendario
      *
-     * @param id  (required)
-     * @return Categoria evento calendario eliminata (status code 204)
-     *         or Categoria evento calendario non trovata (status code 404)
+     * @param id (required)
+     * @return Categoria evento calendario eliminata (status code 204) or Categoria evento
+     *     calendario non trovata (status code 404)
      */
     @Operation(
-        operationId = "deleteCalendarEventCategory",
-        summary = "Elimina una categoria evento calendario",
-        tags = { "CalendarEventCategory" },
-        responses = {
-            @ApiResponse(responseCode = "204", description = "Categoria evento calendario eliminata"),
-            @ApiResponse(responseCode = "404", description = "Categoria evento calendario non trovata")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "deleteCalendarEventCategory",
+            summary = "Elimina una categoria evento calendario",
+            tags = {"CalendarEventCategory"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "204",
+                        description = "Categoria evento calendario eliminata"),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Categoria evento calendario non trovata")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.DELETE,
-        value = CalendarEventCategoriesApi.PATH_DELETE_CALENDAR_EVENT_CATEGORY
-    )
+            method = RequestMethod.DELETE,
+            value = CalendarEventCategoriesApi.PATH_DELETE_CALENDAR_EVENT_CATEGORY)
     default ResponseEntity<Void> deleteCalendarEventCategory(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_CALENDAR_EVENT_CATEGORIES = "/calendar-event-categories";
+
     /**
      * GET /calendar-event-categories : Recupera tutte le categorie evento calendario
      *
      * @return Lista categorie evento calendario (status code 200)
      */
     @Operation(
-        operationId = "getCalendarEventCategories",
-        summary = "Recupera tutte le categorie evento calendario",
-        tags = { "CalendarEventCategory" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Lista categorie evento calendario", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CalendarEventCategory.class)))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getCalendarEventCategories",
+            summary = "Recupera tutte le categorie evento calendario",
+            tags = {"CalendarEventCategory"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Lista categorie evento calendario",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array =
+                                            @ArraySchema(
+                                                    schema =
+                                                            @Schema(
+                                                                    implementation =
+                                                                            CalendarEventCategory
+                                                                                    .class)))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = CalendarEventCategoriesApi.PATH_GET_CALENDAR_EVENT_CATEGORIES,
-        produces = { "application/json" }
-    )
-    default ResponseEntity<List<CalendarEventCategory>> getCalendarEventCategories(
-        
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"standard\" : true, \"color\" : \"color\", \"name\" : \"name\", \"id\" : \"id\" }, { \"standard\" : true, \"color\" : \"color\", \"name\" : \"name\", \"id\" : \"id\" } ]";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            method = RequestMethod.GET,
+            value = CalendarEventCategoriesApi.PATH_GET_CALENDAR_EVENT_CATEGORIES,
+            produces = {"application/json"})
+    default ResponseEntity<List<CalendarEventCategory>> getCalendarEventCategories() {
 
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "[ { \"standard\" : true, \"color\" : \"color\", \"name\" : \"name\", \"id\" : \"id\" }, { \"standard\" : true, \"color\" : \"color\", \"name\" : \"name\", \"id\" : \"id\" } ]";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
     String PATH_GET_CALENDAR_EVENT_CATEGORY_BY_ID = "/calendar-event-categories/{id}";
+
     /**
      * GET /calendar-event-categories/{id} : Recupera una categoria evento calendario tramite ID
      *
-     * @param id  (required)
-     * @return Categoria evento calendario trovata (status code 200)
-     *         or Categoria evento calendario non trovata (status code 404)
+     * @param id (required)
+     * @return Categoria evento calendario trovata (status code 200) or Categoria evento calendario
+     *     non trovata (status code 404)
      */
     @Operation(
-        operationId = "getCalendarEventCategoryById",
-        summary = "Recupera una categoria evento calendario tramite ID",
-        tags = { "CalendarEventCategory" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Categoria evento calendario trovata", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = CalendarEventCategory.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Categoria evento calendario non trovata")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getCalendarEventCategoryById",
+            summary = "Recupera una categoria evento calendario tramite ID",
+            tags = {"CalendarEventCategory"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Categoria evento calendario trovata",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CalendarEventCategory.class))
+                        }),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Categoria evento calendario non trovata")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = CalendarEventCategoriesApi.PATH_GET_CALENDAR_EVENT_CATEGORY_BY_ID,
-        produces = { "application/json" }
-    )
+            method = RequestMethod.GET,
+            value = CalendarEventCategoriesApi.PATH_GET_CALENDAR_EVENT_CATEGORY_BY_ID,
+            produces = {"application/json"})
     default ResponseEntity<CalendarEventCategory> getCalendarEventCategoryById(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"standard\" : true, \"color\" : \"color\", \"name\" : \"name\", \"id\" : \"id\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"standard\" : true, \"color\" : \"color\", \"name\" : \"name\", \"id\" : \"id\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_UPDATE_CALENDAR_EVENT_CATEGORY = "/calendar-event-categories/{id}";
+
     /**
      * PUT /calendar-event-categories/{id} : Aggiorna una categoria evento calendario
      *
-     * @param id  (required)
-     * @param calendarEventCategory  (required)
-     * @return Categoria evento calendario aggiornata (status code 200)
-     *         or Richiesta non valida (status code 400)
-     *         or Categoria evento calendario non trovata (status code 404)
+     * @param id (required)
+     * @param calendarEventCategory (required)
+     * @return Categoria evento calendario aggiornata (status code 200) or Richiesta non valida
+     *     (status code 400) or Categoria evento calendario non trovata (status code 404)
      */
     @Operation(
-        operationId = "updateCalendarEventCategory",
-        summary = "Aggiorna una categoria evento calendario",
-        tags = { "CalendarEventCategory" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Categoria evento calendario aggiornata", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = CalendarEventCategory.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
-            @ApiResponse(responseCode = "404", description = "Categoria evento calendario non trovata")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "updateCalendarEventCategory",
+            summary = "Aggiorna una categoria evento calendario",
+            tags = {"CalendarEventCategory"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Categoria evento calendario aggiornata",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CalendarEventCategory.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Categoria evento calendario non trovata")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.PUT,
-        value = CalendarEventCategoriesApi.PATH_UPDATE_CALENDAR_EVENT_CATEGORY,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.PUT,
+            value = CalendarEventCategoriesApi.PATH_UPDATE_CALENDAR_EVENT_CATEGORY,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<CalendarEventCategory> updateCalendarEventCategory(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id,
-        @Parameter(name = "CalendarEventCategory", description = "", required = true) @Valid @RequestBody CalendarEventCategory calendarEventCategory
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"standard\" : true, \"color\" : \"color\", \"name\" : \"name\", \"id\" : \"id\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id,
+            @Parameter(name = "CalendarEventCategory", description = "", required = true)
+                    @Valid
+                    @RequestBody
+                    CalendarEventCategory calendarEventCategory) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"standard\" : true, \"color\" : \"color\", \"name\" : \"name\", \"id\" : \"id\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

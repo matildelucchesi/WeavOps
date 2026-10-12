@@ -15,6 +15,14 @@ export interface LoomItemAssignment {
     itemId: string;
     processId?: string;
     status?: LoomItemAssignment.StatusEnum;
+    /**
+     * Codice Tela obbligatorio alla chiusura con pezze prodotte.
+     */
+    fabricCode?: string;
+    /**
+     * Certificazione della Tela scelta solo per articoli PARTIAL; assente per Tela non certificata.
+     */
+    fabricCertificationId?: string;
 }
 export namespace LoomItemAssignment {
     export const StatusEnum = {

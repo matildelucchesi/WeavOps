@@ -1,12 +1,11 @@
 package org.openapitools.mapper;
 
-import org.openapitools.domain.ArrangementEntity;
-import org.openapitools.model.Arrangement;
-import org.springframework.stereotype.Component;
-
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import org.openapitools.domain.ArrangementEntity;
+import org.openapitools.model.Arrangement;
+import org.springframework.stereotype.Component;
 
 @Component
 public class ArrangementMapper {

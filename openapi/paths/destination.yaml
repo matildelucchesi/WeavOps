@@ -1,0 +1,80 @@
+/destinations:
+  get:
+    tags: [Destination]
+    operationId: getDestinations
+    responses:
+      '200':
+        description: Elenco delle aziende di destinazione.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/destination.yaml'
+  post:
+    tags: [Destination]
+    operationId: createDestination
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/destination.yaml'
+    responses:
+      '201':
+        description: Destinazione creata.
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/destination.yaml'
+      '400':
+        description: Dati non validi.
+/destinations/{id}:
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  get:
+    tags: [Destination]
+    operationId: getDestinationById
+    responses:
+      '200':
+        description: Destinazione.
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/destination.yaml'
+      '404':
+        description: Destinazione non trovata.
+  put:
+    tags: [Destination]
+    operationId: updateDestination
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/destination.yaml'
+    responses:
+      '200':
+        description: Destinazione.
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/destination.yaml'
+      '400':
+        description: Dati non validi.
+      '404':
+        description: Destinazione non trovata.
+  delete:
+    tags: [Destination]
+    operationId: deleteDestination
+    responses:
+      '204':
+        description: Destinazione eliminata.
+      '409':
+        description: Destinazione ancora associata a uno o più clienti.
+      '404':
+        description: Destinazione non trovata.

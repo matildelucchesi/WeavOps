@@ -11,3 +11,19 @@ properties:
     description: Nome esatto del customer da associare all'item.
   arrangement:
     $ref: './arrangement.yaml'
+
+  warpWeight:
+    type: number
+    minimum: 0
+    description: Peso di ordito dell'intero articolo in kg.
+  weftWeight:
+    type: number
+    minimum: 0
+    description: Peso di trama dell'intero articolo in kg.
+  isCertified:
+    type: string
+    enum: [ALL, NONE, PARTIAL]
+    description: Tutte, nessuna o alcune pezze certificate.
+  certificationId:
+    type: string
+    description: Identificativo della Certification selezionata.

@@ -1,5 +1,6 @@
 package org.openapitools.configuration;
 
+import java.util.List;
 import org.openapitools.domain.CalendarEventCategoryEntity;
 import org.openapitools.repository.CalendarEventCategoryRepository;
 import org.slf4j.Logger;
@@ -9,25 +10,28 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
-@ConditionalOnProperty(name = "app.bootstrap.calendar-event-categories.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(
+        name = "app.bootstrap.calendar-event-categories.enabled",
+        havingValue = "true",
+        matchIfMissing = true)
 public class CalendarEventCategoryDatabaseInitializer implements CommandLineRunner {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CalendarEventCategoryDatabaseInitializer.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(CalendarEventCategoryDatabaseInitializer.class);
 
-    private static final List<DefaultCalendarEventCategory> DEFAULT_CATEGORIES = List.of(
-            new DefaultCalendarEventCategory("Evento generico", "#4f46e5"),
-            new DefaultCalendarEventCategory("Consegna articolo", "#170da9"),
-            new DefaultCalendarEventCategory("Fine prevista articolo", "#3d81f6"),
-            new DefaultCalendarEventCategory("Fine prevista telaio", "#15be80"),
-            new DefaultCalendarEventCategory("Chiusura aziendale", "#dd0000")
-    );
+    private static final List<DefaultCalendarEventCategory> DEFAULT_CATEGORIES =
+            List.of(
+                    new DefaultCalendarEventCategory("Evento generico", "#4f46e5"),
+                    new DefaultCalendarEventCategory("Consegna articolo", "#170da9"),
+                    new DefaultCalendarEventCategory("Fine prevista articolo", "#3d81f6"),
+                    new DefaultCalendarEventCategory("Fine prevista telaio", "#15be80"),
+                    new DefaultCalendarEventCategory("Chiusura aziendale", "#dd0000"));
 
     private final CalendarEventCategoryRepository calendarEventCategoryRepository;
 
-    public CalendarEventCategoryDatabaseInitializer(CalendarEventCategoryRepository calendarEventCategoryRepository) {
+    public CalendarEventCategoryDatabaseInitializer(
+            CalendarEventCategoryRepository calendarEventCategoryRepository) {
         this.calendarEventCategoryRepository = calendarEventCategoryRepository;
     }
 
@@ -43,9 +47,10 @@ public class CalendarEventCategoryDatabaseInitializer implements CommandLineRunn
     }
 
     private void upsertDefaultCategory(DefaultCalendarEventCategory defaultCategory) {
-        CalendarEventCategoryEntity category = calendarEventCategoryRepository
-                .findByNameIgnoreCase(defaultCategory.name())
-                .orElseGet(CalendarEventCategoryEntity::new);
+        CalendarEventCategoryEntity category =
+                calendarEventCategoryRepository
+                        .findByNameIgnoreCase(defaultCategory.name())
+                        .orElseGet(CalendarEventCategoryEntity::new);
 
         category.setName(defaultCategory.name());
         category.setColor(defaultCategory.color());

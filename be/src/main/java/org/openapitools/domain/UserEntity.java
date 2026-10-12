@@ -7,8 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "users")
 public class UserEntity {
 
-    @Id
-    private String id;
+    @Id private String id;
 
     @Indexed(unique = true)
     private String username;
@@ -23,6 +22,24 @@ public class UserEntity {
     private String lastName;
 
     private String email;
+    private String companyName;
+    private String vatNumber;
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getVatNumber() {
+        return vatNumber;
+    }
+
+    public void setVatNumber(String vatNumber) {
+        this.vatNumber = vatNumber;
+    }
 
     // getter & setter
 

@@ -1,23 +1,22 @@
 package org.openapitools.controller;
 
 import com.mongodb.MongoException;
+import jakarta.validation.Valid;
+import java.util.List;
 import org.openapitools.api.LoomItemAssignmentsApi;
 import org.openapitools.mapper.LoomItemAssignmentMapper;
 import org.openapitools.model.LoomItemAssignment;
-import org.openapitools.service.LoomItemAssignmentService;
-import org.openapitools.service.LoomAlreadyRunningException;
 import org.openapitools.service.DuplicateItemLoomAssignmentException;
+import org.openapitools.service.LoomAlreadyRunningException;
+import org.openapitools.service.LoomItemAssignmentService;
 import org.openapitools.service.MobileTokenAuthorizationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
-import java.util.List;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 public class LoomItemAssignmentController implements LoomItemAssignmentsApi {
@@ -29,8 +28,7 @@ public class LoomItemAssignmentController implements LoomItemAssignmentsApi {
     public LoomItemAssignmentController(
             LoomItemAssignmentService service,
             LoomItemAssignmentMapper mapper,
-            MobileTokenAuthorizationService mobileTokenAuthorizationService
-    ) {
+            MobileTokenAuthorizationService mobileTokenAuthorizationService) {
         this.service = service;
         this.mapper = mapper;
         this.mobileTokenAuthorizationService = mobileTokenAuthorizationService;
@@ -42,7 +40,8 @@ public class LoomItemAssignmentController implements LoomItemAssignmentsApi {
     }
 
     @Override
-    public ResponseEntity<LoomItemAssignment> getLoomItemAssignmentById(@PathVariable("id") String id) {
+    public ResponseEntity<LoomItemAssignment> getLoomItemAssignmentById(
+            @PathVariable("id") String id) {
         return service.findById(id)
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)
@@ -51,8 +50,7 @@ public class LoomItemAssignmentController implements LoomItemAssignmentsApi {
 
     @Override
     public ResponseEntity<LoomItemAssignment> createLoomItemAssignment(
-            @Valid @RequestBody LoomItemAssignment loomItemAssignment
-    ) {
+            @Valid @RequestBody LoomItemAssignment loomItemAssignment) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(mapper.toDto(service.save(mapper.toEntity(loomItemAssignment))));
@@ -71,11 +69,11 @@ public class LoomItemAssignmentController implements LoomItemAssignmentsApi {
     @Override
     public ResponseEntity<LoomItemAssignment> updateLoomItemAssignment(
             @PathVariable("id") String id,
-            @Valid @RequestBody LoomItemAssignment loomItemAssignment
-    ) {
+            @Valid @RequestBody LoomItemAssignment loomItemAssignment) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (mobileTokenAuthorizationService.isMobileToken(authentication)
-                && !mobileTokenAuthorizationService.canUpdateAssignment(authentication, id, loomItemAssignment)) {
+                && !mobileTokenAuthorizationService.canUpdateAssignment(
+                        authentication, id, loomItemAssignment)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -103,15 +101,13 @@ public class LoomItemAssignmentController implements LoomItemAssignmentsApi {
 
     @Override
     public ResponseEntity<List<LoomItemAssignment>> getLoomItemAssignmentsByLoomId(
-            @PathVariable("loomId") String loomId
-    ) {
+            @PathVariable("loomId") String loomId) {
         return ResponseEntity.ok(service.findByLoomId(loomId).stream().map(mapper::toDto).toList());
     }
 
     @Override
     public ResponseEntity<List<LoomItemAssignment>> getLoomItemAssignmentsByItemId(
-            @PathVariable("itemId") String itemId
-    ) {
+            @PathVariable("itemId") String itemId) {
         return ResponseEntity.ok(service.findByItemId(itemId).stream().map(mapper::toDto).toList());
     }
 

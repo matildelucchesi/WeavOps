@@ -1,23 +1,24 @@
 package org.openapitools.model;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class CreateItemWithArrangementRequestTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper =
+            new ObjectMapper().registerModule(new JavaTimeModule());
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
     void deserializesCustomerNameAndArrangement() throws Exception {
-        String json = """
+        String json =
+                """
                 {
                   "customerName": "ACME Srl",
                   "arrangement": {
@@ -34,29 +35,30 @@ class CreateItemWithArrangementRequestTest {
                 }
                 """;
 
-        CreateItemWithArrangementRequest request = objectMapper.readValue(
-                json,
-                CreateItemWithArrangementRequest.class
-        );
+        CreateItemWithArrangementRequest request =
+                objectMapper.readValue(json, CreateItemWithArrangementRequest.class);
 
         assertThat(request.getCustomerName()).isEqualTo("ACME Srl");
         assertThat(request.getArrangement().getItemName()).isEqualTo("Articolo 100");
-        assertThat(request.getArrangement().getReedCount()).isEqualByComparingTo(BigDecimal.valueOf(20));
+        assertThat(request.getArrangement().getReedCount())
+                .isEqualByComparingTo(BigDecimal.valueOf(20));
     }
 
     @Test
     void rejectsBlankCustomerName() {
-        Arrangement arrangement = new Arrangement(
-                "Articolo 100",
-                BigDecimal.valueOf(20),
-                BigDecimal.valueOf(100),
-                3F,
-                1200F,
-                BigDecimal.valueOf(25)
-        );
-        CreateItemWithArrangementRequest request = new CreateItemWithArrangementRequest("", arrangement);
+        Arrangement arrangement =
+                new Arrangement(
+                        "Articolo 100",
+                        BigDecimal.valueOf(20),
+                        BigDecimal.valueOf(100),
+                        3F,
+                        1200F,
+                        BigDecimal.valueOf(25));
+        CreateItemWithArrangementRequest request =
+                new CreateItemWithArrangementRequest("", arrangement);
 
         assertThat(validator.validate(request))
-                .anyMatch(violation -> violation.getPropertyPath().toString().equals("customerName"));
+                .anyMatch(
+                        violation -> violation.getPropertyPath().toString().equals("customerName"));
     }
 }

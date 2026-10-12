@@ -1,4 +1,7 @@
-import { Component, Input, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { MatSelectModule } from '@angular/material/select';
+import { Destination } from '../../../api/model/destination';
+import { DestinationFacadeService } from '../../../services/destination-facade.service';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormsModule, NgForm, NgModel } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,20 +18,27 @@ import { timeout } from 'rxjs';
 import { LoaderComponent } from '../../reusable-components/loader-component/loader-component';
 import { DecorativeLinesComponent } from "../../reusable-components/decorative-lines-component/decorative-lines-component";
 import { Referent } from '../../../api';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-customer-details-page',
-  imports: [TitlePageComponent, ExitButtonComponent, MatIcon, ButtonGeneralActionComponent, FormsModule, MatFormFieldModule, LoaderComponent, //DecorativeLinesComponent
+  imports: [TitlePageComponent, ExitButtonComponent, MatIcon, ButtonGeneralActionComponent, FormsModule, MatFormFieldModule, MatSelectModule, LoaderComponent, //DecorativeLinesComponent
   ],
   standalone: true,
   templateUrl: './customer-details-page.html',
   styleUrl: './customer-details-page.scss',
+  host: {'[class.customer-dialog]': 'isDialog'},
 })
 export class CustomerDetailsPage implements OnInit, OnDestroy {
+  public readonly dialogRef = inject(MatDialogRef<CustomerDetailsPage, boolean>, {optional: true});
+  private readonly dialogCustomer = inject<Customer | null>(MAT_DIALOG_DATA, {optional: true});
+  public get isDialog(): boolean { return Boolean(this.dialogRef); }
+  private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly loaderDurationMs: number = 1200;
   private readonly saveTimeoutMs: number = 15000;
   private readonly navigationService = inject(Router);
   private readonly customerService = inject(CustomerFacadeService);
+  private readonly destinationService = inject(DestinationFacadeService);
   private readonly route = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
   private loaderTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -38,6 +48,31 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
 
   public customerName: string = '';
   public customerEmail: string = '';
+  public vatNumber = '';
+  public street = '';
+  public streetNumber = '';
+  public postalCode = '';
+  public city = '';
+  public provinceCode = '';
+  public selectedDestinationIds: string[] = [];
+  public removeDestination(id: string): void {
+    this.selectedDestinationIds = this.selectedDestinationIds.filter(value => value !== id);
+  }
+  public destinations: Destination[] = [];
+  public destinationSearch = '';
+  public destinationsLoading = true;
+  public destinationsLoadError = false;
+  public destinationMatchesSearch(destination: Destination): boolean {
+    return [destination.name, destination.street, destination.streetNumber, destination.postalCode, destination.city, destination.provinceCode]
+      .join(' ').toLocaleLowerCase('it').includes(this.destinationSearch.trim().toLocaleLowerCase('it'));
+  }
+  public onDestinationSearchKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Escape' && event.key !== 'Tab' && event.key !== 'ArrowDown' && event.key !== 'ArrowUp') event.stopPropagation();
+  }
+  public get destinationSelectionLabel(): string {
+    if (!this.selectedDestinationIds.length) return 'Seleziona aziende di destinazione';
+    return `${this.selectedDestinationIds.length} destinazioni selezionate`;
+  }
   public note: string = '';
   public referentName1: string = '';
   public referentSurname1: string = '';
@@ -57,6 +92,12 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
   //edit mode
   @Input() isEditMode: boolean = false;
   public customer: Customer | null = null;
+  public modificationsEnabled = false;
+  public get isDirectEdit(): boolean { return this.isEditMode && this.route.snapshot.queryParamMap.get('edit') === 'true'; }
+  public get canEdit(): boolean { return !this.isEditMode || this.modificationsEnabled; }
+  public toggleModifications(): void {
+    if (!this.isSaving() && !this.isRequestPending) this.modificationsEnabled = !this.modificationsEnabled;
+  }
   public referentsList: Array<Referent> = [];
 
   public goBackToCustomerPage(): void {
@@ -64,14 +105,19 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    const navigationCustomer = this.getNavigationCustomer();
+    this.destinationService.getAll().subscribe({
+      next: destinations => { this.destinations = [...destinations].sort((a, b) => a.name.localeCompare(b.name, 'it')); this.destinationsLoading = false; this.changeDetector.markForCheck(); },
+      error: () => { this.destinationsLoading = false; this.destinationsLoadError = true; this.changeDetector.markForCheck(); },
+    });
+    const navigationCustomer = this.isDialog ? this.dialogCustomer : this.getNavigationCustomer();
 
     if (navigationCustomer) {
       this.populateForm(navigationCustomer);
     }
 
-    this.customerId = this.route.snapshot.queryParamMap.get('id') ?? navigationCustomer?.id ?? null;
+    this.customerId = this.isDialog ? navigationCustomer?.id ?? null : this.route.snapshot.queryParamMap.get('id') ?? navigationCustomer?.id ?? null;
     this.isEditMode = Boolean(this.customerId || navigationCustomer);
+    if (this.isDialog || this.isDirectEdit) this.modificationsEnabled = true;
 
     if (this.customerId) {
       this.loadCustomer(this.customerId);
@@ -85,6 +131,7 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
   }
 
   public createNewCustomer(form?: NgForm): void {
+    if (!this.canEdit) return;
     if (this.isSaving() || this.isRequestPending) {
       return;
     }
@@ -100,8 +147,15 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
     }
 
     const customer: Customer = {
-      name: this.customerName.trim(),
+      name: this.customerName.trim().toLocaleUpperCase('it'),
       email: this.customerEmail.trim(),
+      vatNumber: this.vatNumber.trim(),
+      street: this.street.trim().toLocaleUpperCase('it'),
+      streetNumber: this.streetNumber.trim().toLocaleUpperCase('it'),
+      postalCode: this.postalCode.trim(),
+      city: this.city.trim().toLocaleUpperCase('it'),
+      provinceCode: this.provinceCode.trim().toUpperCase(),
+      destinationIds: [...this.selectedDestinationIds],
       note: this.note.trim(),
       items: this.customer?.items ?? [],
       referents: this.buildReferents(),
@@ -109,6 +163,7 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
 
     this.showLoader();
     this.isRequestPending = true;
+    if (this.dialogRef) this.dialogRef.disableClose = true;
 
     const saveRequest = this.isEditMode && this.customerId
       ? this.customerService.update(this.customerId, customer)
@@ -130,11 +185,13 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
             horizontalPosition: 'end',
             verticalPosition: 'bottom',
           });
-          this.navigationService.navigate(['/clienti']);
+          if (this.dialogRef) this.dialogRef.close(true);
+          else this.navigationService.navigate(['/clienti']);
         });
       },
       error: (err: HttpErrorResponse) => {
         this.isRequestPending = false;
+        if (this.dialogRef) this.dialogRef.disableClose = false;
         console.error(this.isEditMode ? 'Error updating customer:' : 'Error creating customer:', err);
         const errorMessage = err.error?.message ?? fallbackErrorMessage;
         this.showSnackBarAfterLoader(() => {
@@ -213,8 +270,15 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
 
     this.customer = customer;
     this.referentsList = customer.referents ?? [];
-    this.customerName = customer.name;
+    this.customerName = customer.name.toLocaleUpperCase('it');
     this.customerEmail = customer.email;
+    this.vatNumber = customer.vatNumber ?? '';
+    this.street = (customer.street ?? '').toLocaleUpperCase('it');
+    this.streetNumber = (customer.streetNumber ?? '').toLocaleUpperCase('it');
+    this.postalCode = customer.postalCode ?? '';
+    this.city = (customer.city ?? '').toLocaleUpperCase('it');
+    this.provinceCode = customer.provinceCode ?? '';
+    this.selectedDestinationIds = [...(customer.destinationIds ?? [])];
     this.note = customer.note ?? '';
     this.referentName1 = firstReferent?.firstName ?? '';
     this.referentSurname1 = firstReferent?.lastName ?? '';
@@ -222,6 +286,7 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
     this.referentName2 = secondReferent?.firstName ?? '';
     this.referentSurname2 = secondReferent?.lastName ?? '';
     this.referentPhone2 = secondReferent?.phoneNumber ?? '';
+    this.changeDetector.markForCheck();
   }
 
   private buildReferents(): Referent[] {
@@ -247,6 +312,11 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
   }
 
   private getValidationErrorMessage(): string | null {
+    if (!/^[A-Za-z0-9]+$/.test(this.vatNumber.trim())) return 'La partita IVA è obbligatoria e può contenere solo lettere e cifre.';
+    if (this.postalCode.trim() && !/^[0-9]{5}$/.test(this.postalCode.trim())) return 'Il CAP deve contenere 5 cifre.';
+    if (this.provinceCode.trim() && !/^[A-Za-z]{2}$/.test(this.provinceCode.trim())) return 'La sigla provincia deve contenere 2 lettere.';
+    if (this.destinationsLoading) return 'Attendere il caricamento delle destinazioni.';
+    if (this.destinationsLoadError) return 'Impossibile caricare le destinazioni. Ricaricare la pagina prima di salvare.';
     const customerName = this.customerName.trim();
     const customerEmail = this.customerEmail.trim();
     const referentName1 = this.referentName1.trim();

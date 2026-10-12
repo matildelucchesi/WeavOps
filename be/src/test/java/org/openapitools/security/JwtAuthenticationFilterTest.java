@@ -1,7 +1,11 @@
 package org.openapitools.security;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.openapitools.domain.UserEntity;
@@ -10,12 +14,6 @@ import org.openapitools.service.TokenService;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.io.IOException;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 class JwtAuthenticationFilterTest {
     private static final String SECRET = "isolated-test-jwt-key-0123456789abcdef";
@@ -50,15 +48,16 @@ class JwtAuthenticationFilterTest {
         when(repository.findById("user-1")).thenReturn(Optional.of(user(2)));
         MockHttpServletRequest request = request(user);
 
-        new JwtAuthenticationFilter(tokenService(), repository).doFilter(
-                request, new MockHttpServletResponse(), mock(FilterChain.class));
+        new JwtAuthenticationFilter(tokenService(), repository)
+                .doFilter(request, new MockHttpServletResponse(), mock(FilterChain.class));
 
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNotNull();
     }
 
-    private void assertUnauthenticated(UserEntity user, UserRepository repository) throws Exception {
-        new JwtAuthenticationFilter(tokenService(), repository).doFilter(
-                request(user), new MockHttpServletResponse(), mock(FilterChain.class));
+    private void assertUnauthenticated(UserEntity user, UserRepository repository)
+            throws Exception {
+        new JwtAuthenticationFilter(tokenService(), repository)
+                .doFilter(request(user), new MockHttpServletResponse(), mock(FilterChain.class));
 
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
     }

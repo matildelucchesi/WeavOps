@@ -4,6 +4,10 @@
   justify-content: flex-end;
 }
 
+.data-form + .button-wrapper {
+  margin-top: 20px;
+}
+
 .body{
     width: 90%;
     justify-self: center;
@@ -23,8 +27,44 @@
 }
 
 .item-data{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 24px;
+    row-gap: 16px;
+}
+
+.data-form{
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.main-row,
+.weights-row,
+.pieces-row,
+.dimensions-row,
+.other-specs-row{
+    order: 0;
+}
+
+.weights-row{ order: 1; }
+.pieces-row{ order: 2; }
+.dimensions-row{ order: 3; }
+.other-specs-row{ order: 4; }
+
+.pieces-row .form-group,
+.dimensions-row .form-group,
+.other-specs-row .form-group,
+.main-row > .form-group{
+    min-width: 0;
+}
+
+.pieces-row input,
+.dimensions-row input,
+.other-specs-row input,
+.main-row > .form-group > input{
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .section-title{
@@ -47,7 +87,7 @@
     line-height: 1.25;
 }
 
-input{
+input, select{
     border: 1.5px solid var(--weavops-color-primary);
     border-radius: 10px;
     padding: 8px 16px;
@@ -168,4 +208,44 @@ input{
 
 .option{
     font-size: 14px;
+}
+
+.weights-row{
+    .input-with-unit{
+        position: relative;
+    }
+
+    .input-with-unit input{
+        width: 234px;
+        box-sizing: border-box;
+    }
+
+    .input-with-unit span{
+        position: absolute;
+        left: calc(100% + 10px);
+    }
+}
+
+.certification-row{
+    select{
+        width: 234px;
+    }
+}
+
+.pieces-row .customer-autocomplete-field,
+.dimensions-row .customer-autocomplete-field,
+.main-row .customer-autocomplete-field{
+    width: 100%;
+}
+
+@media (max-width: 900px){
+    .item-data{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px){
+    .item-data{
+        grid-template-columns: minmax(0, 1fr);
+    }
 }

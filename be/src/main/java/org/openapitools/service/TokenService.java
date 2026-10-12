@@ -3,12 +3,6 @@ package org.openapitools.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openapitools.domain.UserEntity;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -17,6 +11,11 @@ import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import org.openapitools.domain.UserEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Service
 public class TokenService {
@@ -30,8 +29,8 @@ public class TokenService {
             ObjectMapper objectMapper,
             @Value("${app.auth.jwt-secret}") String jwtSecret,
             @Value("${app.auth.jwt-expiration-seconds:86400}") long expirationSeconds,
-            @Value("${app.auth.mobile-token-expiration-seconds:31536000}") long mobileExpirationSeconds
-    ) {
+            @Value("${app.auth.mobile-token-expiration-seconds:31536000}")
+                    long mobileExpirationSeconds) {
         validateJwtSecret(jwtSecret);
         this.objectMapper = objectMapper;
         this.jwtSecret = jwtSecret;
@@ -41,7 +40,9 @@ public class TokenService {
 
     private void validateJwtSecret(String secret) {
         int secretLength = secret == null ? 0 : secret.getBytes(StandardCharsets.UTF_8).length;
-        if (secret == null || secret.isBlank() || secretLength < 32
+        if (secret == null
+                || secret.isBlank()
+                || secretLength < 32
                 || "weavops-development-secret-change-before-production".equals(secret)
                 || "weavops-test-secret".equals(secret)) {
             throw new IllegalStateException(
@@ -115,15 +116,21 @@ public class TokenService {
             Long expiresAt = asLong(payload.get("exp"));
             Long credentialVersion = asLong(payload.get("credentialVersion"));
 
-            boolean validMobileToken = "loom-mobile".equals(purpose) && loomId != null && !loomId.isBlank();
-            boolean validUserToken = purpose == null && username != null && userId != null
-                    && credentialVersion != null;
+            boolean validMobileToken =
+                    "loom-mobile".equals(purpose) && loomId != null && !loomId.isBlank();
+            boolean validUserToken =
+                    purpose == null
+                            && username != null
+                            && userId != null
+                            && credentialVersion != null;
             if ((!validMobileToken && !validUserToken)
-                    || expiresAt == null || expiresAt <= Instant.now().getEpochSecond()) {
+                    || expiresAt == null
+                    || expiresAt <= Instant.now().getEpochSecond()) {
                 return Optional.empty();
             }
 
-            return Optional.of(new TokenPayload(username, userId, purpose, loomId, credentialVersion));
+            return Optional.of(
+                    new TokenPayload(username, userId, purpose, loomId, credentialVersion));
         } catch (Exception exception) {
             return Optional.empty();
         }
@@ -142,7 +149,8 @@ public class TokenService {
     private String sign(String value) {
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
-            SecretKeySpec key = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+            SecretKeySpec key =
+                    new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
             mac.init(key);
             return Base64.getUrlEncoder()
                     .withoutPadding()
@@ -155,8 +163,7 @@ public class TokenService {
     private boolean signatureMatches(String actualSignature, String expectedSignature) {
         return MessageDigest.isEqual(
                 actualSignature.getBytes(StandardCharsets.UTF_8),
-                expectedSignature.getBytes(StandardCharsets.UTF_8)
-        );
+                expectedSignature.getBytes(StandardCharsets.UTF_8));
     }
 
     private Map<String, Object> readBase64UrlJson(String value) throws IOException {
@@ -181,7 +188,6 @@ public class TokenService {
             String userId,
             String purpose,
             String loomId,
-            Long credentialVersion
-    ) {
-    }
+            Long credentialVersion) {
+            }
 }

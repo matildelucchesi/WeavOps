@@ -1,14 +1,12 @@
 package org.openapitools.domain;
 
+import java.time.Instant;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
-
 @Document(collection = "loom-log")
 public class LoomLogEntity {
-    @Id
-    private String id;
+    @Id private String id;
 
     private String key;
     private String loomId;

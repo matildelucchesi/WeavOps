@@ -7,6 +7,260 @@ servers:
 security:
 - bearerAuth: []
 paths:
+  /services:
+    get:
+      tags: [Service]
+      operationId: getServices
+      responses:
+        '200':
+          description: Servizi del listino.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/service'
+  /rates:
+    get:
+      tags: [Rate]
+      operationId: getRates
+      responses:
+        '200':
+          description: Listino tariffe.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/rate'
+    post:
+      tags: [Rate]
+      operationId: createRate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rate'
+      responses:
+        '201':
+          description: Tariffa creata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rate'
+        '400':
+          description: Fascia, servizio o importo non validi.
+        '409':
+          description: Fascia sovrapposta a una tariffa dello stesso servizio.
+  /rates/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      tags: [Rate]
+      operationId: updateRate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rate'
+      responses:
+        '200':
+          description: Tariffa modificata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rate'
+        '400':
+          description: Fascia, servizio o importo non validi.
+        '404':
+          description: Tariffa non trovata.
+        '409':
+          description: Fascia sovrapposta.
+    delete:
+      tags: [Rate]
+      operationId: deleteRate
+      responses:
+        '204':
+          description: Tariffa eliminata.
+        '404':
+          description: Tariffa non trovata.
+  
+  /destinations/{id}:
+    delete:
+      operationId: deleteDestination
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Destinazione eliminata.
+        "409":
+          description: Destinazione ancora associata a uno o più clienti.
+        "404":
+          description: Destinazione non trovata.
+      tags:
+      - Destination
+    get:
+      operationId: getDestinationById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/destination"
+          description: Destinazione.
+        "404":
+          description: Destinazione non trovata.
+      tags:
+      - Destination
+    put:
+      operationId: updateDestination
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/destination"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/destination"
+          description: Destinazione.
+        "400":
+          description: Dati non validi.
+        "404":
+          description: Destinazione non trovata.
+      tags:
+      - Destination
+  /destinations:
+    get:
+      operationId: getDestinations
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/destination"
+                type: array
+          description: Elenco delle aziende di destinazione.
+      tags:
+      - Destination
+    post:
+      operationId: createDestination
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/destination"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/destination"
+          description: Destinazione creata.
+        "400":
+          description: Dati non validi.
+      tags:
+      - Destination
+  /fabrics/{id}:
+    get:
+      operationId: getFabricById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/fabric"
+          description: Tela prodotta.
+        "404":
+          description: Tela non trovata.
+      tags:
+      - Fabric
+  /fabrics:
+    get:
+      operationId: getFabrics
+      parameters:
+      - in: query
+        name: itemId
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/fabric"
+                type: array
+          description: "Tele prodotte, eventualmente filtrate per articolo."
+      tags:
+      - Fabric
+  /certifications:
+    post:
+      operationId: createCertification
+      tags: [Certification]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/certification"
+      responses:
+        "201":
+          description: Certificazione creata.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/certification"
+        "400":
+          description: Codice e descrizione obbligatori.
+        "409":
+          description: Codice certificazione già presente.
+    get:
+      operationId: getCertifications
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/certification"
+                type: array
+          description: Elenco delle certificazioni disponibili.
+      tags:
+      - Certification
   /looms:
     get:
       operationId: getLooms
@@ -2088,6 +2342,190 @@ paths:
       - tag: Notifications
 components:
   schemas:
+    service:
+      type: object
+      required: [code, name, bandCriterion]
+      properties:
+        id:
+          type: string
+          readOnly: true
+        code:
+          type: string
+        name:
+          type: string
+        bandCriterion:
+          type: string
+          enum: [PICKS_PER_DM, THREADS, HOURS]
+      
+    rate:
+      type: object
+      required: [serviceId]
+      properties:
+        id:
+          type: string
+          readOnly: true
+        serviceId:
+          type: string
+        minimum:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Limite inferiore incluso; obbligatorio e intero per colpi e fili, assente per telai a campione.
+        maximum:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Limite superiore escluso, maggiore del minimo; null per fascia senza limite. Assente per telai a campione.
+        hours:
+          type: number
+          nullable: true
+          minimum: 0
+          exclusiveMinimum: true
+          description: Numero esatto di ore, anche decimale. Obbligatorio solo per telai a campione; sostituisce minimum e maximum.
+        amount:
+          type: number
+          nullable: true
+          minimum: 0
+          multipleOf: 0.000001
+          description: Importo in EUR, IVA esclusa. Obbligatorio per FIXED (massimo 2 decimali) e PER_THREAD (massimo 6 decimali); null per ON_REQUEST.
+        pricingType:
+          type: string
+          enum: [FIXED, PER_THREAD, ON_REQUEST]
+          default: FIXED
+          description: FIXED è un importo fisso; PER_THREAD moltiplica amount per tutti i fili; ON_REQUEST richiede un prezzo concordato prima della fatturazione.
+        description:
+          type: string
+          nullable: true
+          description: Testo visualizzato nel listino, obbligatorio per ON_REQUEST.
+      
+
+    destination:
+      description: Azienda di destinazione italiana condivisibile tra più clienti.
+      example:
+        id: id
+        name: name
+        street: street
+        streetNumber: streetNumber
+        postalCode: postalCode
+        city: city
+        provinceCode: provinceCode
+      properties:
+        id:
+          readOnly: true
+          type: string
+        name:
+          description: Nome dell'azienda di destinazione.
+          minLength: 1
+          type: string
+        street:
+          description: "Via, piazza o altra denominazione stradale."
+          minLength: 1
+          type: string
+        streetNumber:
+          description: "Numero civico, inclusi suffissi o SNC."
+          minLength: 1
+          type: string
+        postalCode:
+          description: "CAP italiano, inclusi gli eventuali zeri iniziali."
+          pattern: "^[0-9]{5}$"
+          type: string
+        city:
+          description: Comune.
+          minLength: 1
+          type: string
+        provinceCode:
+          description: "Sigla provincia, normalizzata in maiuscolo dal server."
+          pattern: "^[A-Za-z]{2}$"
+          type: string
+      required:
+      - city
+      - name
+      - postalCode
+      - provinceCode
+      - street
+      - streetNumber
+      type: object
+    fabric:
+      description: Tela prodotta alla chiusura di un processo con almeno una pezza
+        prodotta.
+      example:
+        id: id
+        code: code
+        itemId: itemId
+        processId: processId
+        certificationId: certificationId
+        certificationValue: certificationValue
+        piecesCount: 1
+        metersPerPiece: 6.027456183070403
+        weightPerPiece: 1.4658129805029452
+        totalMeters: 5.962133916683182
+        totalWeight: 5.637376656633329
+        producedAt: 2000-01-23T04:56:07.000+00:00
+        status: AVAILABLE
+      properties:
+        id:
+          readOnly: true
+          type: string
+        code:
+          description: Codice univoco inserito manualmente alla chiusura.
+          type: string
+        itemId:
+          type: string
+        processId:
+          description: Processo di origine; una sola Tela per processo.
+          type: string
+        certificationId:
+          type: string
+        certificationValue:
+          description: Sigla della certificazione al momento della produzione.
+          type: string
+        piecesCount:
+          minimum: 1
+          type: integer
+        metersPerPiece:
+          description: Metri per pezza dalla disposizione al momento della chiusura.
+          type: number
+        weightPerPiece:
+          description: Kg per pezza = peso totale articolo / pezze previste nella
+            disposizione.
+          type: number
+        totalMeters:
+          description: Numero pezze prodotte moltiplicato per metri per pezza.
+          readOnly: true
+          type: number
+        totalWeight:
+          description: Numero pezze prodotte moltiplicato per kg per pezza.
+          readOnly: true
+          type: number
+        producedAt:
+          format: date-time
+          type: string
+        status:
+          enum:
+          - AVAILABLE
+          - RESERVED
+          - DELIVERED
+          type: string
+      type: object
+    certification:
+      example:
+        id: id
+        value: value
+        description: description
+      properties:
+        id:
+          description: Identificativo MongoDB generato dal server.
+          readOnly: true
+          type: string
+        value:
+          minLength: 1
+          type: string
+        description:
+          type: string
+      required:
+      - description
+      - value
+      type: object
     loom:
       example:
         serialNumber: serialNumber
@@ -2116,57 +2554,68 @@ components:
       type: object
     item:
       example:
+        id: id
         arrangementId: arrangementId
+        state: INITIALIZED
+        customerId: customerId
+        totalMeters: 0.8008281904610115
         metersRun: 6.027456183070403
+        processing:
+        - id: id
+          speed: 1.4658129805029452
+          efficiency: 5.962133916683182
+          totalMeters: 5.637376656633329
+          metersRun: 2.3021358869347655
+          metersToGo: 7.061401241503109
+          totalPieces: 9.301444243932576
+          piecesRun: 3.616076749251911
+          metersPerPiece: 2.027123023002322
+          startDate: 2000-01-23T04:56:07.000+00:00
+          endDate: 2000-01-23T04:56:07.000+00:00
+          days: 4.145608
+          expectedEndDate: 2000-01-23T04:56:07.000+00:00
+          loom:
+            id: id
+            serialNumber: serialNumber
+            isAssigned: false
+            status: WORKING
+          itemHitsPerDm: 7.386281948385884
+          grs: true
+          gots: true
+        notes: notes
+        - id: id
+          speed: 1.4658129805029452
+          efficiency: 5.962133916683182
+          totalMeters: 5.637376656633329
+          metersRun: 2.3021358869347655
+          metersToGo: 7.061401241503109
+          totalPieces: 9.301444243932576
+          piecesRun: 3.616076749251911
+          metersPerPiece: 2.027123023002322
+          startDate: 2000-01-23T04:56:07.000+00:00
+          endDate: 2000-01-23T04:56:07.000+00:00
+          days: 4.145608
+          expectedEndDate: 2000-01-23T04:56:07.000+00:00
+          loom:
+            id: id
+            serialNumber: serialNumber
+            isAssigned: false
+            status: WORKING
+          itemHitsPerDm: 7.386281948385884
+          grs: true
+          gots: true
+        notes: notes
+        expectedEndDate: 2000-01-23T04:56:07.000+00:00
         endDate: 2000-01-23T04:56:07.000+00:00
+        startDate: 2000-01-23T04:56:07.000+00:00
         isArchived: false
         isDelivered: false
-        expectedEndDate: 2000-01-23T04:56:07.000+00:00
         isLate: false
-        totalMeters: 0.8008281904610115
-        customerId: customerId
-        processing:
-        - totalPieces: 9
-          efficiency: 5.962133916683182
-          metersRun: 2.3021358869347655
-          endDate: 2000-01-23T04:56:07.000+00:00
-          metersToGo: 7.061401241503109
-          itemHitsPerDm: 7.386281948385884
-          speed: 1.4658129805029452
-          piecesRun: 3
-          expectedEndDate: 2000-01-23T04:56:07.000+00:00
-          loom:
-            serialNumber: serialNumber
-            isAssigned: false
-            id: id
-            status: WORKING
-          totalMeters: 5.637376656633329
-          days: 4.145608
-          id: id
-          metersPerPiece: 2.027123023002322
-          startDate: 2000-01-23T04:56:07.000+00:00
-        - totalPieces: 9
-          efficiency: 5.962133916683182
-          metersRun: 2.3021358869347655
-          endDate: 2000-01-23T04:56:07.000+00:00
-          metersToGo: 7.061401241503109
-          itemHitsPerDm: 7.386281948385884
-          speed: 1.4658129805029452
-          piecesRun: 3
-          expectedEndDate: 2000-01-23T04:56:07.000+00:00
-          loom:
-            serialNumber: serialNumber
-            isAssigned: false
-            id: id
-            status: WORKING
-          totalMeters: 5.637376656633329
-          days: 4.145608
-          id: id
-          metersPerPiece: 2.027123023002322
-          startDate: 2000-01-23T04:56:07.000+00:00
-        id: id
-        state: INITIALIZED
-        startDate: 2000-01-23T04:56:07.000+00:00
+        warpWeight: 0.12315135367772556
+        weftWeight: 0.10246457001441578
+        isCertified: ALL
+        certificationId: certificationId
+        totalWeight: 1.4894159098541704
       properties:
         id:
           description: Identificativo MongoDB generato dal server
@@ -2184,10 +2633,8 @@ components:
         customerId:
           type: string
         totalMeters:
-          format: double
           type: number
         metersRun:
-          format: double
           type: number
         processing:
           items:
@@ -2211,6 +2658,29 @@ components:
         isLate:
           default: false
           type: boolean
+        warpWeight:
+          description: Peso di ordito dell'intero articolo in kg.
+          minimum: 0
+          type: number
+        weftWeight:
+          description: Peso di trama dell'intero articolo in kg.
+          minimum: 0
+          type: number
+        isCertified:
+          description: "Tutte, nessuna o alcune pezze certificate."
+          enum:
+          - ALL
+          - NONE
+          - PARTIAL
+          type: string
+        certificationId:
+          description: Identificativo della Certification selezionata.
+          type: string
+        totalWeight:
+          description: Somma del peso di ordito e trama in kg; assente se uno dei
+            pesi non Ã¨ specificato.
+          readOnly: true
+          type: number
       required:
       - arrangement
       - customer
@@ -2315,6 +2785,24 @@ components:
           type: string
         arrangement:
           $ref: "#/components/schemas/arrangement"
+        warpWeight:
+          description: Peso di ordito dell'intero articolo in kg.
+          minimum: 0
+          type: number
+        weftWeight:
+          description: Peso di trama dell'intero articolo in kg.
+          minimum: 0
+          type: number
+        isCertified:
+          description: "Tutte, nessuna o alcune pezze certificate."
+          enum:
+          - ALL
+          - NONE
+          - PARTIAL
+          type: string
+        certificationId:
+          description: Identificativo della Certification selezionata.
+          type: string
       required:
       - arrangement
       - customerName
@@ -2515,6 +3003,9 @@ components:
         itemHitsPerDm:
           format: double
           type: number
+        fabricCode:
+          type: string
+          description: Numero Tela prenotato alla creazione del processo.
       required:
       - efficiency
       - loomId
@@ -2562,11 +3053,13 @@ components:
       type: object
     loom-item-assignment:
       example:
+        id: id
+        loomId: loomId
         itemId: itemId
         processId: processId
-        loomId: loomId
-        id: id
         status: QUEUED
+        fabricCode: fabricCode
+        fabricCertificationId: fabricCertificationId
       properties:
         id:
           readOnly: true
@@ -2584,130 +3077,170 @@ components:
           - COMPLETED
           - ABANDONED
           type: string
+        fabricCode:
+          description: Codice Tela obbligatorio alla chiusura con pezze prodotte.
+          type: string
+          writeOnly: true
+        fabricCertificationId:
+          description: Certificazione della Tela scelta solo per articoli PARTIAL;
+            assente per Tela non certificata.
+          type: string
+          writeOnly: true
       required:
       - itemId
       - loomId
       type: object
     customer:
       example:
-        note: note
-        referents:
-        - firstName: firstName
-          lastName: lastName
-          phoneNumber: phoneNumber
-          id: id
-          email: email
-        - firstName: firstName
-          lastName: lastName
-          phoneNumber: phoneNumber
-          id: id
-          email: email
-        name: name
         id: id
+        name: name
+        referents:
+        - id: id
+          firstName: firstName
+          lastName: lastName
+          phoneNumber: phoneNumber
+          email: email
+        - id: id
+          firstName: firstName
+          lastName: lastName
+          phoneNumber: phoneNumber
+          email: email
         items:
-        - arrangementId: arrangementId
+        - id: id
+          arrangementId: arrangementId
+          state: INITIALIZED
+          customerId: customerId
+          totalMeters: 0.8008281904610115
           metersRun: 6.027456183070403
+          processing:
+          - id: id
+            speed: 1.4658129805029452
+            efficiency: 5.962133916683182
+            totalMeters: 5.637376656633329
+            metersRun: 2.3021358869347655
+            metersToGo: 7.061401241503109
+            totalPieces: 9.301444243932576
+            piecesRun: 3.616076749251911
+            metersPerPiece: 2.027123023002322
+            startDate: 2000-01-23T04:56:07.000+00:00
+            endDate: 2000-01-23T04:56:07.000+00:00
+            days: 4.145608
+            expectedEndDate: 2000-01-23T04:56:07.000+00:00
+            loom:
+              id: id
+              serialNumber: serialNumber
+              isAssigned: false
+              status: WORKING
+            itemHitsPerDm: 7.386281948385884
+            grs: true
+            gots: true
+        notes: notes
+          - id: id
+            speed: 1.4658129805029452
+            efficiency: 5.962133916683182
+            totalMeters: 5.637376656633329
+            metersRun: 2.3021358869347655
+            metersToGo: 7.061401241503109
+            totalPieces: 9.301444243932576
+            piecesRun: 3.616076749251911
+            metersPerPiece: 2.027123023002322
+            startDate: 2000-01-23T04:56:07.000+00:00
+            endDate: 2000-01-23T04:56:07.000+00:00
+            days: 4.145608
+            expectedEndDate: 2000-01-23T04:56:07.000+00:00
+            loom:
+              id: id
+              serialNumber: serialNumber
+              isAssigned: false
+              status: WORKING
+            itemHitsPerDm: 7.386281948385884
+            grs: true
+            gots: true
+        notes: notes
+          expectedEndDate: 2000-01-23T04:56:07.000+00:00
           endDate: 2000-01-23T04:56:07.000+00:00
+          startDate: 2000-01-23T04:56:07.000+00:00
           isArchived: false
           isDelivered: false
-          expectedEndDate: 2000-01-23T04:56:07.000+00:00
           isLate: false
-          totalMeters: 0.8008281904610115
-          customerId: customerId
-          processing:
-          - totalPieces: 9
-            efficiency: 5.962133916683182
-            metersRun: 2.3021358869347655
-            endDate: 2000-01-23T04:56:07.000+00:00
-            metersToGo: 7.061401241503109
-            itemHitsPerDm: 7.386281948385884
-            speed: 1.4658129805029452
-            piecesRun: 3
-            expectedEndDate: 2000-01-23T04:56:07.000+00:00
-            loom:
-              serialNumber: serialNumber
-              isAssigned: false
-              id: id
-              status: WORKING
-            totalMeters: 5.637376656633329
-            days: 4.145608
-            id: id
-            metersPerPiece: 2.027123023002322
-            startDate: 2000-01-23T04:56:07.000+00:00
-          - totalPieces: 9
-            efficiency: 5.962133916683182
-            metersRun: 2.3021358869347655
-            endDate: 2000-01-23T04:56:07.000+00:00
-            metersToGo: 7.061401241503109
-            itemHitsPerDm: 7.386281948385884
-            speed: 1.4658129805029452
-            piecesRun: 3
-            expectedEndDate: 2000-01-23T04:56:07.000+00:00
-            loom:
-              serialNumber: serialNumber
-              isAssigned: false
-              id: id
-              status: WORKING
-            totalMeters: 5.637376656633329
-            days: 4.145608
-            id: id
-            metersPerPiece: 2.027123023002322
-            startDate: 2000-01-23T04:56:07.000+00:00
-          id: id
+          warpWeight: 0.12315135367772556
+          weftWeight: 0.10246457001441578
+          isCertified: ALL
+          certificationId: certificationId
+          totalWeight: 1.4894159098541704
+        - id: id
+          arrangementId: arrangementId
           state: INITIALIZED
-          startDate: 2000-01-23T04:56:07.000+00:00
-        - arrangementId: arrangementId
+          customerId: customerId
+          totalMeters: 0.8008281904610115
           metersRun: 6.027456183070403
+          processing:
+          - id: id
+            speed: 1.4658129805029452
+            efficiency: 5.962133916683182
+            totalMeters: 5.637376656633329
+            metersRun: 2.3021358869347655
+            metersToGo: 7.061401241503109
+            totalPieces: 9.301444243932576
+            piecesRun: 3.616076749251911
+            metersPerPiece: 2.027123023002322
+            startDate: 2000-01-23T04:56:07.000+00:00
+            endDate: 2000-01-23T04:56:07.000+00:00
+            days: 4.145608
+            expectedEndDate: 2000-01-23T04:56:07.000+00:00
+            loom:
+              id: id
+              serialNumber: serialNumber
+              isAssigned: false
+              status: WORKING
+            itemHitsPerDm: 7.386281948385884
+            grs: true
+            gots: true
+        notes: notes
+          - id: id
+            speed: 1.4658129805029452
+            efficiency: 5.962133916683182
+            totalMeters: 5.637376656633329
+            metersRun: 2.3021358869347655
+            metersToGo: 7.061401241503109
+            totalPieces: 9.301444243932576
+            piecesRun: 3.616076749251911
+            metersPerPiece: 2.027123023002322
+            startDate: 2000-01-23T04:56:07.000+00:00
+            endDate: 2000-01-23T04:56:07.000+00:00
+            days: 4.145608
+            expectedEndDate: 2000-01-23T04:56:07.000+00:00
+            loom:
+              id: id
+              serialNumber: serialNumber
+              isAssigned: false
+              status: WORKING
+            itemHitsPerDm: 7.386281948385884
+            grs: true
+            gots: true
+        notes: notes
+          expectedEndDate: 2000-01-23T04:56:07.000+00:00
           endDate: 2000-01-23T04:56:07.000+00:00
+          startDate: 2000-01-23T04:56:07.000+00:00
           isArchived: false
           isDelivered: false
-          expectedEndDate: 2000-01-23T04:56:07.000+00:00
           isLate: false
-          totalMeters: 0.8008281904610115
-          customerId: customerId
-          processing:
-          - totalPieces: 9
-            efficiency: 5.962133916683182
-            metersRun: 2.3021358869347655
-            endDate: 2000-01-23T04:56:07.000+00:00
-            metersToGo: 7.061401241503109
-            itemHitsPerDm: 7.386281948385884
-            speed: 1.4658129805029452
-            piecesRun: 3
-            expectedEndDate: 2000-01-23T04:56:07.000+00:00
-            loom:
-              serialNumber: serialNumber
-              isAssigned: false
-              id: id
-              status: WORKING
-            totalMeters: 5.637376656633329
-            days: 4.145608
-            id: id
-            metersPerPiece: 2.027123023002322
-            startDate: 2000-01-23T04:56:07.000+00:00
-          - totalPieces: 9
-            efficiency: 5.962133916683182
-            metersRun: 2.3021358869347655
-            endDate: 2000-01-23T04:56:07.000+00:00
-            metersToGo: 7.061401241503109
-            itemHitsPerDm: 7.386281948385884
-            speed: 1.4658129805029452
-            piecesRun: 3
-            expectedEndDate: 2000-01-23T04:56:07.000+00:00
-            loom:
-              serialNumber: serialNumber
-              isAssigned: false
-              id: id
-              status: WORKING
-            totalMeters: 5.637376656633329
-            days: 4.145608
-            id: id
-            metersPerPiece: 2.027123023002322
-            startDate: 2000-01-23T04:56:07.000+00:00
-          id: id
-          state: INITIALIZED
-          startDate: 2000-01-23T04:56:07.000+00:00
+          warpWeight: 0.12315135367772556
+          weftWeight: 0.10246457001441578
+          isCertified: ALL
+          certificationId: certificationId
+          totalWeight: 1.4894159098541704
+        note: note
         email: email
+        vatNumber: vatNumber
+        destinationIds:
+        - destinationIds
+        - destinationIds
+        street: street
+        streetNumber: streetNumber
+        postalCode: postalCode
+        city: city
+        provinceCode: provinceCode
       properties:
         id:
           description: Identificativo MongoDB generato dal server
@@ -2727,9 +3260,37 @@ components:
           type: string
         email:
           type: string
+        vatNumber:
+          description: "Partita IVA alfanumerica obbligatoria, senza limite di 11\
+            \ caratteri."
+          pattern: "^[A-Za-z0-9]+$"
+          type: string
+        destinationIds:
+          description: Destinazioni condivise associate al cliente.
+          items:
+            type: string
+          type: array
+        street:
+          description: Via o piazza del cliente.
+          type: string
+        streetNumber:
+          description: "Numero civico, inclusi suffissi o SNC."
+          type: string
+        postalCode:
+          description: "CAP italiano, conservato come stringa."
+          pattern: "^([0-9]{5})?$"
+          type: string
+        city:
+          description: Comune del cliente.
+          type: string
+        provinceCode:
+          description: "Sigla provincia italiana, normalizzata in maiuscolo."
+          pattern: "^([A-Za-z]{2})?$"
+          type: string
       required:
       - email
       - name
+      - vatNumber
       type: object
     customer-item-history:
       example:

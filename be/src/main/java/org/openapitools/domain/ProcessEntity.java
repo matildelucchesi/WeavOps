@@ -1,15 +1,14 @@
 package org.openapitools.domain;
 
+import java.time.Instant;
 import org.openapitools.model.Loom;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.time.Instant;
 
 @Document(collection = "processes")
 public class ProcessEntity {
-    @Id
-    private String id;
+    @Id private String id;
 
     private Double speed;
     private Double efficiency;
@@ -29,7 +28,18 @@ public class ProcessEntity {
     private Boolean gots;
     private String notes;
 
-    //getter & setter
+    @Indexed(unique = true, sparse = true)
+    private String fabricCode;
+
+    public String getFabricCode() {
+        return fabricCode;
+    }
+
+    public void setFabricCode(String fabricCode) {
+        this.fabricCode = fabricCode;
+    }
+
+    // getter & setter
     public Double getMetersPerPiece() {
         return metersPerPiece;
     }
@@ -150,11 +160,27 @@ public class ProcessEntity {
         this.expectedEndDate = expectedEndDate;
     }
 
-    public Boolean getGrs() { return grs; }
-    public void setGrs(Boolean grs) { this.grs = grs; }
-    public Boolean getGots() { return gots; }
-    public void setGots(Boolean gots) { this.gots = gots; }
-    public String getNotes() { return notes; }
-    public void setNotes(String notes) { this.notes = notes; }
+    public Boolean getGrs() {
+        return grs;
+    }
 
+    public void setGrs(Boolean grs) {
+        this.grs = grs;
+    }
+
+    public Boolean getGots() {
+        return gots;
+    }
+
+    public void setGots(Boolean gots) {
+        this.gots = gots;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 }

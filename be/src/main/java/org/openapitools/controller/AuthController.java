@@ -20,7 +20,8 @@ public class AuthController {
     private final UserMapper userMapper;
     private final TokenService tokenService;
 
-    public AuthController(UserService userService, UserMapper userMapper, TokenService tokenService) {
+    public AuthController(
+            UserService userService, UserMapper userMapper, TokenService tokenService) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.tokenService = tokenService;
@@ -28,25 +29,21 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        return userService.authenticate(request.username(), request.password())
-                .map(user -> ResponseEntity.ok(new LoginResponse(
-                        tokenService.generateToken(user),
-                        "Bearer",
-                        userMapper.toDto(user)
-                )))
+        return userService
+                .authenticate(request.username(), request.password())
+                .map(
+                        user ->
+                                ResponseEntity.ok(
+                                        new LoginResponse(
+                                                tokenService.generateToken(user),
+                                                "Bearer",
+                                                userMapper.toDto(user))))
                 .orElseGet(() -> ResponseEntity.status(401).build());
     }
 
-    public record LoginRequest(
-            @NotBlank String username,
-            @NotBlank String password
-    ) {
+    public record LoginRequest(@NotBlank String username, @NotBlank String password) {
     }
 
-    public record LoginResponse(
-            String token,
-            String tokenType,
-            User user
-    ) {
+    public record LoginResponse(String token, String tokenType, User user) {
     }
 }

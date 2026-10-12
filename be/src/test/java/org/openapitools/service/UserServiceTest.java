@@ -1,15 +1,14 @@
 package org.openapitools.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.openapitools.domain.UserEntity;
 import org.openapitools.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 class UserServiceTest {
     @Test
@@ -18,9 +17,12 @@ class UserServiceTest {
         PasswordEncoder encoder = mock(PasswordEncoder.class);
         UserService service = new UserService(repository, encoder);
         UserEntity current = user(4);
+        current.setCompanyName("Azienda");
+        current.setVatNumber("IT123");
         when(repository.findById("user-1")).thenReturn(Optional.of(current));
         when(encoder.encode("new-password")).thenReturn("new-hash");
-        when(repository.save(any(UserEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(repository.save(any(UserEntity.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
         UserEntity update = new UserEntity();
         update.setPassword("new-password");
 
@@ -28,6 +30,8 @@ class UserServiceTest {
 
         assertThat(saved.getCredentialVersion()).isEqualTo(5);
         assertThat(saved.getPassword()).isEqualTo("new-hash");
+        assertThat(saved.getCompanyName()).isEqualTo("Azienda");
+        assertThat(saved.getVatNumber()).isEqualTo("IT123");
     }
 
     @Test
@@ -37,7 +41,8 @@ class UserServiceTest {
         UserService service = new UserService(repository, encoder);
         UserEntity current = user(4);
         when(repository.findById("user-1")).thenReturn(Optional.of(current));
-        when(repository.save(any(UserEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(repository.save(any(UserEntity.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
         UserEntity update = new UserEntity();
         update.setFirstName("Alice");
 

@@ -1,16 +1,14 @@
 package org.openapitools.domain;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.math.BigDecimal;
 import java.time.Instant;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "arrangements")
 public class ArrangementEntity {
 
-    @Id
-    private String id;
+    @Id private String id;
 
     private String itemName;
     private BigDecimal reedCount;
@@ -29,7 +27,7 @@ public class ArrangementEntity {
     private String sundayStartTime;
     private String sundayEndTime;
 
-    //getter & setter
+    // getter & setter
 
     public String getId() {
         return id;
@@ -118,16 +116,52 @@ public class ArrangementEntity {
     public void setDeliveryDate(Instant deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
-    public Boolean getWorksSaturday() { return worksSaturday; }
-    public void setWorksSaturday(Boolean worksSaturday) { this.worksSaturday = worksSaturday; }
-    public String getSaturdayStartTime() { return saturdayStartTime; }
-    public void setSaturdayStartTime(String saturdayStartTime) { this.saturdayStartTime = saturdayStartTime; }
-    public String getSaturdayEndTime() { return saturdayEndTime; }
-    public void setSaturdayEndTime(String saturdayEndTime) { this.saturdayEndTime = saturdayEndTime; }
-    public Boolean getWorksSunday() { return worksSunday; }
-    public void setWorksSunday(Boolean worksSunday) { this.worksSunday = worksSunday; }
-    public String getSundayStartTime() { return sundayStartTime; }
-    public void setSundayStartTime(String sundayStartTime) { this.sundayStartTime = sundayStartTime; }
-    public String getSundayEndTime() { return sundayEndTime; }
-    public void setSundayEndTime(String sundayEndTime) { this.sundayEndTime = sundayEndTime; }
+
+    public Boolean getWorksSaturday() {
+        return worksSaturday;
+    }
+
+    public void setWorksSaturday(Boolean worksSaturday) {
+        this.worksSaturday = worksSaturday;
+    }
+
+    public String getSaturdayStartTime() {
+        return saturdayStartTime;
+    }
+
+    public void setSaturdayStartTime(String saturdayStartTime) {
+        this.saturdayStartTime = saturdayStartTime;
+    }
+
+    public String getSaturdayEndTime() {
+        return saturdayEndTime;
+    }
+
+    public void setSaturdayEndTime(String saturdayEndTime) {
+        this.saturdayEndTime = saturdayEndTime;
+    }
+
+    public Boolean getWorksSunday() {
+        return worksSunday;
+    }
+
+    public void setWorksSunday(Boolean worksSunday) {
+        this.worksSunday = worksSunday;
+    }
+
+    public String getSundayStartTime() {
+        return sundayStartTime;
+    }
+
+    public void setSundayStartTime(String sundayStartTime) {
+        this.sundayStartTime = sundayStartTime;
+    }
+
+    public String getSundayEndTime() {
+        return sundayEndTime;
+    }
+
+    public void setSundayEndTime(String sundayEndTime) {
+        this.sundayEndTime = sundayEndTime;
+    }
 }

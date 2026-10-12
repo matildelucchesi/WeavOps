@@ -5,36 +5,29 @@
  */
 package org.openapitools.api;
 
-import org.openapitools.model.Login200Response;
-import org.openapitools.model.LoginRequest;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.util.Optional;
+import org.openapitools.model.Login200Response;
+import org.openapitools.model.LoginRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import jakarta.annotation.Generated;
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-20T09:27:07.285474300+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(
+        value = "org.openapitools.codegen.languages.SpringCodegen",
+        date = "2026-07-20T09:27:07.285474300+02:00[Europe/Rome]",
+        comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Auth", description = "the Auth API")
 public interface AuthApi {
@@ -44,46 +37,53 @@ public interface AuthApi {
     }
 
     String PATH_LOGIN = "/auth/login";
+
     /**
      * POST /auth/login : Effettua il login utente
      *
-     * @param loginRequest  (required)
-     * @return Login eseguito correttamente (status code 200)
-     *         or Richiesta non valida (status code 400)
-     *         or Credenziali non valide (status code 401)
+     * @param loginRequest (required)
+     * @return Login eseguito correttamente (status code 200) or Richiesta non valida (status code
+     *     400) or Credenziali non valide (status code 401)
      */
     @Operation(
-        operationId = "login",
-        summary = "Effettua il login utente",
-        tags = { "Auth" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Login eseguito correttamente", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Login200Response.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
-            @ApiResponse(responseCode = "401", description = "Credenziali non valide")
-        }
-    )
+            operationId = "login",
+            summary = "Effettua il login utente",
+            tags = {"Auth"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Login eseguito correttamente",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Login200Response.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+                @ApiResponse(responseCode = "401", description = "Credenziali non valide")
+            })
     @RequestMapping(
-        method = RequestMethod.POST,
-        value = AuthApi.PATH_LOGIN,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.POST,
+            value = AuthApi.PATH_LOGIN,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<Login200Response> login(
-        @Parameter(name = "LoginRequest", description = "", required = true) @Valid @RequestBody LoginRequest loginRequest
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"tokenType\" : \"Bearer\", \"user\" : { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"password\" : \"password\", \"id\" : \"id\", \"email\" : \"email\", \"username\" : \"username\" }, \"token\" : \"token\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "LoginRequest", description = "", required = true) @Valid @RequestBody
+                    LoginRequest loginRequest) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"tokenType\" : \"Bearer\", \"user\" : { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"password\" : \"password\", \"id\" : \"id\", \"email\" : \"email\", \"username\" : \"username\" }, \"token\" : \"token\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

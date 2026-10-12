@@ -5,35 +5,32 @@
  */
 package org.openapitools.api;
 
-import org.openapitools.model.LoomLog;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.util.List;
+import java.util.Optional;
+import org.openapitools.model.LoomLog;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import jakarta.annotation.Generated;
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-20T09:27:07.285474300+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(
+        value = "org.openapitools.codegen.languages.SpringCodegen",
+        date = "2026-07-20T09:27:07.285474300+02:00[Europe/Rome]",
+        comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "LoomLog", description = "the LoomLog API")
 public interface LoomLogsApi {
@@ -43,213 +40,231 @@ public interface LoomLogsApi {
     }
 
     String PATH_CREATE_LOOM_LOG = "/loom-logs";
+
     /**
      * POST /loom-logs : Crea un log telaio
      *
-     * @param loomLog  (required)
-     * @return Log telaio creato (status code 201)
-     *         or Richiesta non valida (status code 400)
+     * @param loomLog (required)
+     * @return Log telaio creato (status code 201) or Richiesta non valida (status code 400)
      */
     @Operation(
-        operationId = "createLoomLog",
-        summary = "Crea un log telaio",
-        tags = { "LoomLog" },
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Log telaio creato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = LoomLog.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "createLoomLog",
+            summary = "Crea un log telaio",
+            tags = {"LoomLog"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Log telaio creato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = LoomLog.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.POST,
-        value = LoomLogsApi.PATH_CREATE_LOOM_LOG,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.POST,
+            value = LoomLogsApi.PATH_CREATE_LOOM_LOG,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<LoomLog> createLoomLog(
-        @Parameter(name = "LoomLog", description = "", required = true) @Valid @RequestBody LoomLog loomLog
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"id\" : \"id\", \"key\" : \"key\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "LoomLog", description = "", required = true) @Valid @RequestBody
+                    LoomLog loomLog) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString = "{ \"id\" : \"id\", \"key\" : \"key\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_DELETE_LOOM_LOG = "/loom-logs/{id}";
+
     /**
      * DELETE /loom-logs/{id} : Elimina un log telaio
      *
-     * @param id  (required)
-     * @return Log telaio eliminato (status code 204)
-     *         or Log telaio non trovato (status code 404)
+     * @param id (required)
+     * @return Log telaio eliminato (status code 204) or Log telaio non trovato (status code 404)
      */
     @Operation(
-        operationId = "deleteLoomLog",
-        summary = "Elimina un log telaio",
-        tags = { "LoomLog" },
-        responses = {
-            @ApiResponse(responseCode = "204", description = "Log telaio eliminato"),
-            @ApiResponse(responseCode = "404", description = "Log telaio non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.DELETE,
-        value = LoomLogsApi.PATH_DELETE_LOOM_LOG
-    )
+            operationId = "deleteLoomLog",
+            summary = "Elimina un log telaio",
+            tags = {"LoomLog"},
+            responses = {
+                @ApiResponse(responseCode = "204", description = "Log telaio eliminato"),
+                @ApiResponse(responseCode = "404", description = "Log telaio non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @RequestMapping(method = RequestMethod.DELETE, value = LoomLogsApi.PATH_DELETE_LOOM_LOG)
     default ResponseEntity<Void> deleteLoomLog(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_LOOM_LOG_BY_ID = "/loom-logs/{id}";
+
     /**
      * GET /loom-logs/{id} : Recupera un log telaio tramite ID
      *
-     * @param id  (required)
-     * @return Log telaio trovato (status code 200)
-     *         or Log telaio non trovato (status code 404)
+     * @param id (required)
+     * @return Log telaio trovato (status code 200) or Log telaio non trovato (status code 404)
      */
     @Operation(
-        operationId = "getLoomLogById",
-        summary = "Recupera un log telaio tramite ID",
-        tags = { "LoomLog" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Log telaio trovato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = LoomLog.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Log telaio non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getLoomLogById",
+            summary = "Recupera un log telaio tramite ID",
+            tags = {"LoomLog"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Log telaio trovato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = LoomLog.class))
+                        }),
+                @ApiResponse(responseCode = "404", description = "Log telaio non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = LoomLogsApi.PATH_GET_LOOM_LOG_BY_ID,
-        produces = { "application/json" }
-    )
+            method = RequestMethod.GET,
+            value = LoomLogsApi.PATH_GET_LOOM_LOG_BY_ID,
+            produces = {"application/json"})
     default ResponseEntity<LoomLog> getLoomLogById(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"id\" : \"id\", \"key\" : \"key\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString = "{ \"id\" : \"id\", \"key\" : \"key\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_LOOM_LOGS = "/loom-logs";
+
     /**
      * GET /loom-logs : Recupera tutti i log telaio
      *
      * @return Lista log telaio (status code 200)
      */
     @Operation(
-        operationId = "getLoomLogs",
-        summary = "Recupera tutti i log telaio",
-        tags = { "LoomLog" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Lista log telaio", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = LoomLog.class)))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getLoomLogs",
+            summary = "Recupera tutti i log telaio",
+            tags = {"LoomLog"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Lista log telaio",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array =
+                                            @ArraySchema(
+                                                    schema =
+                                                            @Schema(
+                                                                    implementation =
+                                                                            LoomLog.class)))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = LoomLogsApi.PATH_GET_LOOM_LOGS,
-        produces = { "application/json" }
-    )
-    default ResponseEntity<List<LoomLog>> getLoomLogs(
-        
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"id\" : \"id\", \"key\" : \"key\" }, { \"id\" : \"id\", \"key\" : \"key\" } ]";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            method = RequestMethod.GET,
+            value = LoomLogsApi.PATH_GET_LOOM_LOGS,
+            produces = {"application/json"})
+    default ResponseEntity<List<LoomLog>> getLoomLogs() {
 
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "[ { \"id\" : \"id\", \"key\" : \"key\" }, { \"id\" : \"id\", \"key\" : \"key\" } ]";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
     String PATH_UPDATE_LOOM_LOG = "/loom-logs/{id}";
+
     /**
      * PUT /loom-logs/{id} : Aggiorna un log telaio
      *
-     * @param id  (required)
-     * @param loomLog  (required)
-     * @return Log telaio aggiornato (status code 200)
-     *         or Richiesta non valida (status code 400)
-     *         or Log telaio non trovato (status code 404)
+     * @param id (required)
+     * @param loomLog (required)
+     * @return Log telaio aggiornato (status code 200) or Richiesta non valida (status code 400) or
+     *     Log telaio non trovato (status code 404)
      */
     @Operation(
-        operationId = "updateLoomLog",
-        summary = "Aggiorna un log telaio",
-        tags = { "LoomLog" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Log telaio aggiornato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = LoomLog.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
-            @ApiResponse(responseCode = "404", description = "Log telaio non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "updateLoomLog",
+            summary = "Aggiorna un log telaio",
+            tags = {"LoomLog"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Log telaio aggiornato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = LoomLog.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+                @ApiResponse(responseCode = "404", description = "Log telaio non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.PUT,
-        value = LoomLogsApi.PATH_UPDATE_LOOM_LOG,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.PUT,
+            value = LoomLogsApi.PATH_UPDATE_LOOM_LOG,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<LoomLog> updateLoomLog(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id,
-        @Parameter(name = "LoomLog", description = "", required = true) @Valid @RequestBody LoomLog loomLog
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"id\" : \"id\", \"key\" : \"key\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id,
+            @Parameter(name = "LoomLog", description = "", required = true) @Valid @RequestBody
+                    LoomLog loomLog) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString = "{ \"id\" : \"id\", \"key\" : \"key\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

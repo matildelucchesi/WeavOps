@@ -5,13 +5,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "loom-process-history")
 public class LoomProcessHistoryEntity {
-    @Id
-    private String id;
+    @Id private String id;
 
     private String loomId;
     private String processId;
 
-    //getter & setter
+    // getter & setter
     public String getId() {
         return id;
     }

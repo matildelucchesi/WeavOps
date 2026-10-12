@@ -1,17 +1,16 @@
 package org.openapitools.mapper;
 
-import org.openapitools.domain.CustomerEntity;
-import org.openapitools.domain.ItemEntity;
-import org.openapitools.model.Customer;
-import org.openapitools.model.Item;
-import org.springframework.stereotype.Component;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import org.openapitools.domain.CustomerEntity;
+import org.openapitools.domain.ItemEntity;
+import org.openapitools.model.Customer;
+import org.openapitools.model.Item;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 @Component
 public class ItemMapper {
@@ -20,7 +19,10 @@ public class ItemMapper {
     private final ProcessMapper processMapper;
     private final ReferentMapper referentMapper;
 
-    public ItemMapper(ArrangementMapper arrangementMapper, ProcessMapper processMapper, ReferentMapper referentMapper) {
+    public ItemMapper(
+            ArrangementMapper arrangementMapper,
+            ProcessMapper processMapper,
+            ReferentMapper referentMapper) {
         this.arrangementMapper = arrangementMapper;
         this.processMapper = processMapper;
         this.referentMapper = referentMapper;
@@ -48,6 +50,11 @@ public class ItemMapper {
         }
 
         Item dto = new Item();
+        dto.setWarpWeight(entity.getWarpWeight());
+        dto.setWeftWeight(entity.getWeftWeight());
+        dto.setIsCertified(entity.getIsCertified());
+        dto.setCertificationId(entity.getCertificationId());
+        dto.setTotalWeight(entity.getTotalWeight());
         dto.setId(entity.getId());
         dto.setArrangementId(entity.getArrangementId());
         dto.setState(entity.getState());
@@ -74,6 +81,10 @@ public class ItemMapper {
         }
 
         ItemEntity entity = new ItemEntity();
+        entity.setWarpWeight(dto.getWarpWeight());
+        entity.setWeftWeight(dto.getWeftWeight());
+        entity.setIsCertified(dto.getIsCertified());
+        entity.setCertificationId(dto.getCertificationId());
         entity.setId(dto.getId());
         entity.setArrangementId(dto.getArrangementId());
         entity.setState(dto.getState());
@@ -83,7 +94,8 @@ public class ItemMapper {
         entity.setTotalMeters(toDouble(dto.getTotalMeters()));
         entity.setMetersRun(toDouble(dto.getMetersRun()));
         if (dto.getProcessing() != null) {
-            entity.setProcessing(dto.getProcessing().stream().map(processMapper::toEntity).toList());
+            entity.setProcessing(
+                    dto.getProcessing().stream().map(processMapper::toEntity).toList());
         }
         entity.setExpectedEndDate(toInstant(dto.getExpectedEndDate()));
         entity.setEndDate(toInstant(dto.getEndDate()));
@@ -107,6 +119,16 @@ public class ItemMapper {
         }
         dto.setNote(entity.getNote());
         dto.setEmail(entity.getEmail());
+        dto.setVatNumber(entity.getVatNumber());
+        dto.setStreet(entity.getStreet());
+        dto.setStreetNumber(entity.getStreetNumber());
+        dto.setPostalCode(entity.getPostalCode());
+        dto.setCity(entity.getCity());
+        dto.setProvinceCode(entity.getProvinceCode());
+        dto.setDestinationIds(
+                entity.getDestinationIds() == null
+                        ? java.util.List.of()
+                        : new java.util.ArrayList<>(entity.getDestinationIds()));
         return dto;
     }
 
@@ -123,6 +145,16 @@ public class ItemMapper {
         }
         entity.setNote(dto.getNote());
         entity.setEmail(dto.getEmail());
+        entity.setVatNumber(dto.getVatNumber());
+        entity.setStreet(dto.getStreet());
+        entity.setStreetNumber(dto.getStreetNumber());
+        entity.setPostalCode(dto.getPostalCode());
+        entity.setCity(dto.getCity());
+        entity.setProvinceCode(dto.getProvinceCode());
+        entity.setDestinationIds(
+                dto.getDestinationIds() == null
+                        ? new java.util.ArrayList<>()
+                        : new java.util.ArrayList<>(dto.getDestinationIds()));
         return entity;
     }
 
@@ -136,7 +168,8 @@ public class ItemMapper {
         }
         double converted = value.doubleValue();
         if (!Double.isFinite(converted)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Valore numerico fuori dai limiti supportati.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Valore numerico fuori dai limiti supportati.");
         }
         return converted;
     }

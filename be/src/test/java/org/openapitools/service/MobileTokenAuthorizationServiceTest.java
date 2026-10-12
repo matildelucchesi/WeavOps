@@ -1,21 +1,21 @@
 package org.openapitools.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+
 import org.junit.jupiter.api.Test;
 import org.openapitools.repository.ArrangementRepository;
 import org.openapitools.repository.ItemRepository;
 import org.openapitools.repository.LoomItemAssignmentRepository;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-
 class MobileTokenAuthorizationServiceTest {
 
-    private final MobileTokenAuthorizationService service = new MobileTokenAuthorizationService(
-            mock(LoomItemAssignmentRepository.class),
-            mock(ItemRepository.class),
-            mock(ArrangementRepository.class)
-    );
+    private final MobileTokenAuthorizationService service =
+            new MobileTokenAuthorizationService(
+                    mock(LoomItemAssignmentRepository.class),
+                    mock(ItemRepository.class),
+                    mock(ArrangementRepository.class));
 
     @Test
     void knottingPostIsAllowedOnlyForTheLoomBoundToTheMobileToken() {
@@ -28,7 +28,8 @@ class MobileTokenAuthorizationServiceTest {
 
     @Test
     void mobileTokenCannotUsePostMatcherForOtherOperations() {
-        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/api/looms/loom-1/mobile-access-token");
+        MockHttpServletRequest request =
+                new MockHttpServletRequest("POST", "/api/looms/loom-1/mobile-access-token");
         request.setServletPath("/api/looms/loom-1/mobile-access-token");
 
         assertThat(service.isAllowedMobileRequest("loom-1", request)).isFalse();

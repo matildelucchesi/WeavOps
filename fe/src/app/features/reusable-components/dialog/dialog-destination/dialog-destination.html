@@ -1,0 +1,18 @@
+<div class="destination-dialog">
+  <h2>{{ original ? 'Modifica destinazione' : 'Nuova destinazione' }}</h2>
+  <form #destinationForm="ngForm" (ngSubmit)="save(destinationForm)" novalidate>
+    <div class="fields">
+      <div class="field full"><label for="destinationName">Nome azienda</label><input id="destinationName" name="name" [ngModel]="model.name" (ngModelChange)="model.name = $event.toLocaleUpperCase('it')" style="text-transform: uppercase" required [disabled]="isSaving" autocomplete="organization"></div>
+      <div class="field"><label for="destinationStreet">Via/piazza</label><input id="destinationStreet" name="street" [ngModel]="model.street" (ngModelChange)="model.street = $event.toLocaleUpperCase('it')" style="text-transform: uppercase" required [disabled]="isSaving" autocomplete="address-line1"></div>
+      <div class="field"><label for="destinationStreetNumber">Numero civico</label><input id="destinationStreetNumber" name="streetNumber" [ngModel]="model.streetNumber" (ngModelChange)="model.streetNumber = $event.toLocaleUpperCase('it')" style="text-transform: uppercase" required [disabled]="isSaving" placeholder="Numero o SNC"></div>
+      <div class="field"><label for="destinationPostalCode">CAP</label><input id="destinationPostalCode" name="postalCode" [(ngModel)]="model.postalCode" required pattern="[0-9]{5}" maxlength="5" inputmode="numeric" [disabled]="isSaving" autocomplete="postal-code"></div>
+      <div class="field"><label for="destinationCity">Comune</label><input id="destinationCity" name="city" [ngModel]="model.city" (ngModelChange)="model.city = $event.toLocaleUpperCase('it')" style="text-transform: uppercase" required [disabled]="isSaving" autocomplete="address-level2"></div>
+      <div class="field"><label for="destinationProvince">Sigla provincia</label><input id="destinationProvince" name="provinceCode" [(ngModel)]="model.provinceCode" required pattern="[A-Za-z]{2}" maxlength="2" [disabled]="isSaving" autocomplete="address-level1"></div>
+    </div>
+    @if (errorMessage) { <p class="error" role="alert">{{ errorMessage }}</p> }
+    <div class="actions">
+      <button type="button" class="cancel" (click)="close()" [disabled]="isSaving">Annulla</button>
+      <button type="submit" class="save" [disabled]="isSaving">{{ isSaving ? 'Salvataggio…' : 'Salva' }}</button>
+    </div>
+  </form>
+</div>

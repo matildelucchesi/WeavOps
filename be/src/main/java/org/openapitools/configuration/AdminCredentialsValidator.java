@@ -28,7 +28,8 @@ public final class AdminCredentialsValidator {
             throw new IllegalArgumentException("La password deve contenere almeno 6 caratteri.");
         }
         if (value.getBytes(StandardCharsets.UTF_8).length > MAX_BCRYPT_PASSWORD_BYTES) {
-            throw new IllegalArgumentException("La password supera il limite di 72 byte supportato da BCrypt.");
+            throw new IllegalArgumentException(
+                    "La password supera il limite di 72 byte supportato da BCrypt.");
         }
     }
 }

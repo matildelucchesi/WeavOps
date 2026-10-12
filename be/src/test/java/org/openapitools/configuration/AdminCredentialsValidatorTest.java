@@ -1,9 +1,9 @@
 package org.openapitools.configuration;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+
+import org.junit.jupiter.api.Test;
 
 class AdminCredentialsValidatorTest {
     @Test
@@ -27,8 +27,12 @@ class AdminCredentialsValidatorTest {
     @Test
     void rejectsShortAndOverlongBcryptPasswords() {
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> AdminCredentialsValidator.validatePassword("abcde".toCharArray()));
+                .isThrownBy(
+                        () -> AdminCredentialsValidator.validatePassword("abcde".toCharArray()));
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> AdminCredentialsValidator.validatePassword("é".repeat(37).toCharArray()));
+                .isThrownBy(
+                        () ->
+                                AdminCredentialsValidator.validatePassword(
+                                        "é".repeat(37).toCharArray()));
     }
 }

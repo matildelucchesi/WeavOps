@@ -1,0 +1,256 @@
+<app-title-page-component
+  title="DDT"
+  iconName="local_shipping"
+  [imageWidth]="40"
+  [imageHeight]="40"
+/>
+<section class="documents">
+  @if (error) {
+    <p role="alert" class="error">{{ error }}</p>
+  }
+  @if (loading) {
+    <p>Caricamento…</p>
+  }
+  @if (!editing) {
+    <app-table-component
+      [columns]="documentColumns"
+      [rows]="saved"
+      [actions]="documentActions"
+      [addButton]="{ ariaLabel: 'Aggiungi nuovo DDT' }"
+      [enableMultiSelection]="false"
+      [sortByCreationDate]="false"
+      [pageSize]="10"
+      (actionClick)="onDocumentAction($event)"
+      (addButtonClick)="start()"
+    />
+  } @else {
+    <div class="toolbar">
+      <h2>Nuovo documento di trasporto</h2>
+      <button class="back-button" type="button" (click)="editing = false; error = ''" [disabled]="busy">
+        <mat-icon>arrow_back</mat-icon>
+        Indietro
+      </button>
+    </div>
+    @if (customer && !availableDestinations.length) {
+      <p class="error" role="alert">
+        Il cliente non ha destinazioni associate. Associa una destinazione nell’anagrafica per
+        completare il DDT.
+      </p>
+    }
+    @if (customer && availableDestinations.length && !destination) {
+      <p>Seleziona una destinazione associata al cliente.</p>
+    }
+    <mat-menu #customersMenu="matMenu" class="ddt-selection-panel"
+      ><div
+        class="menu-search"
+        (click)="$event.stopPropagation()"
+        (keydown)="$event.stopPropagation()"
+      >
+        <input
+          aria-label="Cerca Spett."
+          placeholder="Cerca cliente…"
+          [(ngModel)]="customerSearch"
+        />
+      </div>
+      @for (c of filteredCustomers; track c.id) {
+        <button mat-menu-item [class.ddt-option-selected]="customerId === c.id" (click)="chooseCustomer(c.id!)">{{ c.name }}@if (c.street || c.city) { — {{ address(c) }} }</button>
+      }
+      @if (!filteredCustomers.length) {
+        <div class="menu-search">Nessun cliente trovato.</div>
+      }
+    </mat-menu>
+    <mat-menu #destinationsMenu="matMenu" class="ddt-selection-panel"
+      ><div
+        class="menu-search"
+        (click)="$event.stopPropagation()"
+        (keydown)="$event.stopPropagation()"
+      >
+        <input
+          aria-label="Cerca luogo di destinazione"
+          placeholder="Cerca destinazione…"
+          [(ngModel)]="destinationSearch"
+        />
+      </div>
+      @for (d of filteredDestinations; track d.id) {
+        <button mat-menu-item [class.ddt-option-selected]="destinationId === d.id" (click)="destinationId = d.id!">{{ d.name }} — {{ address(d) }}</button>
+      }
+      @if (!filteredDestinations.length) {
+        <div class="menu-search">Nessuna destinazione trovata.</div>
+      }
+    </mat-menu>
+    <div class="paper-workspace" #paperWorkspace>
+      @for (pageRows of sheets; track $index; let page = $index) {
+        <article class="paper" [style.zoom]="paperScale()" [attr.aria-label]="'Documento di trasporto pagina ' + (page + 1)">
+          <header class="company">
+            <h1>{{ issuer?.companyName | uppercase }}</h1>
+            <p>Via Milano, 11<br />59013 MONTEMURLO (PO)</p>
+          </header>
+          <div class="addresses">
+            <div class="address">
+              <span class="outside-label">Spett.</span
+              ><div class="address-block"><button
+                class="address-input"
+                [matMenuTriggerFor]="customersMenu"
+                (menuOpened)="customerSearch = ''"
+                [disabled]="busy"
+                aria-label="Seleziona Spett."
+              >
+                @if (customer) {
+                  <strong>{{ customer.name }}</strong>
+                } @else {
+                  <span class="placeholder">Seleziona cliente ▾</span>
+                }
+              </button>
+              @if (customer) { <span>{{ address(customer) }}</span> }
+              </div>
+            </div>
+            <div class="address">
+              <span class="outside-label">Luogo di destinazione</span
+              ><div class="address-block"><button
+                class="address-input"
+                [matMenuTriggerFor]="destinationsMenu"
+                (menuOpened)="destinationSearch = ''"
+                [disabled]="!customer || !availableDestinations.length || busy"
+                aria-label="Seleziona luogo di destinazione"
+              >
+                @if (destination) {
+                  <strong>{{ destination.name }}</strong>
+                } @else {
+                  <span class="placeholder">Seleziona destinazione ▾</span>
+                }
+              </button>
+              @if (destination) { <span>{{ address(destination) }}</span> }
+              </div>
+            </div>
+          </div>
+          <h2 class="document-title">DOCUMENTO DI TRASPORTO (D.D.T)</h2>
+          <div class="metadata">
+            <label class="box"
+              >Numero Doc.<input
+                aria-label="Numero DDT"
+                type="number"
+                min="1"
+                step="1"
+                [(ngModel)]="number"
+                [disabled]="busy"
+            /></label>
+            <label class="box"
+              >Data Doc.<input
+                aria-label="Data documento"
+                type="date"
+                [(ngModel)]="date"
+                [disabled]="busy"
+            /></label>
+            <div class="box">
+              Partita I.V.A.<span>{{ issuer?.vatNumber }}</span>
+            </div>
+            <label class="box"
+              >Causale del trasporto<input maxlength="45" [(ngModel)]="reason" [disabled]="busy"
+            /></label>
+            <div class="box">
+              Pag.<span>{{ page + 1 }}</span>
+            </div>
+          </div>
+          <div class="goods">
+            <div class="goods-header goods-grid">
+              <span>Descrizione</span><span>Tela</span><span>Colli</span><span>Metri</span
+              ><span>Chili</span>
+            </div>
+            <div class="goods-body">
+              <div class="goods-column-lines goods-grid" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+              @for (r of pageRows; track r.key) {
+                <div class="goods-row goods-grid">
+                  <span class="description"
+                    >@if (fabricEditsEnabled) {
+                      <input [attr.aria-label]="'Descrizione tela ' + r.code" [ngModel]="r.description" (ngModelChange)="updateDocumentRow(r.key, { description: $event })" [disabled]="busy" required />
+                    } @else { {{ r.description }} }<button
+                      class="remove"
+                      (click)="selected.delete(r.key)"
+                      [disabled]="busy"
+                      [attr.aria-label]="'Rimuovi tela ' + r.fabricCode"
+                    >
+                      ×
+                    </button></span
+                  ><span>@if (fabricEditsEnabled) {
+                    <input [attr.aria-label]="'Codice tela ' + r.code" [ngModel]="r.fabricCode" (ngModelChange)="updateDocumentRow(r.key, { fabricCode: $event })" [disabled]="busy" required />
+                  } @else { {{ r.fabricCode }} }</span
+                  ><span>@if (fabricEditsEnabled) {
+                    <input type="number" min="1" step="1" [attr.aria-label]="'Colli tela ' + r.code" [ngModel]="r.pieces" (ngModelChange)="updateDocumentRow(r.key, { pieces: $event })" [disabled]="busy" required />
+                  } @else { {{ r.pieces }} }</span
+                  ><span class="numeric">@if (fabricEditsEnabled) {
+                    <input type="number" min="0.001" step="any" [attr.aria-label]="'Metri tela ' + r.code" [ngModel]="r.meters" (ngModelChange)="updateDocumentRow(r.key, { meters: $event })" [disabled]="busy" required />
+                  } @else { {{ r.meters | number: '1.2-2' : 'it' }} }</span
+                  ><span class="numeric">
+                    @if (fabricEditsEnabled) {
+                      <input type="number" min="0" step="0.1" [attr.aria-label]="'Chili tela ' + r.code" [ngModel]="r.weight === null ? null : +(r.weight.toFixed(1))" (ngModelChange)="updateDocumentRow(r.key, { weight: $event })" [disabled]="busy" required />
+                    } @else if (r.weight === null) {
+                      <abbr title="Peso articolo mancante">—</abbr>
+                    } @else {
+                      {{ r.weight | number: '1.1-1' : 'it' }}
+                    }
+                  </span>
+                </div>
+              }
+              @if (customer && page === sheets.length - 1) {
+                <div class="goods-grid add-fabric-row">
+                  <span class="fabric-controls"><button class="add-fabric" type="button" aria-label="Aggiungi tela" title="Aggiungi tela" (click)="addFabrics()" [disabled]="busy">+</button>
+                    <button class="edit-fabric" type="button" [attr.aria-label]="fabricEditsEnabled ? 'Disabilita modifiche Tele' : 'Abilita modifiche Tele'" [title]="fabricEditsEnabled ? 'Disabilita modifiche' : 'Abilita modifiche'" [attr.aria-pressed]="fabricEditsEnabled" (click)="fabricEditsEnabled = !fabricEditsEnabled" [disabled]="busy || !selectedRows.length"><mat-icon>edit</mat-icon></button>
+                  </span>
+                  <span></span><span></span><span></span><span></span>
+                </div>
+              } @else if (!customer && !selectedRows.length) {
+                <p class="empty-sheet">Seleziona Spett. e aggiungi le tele da spedire.</p>
+              }
+            </div>
+          </div>
+          <div class="transport-row">
+            <label class="box"
+              >Trasporto a cura del<input maxlength="40" [(ngModel)]="transport" [disabled]="busy"
+            /></label>
+            <div class="box">
+              N. Colli<span>{{ totalPieces }}</span>
+            </div>
+            <label class="box"
+              >Porto<input maxlength="50" [(ngModel)]="freight" [disabled]="busy" /></label
+            ><label class="box"
+              >Data Ritiro<input type="date" [(ngModel)]="pickupDate" [disabled]="busy" /></label
+            ><label class="box"
+              >Ora Ritiro<input type="time" [(ngModel)]="pickupTime" [disabled]="busy"
+            /></label>
+          </div>
+          <label class="box carrier"
+            >Vettore<textarea maxlength="150" [(ngModel)]="carrier" [disabled]="busy"></textarea>
+          </label>
+          <div class="bottom">
+            <div>
+              <label class="box appearance"
+                >Aspetto esteriore dei beni<input
+                  maxlength="70"
+                  [(ngModel)]="appearance"
+                  [disabled]="busy" /></label
+              ><label class="box notes"
+                >Annotazioni / Variazioni<textarea
+                  maxlength="180"
+                  [(ngModel)]="notes"
+                  [disabled]="busy"
+                ></textarea>
+              </label>
+            </div>
+            <div>
+              <div class="box signature">Firma del conducente</div>
+              <div class="box signature">Firma del destinatario</div>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+    <div class="actions">
+      <button class="pdf-button preview-button" type="button" (click)="generate(true)" [disabled]="!canGenerate || busy">
+        <mat-icon>download</mat-icon><span>Scarica anteprima</span>
+      </button>
+      <button class="pdf-button save-pdf-button" type="button" (click)="generate(false)" [disabled]="!canGenerate || busy">
+        <mat-icon>save</mat-icon><span>{{ busy ? 'Salvataggio…' : 'Salva e scarica PDF' }}</span>
+      </button>
+    </div>
+  }
+</section>

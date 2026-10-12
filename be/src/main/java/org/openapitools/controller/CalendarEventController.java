@@ -1,5 +1,7 @@
 package org.openapitools.controller;
 
+import jakarta.validation.Valid;
+import java.util.List;
 import org.openapitools.api.CalendarEventsApi;
 import org.openapitools.mapper.CalendarEventMapper;
 import org.openapitools.model.CalendarEvent;
@@ -11,9 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
-import java.util.List;
-
 @RestController
 public class CalendarEventController implements CalendarEventsApi {
 
@@ -24,8 +23,7 @@ public class CalendarEventController implements CalendarEventsApi {
     public CalendarEventController(
             CalendarEventService service,
             CalendarEventMapper mapper,
-            ProductionForecastService productionForecastService
-    ) {
+            ProductionForecastService productionForecastService) {
         this.service = service;
         this.mapper = mapper;
         this.productionForecastService = productionForecastService;
@@ -55,7 +53,8 @@ public class CalendarEventController implements CalendarEventsApi {
     }
 
     @Override
-    public ResponseEntity<CalendarEvent> createCalendarEvent(@Valid @RequestBody CalendarEvent calendarEvent) {
+    public ResponseEntity<CalendarEvent> createCalendarEvent(
+            @Valid @RequestBody CalendarEvent calendarEvent) {
         CalendarEvent createdEvent = mapper.toDto(service.save(mapper.toEntity(calendarEvent)));
         recalculateForecastsIfClosure(createdEvent);
 
@@ -64,30 +63,32 @@ public class CalendarEventController implements CalendarEventsApi {
 
     @Override
     public ResponseEntity<CalendarEvent> updateCalendarEvent(
-            @PathVariable("id") String id,
-            @Valid @RequestBody CalendarEvent calendarEvent
-    ) {
-        boolean wasClosure = service.findById(id)
-                .map(event -> event.getType() == CalendarEvent.TypeEnum.CLOSURE)
-                .orElse(false);
+            @PathVariable("id") String id, @Valid @RequestBody CalendarEvent calendarEvent) {
+        boolean wasClosure =
+                service.findById(id)
+                        .map(event -> event.getType() == CalendarEvent.TypeEnum.CLOSURE)
+                        .orElse(false);
 
         return service.update(id, mapper.toEntity(calendarEvent))
                 .map(mapper::toDto)
-                .map(updatedEvent -> {
-                    if (wasClosure || updatedEvent.getType() == CalendarEvent.TypeEnum.CLOSURE) {
-                        productionForecastService.recalculateAllProductionForecasts();
-                    }
+                .map(
+                        updatedEvent -> {
+                            if (wasClosure
+                                    || updatedEvent.getType() == CalendarEvent.TypeEnum.CLOSURE) {
+                                productionForecastService.recalculateAllProductionForecasts();
+                            }
 
-                    return ResponseEntity.ok(updatedEvent);
-                })
+                            return ResponseEntity.ok(updatedEvent);
+                        })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Override
     public ResponseEntity<Void> deleteCalendarEvent(@PathVariable("id") String id) {
-        boolean isClosure = service.findById(id)
-                .map(event -> event.getType() == CalendarEvent.TypeEnum.CLOSURE)
-                .orElse(false);
+        boolean isClosure =
+                service.findById(id)
+                        .map(event -> event.getType() == CalendarEvent.TypeEnum.CLOSURE)
+                        .orElse(false);
 
         return service.deleteById(id)
                 ? deleteCalendarEventResponse(isClosure)

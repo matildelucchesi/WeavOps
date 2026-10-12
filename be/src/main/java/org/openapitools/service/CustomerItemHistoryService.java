@@ -1,11 +1,10 @@
 package org.openapitools.service;
 
+import java.util.List;
+import java.util.Optional;
 import org.openapitools.domain.CustomerItemHistoryEntity;
 import org.openapitools.repository.CustomerItemHistoryRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CustomerItemHistoryService {

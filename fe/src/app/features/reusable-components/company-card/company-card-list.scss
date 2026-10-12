@@ -1,0 +1,24 @@
+:host { display: block; color: var(--weavops-color-primary); }
+.body { width: 100%; min-width: 0; }
+.list-toolbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.filter-actions { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.searchbar { display: flex; align-items: center; gap: 10px; flex: 1 1 240px; max-width: 500px; min-width: 0; padding: 10px 14px; border: 1px solid var(--weavops-color-primary); border-radius: 10px; background: var(--weavops-color-surface-muted); box-sizing: border-box; }
+.searchbar:focus-within { outline: 2px solid var(--weavops-color-primary); outline-offset: 2px; }
+.searchbar input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: inherit; font: inherit; }
+.searchbar mat-icon { flex-shrink: 0; }
+.company-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding-bottom: 24px; }
+.list-footer { display: flex; align-items: center; justify-content: flex-end; gap: 20px; flex-wrap: wrap; padding-bottom: 24px; }
+.detail-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 28px; margin: 0; }
+.detail-grid > div { min-width: 0; }
+dt { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+dd { margin: 0; font-size: 15px; line-height: 1.5; white-space: pre-line; overflow-wrap: anywhere; }
+.wide-detail { grid-column: 1 / -1; }
+.card-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+.card-action { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 0; border-radius: 8px; padding: 6px; background: transparent; color: var(--card-icon-color, var(--weavops-color-primary)); cursor: pointer; }
+.card-action:hover:not(:disabled) { color: var(--weavops-color-accent); background: var(--weavops-color-primary-soft); }
+.card-action:focus-visible, .clear-filters:focus-visible { outline: 2px solid var(--weavops-color-accent); outline-offset: 2px; }
+.card-action:disabled { opacity: .45; cursor: default; }
+.clear-filters { padding: 8px 12px; border: 1px solid var(--weavops-color-primary); border-radius: 8px; background: var(--weavops-color-surface-muted); color: inherit; cursor: pointer; font: inherit; }
+.error { color: var(--weavops-color-danger); }
+@media(max-width: 768px) { .detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media(max-width: 414px) { .detail-grid { grid-template-columns: minmax(0, 1fr); } }

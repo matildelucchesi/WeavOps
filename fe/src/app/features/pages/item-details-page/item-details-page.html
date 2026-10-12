@@ -55,161 +55,120 @@
         </div>
 
         @if (arrangementData; as arrangement) {
-          <form class="data-form">
-            <div class="item-data">
-              <div class="column">
+          <form class="data-form arrangement-form">
+            <div class="arrangement-fields">
+              <div class="arrangement-row">
                 <div class="form-group">
                   <label for="itemName">Nome Articolo</label>
-                  <input
-                    type="text"
-                    id="itemName"
-                    name="itemName"
-                    [(ngModel)]="arrangement.itemName"
-                    [readonly]="!isEditEnabled"
-                    [class.input-readonly]="!isEditEnabled">
+                  <input type="text" id="itemName" name="itemName" [(ngModel)]="arrangement.itemName" [readonly]="!isEditEnabled" [class.input-readonly]="!isEditEnabled">
                 </div>
                 <div class="form-group">
-                  <label for="piecesCount">Numero Pezze</label>
-                  <input
-                    type="number"
-                    id="piecesCount"
-                    name="piecesCount"
-                    [ngModel]="arrangement.piecesCount"
-                    (ngModelChange)="onPiecesCountChange(arrangement, $event)"
-                    [readonly]="!isEditEnabled"
-                    [class.input-readonly]="!isEditEnabled">
-                </div>
-                <div class="form-group">
-                  <label for="pieceLength">Lunghezza Pezza (m)</label>
-                  <input
-                    type="number"
-                    id="pieceLength"
-                    name="pieceLength"
-                    [ngModel]="arrangement.pieceLength"
-                    (ngModelChange)="onPieceLengthChange(arrangement, $event)"
-                    [readonly]="!isEditEnabled"
-                    [class.input-readonly]="!isEditEnabled">
-                </div>
-                <div class="form-group">
-                  <label for="hitsPerDm">Numero Colpi (per dm)</label>
-                  <input
-                    type="number"
-                    id="hitsPerDm"
-                    name="hitsPerDm"
-                    [(ngModel)]="arrangement.hitsPerDm"
-                    [readonly]="!isEditEnabled"
-                    [class.input-readonly]="!isEditEnabled">
-                </div>
-              </div>
-
-              <div class="column">
-                <div class="reed-group">
-                  <div class="form-group">
-                    <label for="reedCount">Misura Pettine</label>
-                    <div class="input-with-unit">
-                      <input
-                        type="number"
-                        class="reed-input"
-                        id="reedCount"
-                        name="reedCount"
-                        [(ngModel)]="arrangement.reedCount"
-                        [readonly]="!isEditEnabled"
-                        [class.input-readonly]="!isEditEnabled">
-                      in
-                      <input
-                        type="number"
-                        class="reed-input"
-                        id="reedCM"
-                        name="reedCM"
-                        [(ngModel)]="arrangement.reedCM"
-                        [readonly]="!isEditEnabled"
-                        [class.input-readonly]="!isEditEnabled">
-                      cm
-                    </div>
+                  <label for="reedCount">Misura Pettine</label>
+                  <div class="input-with-unit">
+                    <input type="number" class="reed-input" id="reedCount" name="reedCount" [(ngModel)]="arrangement.reedCount" [readonly]="!isEditEnabled" [class.input-readonly]="!isEditEnabled">
+                    in
+                    <input type="number" class="reed-input" id="reedCM" name="reedCM" [(ngModel)]="arrangement.reedCM" [readonly]="!isEditEnabled" [class.input-readonly]="!isEditEnabled">
+                    cm
                   </div>
                 </div>
-                <div class="form-group">
-                  <label for="reedHeight">Altezza pettine (m)</label>
-                  <input
-                    type="number"
-                    id="reedHeight"
-                    name="reedHeight"
-                    [(ngModel)]="arrangement.reedHeight"
-                    [readonly]="!isEditEnabled"
-                    [class.input-readonly]="!isEditEnabled">
-                </div>
-                <div class="form-group">
-                  <label for="warpLength">Lunghezza ordito (m)</label>
-                  <input
-                    type="number"
-                    id="warpLength"
-                    name="warpLength"
-                    [(ngModel)]="arrangement.warpLength"
-                    [readonly]="!isEditEnabled"
-                    [class.input-readonly]="!isEditEnabled">
-                </div>
-                <div class="form-group">
-                  <label for="warpEndCount">Numero fili ordito</label>
-                  <input
-                    type="number"
-                    id="warpEndCount"
-                    name="warpEndCount"
-                    [(ngModel)]="arrangement.warpEndCount"
-                    [readonly]="!isEditEnabled"
-                    [class.input-readonly]="!isEditEnabled">
-                </div>
-              </div>
-
-              <div class="column">
                 <div class="form-group">
                   <label for="deliveryDate">Data di consegna</label>
                   @if(isEditEnabled) {
                     <mat-form-field appearance="outline" class="date-picker-field">
-                      <input
-                        matInput
-                        id="deliveryDate"
-                        name="deliveryDate"
-                        [matDatepicker]="deliveryDatePicker"
-                        [(ngModel)]="deliveryDate"
-                        (ngModelChange)="onDeliveryDateChange($event)">
+                      <input matInput id="deliveryDate" name="deliveryDate" [matDatepicker]="deliveryDatePicker" [(ngModel)]="deliveryDate" (ngModelChange)="onDeliveryDateChange($event)">
                       <mat-datepicker-toggle matIconSuffix [for]="deliveryDatePicker"></mat-datepicker-toggle>
                       <mat-datepicker #deliveryDatePicker></mat-datepicker>
                     </mat-form-field>
                   } @else {
-                  <input
-                    type="text"
-                    id="deliveryDate"
-                    name="deliveryDate"
-                    [value]="formatDate(arrangement.deliveryDate)"
-                    readonly
-                    class="input-readonly">
+                    <input type="text" id="deliveryDate" name="deliveryDate" [value]="formatDate(arrangement.deliveryDate)" readonly class="input-readonly">
                   }
                 </div>
-                <div class="form-group"></div>
-                @if(!isEditEnabled){
-                <div class="button-wrapper">
-                  <button
-                    type="button"
-                    class="button-qr"
-                    aria-label="Esporta Disposizione"
-                    (click)="exportArrangementData()">
-                    <span class="qr-mark" aria-hidden="true">
-                      <mat-icon
-                        class="button-qr-icon material-symbols-outlined"
-                        fontSet="material-symbols-outlined">
-                        qr_code_2
-                      </mat-icon>
-                    </span>
-                    <span class="button-qr-copy">
-                      <span>Esporta Disposizione</span>
-                      <small style="font-weight: 300;">Genera QR Code telai</small>
-                    </span>
-                  </button>
+              </div>
+
+              @if (itemData; as item) {
+                <div class="arrangement-row">
+                  <div class="form-group">
+                    <label for="warpWeight">Peso ordito (kg)</label>
+                    <input id="warpWeight" name="warpWeight" type="number" min="0" step="any" [(ngModel)]="item.warpWeight" [disabled]="!isEditEnabled">
+                  </div>
+                  <div class="form-group">
+                    <label for="weftWeight">Peso trama (kg)</label>
+                    <input id="weftWeight" name="weftWeight" type="number" min="0" step="any" [(ngModel)]="item.weftWeight" [disabled]="!isEditEnabled">
+                  </div>
+                  <div class="form-group">
+                    <label for="totalWeight">Peso totale (kg)</label>
+                    <input id="totalWeight" name="totalWeight" readonly [value]="item.warpWeight != null && item.weftWeight != null ? (+item.warpWeight!) + (+item.weftWeight!) : ''">
+                  </div>
                 </div>
               }
+
+              <div class="arrangement-row">
+                <div class="form-group">
+                  <label for="piecesCount">Numero Pezze</label>
+                  <input type="number" id="piecesCount" name="piecesCount" [ngModel]="arrangement.piecesCount" (ngModelChange)="onPiecesCountChange(arrangement, $event)" [readonly]="!isEditEnabled" [class.input-readonly]="!isEditEnabled">
+                </div>
+                <div class="form-group">
+                  <label for="pieceLength">Lunghezza Pezza (m)</label>
+                  <input type="number" id="pieceLength" name="pieceLength" [ngModel]="arrangement.pieceLength" (ngModelChange)="onPieceLengthChange(arrangement, $event)" [readonly]="!isEditEnabled" [class.input-readonly]="!isEditEnabled">
+                </div>
+                <div></div>
+              </div>
+
+              @if (itemData; as item) {
+                <div class="arrangement-row">
+                  <div class="form-group">
+                    <label for="isCertified">Pezze certificate</label>
+                    <select id="isCertified" name="isCertified" [(ngModel)]="item.isCertified" (ngModelChange)="item.certificationId = $event === 'NONE' ? undefined : item.certificationId" [disabled]="!isEditEnabled">
+                      <option [ngValue]="undefined">Non specificato</option><option value="ALL">Tutte</option><option value="NONE">Nessuna</option><option value="PARTIAL">Alcune</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="certificationId">Certificazione</label>
+                    <select id="certificationId" name="certificationId" [(ngModel)]="item.certificationId" [disabled]="!isEditEnabled || item.isCertified === 'NONE'">
+                      <option [ngValue]="undefined">Seleziona certificazione</option>
+                      @for (certification of certifications; track certification.id) { <option [ngValue]="certification.id">{{ certification.value }} — {{ certification.description }}</option> }
+                    </select>
+                  </div>
+                  <div></div>
+                </div>
+              }
+
+              <div class="arrangement-row">
+                <div class="form-group">
+                  <label for="reedHeight">Altezza pettine (m)</label>
+                  <input type="number" id="reedHeight" name="reedHeight" [(ngModel)]="arrangement.reedHeight" [readonly]="!isEditEnabled" [class.input-readonly]="!isEditEnabled">
+                </div>
+                <div class="form-group">
+                  <label for="warpLength">Lunghezza ordito (m)</label>
+                  <input type="number" id="warpLength" name="warpLength" [(ngModel)]="arrangement.warpLength" [readonly]="!isEditEnabled" [class.input-readonly]="!isEditEnabled">
+                </div>
+                <div></div>
+              </div>
+
+              <div class="arrangement-row">
+                <div class="form-group">
+                  <label for="hitsPerDm">Numero Colpi (per dm)</label>
+                  <input type="number" id="hitsPerDm" name="hitsPerDm" [(ngModel)]="arrangement.hitsPerDm" [readonly]="!isEditEnabled" [class.input-readonly]="!isEditEnabled">
+                </div>
+                <div class="form-group">
+                  <label for="warpEndCount">Numero fili ordito</label>
+                  <input type="number" id="warpEndCount" name="warpEndCount" [(ngModel)]="arrangement.warpEndCount" [readonly]="!isEditEnabled" [class.input-readonly]="!isEditEnabled">
+                </div>
+                @if(!isEditEnabled){
+              <div class="arrangement-export-actions">
+                <button type="button" class="button-qr" aria-label="Esporta Disposizione" (click)="exportArrangementData()">
+                  <span class="qr-mark" aria-hidden="true">
+                    <mat-icon class="button-qr-icon material-symbols-outlined" fontSet="material-symbols-outlined">qr_code_2</mat-icon>
+                  </span>
+                  <span class="button-qr-copy">
+                    <span>Esporta Disposizione</span>
+                    <small style="font-weight: 300;">Genera QR Code telai</small>
+                  </span>
+                </button>
+              </div>
+                }
               </div>
             </div>
-            
           </form>
           
         } @else {
@@ -385,7 +344,7 @@
               }
               </div>
               </div>
-            </form>
+</form>
           }
       </div>
       <div class="content-padding">
@@ -422,6 +381,27 @@
     </div>
     <div class="text-pattern-inverse"></div>
     </div>
+  <section class="fabrics-section">
+    <h2>Tele prodotte</h2>
+    @if (deliveryNotesLoadError()) { <p role="alert">Impossibile verificare i DDT associati alle Tele.</p> }
+    @if (fabricsLoadError) { <p role="alert">Impossibile caricare le Tele prodotte.</p> }
+    @else if (fabrics().length === 0) { <p>Nessuna Tela registrata per questo articolo.</p> }
+    @else {
+      <table>
+        <thead><tr><th>Codice Tela</th><th>Certificazione</th><th>Pezze</th><th>Metri per pezza</th><th>Kg per pezza</th><th>Metri totali</th><th>Kg totali</th><th>DDT</th></tr></thead>
+        <tbody>
+          @for (fabric of fabrics(); track fabric.id) {
+            <tr><td>{{ fabric.code }}</td><td>{{ fabric.certificationValue ?? 'Nessuna' }}</td><td>{{ fabric.piecesCount }}</td><td>{{ fabric.metersPerPiece | number:'1.0-3' }}</td><td>{{ fabric.weightPerPiece | number:'1.0-3' }}</td><td>{{ fabric.totalMeters | number:'1.0-3' }}</td><td>{{ fabric.totalWeight | number:'1.0-3' }}</td>
+              <td>@if (deliveryNoteForFabric(fabric.id); as document) {
+                <span class="fabric-ddt">{{ document.number }}/{{ document.year }} · {{ document.date | date:'dd/MM/yyyy' }}</span>
+                <button type="button" class="view-ddt" (click)="viewDeliveryNote(document)" [attr.aria-label]="'Visualizza DDT ' + document.number + '/' + document.year" title="Visualizza DDT"><mat-icon>visibility</mat-icon></button>
+              } @else { <span>{{ deliveryNotesLoadError() ? 'Non verificato' : '—' }}</span> }</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
   <app-white-panel [title]="'Attenzione'" [text]="'Se la produzione viene contrassegnata come TERMINATA, l’articolo verrà inserito nella lista degli articoli ARCHIVIATI, visualizzabile nella pagina Anagrafiche Articoli, e tutti i telai associati verranno liberati immediatamente.<br>La terminazione è irreversibile, ma è comunque possibile copiare i dati dell’articolo per metterne in produzione uno nuovo con gli stessi dati di partenza.'"></app-white-panel>
   <app-white-panel [title]="'Informazioni su eliminazione processo'" [text]="'Se un processo con stato IN LAVORAZIONE viene eliminato, tutti i dati associati verranno persi e non sarà possibile ripristinarli. Inoltre verrà contrassegnato come ABBANDONATO e i metri non ancora prodotti resteranno nel totale da completare. <br> Se un processo con stato IN CODA viene eliminato, verranno ripristinati tutti i dati a prima dell\'assegnazione del processo. <br><br> Non è possibile eliminare i processi con stato ABBANDONATO e COMPLETATO in modo da mantenere traccia della produzione.'"></app-white-panel>
   <app-white-panel [iconName]="'contact_support'" [title]="'Come viene calcolata la Data Completamento Lavorazione Prevista?'" [text]="'La Data di Completamento Lavorazione Prevista viene calcolata stimando la produzione giornaliera di ogni telaio assegnato, considerando una lavorazione continua senza interruzioni.'"></app-white-panel>

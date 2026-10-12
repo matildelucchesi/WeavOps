@@ -41,3 +41,14 @@
     bottom: 8px;
     z-index: 20;
 }
+.directory-group { position: relative; width: 100%; }
+.directory-toggle { display: grid; justify-items: center; gap: 10px; width: 100%; padding: 10px 4px; border: 0; border-radius: 14px; background: transparent; color: var(--weavops-color-surface-muted); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.directory-toggle mat-icon { width: 30px; height: 30px; font-size: 30px; }
+.directory-toggle:hover, .directory-toggle.is-active { background: rgb(var(--weavops-rgb-white) / .14); }
+.directory-toggle:focus-visible, .directory-submenu a:focus-visible { outline: 2px solid var(--weavops-color-accent); outline-offset: 2px; }
+.directory-submenu { position: absolute; left: calc(100% + 20px); top: 0; z-index: 30; width: 190px; padding: 10px; border-radius: 12px; background: var(--weavops-color-primary); color: var(--weavops-color-surface-muted); box-shadow: 0 8px 24px rgb(var(--weavops-rgb-black) / .18); animation: directory-slide 160ms ease-out; }
+.directory-submenu a { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 8px; color: inherit; text-decoration: none; white-space: nowrap; }
+.directory-submenu a:hover, .directory-submenu a.is-active { background: rgb(var(--weavops-rgb-white) / .14); }
+.controls-group .directory-submenu { width: 230px; }
+@keyframes directory-slide { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+@media(prefers-reduced-motion: reduce) { .directory-submenu { animation: none; } }

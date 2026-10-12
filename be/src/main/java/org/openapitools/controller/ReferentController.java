@@ -1,5 +1,7 @@
 package org.openapitools.controller;
 
+import jakarta.validation.Valid;
+import java.util.List;
 import org.openapitools.api.ReferentsApi;
 import org.openapitools.mapper.ReferentMapper;
 import org.openapitools.model.Referent;
@@ -9,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
-import java.util.List;
 
 @RestController
 public class ReferentController implements ReferentsApi {
@@ -44,7 +43,8 @@ public class ReferentController implements ReferentsApi {
     }
 
     @Override
-    public ResponseEntity<Referent> updateReferent(@PathVariable("id") String id, @Valid @RequestBody Referent referent) {
+    public ResponseEntity<Referent> updateReferent(
+            @PathVariable("id") String id, @Valid @RequestBody Referent referent) {
         return service.update(id, mapper.toEntity(referent))
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)

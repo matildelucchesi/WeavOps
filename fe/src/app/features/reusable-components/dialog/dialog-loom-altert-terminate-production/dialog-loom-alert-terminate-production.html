@@ -1,8 +1,6 @@
 <div class="wrapper" [attr.data-assignment-id]="assignment?.id">
-    <div class="head">
-        <mat-icon class="icon" aria-hidden="true">help</mat-icon>
-    </div>
     @if(!isConfirmed) {
+        <div class="head"><mat-icon class="icon" aria-hidden="true">help</mat-icon></div>
         <p class="first-text">Vuoi procedere con la terminazione della produzione dell'articolo?</p>
         <div class="body" style="padding:20px">
             <p class="second-text">ATTENZIONE: Questa azione e irreversibile</p>
@@ -16,10 +14,20 @@
             </button>
         </div>
     } @else {
+        <app-fabric-completion-fields [item]="item" [process]="process" [arrangement]="arrangement"></app-fabric-completion-fields>
+        @if (!selectedStatus) {
         <div class="notes-field">
             <label for="productionNotes">Aggiungi qui eventuali note</label>
             <textarea id="productionNotes" name="productionNotes" rows="4" [(ngModel)]="notes"></textarea>
         </div>
+        }
+        @if (selectedStatus) {
+          <div class="actions">
+            <button class="cancel-button" type="button" (click)="onCloseDialog()">Annulla</button>
+            <button class="completed-button" type="button" (click)="onSelectState(selectedStatus)">Conferma chiusura</button>
+          </div>
+        } @else {
+        <div class="head closing-question"><mat-icon class="icon" aria-hidden="true">help</mat-icon></div>
         <div class="why">
             <p>Desideri terminare la produzione marcando il lavoro come...</p>
         </div>
@@ -31,5 +39,6 @@
                 Completato
             </button>
         </div>
+        }
     }
 </div>

@@ -49,65 +49,52 @@
         } @else {
             <form class="data-form" #processForm="ngForm" novalidate>
                 <div class="process-data">
-                    <div class="column">
-                        <div class="form-group">
-                            <label for="totalMeters">Metri mancanti al completamento</label>
-                            <input
-                                type="number"
-                                id="totalMeters"
-                                name="totalMeters"
-                                min="0"
-                                required
-                                [(ngModel)]="process.totalMeters">
-                        </div>
-                        <div class="form-group">
-                            <label for="speed">Velocità (Colpi/Minuto)</label>
-                            <input
-                                type="number"
-                                id="speed"
-                                name="speed"
-                                min="0"
-                                required
-                                [(ngModel)]="process.speed">
-                            @if(isSpeedBelowMinimum){
-                                <mat-error class="validation-error">
-                                    La velocità minima consentita è di 250 colpi/minuto.
-                                </mat-error>
-                            }
-                            
-                        </div>
-                        <div class="form-group">
-                            <label for="efficiency">Resa (%)</label>
-                            <input
-                                type="number"
-                                id="efficiency"
-                                name="efficiency"
-                                min="0"
-                                required
-                                [(ngModel)]="process.efficiency">
-                        </div>
+                    <div class="form-group fabric-code-field">
+                        <label for="fabricCode">Numero Tela *</label>
+                        <input type="text" id="fabricCode" name="fabricCode" [(ngModel)]="process.fabricCode" #fabricCodeModel="ngModel" required maxlength="100" autocomplete="off" [class.input-invalid]="fabricCodeModel.invalid && fabricCodeModel.touched">
+                        <small>Il numero viene prenotato quando confermi il processo.</small>
+                        @if (fabricCodeModel.hasError('required') && fabricCodeModel.touched) {
+                            <mat-error class="validation-error">Il numero tela è obbligatorio.</mat-error>
+                        }
                     </div>
-                    <div class="column">
-                        <div class="form-group">
-                            <label for="totalPieces">Numero Pezze Totali</label>
-                            <div class="total-pieces-row">
-                                <input
-                                    class="date-input total-pieces-input"
-                                    type="number"
-                                    readonly
-                                    id="totalPieces"
-                                    name="totalPieces"
-                                    required
-                                    [ngModel]="calculatedTotalPieces">
-                                <div
-                                    class="meters-per-piece-indicator"
-                                    [attr.aria-label]="'Lunghezza pezza: ' + (process.metersPerPiece ?? '-') + ' metri'"
-                                    [attr.title]="'Lunghezza pezza: ' + (process.metersPerPiece ?? '-') + ' m'">
-                                    <span class="meters-per-piece-value">{{ process.metersPerPiece ?? '-' }} m</span>
-                                    <mat-icon fontSet="material-symbols-outlined" class="meters-per-piece-icon">straighten</mat-icon>
-                                </div>
+                    <div class="form-group">
+                        <label for="totalMeters">Metri mancanti al completamento *</label>
+                        <input type="number" id="totalMeters" name="totalMeters" #totalMetersModel="ngModel" min="0" required [(ngModel)]="process.totalMeters" [class.input-invalid]="totalMetersModel.invalid && totalMetersModel.touched">
+                        @if (totalMetersModel.hasError('required') && totalMetersModel.touched) {
+                            <mat-error class="validation-error">I metri mancanti sono obbligatori.</mat-error>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label for="totalPieces">Numero Pezze Totali *</label>
+                        <div class="total-pieces-row">
+                            <input class="date-input total-pieces-input" type="number" readonly id="totalPieces" name="totalPieces" #totalPiecesModel="ngModel" required [ngModel]="calculatedTotalPieces" [class.input-invalid]="totalPiecesModel.invalid && totalPiecesModel.touched">
+                            <div class="meters-per-piece-indicator"
+                                [attr.aria-label]="'Lunghezza pezza: ' + (process.metersPerPiece ?? '-') + ' metri'"
+                                [attr.title]="'Lunghezza pezza: ' + (process.metersPerPiece ?? '-') + ' m'">
+                                <span class="meters-per-piece-value">{{ process.metersPerPiece ?? '-' }} m</span>
+                                <mat-icon fontSet="material-symbols-outlined" class="meters-per-piece-icon">straighten</mat-icon>
                             </div>
                         </div>
+                        @if (totalPiecesModel.invalid && totalPiecesModel.touched) {
+                            <mat-error class="validation-error">Il numero pezze totali è obbligatorio.</mat-error>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label for="speed">Velocità (Colpi/Minuto) *</label>
+                        <input type="number" id="speed" name="speed" #speedModel="ngModel" min="0" required [(ngModel)]="process.speed" [class.input-invalid]="speedModel.invalid && speedModel.touched">
+                        @if (speedModel.hasError('required') && speedModel.touched) {
+                            <mat-error class="validation-error">La velocità è obbligatoria.</mat-error>
+                        }
+                        @if(isSpeedBelowMinimum){
+                            <mat-error class="validation-error">La velocità minima consentita è di 250 colpi/minuto.</mat-error>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label for="efficiency">Resa (%) *</label>
+                        <input type="number" id="efficiency" name="efficiency" #efficiencyModel="ngModel" min="0" required [(ngModel)]="process.efficiency" [class.input-invalid]="efficiencyModel.invalid && efficiencyModel.touched">
+                        @if (efficiencyModel.hasError('required') && efficiencyModel.touched) {
+                            <mat-error class="validation-error">La resa è obbligatoria.</mat-error>
+                        }
                     </div>
                 </div>
             </form>

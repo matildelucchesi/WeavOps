@@ -1,29 +1,37 @@
-<!--<app-decorative-lines-component
-  [verticalPositions]="['24%', '25%', '43%', '75%','91%', '94%', '92%']"
-  [horizontalPositions]="['2%','15%', '17%', '30%', '53%', '56%', '94%']">
-</app-decorative-lines-component>-->
-
-<div class="title-wrapper">
-  <app-title-page-component
-  title="Clienti"
-  iconName="group"
-  [imageWidth]="40"
-  [imageHeight]="40">
-</app-title-page-component>
-</div>
-
+<app-title-page-component title="Clienti" iconName="group" [imageWidth]="40" [imageHeight]="40"></app-title-page-component>
 <div class="body">
-  <div>
-    <app-table-component
-    [columns]="columns"
-    [rows]="rows()"
-    [actions]="actions"
-    [addButton]="addButton"
-    [filterButton]="filterButton"
-    actionColumnHeader=""
-    (actionClick)="onTableAction($event)"
-    (bulkActionClick)="onTableBulkAction($event)"
-    (filterSelected)="onFilterSelected($event)">
-    </app-table-component>
+  <div class="list-toolbar">
+    <label class="searchbar"><mat-icon aria-hidden="true">search</mat-icon><input type="search" aria-label="Cerca clienti" placeholder="Cerca clienti…" [value]="searchTerm" (input)="search($any($event.target).value)"></label>
+    <app-add-button-component ariaLabel="Aggiungi cliente" (buttonClick)="addCustomer()"></app-add-button-component>
+  </div>
+  @if (loading()) { <p role="status">Caricamento clienti…</p> }
+  @if (loadError()) { <p role="alert" class="error">Impossibile caricare i clienti. <button class="clear-filters" (click)="loadCustomerRows()">Riprova</button></p> }
+  <div class="company-list">
+    @for (row of pagedRows; track row.id ?? row.customer.id) {
+      <app-company-card [name]="row.name">
+        <dl class="detail-grid">
+          <div><dt>Partita IVA</dt><dd>{{ row.vatNumber || '—' }}</dd></div>
+          <div><dt>Email</dt><dd>{{ row.email || '—' }}</dd></div>
+          <div><dt>Indirizzo</dt><dd>{{ row.customer.street || '—' }} {{ row.customer.streetNumber }}</dd></div>
+          <div><dt>CAP</dt><dd>{{ row.customer.postalCode || '—' }}</dd></div>
+          <div><dt>Comune</dt><dd>{{ row.customer.city || '—' }}</dd></div>
+          <div><dt>Provincia</dt><dd>{{ row.customer.provinceCode || '—' }}</dd></div>
+          <div class="wide-detail"><dt>Aziende di destinazione</dt><dd>{{ row.destinationNames || 'Nessuna destinazione assegnata' }}</dd></div>
+          @for (referent of row.customer.referents ?? []; track $index) {
+            <div class="wide-detail"><dt>Referente {{ $index + 1 }}</dt><dd><span class="referent-contact"><span>{{ referent.firstName }} {{ referent.lastName }}</span><span>{{ referent.phoneNumber || '—' }}</span></span>@if (referent.email) { <br>{{ referent.email }} }</dd></div>
+          }
+          <div class="wide-detail"><dt>Note</dt><dd>{{ row.customer.note || 'Nessuna nota' }}</dd></div>
+        </dl>
+        <div cardActions class="card-actions">
+          @for (action of cardActions; track action.id) {
+            <button type="button" class="card-action" [attr.aria-label]="action.label" [matTooltip]="action.label" [disabled]="actionDisabled(action, row)" [style.--card-icon-color]="actionColor(action, row)" (click)="cardAction(action, row)"><mat-icon>{{ action.icon }}</mat-icon></button>
+          }
+        </div>
+      </app-company-card>
+    } @empty { @if (!loading() && !loadError()) { <p>Nessun cliente trovato.</p> } }
+  </div>
+  <div class="list-footer">
+    <app-card-pagination [total]="rows().length" [page]="currentPage()" [pageSize]="pageSize()" (pageSizeChange)="changePageSize($event)" (pageChange)="currentPage.set($event)"></app-card-pagination>
+    
   </div>
 </div>

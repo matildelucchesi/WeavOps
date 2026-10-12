@@ -5,35 +5,32 @@
  */
 package org.openapitools.api;
 
-import org.openapitools.model.Item;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.util.List;
+import java.util.Optional;
+import org.openapitools.model.Item;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import jakarta.annotation.Generated;
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-19T15:48:41.653649400+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(
+        value = "org.openapitools.codegen.languages.SpringCodegen",
+        date = "2026-06-19T15:48:41.653649400+02:00[Europe/Rome]",
+        comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Item", description = "the Item API")
 public interface ItemsApi {
@@ -43,213 +40,231 @@ public interface ItemsApi {
     }
 
     String PATH_CREATE_ITEM = "/items";
+
     /**
      * POST /items : Crea un item
      *
-     * @param item  (required)
-     * @return Item creato (status code 201)
-     *         or Richiesta non valida (status code 400)
+     * @param item (required)
+     * @return Item creato (status code 201) or Richiesta non valida (status code 400)
      */
     @Operation(
-        operationId = "createItem",
-        summary = "Crea un item",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Item creato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "createItem",
+            summary = "Crea un item",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Item creato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Item.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.POST,
-        value = ItemsApi.PATH_CREATE_ITEM,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.POST,
+            value = ItemsApi.PATH_CREATE_ITEM,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<Item> createItem(
-        @Parameter(name = "Item", description = "", required = true) @Valid @RequestBody Item item
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "Item", description = "", required = true) @Valid @RequestBody
+                    Item item) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_DELETE_ITEM = "/items/{id}";
+
     /**
      * DELETE /items/{id} : Elimina un item
      *
-     * @param id  (required)
-     * @return Item eliminato (status code 204)
-     *         or Item non trovato (status code 404)
+     * @param id (required)
+     * @return Item eliminato (status code 204) or Item non trovato (status code 404)
      */
     @Operation(
-        operationId = "deleteItem",
-        summary = "Elimina un item",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "204", description = "Item eliminato"),
-            @ApiResponse(responseCode = "404", description = "Item non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.DELETE,
-        value = ItemsApi.PATH_DELETE_ITEM
-    )
+            operationId = "deleteItem",
+            summary = "Elimina un item",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(responseCode = "204", description = "Item eliminato"),
+                @ApiResponse(responseCode = "404", description = "Item non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @RequestMapping(method = RequestMethod.DELETE, value = ItemsApi.PATH_DELETE_ITEM)
     default ResponseEntity<Void> deleteItem(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_ITEM_BY_ID = "/items/{id}";
+
     /**
      * GET /items/{id} : Recupera un item tramite ID
      *
-     * @param id  (required)
-     * @return Item trovato (status code 200)
-     *         or Item non trovato (status code 404)
+     * @param id (required)
+     * @return Item trovato (status code 200) or Item non trovato (status code 404)
      */
     @Operation(
-        operationId = "getItemById",
-        summary = "Recupera un item tramite ID",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Item trovato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Item non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getItemById",
+            summary = "Recupera un item tramite ID",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Item trovato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Item.class))
+                        }),
+                @ApiResponse(responseCode = "404", description = "Item non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = ItemsApi.PATH_GET_ITEM_BY_ID,
-        produces = { "application/json" }
-    )
+            method = RequestMethod.GET,
+            value = ItemsApi.PATH_GET_ITEM_BY_ID,
+            produces = {"application/json"})
     default ResponseEntity<Item> getItemById(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_ITEMS = "/items";
+
     /**
      * GET /items : Recupera tutti i item
      *
      * @return Lista item (status code 200)
      */
     @Operation(
-        operationId = "getItems",
-        summary = "Recupera tutti i item",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Lista item", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Item.class)))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getItems",
+            summary = "Recupera tutti i item",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Lista item",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array =
+                                            @ArraySchema(
+                                                    schema = @Schema(implementation = Item.class)))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = ItemsApi.PATH_GET_ITEMS,
-        produces = { "application/json" }
-    )
-    default ResponseEntity<List<Item>> getItems(
-        
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } }, { \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } } ]";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            method = RequestMethod.GET,
+            value = ItemsApi.PATH_GET_ITEMS,
+            produces = {"application/json"})
+    default ResponseEntity<List<Item>> getItems() {
 
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "[ { \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } }, { \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } } ]";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
     String PATH_UPDATE_ITEM = "/items/{id}";
+
     /**
      * PUT /items/{id} : Aggiorna un item
      *
-     * @param id  (required)
-     * @param item  (required)
-     * @return Item aggiornato (status code 200)
-     *         or Richiesta non valida (status code 400)
-     *         or Item non trovato (status code 404)
+     * @param id (required)
+     * @param item (required)
+     * @return Item aggiornato (status code 200) or Richiesta non valida (status code 400) or Item
+     *     non trovato (status code 404)
      */
     @Operation(
-        operationId = "updateItem",
-        summary = "Aggiorna un item",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Item aggiornato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
-            @ApiResponse(responseCode = "404", description = "Item non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "updateItem",
+            summary = "Aggiorna un item",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Item aggiornato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Item.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+                @ApiResponse(responseCode = "404", description = "Item non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.PUT,
-        value = ItemsApi.PATH_UPDATE_ITEM,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.PUT,
+            value = ItemsApi.PATH_UPDATE_ITEM,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<Item> updateItem(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id,
-        @Parameter(name = "Item", description = "", required = true) @Valid @RequestBody Item item
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id,
+            @Parameter(name = "Item", description = "", required = true) @Valid @RequestBody
+                    Item item) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"arrangement\" : { \"itemName\" : \"itemName\", \"reedHight\" : 1.4658129, \"warpLenght\" : 5.962134, \"piecesCount\" : 5.637377, \"reedCount\" : 0.8008281904610115, \"warpEndCount\" : 7.0614014, \"pieceLenght\" : 2.302136, \"hitsPerDm\" : 9.301444243932576, \"id\" : \"id\", \"reedCM\" : 6.027456183070403, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, \"metersRun\" : 2.027123023002322, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 3.616076749251911, \"processing\" : [ { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"efficiency\" : 7.386281948385884, \"metersRun\" : 1.0246457001441578, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"totalMeters\" : 1.2315135367772556, \"loomId\" : \"loomId\", \"metersToGo\" : 1.4894159098541704, \"id\" : \"id\", \"speed\" : 4.145608029883936, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\", \"customer\" : { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

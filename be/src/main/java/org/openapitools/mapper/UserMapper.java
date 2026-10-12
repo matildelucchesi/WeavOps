@@ -18,6 +18,8 @@ public class UserMapper {
         dto.setFirstName(entity.getFirstName());
         dto.setLastName(entity.getLastName());
         dto.setEmail(entity.getEmail());
+        dto.setCompanyName(entity.getCompanyName());
+        dto.setVatNumber(entity.getVatNumber());
         return dto;
     }
 
@@ -33,6 +35,8 @@ public class UserMapper {
         entity.setFirstName(dto.getFirstName());
         entity.setLastName(dto.getLastName());
         entity.setEmail(dto.getEmail());
+        entity.setCompanyName(dto.getCompanyName());
+        entity.setVatNumber(dto.getVatNumber());
         return entity;
     }
 }

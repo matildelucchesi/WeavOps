@@ -1,5 +1,8 @@
 package org.openapitools.controller;
 
+import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Map;
 import org.openapitools.api.LoomsApi;
 import org.openapitools.constants.LoomLogEvent;
 import org.openapitools.domain.LoomEntity;
@@ -7,28 +10,25 @@ import org.openapitools.domain.LoomLogEntity;
 import org.openapitools.mapper.LoomMapper;
 import org.openapitools.model.DeleteMultiLooms200Response;
 import org.openapitools.model.Loom;
-import org.openapitools.service.LoomService;
 import org.openapitools.service.LoomLogService;
+import org.openapitools.service.LoomService;
 import org.openapitools.service.MobileTokenAuthorizationService;
 import org.openapitools.service.TokenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
-
-import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Map;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class LoomController implements LoomsApi {
 
-    private static final String DUPLICATE_SERIAL_NUMBER_MESSAGE = "Telaio con numero seriale già esistente";
+    private static final String DUPLICATE_SERIAL_NUMBER_MESSAGE =
+            "Telaio con numero seriale già esistente";
 
     private final LoomService service;
     private final LoomMapper mapper;
@@ -41,8 +41,7 @@ public class LoomController implements LoomsApi {
             LoomMapper mapper,
             LoomLogService loomLogService,
             TokenService tokenService,
-            MobileTokenAuthorizationService mobileTokenAuthorizationService
-    ) {
+            MobileTokenAuthorizationService mobileTokenAuthorizationService) {
         this.service = service;
         this.mapper = mapper;
         this.loomLogService = loomLogService;
@@ -66,10 +65,12 @@ public class LoomController implements LoomsApi {
     @Override
     @SuppressWarnings("unchecked")
     public ResponseEntity<Loom> createLoom(@Valid @RequestBody Loom loom) {
-        if(service.findBySerialNumber(loom.getSerialNumber()).isPresent()){
-            return (ResponseEntity<Loom>) (ResponseEntity<?>) ResponseEntity.badRequest()
-                    .body(Map.of("message", DUPLICATE_SERIAL_NUMBER_MESSAGE));
-        }else {
+        if (service.findBySerialNumber(loom.getSerialNumber()).isPresent()) {
+            return (ResponseEntity<Loom>)
+                    (ResponseEntity<?>)
+                            ResponseEntity.badRequest()
+                                    .body(Map.of("message", DUPLICATE_SERIAL_NUMBER_MESSAGE));
+        } else {
             LoomEntity savedLoom = service.save(mapper.toEntity(loom));
             LoomLogEntity loomLog = new LoomLogEntity();
             loomLog.setKey(LoomLogEvent.LOOM_CREATED.name());
@@ -77,13 +78,13 @@ public class LoomController implements LoomsApi {
             loomLog.setLoomCode(savedLoom.getSerialNumber());
             loomLogService.save(loomLog);
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(mapper.toDto(savedLoom));
+            return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDto(savedLoom));
         }
     }
 
     @Override
-    public ResponseEntity<Loom> updateLoom(@PathVariable("id") String id, @Valid @RequestBody Loom loom) {
+    public ResponseEntity<Loom> updateLoom(
+            @PathVariable("id") String id, @Valid @RequestBody Loom loom) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (mobileTokenAuthorizationService.isMobileToken(authentication)) {
             if (loom.getStatus() == null) {
@@ -111,8 +112,7 @@ public class LoomController implements LoomsApi {
 
     @Override
     public ResponseEntity<DeleteMultiLooms200Response> deleteMultiLooms(
-            @Valid @RequestBody List<String> requestBody
-    ) {
+            @Valid @RequestBody List<String> requestBody) {
         int deletedCount = service.deleteByIds(requestBody);
 
         return ResponseEntity.ok(new DeleteMultiLooms200Response().deletedCount(deletedCount));
@@ -121,8 +121,7 @@ public class LoomController implements LoomsApi {
     @Override
     public ResponseEntity<Loom> addPieces(
             @PathVariable("id") String id,
-            @RequestParam(value = "pieces", required = true) Integer pieces
-    ) {
+            @RequestParam(value = "pieces", required = true) Integer pieces) {
         if (id == null || id.isBlank() || pieces == null || pieces <= 0) {
             return ResponseEntity.badRequest().build();
         }
@@ -141,12 +140,14 @@ public class LoomController implements LoomsApi {
     }
 
     @PostMapping("/looms/{id}/mobile-access-token")
-    public ResponseEntity<MobileAccessTokenResponse> createMobileAccessToken(@PathVariable("id") String id) {
+    public ResponseEntity<MobileAccessTokenResponse> createMobileAccessToken(
+            @PathVariable("id") String id) {
         if (service.findById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(new MobileAccessTokenResponse(tokenService.generateMobileToken(id)));
+        return ResponseEntity.ok(
+                new MobileAccessTokenResponse(tokenService.generateMobileToken(id)));
     }
 
     public record MobileAccessTokenResponse(String token) {

@@ -1,0 +1,18 @@
+/* Hallmark · pre-emit critique: P4 H4 E4 S5 R5 V4
+ * WeavOps: elenco gestionale, card espandibili, palette e tipografia esistenti. */
+:host { display: block; min-width: 0; }
+.company-card { width: 100%; box-sizing: border-box; border: 1px solid var(--weavops-color-primary); border-radius: 6px; background: var(--weavops-color-surface); color: var(--weavops-color-primary); box-shadow: 0 2px 2px var(--weavops-color-primary); overflow: clip; }
+summary { display: flex; align-items: center; gap: 20px; min-height: 76px; box-sizing: border-box; padding: 16px 24px; list-style: none; cursor: pointer; }
+summary::-webkit-details-marker { display: none; }
+h2 { margin: 0; flex: 1; min-width: 0; font-size: clamp(18px, 1.5vw, 22px); font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
+.header-actions { flex-shrink: 0; }
+:host ::ng-deep .header-actions .card-actions { margin-top: 0; gap: 6px; }
+.expand-button { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: 10px; background: var(--weavops-color-primary); color: var(--weavops-color-surface); }
+.expand-icon { width: 28px; height: 28px; font-size: 28px; }
+details[open] .expand-icon { transform: rotate(180deg); }
+summary:hover { background: var(--weavops-color-primary-soft); }
+summary:active { background: var(--weavops-color-primary-soft); }
+summary:focus-visible { outline: 2px solid var(--weavops-color-accent); outline-offset: -4px; }
+.company-details { padding: 24px; border-top: 1px solid var(--weavops-color-primary); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media(max-width: 600px) { summary { padding: 12px 18px; } .company-details { padding: 18px; } }

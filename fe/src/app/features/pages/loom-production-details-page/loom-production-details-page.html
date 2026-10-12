@@ -44,6 +44,10 @@
                 <input type="text" id="itemName" name="itemName" [value]="arrangement()?.itemName ?? ''" [readonly]="!isEditEnabled">
               </div>
               <div class="form-group">
+                <label for="articleCertification">Certificazione</label>
+                <input type="text" id="articleCertification" name="articleCertification" [value]="currentCertificationLabel()" readonly>
+              </div>
+              <div class="form-group">
                 <label for="hitsPerDm">Numero Colpi (per dm)</label>
                 <input type="number" id="hitsPerDm" name="hitsPerDm" [value]="arrangement()?.hitsPerDm ?? ''" [readonly]="!isEditEnabled">
               </div>
@@ -91,14 +95,14 @@
               <h3>Dettagli Produzione</h3>
               <div class="production-fields">
                 <div class="form-group">
-                  @if(process()?.metersToGo === 0){
-                    <label for="totalMeters" [class.complete-text]="process()?.metersToGo === 0">Articolo completato</label>
+                  @if(remainingArticleMeters === 0){
+                    <label for="totalMeters" [class.complete-text]="remainingArticleMeters === 0">Articolo completato</label>
                   }
                   @else{
-                    <label for="totalMeters" [class.complete-text]="process()?.metersToGo === 0">Metri mancanti al completamento</label>
+                    <label for="totalMeters" [class.complete-text]="remainingArticleMeters === 0">Metri mancanti al completamento</label>
                   }
                  
-                  <input type="number" id="totalMeters" name="totalMeters" [value]="process()?.metersToGo ?? ''" [readonly]="!isEditEnabled" [class.complete]="process()?.metersToGo === 0">
+                  <input type="number" id="totalMeters" name="totalMeters" [value]="remainingArticleMeters ?? ''" [readonly]="!isEditEnabled" [class.complete]="remainingArticleMeters === 0">
                 </div>
                 <div class="form-group">
                   <label for="metersRun">Metri Prodotti</label>
@@ -187,3 +191,4 @@
     </app-table-component>
   
 </div>
+

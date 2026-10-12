@@ -1,0 +1,39 @@
+type: object
+required: [serviceId]
+properties:
+  id:
+    type: string
+    readOnly: true
+  serviceId:
+    type: string
+  minimum:
+    type: number
+    nullable: true
+    minimum: 0
+    description: Limite inferiore incluso; obbligatorio e intero per colpi e fili, assente per telai a campione.
+  maximum:
+    type: number
+    nullable: true
+    minimum: 0
+    description: Limite superiore escluso, maggiore del minimo; null per fascia senza limite. Assente per telai a campione.
+  hours:
+    type: number
+    nullable: true
+    minimum: 0
+    exclusiveMinimum: true
+    description: Numero esatto di ore, anche decimale. Obbligatorio solo per telai a campione; sostituisce minimum e maximum.
+  amount:
+    type: number
+    nullable: true
+    minimum: 0
+    multipleOf: 0.000001
+    description: Importo in EUR, IVA esclusa. Obbligatorio per FIXED (massimo 2 decimali) e PER_THREAD (massimo 6 decimali); null per ON_REQUEST.
+  pricingType:
+    type: string
+    enum: [FIXED, PER_THREAD, ON_REQUEST]
+    default: FIXED
+    description: FIXED è un importo fisso; PER_THREAD moltiplica amount per tutti i fili; ON_REQUEST richiede un prezzo concordato prima della fatturazione.
+  description:
+    type: string
+    nullable: true
+    description: Testo visualizzato nel listino, obbligatorio per ON_REQUEST.

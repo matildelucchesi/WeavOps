@@ -1,4 +1,11 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { CertificationFacadeService } from '../../../services/certification-facade.service';
+import { Certification } from '../../../api/model/certification';
+import { FabricFacadeService } from '../../../services/fabric-facade.service';
+import { Fabric } from '../../../api/model/fabric';
+import { DeliveryNoteService, SavedDeliveryNote } from '../../../services/delivery-note.service';
+import { DatePipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DecorativeLinesComponent } from '../../reusable-components/decorative-lines-component/decorative-lines-component';
@@ -37,6 +44,7 @@ interface ProcessTableRow {
   loomId?: string;
   status?: LoomItemAssignment.StatusEnum;
   loomName: string;
+  fabricCode: string;
   loomState: string;
   piecesRun: string;
   totalPieces: string;
@@ -65,6 +73,8 @@ interface ArrangementPdfSection {
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
+    DecimalPipe,
+    DatePipe,
     TableComponent,
     MatSnackBarModule,
   ],
@@ -78,6 +88,22 @@ interface ArrangementPdfSection {
 })
 export class ItemDetailsPage implements OnInit {
 
+  private readonly fabricService = inject(FabricFacadeService);
+  private readonly deliveryNoteService = inject(DeliveryNoteService);
+  readonly deliveryNotes = signal<SavedDeliveryNote[]>([]);
+  readonly deliveryNotesLoadError = signal(false);
+  deliveryNoteForFabric(id: string | undefined): SavedDeliveryNote | undefined {
+    return this.deliveryNotes().find(document => id !== undefined && document.fabricIds?.includes(id));
+  }
+  viewDeliveryNote(document: SavedDeliveryNote): void {
+    this.deliveryNoteService.view(document._id, message => this.snackBar.open(message, 'Chiudi'));
+  }
+  public readonly fabrics = signal<Fabric[]>([]);
+  public fabricsLoadError = false;
+  private loadFabrics(itemId: string | undefined): void {
+    if (!itemId) return;
+    this.fabricService.getByItemId(itemId).subscribe({next: values => { this.fabrics.set(values); this.fabricsLoadError = false; }, error: () => this.fabricsLoadError = true});
+  }
   private readonly item = signal<Item | null>(null);
   private readonly arrangement = signal<Arrangement | null>(null);
   private readonly loomNamesById = signal<Record<string, string>>({});
@@ -91,6 +117,7 @@ export class ItemDetailsPage implements OnInit {
 
   public readonly processesColumns: TableColumn<ProcessTableRow>[] = [
     { header: 'Nome Telaio', field: 'loomName' },
+    { header: 'Numero Tela', field: 'fabricCode' },
     { header: 'Pezze Fatte', field: 'piecesRun' },
     {
       header: 'Stato Processo',
@@ -177,6 +204,7 @@ export class ItemDetailsPage implements OnInit {
       loomId: assignment.loomId,
       status: assignment.status,
       loomName: this.getAssignmentLoomName(assignment, process),
+      fabricCode: process?.fabricCode?.trim() || '-',
       loomState: this.getAssignmentLoomState(assignment),
       piecesRun: this.formatTablePieces(process?.piecesRun),
       totalPieces: this.formatTablePieces(process?.totalPieces),
@@ -186,6 +214,8 @@ export class ItemDetailsPage implements OnInit {
     };
   }));
   
+  private readonly certificationService = inject(CertificationFacadeService);
+  public certifications: Certification[] = [];
   private readonly itemService = inject(ItemFacadeService);
   private readonly assignmentService = inject(LoomItemAssignmentFacadeService);
   private readonly arrangementService = inject(ArrangementFacadeService);
@@ -538,6 +568,11 @@ export class ItemDetailsPage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.deliveryNoteService.list().subscribe({
+      next: documents => this.deliveryNotes.set(documents),
+      error: () => this.deliveryNotesLoadError.set(true),
+    });
+    this.certificationService.getAll().subscribe({next: values => this.certifications = values, error: () => this.snackBar.open('Impossibile caricare le certificazioni', 'Chiudi')});
     const itemId = this.route.snapshot.queryParamMap.get('id');
     const navigationItem = this.getNavigationItem();
     const navigationArrangement = this.getNavigationArrangement();
@@ -556,6 +591,7 @@ export class ItemDetailsPage implements OnInit {
     this.item.set(navigationItem);
 
     if (navigationItem) {
+      this.loadFabrics(navigationItem.id);
       this.loadItemAssignments(navigationItem.id);
       this.loadRemainingMetersToAssign(navigationItem.id);
       this.setArrangement(navigationArrangement);
@@ -568,6 +604,7 @@ export class ItemDetailsPage implements OnInit {
 
     this.itemService.getById(itemId).subscribe((item) => {
       this.item.set(item);
+      this.loadFabrics(item.id);
       this.loadItemAssignments(item.id);
       this.loadRemainingMetersToAssign(item.id);
       this.loadArrangement(item.arrangementId);
@@ -1478,7 +1515,7 @@ export class ItemDetailsPage implements OnInit {
       },
       error: (error) => {
         console.error("Errore durante l'eliminazione dell'assegnazione:", error);
-        this.snackBar.open("Errore durante l'eliminazione dell'assegnazione", 'Chiudi', {
+        this.snackBar.open(error.error?.message ?? "Errore durante l'eliminazione dell'assegnazione", 'Chiudi', {
           duration: 4000,
           horizontalPosition: 'end',
           verticalPosition: 'bottom',

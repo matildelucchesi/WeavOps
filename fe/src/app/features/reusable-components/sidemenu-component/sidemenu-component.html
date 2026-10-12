@@ -1,30 +1,43 @@
 <div class="wrapper">
     <app-sidemenu-button-component label="Home" icon="home" route="/home" style="width: 100%;"></app-sidemenu-button-component>
-    <app-sidemenu-button-component 
-        label="Telai" 
-        icon="/icon/loom-white-icon.png" 
-        route="/telai" 
-        [activeRoutes]="['/dettaglio-produzione']"
-        style="width: 100%;"
-    ></app-sidemenu-button-component>
-    <app-sidemenu-button-component
-        label="Articoli"
-        icon="/icon/item-white-icon.png"
-        route="/articoli"
-        [activeRoutes]="['/dettaglio-articolo']"
-        style="width: 100%;"
-    ></app-sidemenu-button-component>
-    <app-sidemenu-button-component
-        label="Clienti"
-        icon="group"
-        route="/clienti"
-        [activeRoutes]="['/aggiungi-cliente', '/cronologia-articoli']"
-        style="width: 100%;"
-    ></app-sidemenu-button-component>
-    <app-sidemenu-button-component label="Log Giornaliero Telai" icon="pending_actions" route="/storico-lavoro-telai" style="width: 100%;"></app-sidemenu-button-component>
-    <!--<app-sidemenu-button-component label="Previsioni" icon="query_stats" route="/previsioni" style="width: 100%;"></app-sidemenu-button-component>-->
+    <app-sidemenu-button-component label="Telai" icon="/icon/loom-white-icon.png" route="/telai" [activeRoutes]="['/dettaglio-produzione']" style="width: 100%;"></app-sidemenu-button-component>
+    <app-sidemenu-button-component label="Articoli" icon="/icon/item-white-icon.png" route="/articoli" [activeRoutes]="['/dettaglio-articolo']" style="width: 100%;"></app-sidemenu-button-component>
+    <div class="directory-group">
+      <button type="button" class="directory-toggle" [class.is-active]="isDirectoryActive" [attr.aria-expanded]="isDirectoryOpen" aria-controls="directory-submenu" (click)="toggleDirectory()">
+        <mat-icon aria-hidden="true">group</mat-icon><span>Anagrafiche</span>
+      </button>
+      @if (isDirectoryOpen) {
+        <nav id="directory-submenu" class="directory-submenu" aria-label="Anagrafiche">
+          <a routerLink="/clienti" routerLinkActive="is-active" (click)="isDirectoryOpen = false"><mat-icon>group</mat-icon>Clienti</a>
+          <a routerLink="/destinazioni" routerLinkActive="is-active" (click)="isDirectoryOpen = false"><mat-icon>location_on</mat-icon>Destinazioni</a>
+          <a routerLink="/certificazioni" routerLinkActive="is-active" (click)="isDirectoryOpen = false"><mat-icon>verified</mat-icon>Certificazioni</a>
+        </nav>
+      }
+    </div>
+    <app-sidemenu-button-component label="Tariffe" icon="price_change" route="/tariffe" style="width: 100%;"></app-sidemenu-button-component>
+    <div class="directory-group documents-group">
+      <button type="button" class="directory-toggle" [class.is-active]="isDocumentsActive" [attr.aria-expanded]="isDocumentsOpen" aria-controls="documents-submenu" (click)="toggleDocuments()">
+        <mat-icon aria-hidden="true">folder</mat-icon><span>Documenti</span>
+      </button>
+      @if (isDocumentsOpen) {
+        <nav id="documents-submenu" class="directory-submenu" aria-label="Documenti">
+          <a routerLink="/documenti/documenti-di-trasporto" routerLinkActive="is-active" (click)="isDocumentsOpen = false"><mat-icon>local_shipping</mat-icon>DDT</a>
+          <a routerLink="/documenti/fatture" routerLinkActive="is-active" (click)="isDocumentsOpen = false"><mat-icon>receipt_long</mat-icon>Fatture</a>
+        </nav>
+      }
+    </div>
+    <div class="directory-group controls-group">
+      <button type="button" class="directory-toggle" [class.is-active]="isControlsActive" [attr.aria-expanded]="isControlsOpen" aria-controls="controls-submenu" (click)="toggleControls()">
+        <mat-icon aria-hidden="true">fact_check</mat-icon><span>Controlli</span>
+      </button>
+      @if (isControlsOpen) {
+        <nav id="controls-submenu" class="directory-submenu" aria-label="Controlli">
+          <a routerLink="/storico-lavoro-telai" routerLinkActive="is-active" (click)="isControlsOpen = false"><mat-icon>pending_actions</mat-icon>Log Giornaliero Telai</a>
+          <a routerLink="/audit" routerLinkActive="is-active" (click)="isControlsOpen = false"><mat-icon>fact_check</mat-icon>Audit</a>
+        </nav>
+      }
+    </div>
     <app-sidemenu-button-component label="Calendario" icon="calendar_today" route="/calendario" style="width: 100%;"></app-sidemenu-button-component>
-    <!--<app-sidemenu-button-component label="Impostazioni" icon="settings" route="/impostazioni" style="width: 100%;"></app-sidemenu-button-component>-->
     <div class="logo-wrapper">
         <button
             class="logo-button"

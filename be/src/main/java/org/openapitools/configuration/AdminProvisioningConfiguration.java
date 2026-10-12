@@ -12,6 +12,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAutoConfiguration
 @EntityScan(basePackageClasses = UserEntity.class)
 @EnableTransactionManagement
-@Import({PasswordConfig.class, MongoTransactionConfig.class, AdminProvisioningService.class, TokenService.class})
-public class AdminProvisioningConfiguration {
-}
+@Import({
+    PasswordConfig.class,
+    MongoTransactionConfig.class,
+    AdminProvisioningService.class,
+    TokenService.class
+})
+public class AdminProvisioningConfiguration {}

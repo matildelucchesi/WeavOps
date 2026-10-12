@@ -1,0 +1,13 @@
+/services:
+  get:
+    tags: [Service]
+    operationId: getServices
+    responses:
+      '200':
+        description: Servizi del listino.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/service.yaml'

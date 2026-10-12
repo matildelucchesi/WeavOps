@@ -1,6 +1,7 @@
 package org.openapitools.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import org.openapitools.api.CalendarEventCategoriesApi;
 import org.openapitools.mapper.CalendarEventCategoryMapper;
 import org.openapitools.model.CalendarEventCategory;
@@ -11,17 +12,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 public class CalendarEventCategoryController implements CalendarEventCategoriesApi {
     private final CalendarEventCategoryService service;
     private final CalendarEventCategoryMapper mapper;
 
     public CalendarEventCategoryController(
-            CalendarEventCategoryService service,
-            CalendarEventCategoryMapper mapper
-    ) {
+            CalendarEventCategoryService service, CalendarEventCategoryMapper mapper) {
         this.service = service;
         this.mapper = mapper;
     }
@@ -32,7 +29,8 @@ public class CalendarEventCategoryController implements CalendarEventCategoriesA
     }
 
     @Override
-    public ResponseEntity<CalendarEventCategory> getCalendarEventCategoryById(@PathVariable("id") String id) {
+    public ResponseEntity<CalendarEventCategory> getCalendarEventCategoryById(
+            @PathVariable("id") String id) {
         return service.findById(id)
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)
@@ -41,8 +39,7 @@ public class CalendarEventCategoryController implements CalendarEventCategoriesA
 
     @Override
     public ResponseEntity<CalendarEventCategory> createCalendarEventCategory(
-            @Valid @RequestBody CalendarEventCategory calendarEventCategory
-    ) {
+            @Valid @RequestBody CalendarEventCategory calendarEventCategory) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(mapper.toDto(service.save(mapper.toEntity(calendarEventCategory))));
     }
@@ -50,8 +47,7 @@ public class CalendarEventCategoryController implements CalendarEventCategoriesA
     @Override
     public ResponseEntity<CalendarEventCategory> updateCalendarEventCategory(
             @PathVariable("id") String id,
-            @Valid @RequestBody CalendarEventCategory calendarEventCategory
-    ) {
+            @Valid @RequestBody CalendarEventCategory calendarEventCategory) {
         return service.update(id, mapper.toEntity(calendarEventCategory))
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)

@@ -241,7 +241,7 @@
     line-height: 1.25;
 }
 
-input{
+input, select{
     border: 1.5px solid var(--weavops-color-primary);
     border-radius: 10px;
     padding: 8px 16px;
@@ -323,6 +323,47 @@ input{
 
 .data-form{
     padding: 20px;
+}
+
+.data-form.arrangement-form{
+    width: auto;
+}
+
+.arrangement-fields{
+    display: grid;
+    gap: 20px;
+}
+
+.arrangement-row,
+.production-data .item-data{
+    align-items: start;
+    column-gap: 20px;
+    display: grid;
+    grid-template-columns: 234px 270px 234px;
+    justify-content: space-between;
+}
+
+.arrangement-row > .form-group{
+    min-width: 0;
+}
+
+.arrangement-row > .form-group > input,
+.arrangement-row > .form-group > select,
+.arrangement-row .date-picker-field{
+    box-sizing: border-box;
+    width: 234px;
+}
+
+.arrangement-export-actions{
+    display: flex;
+    justify-content: flex-end;
+    align-self: end;
+}
+
+.arrangement-export-actions .button-qr{
+    flex: 0 0 234px;
+    height: 80px;
+    width: 234px;
 }
 
 .item-data{
@@ -456,6 +497,21 @@ select:disabled{
     margin-bottom: 2px;
 }
 
+@media (max-width: 900px){
+    .arrangement-row,
+    .production-data .item-data{
+        grid-template-columns: repeat(2, minmax(234px, 1fr));
+        row-gap: 12px;
+    }
+}
+
+@media (max-width: 600px){
+    .arrangement-row,
+    .production-data .item-data{
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
 .save-case{
     background-color: var(--weavops-color-accent);
     border: 1.5px solid var(--weavops-color-accent);
@@ -474,4 +530,14 @@ select:disabled{
 
 .expected-end-date-label-success {
     color: var(--weavops-color-success);
+}
+
+.fabric-ddt { display: inline-block; padding: 5px 8px; border-radius: 6px; background: #eee5f5; font-size: 12px; }
+.view-ddt { border: 0; background: transparent; color: var(--weavops-color-primary); cursor: pointer; vertical-align: middle; }
+.fabrics-section {
+  background-color: var(--weavops-color-surface);
+  margin: 24px 0; padding: 20px; border: 1.5px solid var(--weavops-color-primary);
+  border-radius: 10px; overflow-x: auto; color: var(--weavops-color-primary);
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px; text-align: left; border-bottom: 1px solid var(--weavops-color-grey); white-space: nowrap; }
 }

@@ -1,0 +1,37 @@
+/fabrics:
+  get:
+    tags: [Fabric]
+    operationId: getFabrics
+    parameters:
+      - name: itemId
+        in: query
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Tele prodotte, eventualmente filtrate per articolo.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/fabric.yaml'
+/fabrics/{id}:
+  get:
+    tags: [Fabric]
+    operationId: getFabricById
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Tela prodotta.
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/fabric.yaml'
+      '404':
+        description: Tela non trovata.

@@ -1,0 +1,70 @@
+/rates:
+  get:
+    tags: [Rate]
+    operationId: getRates
+    responses:
+      '200':
+        description: Listino tariffe.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/rate.yaml'
+  post:
+    tags: [Rate]
+    operationId: createRate
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/rate.yaml'
+    responses:
+      '201':
+        description: Tariffa creata.
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/rate.yaml'
+      '400':
+        description: Fascia, servizio o importo non validi.
+      '409':
+        description: Fascia sovrapposta a una tariffa dello stesso servizio.
+/rates/{id}:
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  put:
+    tags: [Rate]
+    operationId: updateRate
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/rate.yaml'
+    responses:
+      '200':
+        description: Tariffa modificata.
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/rate.yaml'
+      '400':
+        description: Fascia, servizio o importo non validi.
+      '404':
+        description: Tariffa non trovata.
+      '409':
+        description: Fascia sovrapposta.
+  delete:
+    tags: [Rate]
+    operationId: deleteRate
+    responses:
+      '204':
+        description: Tariffa eliminata.
+      '404':
+        description: Tariffa non trovata.

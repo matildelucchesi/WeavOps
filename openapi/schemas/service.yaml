@@ -1,0 +1,13 @@
+type: object
+required: [code, name, bandCriterion]
+properties:
+  id:
+    type: string
+    readOnly: true
+  code:
+    type: string
+  name:
+    type: string
+  bandCriterion:
+    type: string
+    enum: [PICKS_PER_DM, THREADS, HOURS]

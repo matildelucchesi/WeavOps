@@ -25,6 +25,8 @@ interface ProfileForm {
 export class ProfilePage implements OnInit {
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
   private readonly userService = inject(UserFacadeService);
+  public company = { name: '', vatNumber: '' };
+  public isLoadingCompany = true;
   private readonly snackBar = inject(MatSnackBar);
   private loaderStartedAt = 0;
 
@@ -41,6 +43,7 @@ export class ProfilePage implements OnInit {
     this.userId = this.getUserIdFromToken();
 
     if (!this.userId) {
+      this.isLoadingCompany = false;
       this.showError('Impossibile recuperare l’utente autenticato');
       return;
     }
@@ -53,12 +56,27 @@ export class ProfilePage implements OnInit {
           lastName: user.lastName ?? '',
           email: user.email ?? '',
         };
+        this.company = { name: user.companyName ?? '', vatNumber: user.vatNumber ?? '' };
+        this.isLoadingCompany = false;
         this.changeDetectorRef.detectChanges();
       },
       error: () => {
+        this.isLoadingCompany = false;
+        this.changeDetectorRef.markForCheck();
         this.showError('Impossibile caricare il profilo');
       },
     });
+  }
+
+  public saveCompany(): void {
+    if (this.isSaving || this.isLoadingCompany) return;
+    const company = { name: this.company.name.trim(), vatNumber: this.company.vatNumber.trim() };
+    if (!company.name || !/^[a-z0-9]+$/i.test(company.vatNumber)) {
+      this.showError('Inserisci nome azienda e partita IVA alfanumerica');
+      return;
+    }
+    this.company = company;
+    this.updateUser('', 'Informazioni azienda aggiornate');
   }
 
   public onProfileImageSelected(event: Event): void {
@@ -186,7 +204,7 @@ export class ProfilePage implements OnInit {
 
     this.isSaving = true;
     this.startLoader();
-    const user: User = { ...this.profile, password };
+    const user: User = { ...this.profile, password, companyName: this.company.name, vatNumber: this.company.vatNumber };
     this.userService.update(this.userId, user).subscribe({
       next: (updatedUser) => {
         this.profile = {
@@ -195,6 +213,7 @@ export class ProfilePage implements OnInit {
           lastName: updatedUser.lastName ?? '',
           email: updatedUser.email ?? '',
         };
+        this.company = { name: updatedUser.companyName ?? '', vatNumber: updatedUser.vatNumber ?? '' };
         this.newPassword = '';
         this.confirmPassword = '';
         this.finishLoader(() => {

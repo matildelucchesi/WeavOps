@@ -1,14 +1,13 @@
 package org.openapitools.mapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.openapitools.model.Process;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.math.BigDecimal;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ProcessMapperTest {
     private final ProcessMapper mapper = new ProcessMapper();
@@ -43,10 +42,8 @@ class ProcessMapperTest {
         Process dto = new Process();
         dto.setTotalPieces(new BigDecimal("10.5"));
 
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class,
-                () -> mapper.toEntity(dto)
-        );
+        ResponseStatusException exception =
+                assertThrows(ResponseStatusException.class, () -> mapper.toEntity(dto));
 
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
     }

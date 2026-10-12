@@ -1,3 +1,7 @@
+import { MatDialog } from '@angular/material/dialog';
+import { CertificationFacadeService } from '../../../services/certification-facade.service';
+import { CustomerFacadeService } from '../../../services/customer-facade.service';
+import { CustomerItemHistoryFacadeService } from '../../../services/customer-item-history-facade.service';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgForm } from '@angular/forms';
 import { of } from 'rxjs';
@@ -20,6 +24,10 @@ describe('ItemAddNewPage', () => {
     await TestBed.configureTestingModule({
       imports: [ItemAddNewPage],
       providers: [
+        { provide: CertificationFacadeService, useValue: { getAll: () => of([]) } },
+        { provide: CustomerFacadeService, useValue: { getAll: () => of([]) } },
+        { provide: CustomerItemHistoryFacadeService, useValue: { create: () => of({}) } },
+        { provide: MatDialog, useValue: { open: () => ({ afterClosed: () => of({ worksSaturday: false, worksSunday: false }) }) } },
         { provide: ItemFacadeService, useValue: itemService },
       ],
     }).compileComponents();
@@ -46,11 +54,19 @@ describe('ItemAddNewPage', () => {
     component.warpLength = 200;
     component.warpEndCount = 1200;
     component.deliveryDate = selectedDate;
+    component.warpWeight = 100.5;
+    component.weftWeight = 20.25;
+    component.isCertified = 'PARTIAL';
+    component.certificationId = 'grs-id';
 
     component.createNewItem({ invalid: false } as NgForm);
 
     expect(itemService.createItemWithArrangement).toHaveBeenCalledWith(
       expect.objectContaining({
+        warpWeight: 100.5,
+        weftWeight: 20.25,
+        isCertified: 'PARTIAL',
+        certificationId: 'grs-id',
         arrangement: expect.objectContaining({
           deliveryDate: selectedDate.toISOString(),
         }),

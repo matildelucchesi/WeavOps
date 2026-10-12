@@ -21,5 +21,33 @@ export interface Customer {
     items?: Array<Item>;
     note?: string;
     email: string;
+    /**
+     * Partita IVA alfanumerica obbligatoria, senza limite di 11 caratteri.
+     */
+    vatNumber: string;
+    /**
+     * Destinazioni condivise associate al cliente.
+     */
+    destinationIds?: Array<string>;
+    /**
+     * Via o piazza del cliente.
+     */
+    street?: string;
+    /**
+     * Numero civico, inclusi suffissi o SNC.
+     */
+    streetNumber?: string;
+    /**
+     * CAP italiano, conservato come stringa.
+     */
+    postalCode?: string;
+    /**
+     * Comune del cliente.
+     */
+    city?: string;
+    /**
+     * Sigla provincia italiana, normalizzata in maiuscolo.
+     */
+    provinceCode?: string;
 }
 

@@ -6,8 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "referents")
 public class ReferentEntity {
 
-    @Id
-    private String id;
+    @Id private String id;
 
     private String firstName;
 
@@ -17,7 +16,7 @@ public class ReferentEntity {
 
     private String email;
 
-    //getter & setter
+    // getter & setter
 
     public String getId() {
         return id;

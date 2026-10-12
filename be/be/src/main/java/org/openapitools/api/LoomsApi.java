@@ -5,36 +5,33 @@
  */
 package org.openapitools.api;
 
-import org.openapitools.model.DeleteMultiLooms200Response;
-import org.openapitools.model.Loom;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.util.List;
+import java.util.Optional;
+import org.openapitools.model.DeleteMultiLooms200Response;
+import org.openapitools.model.Loom;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import jakarta.annotation.Generated;
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-19T15:48:41.653649400+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(
+        value = "org.openapitools.codegen.languages.SpringCodegen",
+        date = "2026-06-19T15:48:41.653649400+02:00[Europe/Rome]",
+        comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Loom", description = "the Loom API")
 public interface LoomsApi {
@@ -44,256 +41,282 @@ public interface LoomsApi {
     }
 
     String PATH_CREATE_LOOM = "/looms";
+
     /**
      * POST /looms : Crea un loom
      *
-     * @param loom  (required)
-     * @return Loom creato (status code 201)
-     *         or Richiesta non valida (status code 400)
+     * @param loom (required)
+     * @return Loom creato (status code 201) or Richiesta non valida (status code 400)
      */
     @Operation(
-        operationId = "createLoom",
-        summary = "Crea un loom",
-        tags = { "Loom" },
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Loom creato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Loom.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "createLoom",
+            summary = "Crea un loom",
+            tags = {"Loom"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Loom creato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Loom.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.POST,
-        value = LoomsApi.PATH_CREATE_LOOM,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.POST,
+            value = LoomsApi.PATH_CREATE_LOOM,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<Loom> createLoom(
-        @Parameter(name = "Loom", description = "", required = true) @Valid @RequestBody Loom loom
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"serialNumber\" : \"serialNumber\", \"id\" : \"id\", \"status\" : \"WORKING\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "Loom", description = "", required = true) @Valid @RequestBody
+                    Loom loom) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"serialNumber\" : \"serialNumber\", \"id\" : \"id\", \"status\" : \"WORKING\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_DELETE_LOOM = "/looms/{id}";
+
     /**
      * DELETE /looms/{id} : Elimina un loom
      *
-     * @param id  (required)
-     * @return Loom eliminato (status code 204)
-     *         or Loom non trovato (status code 404)
+     * @param id (required)
+     * @return Loom eliminato (status code 204) or Loom non trovato (status code 404)
      */
     @Operation(
-        operationId = "deleteLoom",
-        summary = "Elimina un loom",
-        tags = { "Loom" },
-        responses = {
-            @ApiResponse(responseCode = "204", description = "Loom eliminato"),
-            @ApiResponse(responseCode = "404", description = "Loom non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.DELETE,
-        value = LoomsApi.PATH_DELETE_LOOM
-    )
+            operationId = "deleteLoom",
+            summary = "Elimina un loom",
+            tags = {"Loom"},
+            responses = {
+                @ApiResponse(responseCode = "204", description = "Loom eliminato"),
+                @ApiResponse(responseCode = "404", description = "Loom non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @RequestMapping(method = RequestMethod.DELETE, value = LoomsApi.PATH_DELETE_LOOM)
     default ResponseEntity<Void> deleteLoom(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_DELETE_MULTI_LOOMS = "/looms/delete-multi";
+
     /**
      * POST /looms/delete-multi : Elimina più telai contemporaneamente
      *
-     * @param requestBody  (required)
+     * @param requestBody (required)
      * @return ok (status code 200)
      */
     @Operation(
-        operationId = "deleteMultiLooms",
-        summary = "Elimina più telai contemporaneamente",
-        tags = { "Loom" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "ok", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = DeleteMultiLooms200Response.class))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "deleteMultiLooms",
+            summary = "Elimina più telai contemporaneamente",
+            tags = {"Loom"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "ok",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema =
+                                            @Schema(
+                                                    implementation =
+                                                            DeleteMultiLooms200Response.class))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.POST,
-        value = LoomsApi.PATH_DELETE_MULTI_LOOMS,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.POST,
+            value = LoomsApi.PATH_DELETE_MULTI_LOOMS,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<DeleteMultiLooms200Response> deleteMultiLooms(
-        @Parameter(name = "request_body", description = "", required = true) @Valid @RequestBody List<String> requestBody
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"deletedCount\" : 0 }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "request_body", description = "", required = true) @Valid @RequestBody
+                    List<String> requestBody) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString = "{ \"deletedCount\" : 0 }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_LOOM_BY_ID = "/looms/{id}";
+
     /**
      * GET /looms/{id} : Recupera un loom tramite id
      *
-     * @param id  (required)
-     * @return Loom trovato (status code 200)
-     *         or Loom non trovato (status code 404)
+     * @param id (required)
+     * @return Loom trovato (status code 200) or Loom non trovato (status code 404)
      */
     @Operation(
-        operationId = "getLoomById",
-        summary = "Recupera un loom tramite id",
-        tags = { "Loom" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Loom trovato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Loom.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Loom non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getLoomById",
+            summary = "Recupera un loom tramite id",
+            tags = {"Loom"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Loom trovato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Loom.class))
+                        }),
+                @ApiResponse(responseCode = "404", description = "Loom non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = LoomsApi.PATH_GET_LOOM_BY_ID,
-        produces = { "application/json" }
-    )
+            method = RequestMethod.GET,
+            value = LoomsApi.PATH_GET_LOOM_BY_ID,
+            produces = {"application/json"})
     default ResponseEntity<Loom> getLoomById(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"serialNumber\" : \"serialNumber\", \"id\" : \"id\", \"status\" : \"WORKING\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"serialNumber\" : \"serialNumber\", \"id\" : \"id\", \"status\" : \"WORKING\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_LOOMS = "/looms";
+
     /**
      * GET /looms : Recupera tutti i loom
      *
      * @return Lista loom (status code 200)
      */
     @Operation(
-        operationId = "getLooms",
-        summary = "Recupera tutti i loom",
-        tags = { "Loom" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Lista loom", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Loom.class)))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getLooms",
+            summary = "Recupera tutti i loom",
+            tags = {"Loom"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Lista loom",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array =
+                                            @ArraySchema(
+                                                    schema = @Schema(implementation = Loom.class)))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = LoomsApi.PATH_GET_LOOMS,
-        produces = { "application/json" }
-    )
-    default ResponseEntity<List<Loom>> getLooms(
-        
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"serialNumber\" : \"serialNumber\", \"id\" : \"id\", \"status\" : \"WORKING\" }, { \"serialNumber\" : \"serialNumber\", \"id\" : \"id\", \"status\" : \"WORKING\" } ]";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            method = RequestMethod.GET,
+            value = LoomsApi.PATH_GET_LOOMS,
+            produces = {"application/json"})
+    default ResponseEntity<List<Loom>> getLooms() {
 
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "[ { \"serialNumber\" : \"serialNumber\", \"id\" : \"id\", \"status\" : \"WORKING\" }, { \"serialNumber\" : \"serialNumber\", \"id\" : \"id\", \"status\" : \"WORKING\" } ]";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
     String PATH_UPDATE_LOOM = "/looms/{id}";
+
     /**
      * PUT /looms/{id} : Aggiorna un loom
      *
-     * @param id  (required)
-     * @param loom  (required)
-     * @return Loom aggiornato (status code 200)
-     *         or Richiesta non valida (status code 400)
-     *         or Loom non trovato (status code 404)
+     * @param id (required)
+     * @param loom (required)
+     * @return Loom aggiornato (status code 200) or Richiesta non valida (status code 400) or Loom
+     *     non trovato (status code 404)
      */
     @Operation(
-        operationId = "updateLoom",
-        summary = "Aggiorna un loom",
-        tags = { "Loom" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Loom aggiornato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Loom.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
-            @ApiResponse(responseCode = "404", description = "Loom non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "updateLoom",
+            summary = "Aggiorna un loom",
+            tags = {"Loom"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Loom aggiornato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Loom.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+                @ApiResponse(responseCode = "404", description = "Loom non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.PUT,
-        value = LoomsApi.PATH_UPDATE_LOOM,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.PUT,
+            value = LoomsApi.PATH_UPDATE_LOOM,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<Loom> updateLoom(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id,
-        @Parameter(name = "Loom", description = "", required = true) @Valid @RequestBody Loom loom
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"serialNumber\" : \"serialNumber\", \"id\" : \"id\", \"status\" : \"WORKING\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id,
+            @Parameter(name = "Loom", description = "", required = true) @Valid @RequestBody
+                    Loom loom) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"serialNumber\" : \"serialNumber\", \"id\" : \"id\", \"status\" : \"WORKING\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

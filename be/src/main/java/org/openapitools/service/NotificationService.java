@@ -1,5 +1,11 @@
 package org.openapitools.service;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import org.openapitools.domain.ArrangementEntity;
 import org.openapitools.domain.ItemEntity;
 import org.openapitools.model.Notification;
@@ -7,22 +13,13 @@ import org.openapitools.repository.ArrangementRepository;
 import org.openapitools.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-
 @Service
 public class NotificationService {
     private final ItemRepository itemRepository;
     private final ArrangementRepository arrangementRepository;
 
     public NotificationService(
-            ItemRepository itemRepository,
-            ArrangementRepository arrangementRepository
-    ) {
+            ItemRepository itemRepository, ArrangementRepository arrangementRepository) {
         this.itemRepository = itemRepository;
         this.arrangementRepository = arrangementRepository;
     }
@@ -46,14 +43,19 @@ public class NotificationService {
             return Optional.empty();
         }
 
-        return arrangementRepository.findById(item.getArrangementId())
+        return arrangementRepository
+                .findById(item.getArrangementId())
                 .filter(arrangement -> arrangement.getDeliveryDate() != null)
-                .filter(arrangement -> item.getExpectedEndDate().isAfter(arrangement.getDeliveryDate()))
+                .filter(
+                        arrangement ->
+                                item.getExpectedEndDate().isAfter(arrangement.getDeliveryDate()))
                 .map(arrangement -> toItemDeliveryRiskNotification(item, arrangement));
     }
 
-    private Notification toItemDeliveryRiskNotification(ItemEntity item, ArrangementEntity arrangement) {
-        String itemName = isBlank(arrangement.getItemName()) ? "Articolo" : arrangement.getItemName();
+    private Notification toItemDeliveryRiskNotification(
+            ItemEntity item, ArrangementEntity arrangement) {
+        String itemName =
+                isBlank(arrangement.getItemName()) ? "Articolo" : arrangement.getItemName();
 
         Notification notification = new Notification();
         notification.setId(Notification.TypeEnum.ITEM_DELIVERY_RISK.name() + ":" + item.getId());
@@ -61,8 +63,7 @@ public class NotificationService {
         notification.setSeverity(Notification.SeverityEnum.WARNING);
         notification.setTitle("Consegna a rischio");
         notification.setMessage(
-                "La fine produzione prevista di " + itemName + " supera la data di consegna."
-        );
+                "La fine produzione prevista di " + itemName + " supera la data di consegna.");
         notification.setItemId(item.getId());
         notification.setArrangementId(item.getArrangementId());
         notification.setExpectedEndDate(toOffsetDateTime(item.getExpectedEndDate()));

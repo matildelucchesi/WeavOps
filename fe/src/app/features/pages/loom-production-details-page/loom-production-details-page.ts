@@ -19,7 +19,9 @@ import { LoomItemAssignmentFacadeService } from '../../../services/loom-item-ass
 import { ProcessFacadeService } from '../../../services/process-facade.service';
 import { CustomerFacadeService } from '../../../services/customer-facade.service';
 import { ProductionSummaryPdfService } from '../../../services/production-summary-pdf.service';
-import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
+import { UserFacadeService } from '../../../services/user-facade.service';
+import { catchError, finalize, forkJoin, map, Observable, of, switchMap } from 'rxjs';
+import { CertificationFacadeService } from '../../../services/certification-facade.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DialogLoomActionComponent } from '../../reusable-components/dialog/dialog-loom-action-component/dialog-loom-action-component';
@@ -58,10 +60,25 @@ interface QueuedProductionTableRow {
   styleUrl: './loom-production-details-page.scss',
 })
 export class LoomProductionDetailsPage implements OnInit {
+  private readonly userService = inject(UserFacadeService);
+  public get remainingArticleMeters(): number | null {
+    const item = this.item();
+    return item ? this.getRemainingArticleMeters(item) : null;
+  }
+
+  private getRemainingArticleMeters(item: Item): number | null {
+    if (item.totalMeters == null) return null;
+    const producedMeters = item.metersRun ?? (item.processing ?? []).reduce(
+      (total, process) => total + (process.metersRun ?? 0), 0,
+    );
+    return Math.max(item.totalMeters - producedMeters, 0);
+  }
 
   private readonly startProductionLoaderDurationMs: number = 500;
   private readonly loomService = inject(LoomFacadeService);
   private readonly itemService = inject(ItemFacadeService);
+  private readonly certificationService = inject(CertificationFacadeService);
+  private isCheckingStartCertification = false;
   private readonly assignmentService = inject(LoomItemAssignmentFacadeService);
   private readonly arrangementService = inject(ArrangementFacadeService);
   private readonly processService = inject(ProcessFacadeService);
@@ -78,6 +95,22 @@ export class LoomProductionDetailsPage implements OnInit {
   public isEditEnabled: boolean = false;
   public readonly loom = signal<Loom | null>(null);
   public readonly item = signal<Item | null>(null);
+  private readonly articleCertificationCode = signal<string | null>(null);
+  public readonly currentCertificationLabel = computed(() => {
+    const item = this.item();
+    if (!item) {
+      return '';
+    }
+    if (item.isCertified === Item.IsCertifiedEnum.None) {
+      return 'Nessuna';
+    }
+    if (item.isCertified === Item.IsCertifiedEnum.All) {
+      return this.articleCertificationCode() ?? 'Non disponibile';
+    }
+    const process = this.process();
+    const codes = [process?.grs ? 'GRS' : '', process?.gots ? 'GOTS' : ''].filter(Boolean);
+    return codes.length ? codes.join(' / ') : item.isCertified === Item.IsCertifiedEnum.Partial ? 'Nessuna' : 'Non specificata';
+  });
   public readonly process = signal<Process | null>(null);
   public readonly arrangement = signal<Arrangement | null>(null);
   public readonly runningAssignment = signal<LoomItemAssignment | null>(null);
@@ -258,10 +291,17 @@ export class LoomProductionDetailsPage implements OnInit {
         item: of(item),
         process: this.resolveProcess(assignment, item),
         arrangement: this.resolveArrangement(item),
+        certificationCode: item.isCertified === Item.IsCertifiedEnum.All && item.certificationId
+          ? this.certificationService.getAll().pipe(
+              map(values => values.find(value => value.id === item.certificationId)?.value ?? null),
+              catchError(() => of(null)),
+            )
+          : of(null),
       })),
     ).subscribe({
-      next: ({ item, process, arrangement }) => {
+      next: ({ item, process, arrangement, certificationCode }) => {
         this.item.set(item);
+        this.articleCertificationCode.set(certificationCode);
         this.process.set(process);
         this.arrangement.set(arrangement);
       },
@@ -298,7 +338,7 @@ export class LoomProductionDetailsPage implements OnInit {
         map(({ arrangement, process }) => ({
           assignment,
           itemName: arrangement?.itemName ?? item.id ?? '-',
-          totalMeters: this.formatNumber(process?.totalMeters),
+          totalMeters: this.formatNumber(this.getRemainingArticleMeters(item) ?? undefined),
           completionDays: this.formatTableDays(process?.days),
           status: LoomItemAssignment.StatusEnum.Queued,
         })),
@@ -397,6 +437,7 @@ export class LoomProductionDetailsPage implements OnInit {
   }
 
   private clearProductionDetails(): void {
+    this.articleCertificationCode.set(null);
     this.process.set(null);
     this.item.set(null);
     this.arrangement.set(null);
@@ -456,10 +497,13 @@ export class LoomProductionDetailsPage implements OnInit {
       DialogLoomAlertTerminateProductionData,
       DialogLoomAlertTerminateProductionResult
     >(DialogLoomAlertTerminateProduction, {
-      panelClass: 'loom-alert-dialog-panel',
+      panelClass: ['loom-alert-dialog-panel', 'terminate-production-dialog-panel'],
       autoFocus: false,
       data: {
         assignment,
+        item: this.item(),
+        process: this.process(),
+        arrangement: this.arrangement(),
       },
     });
 
@@ -468,7 +512,7 @@ export class LoomProductionDetailsPage implements OnInit {
         return;
       }
 
-      this.updateAssignmentStatus(assignment, result.status, result.notes);
+      this.updateAssignmentStatus(assignment, result.status, result.notes, undefined, undefined, true, result.fabricCode, result.fabricCertificationId);
     });
   }
 
@@ -479,6 +523,8 @@ export class LoomProductionDetailsPage implements OnInit {
     onSuccess?: () => void,
     onError?: () => void,
     reloadAfterUpdate: boolean = true,
+    fabricCode?: string,
+    fabricCertificationId?: string,
   ): void {
     if (!assignment.id || !assignment.processId) {
       console.error('Running assignment or process id is missing');
@@ -488,6 +534,8 @@ export class LoomProductionDetailsPage implements OnInit {
     const updatedAssignment: LoomItemAssignment = {
       ...assignment,
       status,
+      fabricCode,
+      fabricCertificationId,
     };
 
     this.processService.getById(assignment.processId).pipe(
@@ -505,6 +553,7 @@ export class LoomProductionDetailsPage implements OnInit {
       },
       error: (error) => {
         console.error(error);
+        this.snackBar.open(error.error?.message ?? 'Impossibile terminare la produzione: verificare codice Tela e dati articolo.', 'Chiudi', {duration: 6000});
         onError?.();
       },
     });
@@ -518,11 +567,13 @@ export class LoomProductionDetailsPage implements OnInit {
     }
 
     forkJoin({
+      user: this.userService.getCurrent(),
       process: this.processService.getById(assignment.processId),
       item: this.itemService.getById(assignment.itemId),
       logs: this.loomLogService.getLoomLogsByLoomId({ loomId }),
     }).pipe(
-      switchMap(({ process, item, logs }) => forkJoin({
+      switchMap(({ user, process, item, logs }) => forkJoin({
+        user: of(user),
         process: of(process),
         item: of(item),
         logs: of(logs),
@@ -530,7 +581,7 @@ export class LoomProductionDetailsPage implements OnInit {
         customer: item.customerId ? this.customerService.getById(item.customerId) : of(null),
       })),
     ).subscribe({
-      next: ({ process, item, arrangement, customer, logs }) => {
+      next: ({ user, process, item, arrangement, customer, logs }) => {
         const startTime = process.startDate ? new Date(process.startDate).getTime() : Number.NEGATIVE_INFINITY;
         const endDate = process.endDate ?? new Date().toISOString();
         const endTime = new Date(endDate).getTime();
@@ -543,6 +594,7 @@ export class LoomProductionDetailsPage implements OnInit {
         ).length;
 
         void this.createProductionSummaryPdf({
+          companyName: user.companyName ?? '',
           loomId,
           loomNumber: this.loom()?.serialNumber ?? loomId,
           customerName: customer?.name ?? '-',
@@ -560,6 +612,7 @@ export class LoomProductionDetailsPage implements OnInit {
   }
 
   private async createProductionSummaryPdf(data: {
+    companyName: string;
     loomId: string;
     loomNumber: string | number;
     customerName: string;
@@ -583,6 +636,11 @@ export class LoomProductionDetailsPage implements OnInit {
     pdf.setTextColor(...purple);
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(15);
+    if (data.companyName) {
+      const companyLines = pdf.splitTextToSize(data.companyName.toLocaleUpperCase('it'), contentWidth);
+      pdf.text(companyLines, margin, y);
+      y += companyLines.length * 7 + 5;
+    }
     pdf.text(`TELAIO A PRODUZIONE N. ${data.loomNumber}`, margin, y);
     y += 12;
     pdf.setDrawColor(...purple);
@@ -712,7 +770,7 @@ export class LoomProductionDetailsPage implements OnInit {
   }
 
   public checkIfIsPossibleToStartProduction(row: QueuedProductionTableRow): void {
-    if (this.isStartingProduction() || this.isStartProductionRequestPending) {
+    if (this.isStartingProduction() || this.isStartProductionRequestPending || this.isCheckingStartCertification) {
       return;
     }
 
@@ -741,6 +799,38 @@ export class LoomProductionDetailsPage implements OnInit {
       return;
     }
 
+    this.isCheckingStartCertification = true;
+    this.itemService.getById(assignment.itemId).pipe(
+      switchMap((item) => {
+        if (item.isCertified !== Item.IsCertifiedEnum.All) {
+          return of({item, certificationCode: ''});
+        }
+        return this.certificationService.getAll().pipe(map((certifications) => {
+          const certification = certifications.find(value => value.id === item.certificationId);
+          if (!certification) {
+            throw new Error('Certificazione dell’articolo non disponibile');
+          }
+          return {item, certificationCode: certification.value?.trim().toUpperCase() ?? ''};
+        }));
+      }),
+      finalize(() => { this.isCheckingStartCertification = false; }),
+    ).subscribe({
+      next: ({item, certificationCode}) => this.openStartProductionDialog(row, item, certificationCode),
+      error: (error) => {
+        console.error('Errore nel caricamento della certificazione dell’articolo:', error);
+        this.snackBar.open('Impossibile verificare la certificazione dell’articolo. Riprova.', 'Chiudi', {duration: 4000});
+      },
+    });
+  }
+
+  private openStartProductionDialog(row: QueuedProductionTableRow, item: Item, certificationCode: string): void {
+    const assignment = row.assignment;
+    const requiresCertificationChoice = item.isCertified === Item.IsCertifiedEnum.Partial;
+    const automaticCertifications: DialogAlertGenericCertificationResult = {
+      confirmed: true,
+      grs: item.isCertified === Item.IsCertifiedEnum.All && certificationCode === 'GRS',
+      gots: item.isCertified === Item.IsCertifiedEnum.All && certificationCode === 'GOTS',
+    };
     const dialogRef = this.dialog.open<
       DialogAlertGeneric,
       DialogAlertGenericData,
@@ -750,18 +840,23 @@ export class LoomProductionDetailsPage implements OnInit {
       autoFocus: false,
       data: {
         text: `Stai avviando su Telaio ${this.loom()?.serialNumber ?? ''} la produzione di ${row.itemName}.`,
-        subtext: 'Quale certificazione stai usando?',
-        productionCertifications: true,
+        subtext: requiresCertificationChoice ? 'Quale certificazione stai usando?' : 'Vuoi avviare questa produzione?',
+        productionCertifications: requiresCertificationChoice,
         icon: 'help',
         iconColor: 'var(--weavops-color-primary)',
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      if (!requiresCertificationChoice) {
+        if (result === true) {
+          this.startProduction(assignment, automaticCertifications);
+        }
+        return;
+      }
       if (!result || typeof result !== 'object' || !('grs' in result) || !('gots' in result)) {
         return;
       }
-
       this.startProduction(assignment, result);
     });
   }

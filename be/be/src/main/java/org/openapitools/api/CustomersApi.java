@@ -5,36 +5,33 @@
  */
 package org.openapitools.api;
 
-import org.openapitools.model.Customer;
-import org.openapitools.model.DeleteMultiCustomers200Response;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.util.List;
+import java.util.Optional;
+import org.openapitools.model.Customer;
+import org.openapitools.model.DeleteMultiCustomers200Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import jakarta.annotation.Generated;
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-19T15:48:41.653649400+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(
+        value = "org.openapitools.codegen.languages.SpringCodegen",
+        date = "2026-06-19T15:48:41.653649400+02:00[Europe/Rome]",
+        comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Customer", description = "the Customer API")
 public interface CustomersApi {
@@ -44,256 +41,285 @@ public interface CustomersApi {
     }
 
     String PATH_CREATE_CUSTOMER = "/customers";
+
     /**
      * POST /customers : Crea un customer
      *
-     * @param customer  (required)
-     * @return Customer creato (status code 201)
-     *         or Richiesta non valida (status code 400)
+     * @param customer (required)
+     * @return Customer creato (status code 201) or Richiesta non valida (status code 400)
      */
     @Operation(
-        operationId = "createCustomer",
-        summary = "Crea un customer",
-        tags = { "Customer" },
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Customer creato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Customer.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "createCustomer",
+            summary = "Crea un customer",
+            tags = {"Customer"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Customer creato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Customer.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.POST,
-        value = CustomersApi.PATH_CREATE_CUSTOMER,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.POST,
+            value = CustomersApi.PATH_CREATE_CUSTOMER,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<Customer> createCustomer(
-        @Parameter(name = "Customer", description = "", required = true) @Valid @RequestBody Customer customer
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "Customer", description = "", required = true) @Valid @RequestBody
+                    Customer customer) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_DELETE_CUSTOMER = "/customers/{id}";
+
     /**
      * DELETE /customers/{id} : Elimina un customer
      *
-     * @param id  (required)
-     * @return Customer eliminato (status code 204)
-     *         or Customer non trovato (status code 404)
+     * @param id (required)
+     * @return Customer eliminato (status code 204) or Customer non trovato (status code 404)
      */
     @Operation(
-        operationId = "deleteCustomer",
-        summary = "Elimina un customer",
-        tags = { "Customer" },
-        responses = {
-            @ApiResponse(responseCode = "204", description = "Customer eliminato"),
-            @ApiResponse(responseCode = "404", description = "Customer non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.DELETE,
-        value = CustomersApi.PATH_DELETE_CUSTOMER
-    )
+            operationId = "deleteCustomer",
+            summary = "Elimina un customer",
+            tags = {"Customer"},
+            responses = {
+                @ApiResponse(responseCode = "204", description = "Customer eliminato"),
+                @ApiResponse(responseCode = "404", description = "Customer non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @RequestMapping(method = RequestMethod.DELETE, value = CustomersApi.PATH_DELETE_CUSTOMER)
     default ResponseEntity<Void> deleteCustomer(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_DELETE_MULTI_CUSTOMERS = "/customers/delete-multi";
+
     /**
      * POST /customers/delete-multi : Elimina più clienti contemporaneamente
      *
-     * @param requestBody  (required)
+     * @param requestBody (required)
      * @return ok (status code 200)
      */
     @Operation(
-        operationId = "deleteMultiCustomers",
-        summary = "Elimina più clienti contemporaneamente",
-        tags = { "Customer" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "ok", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = DeleteMultiCustomers200Response.class))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "deleteMultiCustomers",
+            summary = "Elimina più clienti contemporaneamente",
+            tags = {"Customer"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "ok",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema =
+                                            @Schema(
+                                                    implementation =
+                                                            DeleteMultiCustomers200Response.class))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.POST,
-        value = CustomersApi.PATH_DELETE_MULTI_CUSTOMERS,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.POST,
+            value = CustomersApi.PATH_DELETE_MULTI_CUSTOMERS,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<DeleteMultiCustomers200Response> deleteMultiCustomers(
-        @Parameter(name = "request_body", description = "", required = true) @Valid @RequestBody List<String> requestBody
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"deletedCount\" : 0 }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "request_body", description = "", required = true) @Valid @RequestBody
+                    List<String> requestBody) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString = "{ \"deletedCount\" : 0 }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_CUSTOMER_BY_ID = "/customers/{id}";
+
     /**
      * GET /customers/{id} : Recupera un customer tramite ID
      *
-     * @param id  (required)
-     * @return Customer trovato (status code 200)
-     *         or Customer non trovato (status code 404)
+     * @param id (required)
+     * @return Customer trovato (status code 200) or Customer non trovato (status code 404)
      */
     @Operation(
-        operationId = "getCustomerById",
-        summary = "Recupera un customer tramite ID",
-        tags = { "Customer" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Customer trovato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Customer.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Customer non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getCustomerById",
+            summary = "Recupera un customer tramite ID",
+            tags = {"Customer"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Customer trovato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Customer.class))
+                        }),
+                @ApiResponse(responseCode = "404", description = "Customer non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = CustomersApi.PATH_GET_CUSTOMER_BY_ID,
-        produces = { "application/json" }
-    )
+            method = RequestMethod.GET,
+            value = CustomersApi.PATH_GET_CUSTOMER_BY_ID,
+            produces = {"application/json"})
     default ResponseEntity<Customer> getCustomerById(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_CUSTOMERS = "/customers";
+
     /**
      * GET /customers : Recupera tutti i customer
      *
      * @return Lista customer (status code 200)
      */
     @Operation(
-        operationId = "getCustomers",
-        summary = "Recupera tutti i customer",
-        tags = { "Customer" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Lista customer", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Customer.class)))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getCustomers",
+            summary = "Recupera tutti i customer",
+            tags = {"Customer"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Lista customer",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array =
+                                            @ArraySchema(
+                                                    schema =
+                                                            @Schema(
+                                                                    implementation =
+                                                                            Customer.class)))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = CustomersApi.PATH_GET_CUSTOMERS,
-        produces = { "application/json" }
-    )
-    default ResponseEntity<List<Customer>> getCustomers(
-        
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" }, { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } ]";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            method = RequestMethod.GET,
+            value = CustomersApi.PATH_GET_CUSTOMERS,
+            produces = {"application/json"})
+    default ResponseEntity<List<Customer>> getCustomers() {
 
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "[ { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" }, { \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" } ]";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
     String PATH_UPDATE_CUSTOMER = "/customers/{id}";
+
     /**
      * PUT /customers/{id} : Aggiorna un customer
      *
-     * @param id  (required)
-     * @param customer  (required)
-     * @return Customer aggiornato (status code 200)
-     *         or Richiesta non valida (status code 400)
-     *         or Customer non trovato (status code 404)
+     * @param id (required)
+     * @param customer (required)
+     * @return Customer aggiornato (status code 200) or Richiesta non valida (status code 400) or
+     *     Customer non trovato (status code 404)
      */
     @Operation(
-        operationId = "updateCustomer",
-        summary = "Aggiorna un customer",
-        tags = { "Customer" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Customer aggiornato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Customer.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
-            @ApiResponse(responseCode = "404", description = "Customer non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "updateCustomer",
+            summary = "Aggiorna un customer",
+            tags = {"Customer"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Customer aggiornato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Customer.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+                @ApiResponse(responseCode = "404", description = "Customer non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.PUT,
-        value = CustomersApi.PATH_UPDATE_CUSTOMER,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.PUT,
+            value = CustomersApi.PATH_UPDATE_CUSTOMER,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<Customer> updateCustomer(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id,
-        @Parameter(name = "Customer", description = "", required = true) @Valid @RequestBody Customer customer
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id,
+            @Parameter(name = "Customer", description = "", required = true) @Valid @RequestBody
+                    Customer customer) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"note\" : \"note\", \"referents\" : [ { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" }, { \"firstName\" : \"firstName\", \"lastName\" : \"lastName\", \"phoneNumber\" : \"phoneNumber\", \"id\" : \"id\", \"email\" : \"email\" } ], \"name\" : \"name\", \"id\" : \"id\", \"items\" : [ null, null ], \"email\" : \"email\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

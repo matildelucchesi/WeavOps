@@ -1,17 +1,3 @@
-.body{
-    width: 95%;
-    justify-self: center;
-    margin: 0 auto;
-}
+@use '../../reusable-components/company-card/company-card-list';
 
-:host{
-    position: relative;
-    display: block;
-    isolation: isolate;
-}
-
-.title-wrapper,
-.body{
-    position: relative;
-    z-index: 1;
-}
+.referent-contact { display: flex; align-items: baseline; gap: 24px; flex-wrap: wrap; white-space: normal; }

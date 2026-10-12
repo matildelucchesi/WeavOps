@@ -2,6 +2,7 @@ type: object
 
 required:
   - name
+  - vatNumber
   - email
 
 properties:
@@ -25,3 +26,30 @@ properties:
     type: string
   
 
+
+  vatNumber:
+    type: string
+    pattern: '^[A-Za-z0-9]+$'
+    description: Partita IVA alfanumerica obbligatoria, senza limite di 11 caratteri.
+  destinationIds:
+    type: array
+    description: Destinazioni condivise associate al cliente.
+    items:
+      type: string
+  street:
+    type: string
+    description: Via o piazza del cliente.
+  streetNumber:
+    type: string
+    description: Numero civico, inclusi suffissi o SNC.
+  postalCode:
+    type: string
+    pattern: '^([0-9]{5})?$'
+    description: CAP italiano, conservato come stringa.
+  city:
+    type: string
+    description: Comune del cliente.
+  provinceCode:
+    type: string
+    pattern: '^([A-Za-z]{2})?$'
+    description: Sigla provincia italiana, normalizzata in maiuscolo.

@@ -1,0 +1,32 @@
+<section aria-label="Destinazioni">
+  <app-title-page-component title="Destinazioni" iconName="location_on" [imageWidth]="40" [imageHeight]="40"></app-title-page-component>
+  <div class="body">
+    <div class="list-toolbar">
+      <label class="searchbar"><mat-icon aria-hidden="true">search</mat-icon><input type="search" aria-label="Cerca destinazioni" placeholder="Cerca destinazioni…" [value]="searchTerm" (input)="search($any($event.target).value)"></label>
+    <app-add-button-component ariaLabel="Aggiungi destinazione" (buttonClick)="edit()"></app-add-button-component>
+    </div>
+    @if (loading()) { <p role="status">Caricamento destinazioni…</p> }
+    @if (loadError) { <p role="alert" class="error">Impossibile caricare le destinazioni. <button type="button" class="clear-filters" (click)="load()">Riprova</button></p> }
+    <div class="company-list">
+      @for (destination of pagedRows; track destination.id) {
+        <app-company-card [name]="destination.name">
+          <dl class="detail-grid">
+            <div><dt>Via/piazza</dt><dd>{{ destination.street }}</dd></div>
+            <div><dt>Numero civico</dt><dd>{{ destination.streetNumber }}</dd></div>
+            <div><dt>CAP</dt><dd>{{ destination.postalCode }}</dd></div>
+            <div><dt>Comune</dt><dd>{{ destination.city }}</dd></div>
+            <div><dt>Provincia</dt><dd>{{ destination.provinceCode }}</dd></div>
+          </dl>
+          <div cardActions class="card-actions">
+            <button type="button" class="card-action" aria-label="Modifica destinazione" matTooltip="Modifica destinazione" (click)="edit(destination)"><mat-icon>edit</mat-icon></button>
+            <button type="button" class="card-action" aria-label="Elimina destinazione" matTooltip="Elimina destinazione" (click)="remove(destination)"><mat-icon>delete</mat-icon></button>
+          </div>
+        </app-company-card>
+      } @empty { @if (!loading() && !loadError) { <p>Nessuna destinazione trovata.</p> } }
+    </div>
+    <div class="list-footer">
+      <app-card-pagination [total]="rows().length" [page]="currentPage()" [pageSize]="pageSize()" (pageSizeChange)="changePageSize($event)" (pageChange)="currentPage.set($event)"></app-card-pagination>
+      
+    </div>
+  </div>
+</section>

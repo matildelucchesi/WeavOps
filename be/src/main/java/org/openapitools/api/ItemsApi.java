@@ -5,38 +5,35 @@
  */
 package org.openapitools.api;
 
-import org.openapitools.model.CreateItemWithArrangementRequest;
-import org.openapitools.model.DeleteMultiItems200Response;
-import org.openapitools.model.Item;
-import org.openapitools.model.ProductionAdvice;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.util.List;
+import java.util.Optional;
+import org.openapitools.model.CreateItemWithArrangementRequest;
+import org.openapitools.model.DeleteMultiItems200Response;
+import org.openapitools.model.Item;
+import org.openapitools.model.ProductionAdvice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import jakarta.annotation.Generated;
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-20T09:27:07.285474300+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(
+        value = "org.openapitools.codegen.languages.SpringCodegen",
+        date = "2026-07-20T09:27:07.285474300+02:00[Europe/Rome]",
+        comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Item", description = "the Item API")
 public interface ItemsApi {
@@ -46,498 +43,554 @@ public interface ItemsApi {
     }
 
     String PATH_CREATE_ITEM = "/items";
+
     /**
      * POST /items : Crea un item
      *
-     * @param item  (required)
-     * @return Item creato (status code 201)
-     *         or Richiesta non valida (status code 400)
+     * @param item (required)
+     * @return Item creato (status code 201) or Richiesta non valida (status code 400)
      */
     @Operation(
-        operationId = "createItem",
-        summary = "Crea un item",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Item creato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "createItem",
+            summary = "Crea un item",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Item creato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Item.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.POST,
-        value = ItemsApi.PATH_CREATE_ITEM,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.POST,
+            value = ItemsApi.PATH_CREATE_ITEM,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<Item> createItem(
-        @Parameter(name = "Item", description = "", required = true) @Valid @RequestBody Item item
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "Item", description = "", required = true) @Valid @RequestBody
+                    Item item) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_CREATE_ITEM_WITH_ARRANGEMENT = "/items/with-arrangement";
+
     /**
      * POST /items/with-arrangement : Crea item con disposizione e customerName
      *
-     * @param createItemWithArrangementRequest  (required)
-     * @return Item creato (status code 201)
-     *         or Richiesta non valida (status code 400)
-     *         or Customer non trovato (status code 404)
+     * @param createItemWithArrangementRequest (required)
+     * @return Item creato (status code 201) or Richiesta non valida (status code 400) or Customer
+     *     non trovato (status code 404)
      */
     @Operation(
-        operationId = "createItemWithArrangement",
-        summary = "Crea item con disposizione e customerName",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Item creato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
-            @ApiResponse(responseCode = "404", description = "Customer non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "createItemWithArrangement",
+            summary = "Crea item con disposizione e customerName",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Item creato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Item.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+                @ApiResponse(responseCode = "404", description = "Customer non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.POST,
-        value = ItemsApi.PATH_CREATE_ITEM_WITH_ARRANGEMENT,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.POST,
+            value = ItemsApi.PATH_CREATE_ITEM_WITH_ARRANGEMENT,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<Item> createItemWithArrangement(
-        @Parameter(name = "CreateItemWithArrangementRequest", description = "", required = true) @Valid @RequestBody CreateItemWithArrangementRequest createItemWithArrangementRequest
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "CreateItemWithArrangementRequest", description = "", required = true)
+                    @Valid
+                    @RequestBody
+                    CreateItemWithArrangementRequest createItemWithArrangementRequest) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_DELETE_ITEM = "/items/{id}";
+
     /**
      * DELETE /items/{id} : Elimina un item
      *
-     * @param id  (required)
-     * @return Item eliminato (status code 204)
-     *         or Item non trovato (status code 404)
+     * @param id (required)
+     * @return Item eliminato (status code 204) or Item non trovato (status code 404)
      */
     @Operation(
-        operationId = "deleteItem",
-        summary = "Elimina un item",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "204", description = "Item eliminato"),
-            @ApiResponse(responseCode = "404", description = "Item non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.DELETE,
-        value = ItemsApi.PATH_DELETE_ITEM
-    )
+            operationId = "deleteItem",
+            summary = "Elimina un item",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(responseCode = "204", description = "Item eliminato"),
+                @ApiResponse(responseCode = "404", description = "Item non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @RequestMapping(method = RequestMethod.DELETE, value = ItemsApi.PATH_DELETE_ITEM)
     default ResponseEntity<Void> deleteItem(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_DELETE_MULTI_ITEMS = "/items/delete-multi";
+
     /**
      * POST /items/delete-multi : Elimina più articoli contemporaneamente
      *
-     * @param requestBody  (required)
+     * @param requestBody (required)
      * @return ok (status code 200)
      */
     @Operation(
-        operationId = "deleteMultiItems",
-        summary = "Elimina più articoli contemporaneamente",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "ok", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = DeleteMultiItems200Response.class))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "deleteMultiItems",
+            summary = "Elimina più articoli contemporaneamente",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "ok",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema =
+                                            @Schema(
+                                                    implementation =
+                                                            DeleteMultiItems200Response.class))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.POST,
-        value = ItemsApi.PATH_DELETE_MULTI_ITEMS,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.POST,
+            value = ItemsApi.PATH_DELETE_MULTI_ITEMS,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<DeleteMultiItems200Response> deleteMultiItems(
-        @Parameter(name = "request_body", description = "", required = true) @Valid @RequestBody List<String> requestBody
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"deletedCount\" : 0 }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "request_body", description = "", required = true) @Valid @RequestBody
+                    List<String> requestBody) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString = "{ \"deletedCount\" : 0 }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_ITEM_BY_ID = "/items/{id}";
+
     /**
      * GET /items/{id} : Recupera un item tramite ID
      *
-     * @param id  (required)
-     * @return Item trovato (status code 200)
-     *         or Item non trovato (status code 404)
+     * @param id (required)
+     * @return Item trovato (status code 200) or Item non trovato (status code 404)
      */
     @Operation(
-        operationId = "getItemById",
-        summary = "Recupera un item tramite ID",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Item trovato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Item non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getItemById",
+            summary = "Recupera un item tramite ID",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Item trovato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Item.class))
+                        }),
+                @ApiResponse(responseCode = "404", description = "Item non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = ItemsApi.PATH_GET_ITEM_BY_ID,
-        produces = { "application/json" }
-    )
+            method = RequestMethod.GET,
+            value = ItemsApi.PATH_GET_ITEM_BY_ID,
+            produces = {"application/json"})
     default ResponseEntity<Item> getItemById(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_ITEMS = "/items";
+
     /**
      * GET /items : Recupera tutti i item
      *
      * @return Lista item (status code 200)
      */
     @Operation(
-        operationId = "getItems",
-        summary = "Recupera tutti i item",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Lista item", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Item.class)))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getItems",
+            summary = "Recupera tutti i item",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Lista item",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array =
+                                            @ArraySchema(
+                                                    schema = @Schema(implementation = Item.class)))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = ItemsApi.PATH_GET_ITEMS,
-        produces = { "application/json" }
-    )
-    default ResponseEntity<List<Item>> getItems(
-        
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            method = RequestMethod.GET,
+            value = ItemsApi.PATH_GET_ITEMS,
+            produces = {"application/json"})
+    default ResponseEntity<List<Item>> getItems() {
 
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "[ { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
     String PATH_GET_ITEMS_ARCHIVED = "/items/items-archived";
+
     /**
      * GET /items/items-archived : Recupera tutti i item archiviati
      *
      * @return Lista item archiviati (status code 200)
      */
     @Operation(
-        operationId = "getItemsArchived",
-        summary = "Recupera tutti i item archiviati",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Lista item archiviati", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Item.class)))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getItemsArchived",
+            summary = "Recupera tutti i item archiviati",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Lista item archiviati",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array =
+                                            @ArraySchema(
+                                                    schema = @Schema(implementation = Item.class)))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = ItemsApi.PATH_GET_ITEMS_ARCHIVED,
-        produces = { "application/json" }
-    )
-    default ResponseEntity<List<Item>> getItemsArchived(
-        
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            method = RequestMethod.GET,
+            value = ItemsApi.PATH_GET_ITEMS_ARCHIVED,
+            produces = {"application/json"})
+    default ResponseEntity<List<Item>> getItemsArchived() {
 
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "[ { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
     String PATH_GET_ITEMS_NOT_ARCHIVED = "/items/items-not-archived";
+
     /**
      * GET /items/items-not-archived : Recupera tutti i item non archiviati
      *
      * @return Lista item non archiviati (status code 200)
      */
     @Operation(
-        operationId = "getItemsNotArchived",
-        summary = "Recupera tutti i item non archiviati",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Lista item non archiviati", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Item.class)))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getItemsNotArchived",
+            summary = "Recupera tutti i item non archiviati",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Lista item non archiviati",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array =
+                                            @ArraySchema(
+                                                    schema = @Schema(implementation = Item.class)))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = ItemsApi.PATH_GET_ITEMS_NOT_ARCHIVED,
-        produces = { "application/json" }
-    )
-    default ResponseEntity<List<Item>> getItemsNotArchived(
-        
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            method = RequestMethod.GET,
+            value = ItemsApi.PATH_GET_ITEMS_NOT_ARCHIVED,
+            produces = {"application/json"})
+    default ResponseEntity<List<Item>> getItemsNotArchived() {
 
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "[ { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
     String PATH_GET_PRODUCTION_ADVICE_BY_ITEM_ID = "/items/{id}/production-advice";
+
     /**
      * GET /items/{id}/production-advice : Calcola il consiglio di produzione per un articolo
      *
-     * @param id  (required)
+     * @param id (required)
      * @return Previsione e numero di telai consigliati per rispettare la consegna (status code 200)
-     *         or Item non trovato (status code 404)
-     *         or Previsione non calcolabile per dati mancanti o non validi (status code 422)
+     *     or Item non trovato (status code 404) or Previsione non calcolabile per dati mancanti o
+     *     non validi (status code 422)
      */
     @Operation(
-        operationId = "getProductionAdviceByItemId",
-        summary = "Calcola il consiglio di produzione per un articolo",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Previsione e numero di telai consigliati per rispettare la consegna", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ProductionAdvice.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Item non trovato"),
-            @ApiResponse(responseCode = "422", description = "Previsione non calcolabile per dati mancanti o non validi")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getProductionAdviceByItemId",
+            summary = "Calcola il consiglio di produzione per un articolo",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description =
+                                "Previsione e numero di telai consigliati per rispettare la consegna",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ProductionAdvice.class))
+                        }),
+                @ApiResponse(responseCode = "404", description = "Item non trovato"),
+                @ApiResponse(
+                        responseCode = "422",
+                        description = "Previsione non calcolabile per dati mancanti o non validi")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = ItemsApi.PATH_GET_PRODUCTION_ADVICE_BY_ITEM_ID,
-        produces = { "application/json" }
-    )
+            method = RequestMethod.GET,
+            value = ItemsApi.PATH_GET_PRODUCTION_ADVICE_BY_ITEM_ID,
+            produces = {"application/json"})
     default ResponseEntity<ProductionAdvice> getProductionAdviceByItemId(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"daysUntilDelivery\" : 0.6027456, \"recommendedTotalLooms\" : 0, \"referenceDailyCapacity\" : 0.7061401, \"currentRunningLooms\" : 0, \"additionalDailyCapacity\" : 0.23021358, \"currentDailyCapacity\" : 0.5962134, \"remainingMeters\" : 0, \"recommendedAdditionalLooms\" : 0, \"meetsDeliveryDate\" : true, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\", \"requiredDailyCapacity\" : 0.5637377, \"estimatedCompletionDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"daysUntilDelivery\" : 0.6027456, \"recommendedTotalLooms\" : 0, \"referenceDailyCapacity\" : 0.7061401, \"currentRunningLooms\" : 0, \"additionalDailyCapacity\" : 0.23021358, \"currentDailyCapacity\" : 0.5962134, \"remainingMeters\" : 0, \"recommendedAdditionalLooms\" : 0, \"meetsDeliveryDate\" : true, \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\", \"requiredDailyCapacity\" : 0.5637377, \"estimatedCompletionDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_REMAINING_METERS_TO_ASSIGN = "/items/{id}/remaining-meters-to-assign";
+
     /**
      * GET /items/{id}/remaining-meters-to-assign : Recupera i metri ancora da assegnare a un item
      *
-     * @param id  (required)
-     * @return Metri ancora da assegnare (status code 200)
-     *         or Item non trovato (status code 404)
+     * @param id (required)
+     * @return Metri ancora da assegnare (status code 200) or Item non trovato (status code 404)
      */
     @Operation(
-        operationId = "getRemainingMetersToAssign",
-        summary = "Recupera i metri ancora da assegnare a un item",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Metri ancora da assegnare", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Double.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Item non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getRemainingMetersToAssign",
+            summary = "Recupera i metri ancora da assegnare a un item",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Metri ancora da assegnare",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Double.class))
+                        }),
+                @ApiResponse(responseCode = "404", description = "Item non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = ItemsApi.PATH_GET_REMAINING_METERS_TO_ASSIGN,
-        produces = { "application/json" }
-    )
+            method = RequestMethod.GET,
+            value = ItemsApi.PATH_GET_REMAINING_METERS_TO_ASSIGN,
+            produces = {"application/json"})
     default ResponseEntity<Double> getRemainingMetersToAssign(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_RUNNING_ITEMS_COUNT = "/items/running-count";
+
     /**
      * GET /items/running-count : Conta gli item in lavorazione
      *
      * @return Numero di item in stato RUNNING (status code 200)
      */
     @Operation(
-        operationId = "getRunningItemsCount",
-        summary = "Conta gli item in lavorazione",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Numero di item in stato RUNNING", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getRunningItemsCount",
+            summary = "Conta gli item in lavorazione",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Numero di item in stato RUNNING",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Integer.class))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = ItemsApi.PATH_GET_RUNNING_ITEMS_COUNT,
-        produces = { "application/json" }
-    )
-    default ResponseEntity<Integer> getRunningItemsCount(
-        
-    ) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            method = RequestMethod.GET,
+            value = ItemsApi.PATH_GET_RUNNING_ITEMS_COUNT,
+            produces = {"application/json"})
+    default ResponseEntity<Integer> getRunningItemsCount() {
 
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
     String PATH_UPDATE_ITEM = "/items/{id}";
+
     /**
      * PUT /items/{id} : Aggiorna un item
      *
-     * @param id  (required)
-     * @param item  (required)
-     * @return Item aggiornato (status code 200)
-     *         or Richiesta non valida (status code 400)
-     *         or Item non trovato (status code 404)
+     * @param id (required)
+     * @param item (required)
+     * @return Item aggiornato (status code 200) or Richiesta non valida (status code 400) or Item
+     *     non trovato (status code 404)
      */
     @Operation(
-        operationId = "updateItem",
-        summary = "Aggiorna un item",
-        tags = { "Item" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Item aggiornato", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
-            @ApiResponse(responseCode = "404", description = "Item non trovato")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "updateItem",
+            summary = "Aggiorna un item",
+            tags = {"Item"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Item aggiornato",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Item.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+                @ApiResponse(responseCode = "404", description = "Item non trovato")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.PUT,
-        value = ItemsApi.PATH_UPDATE_ITEM,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.PUT,
+            value = ItemsApi.PATH_UPDATE_ITEM,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<Item> updateItem(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id,
-        @Parameter(name = "Item", description = "", required = true) @Valid @RequestBody Item item
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id,
+            @Parameter(name = "Item", description = "", required = true) @Valid @RequestBody
+                    Item item) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"arrangementId\" : \"arrangementId\", \"metersRun\" : 6.027456183070403, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isArchived\" : false, \"isDelivered\" : false, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"isLate\" : false, \"totalMeters\" : 0.8008281904610115, \"customerId\" : \"customerId\", \"processing\" : [ { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"totalPieces\" : 9.301444243932576, \"efficiency\" : 5.962133916683182, \"metersRun\" : 2.3021358869347655, \"endDate\" : \"2000-01-23T04:56:07.000+00:00\", \"metersToGo\" : 7.061401241503109, \"itemHitsPerDm\" : 7.386281948385884, \"speed\" : 1.4658129805029452, \"piecesRun\" : 3.616076749251911, \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"loom\" : { \"serialNumber\" : \"serialNumber\", \"isAssigned\" : false, \"id\" : \"id\", \"status\" : \"WORKING\" }, \"totalMeters\" : 5.637376656633329, \"days\" : 4.145608, \"id\" : \"id\", \"metersPerPiece\" : 2.027123023002322, \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" } ], \"id\" : \"id\", \"state\" : \"INITIALIZED\", \"startDate\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

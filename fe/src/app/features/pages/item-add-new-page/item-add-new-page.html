@@ -33,209 +33,136 @@
   </div>
   <div style="padding: 20px;">
     <form class="data-form" #itemForm="ngForm" novalidate>
-      <div class="item-data">
-        <div clasS="column">
-          <div class="form-group">
-            <label for="name">Nome Articolo</label>
-              <input
-                      type="text"
-                      id="name"
-                      name="itemName"
-                      [(ngModel)]="itemName"
-                      #itemModel="ngModel"
-                      required
-                      [class.input-invalid]="shouldShowControlError(itemModel)">
-                  @if (shouldShowControlError(itemModel)) {
-                      <mat-error class="validation-error">
-                          Il nome articolo è obbligatorio
-                      </mat-error>
-                  }
-          </div>
-          <div class="form-group">
-            <label for="customerName">Cliente</label>
-            <div class="customer-autocomplete-field">
-              <input
-                      type="text"
-                      id="customerName"
-                      name="customerName"
-                      [(ngModel)]="customerName"
-                      (ngModelChange)="filterCustomers($event)"
-                      [matAutocomplete]="customerAutocomplete"
-                      #customerAutocompleteTrigger="matAutocompleteTrigger"
-                      #customerModel="ngModel"
-                      required
-                      autocomplete="off"
-                      [class.input-invalid]="shouldShowControlError(customerModel)">
-                  <button
-                    type="button"
-                    class="customer-select-toggle"
-                    aria-label="Mostra clienti"
-                    [disabled]="isSaving() || isRequestPending"
-                    (mousedown)="$event.preventDefault()"
-                    (click)="customerAutocompleteTrigger.openPanel()">
-                    <mat-icon>arrow_drop_down</mat-icon>
-                  </button>
-            </div>
-                  <mat-autocomplete
-                    #customerAutocomplete="matAutocomplete"
-                    (optionSelected)="selectCustomer($event.option.value)">
-                    @for (customer of filteredCustomers(); track customer.id ?? customer.name) {
-                      <mat-option class="option" [value]="customer.name">{{ customer.name }}</mat-option>
-                    }
-                  </mat-autocomplete>
-                  @if (shouldShowControlError(customerModel)) {
-                      <mat-error class="validation-error">
-                          Il nome cliente è obbligatorio
-                      </mat-error>
-                  }
-          </div>
-          <div class="form-group">
-            <label for="piecesCount">Numero Pezze</label>
-              <input
-                      type="text"
-                      id="piecesCount"
-                      name="piecesCount"
-                      [(ngModel)]="piecesCount"
-                      #itemModel="ngModel"
-                      required
-                      [class.input-invalid]="shouldShowControlError(itemModel)">
-                  @if (shouldShowControlError(itemModel)) {
-                      <mat-error class="validation-error">
-                          Il numero pezze è obbligatorio
-                      </mat-error>
-                  }
-          </div>
-          <div class="form-group">
-            <label for="pieceLength">Lunghezza Pezza (m)</label>
-              <input
-                      type="text"
-                      id="pieceLength"
-                      name="pieceLength"
-                      [(ngModel)]="pieceLength"
-                      #itemModel="ngModel"
-                      required
-                      [class.input-invalid]="shouldShowControlError(itemModel)">
-                  @if (shouldShowControlError(itemModel)) {
-                      <mat-error class="validation-error">
-                          La lunghezza pezza è obbligatorio
-                      </mat-error>
-                  }
-          </div>
-          <div class="form-group">
-            <label for="hitsPerDm">Numero Colpi (per dm)</label>
-              <input
-                      type="text"
-                      id="hitsPerDm"
-                      name="hitsPerDm"
-                      [(ngModel)]="hitsPerDm"
-                      #itemModel="ngModel"
-                      required
-                      [class.input-invalid]="shouldShowControlError(itemModel)">
-                  @if (shouldShowControlError(itemModel)) {
-                      <mat-error class="validation-error">
-                          Il numero colpi è obbligatorio
-                      </mat-error>
-                  }
-          </div>
+      <div class="item-data main-row">
+        <div class="form-group">
+          <label for="name">Nome Articolo</label>
+          <input type="text" id="name" name="itemName" [(ngModel)]="itemName" #itemModel="ngModel" required [class.input-invalid]="shouldShowControlError(itemModel)">
+          @if (shouldShowControlError(itemModel)) { <mat-error class="validation-error">Il nome articolo è obbligatorio</mat-error> }
         </div>
-        <div class="column">
-          <div class="reed-group">
-            <div class="form-group">
+        <div class="reed-group">
+          <div class="form-group">
             <label for="reedCount">Misura Pettine</label>
             <div class="input-with-unit">
-              <input
-                      type="text"
-                      class="reed-input"
-                      id="reedCount"
-                      name="reedCount"
-                      [(ngModel)]="reedCount"
-                      #itemModel="ngModel"
-                      required
-                      [class.input-invalid]="shouldShowControlError(itemModel)">
-                
-                  in
-              <input
-                      type="text"
-                      id="reedCM"
-                      class="reed-input"
-                      name="reedCM"
-                      [(ngModel)]="reedCM"
-                      #itemModel="ngModel"
-                      required
-                      [class.input-invalid]="shouldShowControlError(itemModel)">
-                  
-                  cm
+              <input type="text" class="reed-input" id="reedCount" name="reedCount" [(ngModel)]="reedCount" #itemModel="ngModel" required [class.input-invalid]="shouldShowControlError(itemModel)">
+              in
+              <input type="text" id="reedCM" class="reed-input" name="reedCM" [(ngModel)]="reedCM" #itemModel="ngModel" required [class.input-invalid]="shouldShowControlError(itemModel)">
+              cm
             </div>
-            @if (shouldShowControlError(itemModel)) {
-                      <mat-error class="validation-error">
-                          La misura Pettine è obbligatoria
-                      </mat-error>
-                  }  
-            </div>
-            
-          </div>
-          <div class="form-group">
-            <label for="reedHeight">Altezza pettine (m)</label>
-              <input
-                      type="text"
-                      id="reedHeight"
-                      name="reedHeight"
-                      [(ngModel)]="reedHeight"
-                      #itemModel="ngModel"
-                      required
-                      [class.input-invalid]="shouldShowControlError(itemModel)">
-                  @if (shouldShowControlError(itemModel)) {
-                      <mat-error class="validation-error">
-                          L'altezza pettine è obbligatoria
-                      </mat-error>
-                  }
-          </div>
-          <div class="form-group">
-            <label for="warpLength">Lunghezza ordito (m)</label>
-              <input
-                      type="text"
-                      id="warpLength"
-                      name="warpLength"
-                      [(ngModel)]="warpLength"
-                      #itemModel="ngModel"
-                      required
-                      [class.input-invalid]="shouldShowControlError(itemModel)">
-                  @if (shouldShowControlError(itemModel)) {
-                      <mat-error class="validation-error">
-                          La lunghezza dell'ordito è obbligatoria
-                      </mat-error>
-                  }
-          </div>
-          <div class="form-group">
-            <label for="warpEndsCount">Numero fili ordito</label>
-              <input
-                      type="text"
-                      id="warpEndsCount"
-                      name="warpEndsCount"
-                      [(ngModel)]="warpEndCount"
-                      #itemModel="ngModel"
-                      required
-                      [class.input-invalid]="shouldShowControlError(itemModel)">
-                  @if (shouldShowControlError(itemModel)) {
-                      <mat-error class="validation-error">
-                          Il numero fili ordito è obbligatorio
-                      </mat-error>
-                  }
+            @if (shouldShowControlError(itemModel)) { <mat-error class="validation-error">La misura Pettine è obbligatoria</mat-error> }
           </div>
         </div>
-        <div class="column">
-          <div class="form-group">
-            <label for="deliveryDate">Data di consegna</label>
-            <mat-form-field appearance="outline" class="date-picker-field">
-              <input matInput id="deliveryDate" name="deliveryDate" [matDatepicker]="deliveryDatePicker" [(ngModel)]="deliveryDate">
-                <mat-datepicker-toggle matIconSuffix [for]="deliveryDatePicker"></mat-datepicker-toggle>
-                <mat-datepicker #deliveryDatePicker></mat-datepicker>
-              </mat-form-field>
-
+        <div class="form-group">
+          <label for="deliveryDate">Data di consegna</label>
+          <mat-form-field appearance="outline" class="date-picker-field">
+            <input matInput id="deliveryDate" name="deliveryDate" [matDatepicker]="deliveryDatePicker" [(ngModel)]="deliveryDate">
+            <mat-datepicker-toggle matIconSuffix [for]="deliveryDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #deliveryDatePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="item-data pieces-row">
+        <div class="form-group">
+          <label for="piecesCount">Numero Pezze</label>
+          <input type="text" id="piecesCount" name="piecesCount" [(ngModel)]="piecesCount" #itemModel="ngModel" required [class.input-invalid]="shouldShowControlError(itemModel)">
+          @if (shouldShowControlError(itemModel)) { <mat-error class="validation-error">Il numero pezze è obbligatorio</mat-error> }
+        </div>
+        <div class="form-group">
+          <label for="pieceLength">Lunghezza Pezza (m)</label>
+          <input type="text" id="pieceLength" name="pieceLength" [(ngModel)]="pieceLength" #itemModel="ngModel" required [class.input-invalid]="shouldShowControlError(itemModel)">
+          @if (shouldShowControlError(itemModel)) { <mat-error class="validation-error">La lunghezza pezza è obbligatorio</mat-error> }
+        </div>
+        <div class="form-group">
+          <label for="isCertified">Pezze certificate</label>
+          <div class="customer-autocomplete-field">
+            <input id="isCertified" name="isCertified" readonly [value]="certificationStateLabel"
+              [matAutocomplete]="certificationStateAutocomplete" #certificationStateTrigger="matAutocompleteTrigger"
+              (click)="certificationStateTrigger.openPanel()" autocomplete="off">
+            <button type="button" class="customer-select-toggle" aria-label="Mostra opzioni pezze certificate"
+              [disabled]="isSaving() || isRequestPending" (mousedown)="$event.preventDefault()"
+              (click)="certificationStateTrigger.openPanel()">
+              <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+          </div>
+          <mat-autocomplete #certificationStateAutocomplete="matAutocomplete"
+            [displayWith]="displayCertificationState" (optionSelected)="selectCertificationState($event.option.value)">
+            <mat-option class="option" [value]="undefined">Non specificato</mat-option>
+            <mat-option class="option" value="ALL">Tutte</mat-option>
+            <mat-option class="option" value="NONE">Nessuna</mat-option>
+            <mat-option class="option" value="PARTIAL">Alcune</mat-option>
+          </mat-autocomplete>
+          @if (isCertified === 'ALL' || isCertified === 'PARTIAL') {
+            <label for="certificationId">Tipologia di certificazione</label>
+            <select id="certificationId" name="certificationId" [(ngModel)]="certificationId">
+              <option [ngValue]="undefined">Seleziona certificazione</option>
+              @for (certification of certifications; track certification.id) {
+                <option [ngValue]="certification.id">{{ certification.value }} — {{ certification.description }}</option>
+              }
+            </select>
+          }
+        </div>
+      </div>
+      <div class="item-data weights-row">
+        <div class="form-group">
+          <label for="warpWeight">Peso ordito</label>
+          <div class="input-with-unit">
+            <input id="warpWeight" name="warpWeight" type="number" min="0" step="any" [(ngModel)]="warpWeight" aria-label="Peso ordito in kg">
+            <span>kg</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="weftWeight">Peso trama</label>
+          <div class="input-with-unit">
+            <input id="weftWeight" name="weftWeight" type="number" min="0" step="any" [(ngModel)]="weftWeight" aria-label="Peso trama in kg">
+            <span>kg</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="totalWeight">Peso totale</label>
+          <div class="input-with-unit">
+            <input id="totalWeight" name="totalWeight" readonly [value]="totalWeight ?? ''" aria-label="Peso totale in kg">
+            <span>kg</span>
           </div>
         </div>
       </div>
-    </form>
+
+      <div class="item-data dimensions-row">
+        <div class="form-group">
+          <label for="reedHeight">Altezza pettine (m)</label>
+          <input type="text" id="reedHeight" name="reedHeight" [(ngModel)]="reedHeight" #itemModel="ngModel" required [class.input-invalid]="shouldShowControlError(itemModel)">
+          @if (shouldShowControlError(itemModel)) { <mat-error class="validation-error">L'altezza pettine è obbligatoria</mat-error> }
+        </div>
+        <div class="form-group">
+          <label for="warpLength">Lunghezza ordito (m)</label>
+          <input type="text" id="warpLength" name="warpLength" [(ngModel)]="warpLength" #itemModel="ngModel" required [class.input-invalid]="shouldShowControlError(itemModel)">
+          @if (shouldShowControlError(itemModel)) { <mat-error class="validation-error">La lunghezza dell'ordito è obbligatoria</mat-error> }
+        </div>
+        <div class="form-group">
+          <label for="customerName">Cliente</label>
+          <div class="customer-autocomplete-field">
+            <input type="text" id="customerName" name="customerName" [(ngModel)]="customerName" (ngModelChange)="filterCustomers($event)" [matAutocomplete]="customerAutocomplete" #customerAutocompleteTrigger="matAutocompleteTrigger" #customerModel="ngModel" required autocomplete="off" [class.input-invalid]="shouldShowControlError(customerModel)">
+            <button type="button" class="customer-select-toggle" aria-label="Mostra clienti" [disabled]="isSaving() || isRequestPending" (mousedown)="$event.preventDefault()" (click)="customerAutocompleteTrigger.openPanel()"><mat-icon>arrow_drop_down</mat-icon></button>
+          </div>
+          <mat-autocomplete #customerAutocomplete="matAutocomplete" (optionSelected)="selectCustomer($event.option.value)">
+            @for (customer of filteredCustomers(); track customer.id ?? customer.name) { <mat-option class="option" [value]="customer.name">{{ customer.name }}</mat-option> }
+          </mat-autocomplete>
+          @if (shouldShowControlError(customerModel)) { <mat-error class="validation-error">Il nome cliente è obbligatorio</mat-error> }
+        </div>
+      </div>
+
+      <div class="item-data other-specs-row">
+        <div class="form-group">
+          <label for="hitsPerDm">Numero Colpi (per dm)</label>
+          <input type="text" id="hitsPerDm" name="hitsPerDm" [(ngModel)]="hitsPerDm" #itemModel="ngModel" required [class.input-invalid]="shouldShowControlError(itemModel)">
+          @if (shouldShowControlError(itemModel)) { <mat-error class="validation-error">Il numero colpi è obbligatorio</mat-error> }
+        </div>
+        <div class="form-group">
+          <label for="warpEndsCount">Numero fili ordito</label>
+          <input type="text" id="warpEndsCount" name="warpEndsCount" [(ngModel)]="warpEndCount" #itemModel="ngModel" required [class.input-invalid]="shouldShowControlError(itemModel)">
+          @if (shouldShowControlError(itemModel)) { <mat-error class="validation-error">Il numero fili ordito è obbligatorio</mat-error> }
+        </div>
+      </div>
+
+</form>
     <div class="button-wrapper">
         <app-button-general-action-component
         label="Salva"

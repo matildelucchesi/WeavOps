@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 import org.openapitools.domain.UserEntity;
 import org.openapitools.repository.UserRepository;
 import org.openapitools.service.TokenService;
@@ -14,9 +16,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.List;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -32,31 +31,38 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
+            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authorizationHeader != null && authorizationHeader.startsWith(BEARER_PREFIX)) {
             String token = authorizationHeader.substring(BEARER_PREFIX.length());
 
-            tokenService.validateToken(token).ifPresent(payload -> {
-                boolean mobileToken = "loom-mobile".equals(payload.purpose());
-                if (!mobileToken && !isCurrentUserToken(payload)) {
-                    return;
-                }
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        payload,
-                        null,
-                        List.of(new SimpleGrantedAuthority(mobileToken ? "LOOM_MOBILE" : "USER"))
-                );
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            tokenService
+                    .validateToken(token)
+                    .ifPresent(
+                            payload -> {
+                                boolean mobileToken = "loom-mobile".equals(payload.purpose());
+                                if (!mobileToken && !isCurrentUserToken(payload)) {
+                                    return;
+                                }
+                                UsernamePasswordAuthenticationToken authentication =
+                                        new UsernamePasswordAuthenticationToken(
+                                                payload,
+                                                null,
+                                                List.of(
+                                                        new SimpleGrantedAuthority(
+                                                                mobileToken
+                                                                        ? "LOOM_MOBILE"
+                                                                        : "USER")));
+                                authentication.setDetails(
+                                        new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-                securityContext.setAuthentication(authentication);
-                SecurityContextHolder.setContext(securityContext);
-            });
+                                SecurityContext securityContext =
+                                        SecurityContextHolder.createEmptyContext();
+                                securityContext.setAuthentication(authentication);
+                                SecurityContextHolder.setContext(securityContext);
+                            });
         }
 
         filterChain.doFilter(request, response);
@@ -66,7 +72,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (payload.userId() == null || payload.credentialVersion() == null) {
             return false;
         }
-        return userRepository.findById(payload.userId())
+        return userRepository
+                .findById(payload.userId())
                 .filter(user -> user.getCredentialVersion() == payload.credentialVersion())
                 .map(UserEntity::getUsername)
                 .filter(payload.username()::equals)

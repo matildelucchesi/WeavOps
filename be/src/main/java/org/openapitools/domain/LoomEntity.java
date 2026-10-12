@@ -7,15 +7,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "looms")
 public class LoomEntity {
 
-    @Id
-    private String id;
+    @Id private String id;
 
     private String serialNumber;
 
     private Loom.StatusEnum status;
     private boolean isAssigned;
 
-    //getter & setter
+    // getter & setter
 
     public boolean isAssigned() {
         return isAssigned;
@@ -48,5 +47,4 @@ public class LoomEntity {
     public void setStatus(Loom.StatusEnum status) {
         this.status = status;
     }
-
 }

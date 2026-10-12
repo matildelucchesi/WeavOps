@@ -23,6 +23,39 @@
         <sourceDirectory>src/main/java</sourceDirectory>
         <plugins>
             <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <id>check-java-formatting</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <java>
+                        <includes>
+                            <include>src/main/java/**/*.java</include>
+                            <include>src/test/java/**/*.java</include>
+                            <include>be/src/main/java/**/*.java</include>
+                            <include>be/src/test/java/**/*.java</include>
+                        </includes>
+                        <googleJavaFormat>
+                            <version>1.28.0</version>
+                            <style>AOSP</style>
+                        </googleJavaFormat>
+                        <replaceRegex>
+                            <name>Expand empty method bodies</name>
+                            <searchRegex><![CDATA[(?m)^([ \t]*)([^\r\n;{}]*\)[ \t]*(?:throws[^\r\n{]+)?)[ \t]*\{\}]]></searchRegex>
+                            <replacement>$1$2{&#10;$1}</replacement>
+                        </replaceRegex>
+                    </java>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>

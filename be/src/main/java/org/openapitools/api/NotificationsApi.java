@@ -5,35 +5,29 @@
  */
 package org.openapitools.api;
 
-import org.openapitools.model.Notification;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
+import jakarta.annotation.Generated;
+import jakarta.validation.constraints.*;
+import java.util.List;
+import java.util.Optional;
+import org.openapitools.model.Notification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import jakarta.annotation.Generated;
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-20T09:27:07.285474300+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(
+        value = "org.openapitools.codegen.languages.SpringCodegen",
+        date = "2026-07-20T09:27:07.285474300+02:00[Europe/Rome]",
+        comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "Notifications", description = "the Notifications API")
 public interface NotificationsApi {
@@ -43,88 +37,112 @@ public interface NotificationsApi {
     }
 
     String PATH_GET_ITEM_DELIVERY_RISK_NOTIFICATIONS = "/notifications/item-delivery-risks";
+
     /**
-     * GET /notifications/item-delivery-risks : Recupera le notifiche per articoli con consegna a rischio
-     * Restituisce le notifiche per gli articoli non consegnati e non archiviati la cui fine produzione prevista supera la data di consegna. 
+     * GET /notifications/item-delivery-risks : Recupera le notifiche per articoli con consegna a
+     * rischio Restituisce le notifiche per gli articoli non consegnati e non archiviati la cui fine
+     * produzione prevista supera la data di consegna.
      *
      * @return Lista notifiche di rischio consegna (status code 200)
      */
     @Operation(
-        operationId = "getItemDeliveryRiskNotifications",
-        summary = "Recupera le notifiche per articoli con consegna a rischio",
-        description = "Restituisce le notifiche per gli articoli non consegnati e non archiviati la cui fine produzione prevista supera la data di consegna. ",
-        tags = { "Notifications" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Lista notifiche di rischio consegna", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Notification.class)))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getItemDeliveryRiskNotifications",
+            summary = "Recupera le notifiche per articoli con consegna a rischio",
+            description =
+                    "Restituisce le notifiche per gli articoli non consegnati e non archiviati la cui fine produzione prevista supera la data di consegna. ",
+            tags = {"Notifications"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Lista notifiche di rischio consegna",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array =
+                                            @ArraySchema(
+                                                    schema =
+                                                            @Schema(
+                                                                    implementation =
+                                                                            Notification.class)))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = NotificationsApi.PATH_GET_ITEM_DELIVERY_RISK_NOTIFICATIONS,
-        produces = { "application/json" }
-    )
-    default ResponseEntity<List<Notification>> getItemDeliveryRiskNotifications(
-        
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"severity\" : \"INFO\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"id\" : \"id\", \"type\" : \"ITEM_DELIVERY_RISK\", \"title\" : \"title\", \"message\" : \"message\", \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"severity\" : \"INFO\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"id\" : \"id\", \"type\" : \"ITEM_DELIVERY_RISK\", \"title\" : \"title\", \"message\" : \"message\", \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            method = RequestMethod.GET,
+            value = NotificationsApi.PATH_GET_ITEM_DELIVERY_RISK_NOTIFICATIONS,
+            produces = {"application/json"})
+    default ResponseEntity<List<Notification>> getItemDeliveryRiskNotifications() {
 
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "[ { \"severity\" : \"INFO\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"id\" : \"id\", \"type\" : \"ITEM_DELIVERY_RISK\", \"title\" : \"title\", \"message\" : \"message\", \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"severity\" : \"INFO\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"id\" : \"id\", \"type\" : \"ITEM_DELIVERY_RISK\", \"title\" : \"title\", \"message\" : \"message\", \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
     String PATH_GET_NOTIFICATIONS = "/notifications";
+
     /**
-     * GET /notifications : Recupera le notifiche calcolate del sistema
-     * Restituisce le notifiche calcolate lato backend a partire dallo stato corrente dei dati applicativi. Le notifiche non vengono salvate su DB. 
+     * GET /notifications : Recupera le notifiche calcolate del sistema Restituisce le notifiche
+     * calcolate lato backend a partire dallo stato corrente dei dati applicativi. Le notifiche non
+     * vengono salvate su DB.
      *
      * @return Lista notifiche (status code 200)
      */
     @Operation(
-        operationId = "getNotifications",
-        summary = "Recupera le notifiche calcolate del sistema",
-        description = "Restituisce le notifiche calcolate lato backend a partire dallo stato corrente dei dati applicativi. Le notifiche non vengono salvate su DB. ",
-        tags = { "Notifications" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Lista notifiche", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Notification.class)))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getNotifications",
+            summary = "Recupera le notifiche calcolate del sistema",
+            description =
+                    "Restituisce le notifiche calcolate lato backend a partire dallo stato corrente dei dati applicativi. Le notifiche non vengono salvate su DB. ",
+            tags = {"Notifications"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Lista notifiche",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array =
+                                            @ArraySchema(
+                                                    schema =
+                                                            @Schema(
+                                                                    implementation =
+                                                                            Notification.class)))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = NotificationsApi.PATH_GET_NOTIFICATIONS,
-        produces = { "application/json" }
-    )
-    default ResponseEntity<List<Notification>> getNotifications(
-        
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"severity\" : \"INFO\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"id\" : \"id\", \"type\" : \"ITEM_DELIVERY_RISK\", \"title\" : \"title\", \"message\" : \"message\", \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"severity\" : \"INFO\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"id\" : \"id\", \"type\" : \"ITEM_DELIVERY_RISK\", \"title\" : \"title\", \"message\" : \"message\", \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            method = RequestMethod.GET,
+            value = NotificationsApi.PATH_GET_NOTIFICATIONS,
+            produces = {"application/json"})
+    default ResponseEntity<List<Notification>> getNotifications() {
+
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "[ { \"severity\" : \"INFO\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"id\" : \"id\", \"type\" : \"ITEM_DELIVERY_RISK\", \"title\" : \"title\", \"message\" : \"message\", \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" }, { \"severity\" : \"INFO\", \"arrangementId\" : \"arrangementId\", \"itemId\" : \"itemId\", \"expectedEndDate\" : \"2000-01-23T04:56:07.000+00:00\", \"id\" : \"id\", \"type\" : \"ITEM_DELIVERY_RISK\", \"title\" : \"title\", \"message\" : \"message\", \"deliveryDate\" : \"2000-01-23T04:56:07.000+00:00\" } ]";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

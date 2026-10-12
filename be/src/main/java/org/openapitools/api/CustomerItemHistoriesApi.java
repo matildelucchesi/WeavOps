@@ -5,35 +5,32 @@
  */
 package org.openapitools.api;
 
-import org.openapitools.model.CustomerItemHistory;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.util.List;
+import java.util.Optional;
+import org.openapitools.model.CustomerItemHistory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import jakarta.annotation.Generated;
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-07-20T09:27:07.285474300+02:00[Europe/Rome]", comments = "Generator version: 7.22.0")
+@Generated(
+        value = "org.openapitools.codegen.languages.SpringCodegen",
+        date = "2026-07-20T09:27:07.285474300+02:00[Europe/Rome]",
+        comments = "Generator version: 7.22.0")
 @Validated
 @Tag(name = "CustomerItemHistory", description = "the CustomerItemHistory API")
 public interface CustomerItemHistoriesApi {
@@ -43,213 +40,252 @@ public interface CustomerItemHistoriesApi {
     }
 
     String PATH_CREATE_CUSTOMER_ITEM_HISTORY = "/customer-item-histories";
+
     /**
      * POST /customer-item-histories : Crea una cronologia articolo cliente
      *
-     * @param customerItemHistory  (required)
-     * @return Cronologia articolo cliente creata (status code 201)
-     *         or Richiesta non valida (status code 400)
+     * @param customerItemHistory (required)
+     * @return Cronologia articolo cliente creata (status code 201) or Richiesta non valida (status
+     *     code 400)
      */
     @Operation(
-        operationId = "createCustomerItemHistory",
-        summary = "Crea una cronologia articolo cliente",
-        tags = { "CustomerItemHistory" },
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Cronologia articolo cliente creata", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = CustomerItemHistory.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "createCustomerItemHistory",
+            summary = "Crea una cronologia articolo cliente",
+            tags = {"CustomerItemHistory"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Cronologia articolo cliente creata",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CustomerItemHistory.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.POST,
-        value = CustomerItemHistoriesApi.PATH_CREATE_CUSTOMER_ITEM_HISTORY,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.POST,
+            value = CustomerItemHistoriesApi.PATH_CREATE_CUSTOMER_ITEM_HISTORY,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<CustomerItemHistory> createCustomerItemHistory(
-        @Parameter(name = "CustomerItemHistory", description = "", required = true) @Valid @RequestBody CustomerItemHistory customerItemHistory
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"itemId\" : \"itemId\", \"customerId\" : \"customerId\", \"id\" : \"id\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "CustomerItemHistory", description = "", required = true)
+                    @Valid
+                    @RequestBody
+                    CustomerItemHistory customerItemHistory) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"itemId\" : \"itemId\", \"customerId\" : \"customerId\", \"id\" : \"id\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_DELETE_CUSTOMER_ITEM_HISTORY = "/customer-item-histories/{id}";
+
     /**
      * DELETE /customer-item-histories/{id} : Elimina una cronologia articolo cliente
      *
-     * @param id  (required)
-     * @return Cronologia articolo cliente eliminata (status code 204)
-     *         or Cronologia articolo cliente non trovata (status code 404)
+     * @param id (required)
+     * @return Cronologia articolo cliente eliminata (status code 204) or Cronologia articolo
+     *     cliente non trovata (status code 404)
      */
     @Operation(
-        operationId = "deleteCustomerItemHistory",
-        summary = "Elimina una cronologia articolo cliente",
-        tags = { "CustomerItemHistory" },
-        responses = {
-            @ApiResponse(responseCode = "204", description = "Cronologia articolo cliente eliminata"),
-            @ApiResponse(responseCode = "404", description = "Cronologia articolo cliente non trovata")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "deleteCustomerItemHistory",
+            summary = "Elimina una cronologia articolo cliente",
+            tags = {"CustomerItemHistory"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "204",
+                        description = "Cronologia articolo cliente eliminata"),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Cronologia articolo cliente non trovata")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.DELETE,
-        value = CustomerItemHistoriesApi.PATH_DELETE_CUSTOMER_ITEM_HISTORY
-    )
+            method = RequestMethod.DELETE,
+            value = CustomerItemHistoriesApi.PATH_DELETE_CUSTOMER_ITEM_HISTORY)
     default ResponseEntity<Void> deleteCustomerItemHistory(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_GET_CUSTOMER_ITEM_HISTORIES = "/customer-item-histories";
+
     /**
      * GET /customer-item-histories : Recupera tutte le cronologie articoli cliente
      *
      * @return Lista cronologie articoli cliente (status code 200)
      */
     @Operation(
-        operationId = "getCustomerItemHistories",
-        summary = "Recupera tutte le cronologie articoli cliente",
-        tags = { "CustomerItemHistory" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Lista cronologie articoli cliente", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CustomerItemHistory.class)))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getCustomerItemHistories",
+            summary = "Recupera tutte le cronologie articoli cliente",
+            tags = {"CustomerItemHistory"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Lista cronologie articoli cliente",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array =
+                                            @ArraySchema(
+                                                    schema =
+                                                            @Schema(
+                                                                    implementation =
+                                                                            CustomerItemHistory
+                                                                                    .class)))
+                        })
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = CustomerItemHistoriesApi.PATH_GET_CUSTOMER_ITEM_HISTORIES,
-        produces = { "application/json" }
-    )
-    default ResponseEntity<List<CustomerItemHistory>> getCustomerItemHistories(
-        
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"itemId\" : \"itemId\", \"customerId\" : \"customerId\", \"id\" : \"id\" }, { \"itemId\" : \"itemId\", \"customerId\" : \"customerId\", \"id\" : \"id\" } ]";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            method = RequestMethod.GET,
+            value = CustomerItemHistoriesApi.PATH_GET_CUSTOMER_ITEM_HISTORIES,
+            produces = {"application/json"})
+    default ResponseEntity<List<CustomerItemHistory>> getCustomerItemHistories() {
 
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "[ { \"itemId\" : \"itemId\", \"customerId\" : \"customerId\", \"id\" : \"id\" }, { \"itemId\" : \"itemId\", \"customerId\" : \"customerId\", \"id\" : \"id\" } ]";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
     String PATH_GET_CUSTOMER_ITEM_HISTORY_BY_ID = "/customer-item-histories/{id}";
+
     /**
      * GET /customer-item-histories/{id} : Recupera una cronologia articolo cliente tramite ID
      *
-     * @param id  (required)
-     * @return Cronologia articolo cliente trovata (status code 200)
-     *         or Cronologia articolo cliente non trovata (status code 404)
+     * @param id (required)
+     * @return Cronologia articolo cliente trovata (status code 200) or Cronologia articolo cliente
+     *     non trovata (status code 404)
      */
     @Operation(
-        operationId = "getCustomerItemHistoryById",
-        summary = "Recupera una cronologia articolo cliente tramite ID",
-        tags = { "CustomerItemHistory" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Cronologia articolo cliente trovata", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = CustomerItemHistory.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Cronologia articolo cliente non trovata")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "getCustomerItemHistoryById",
+            summary = "Recupera una cronologia articolo cliente tramite ID",
+            tags = {"CustomerItemHistory"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Cronologia articolo cliente trovata",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CustomerItemHistory.class))
+                        }),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Cronologia articolo cliente non trovata")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = CustomerItemHistoriesApi.PATH_GET_CUSTOMER_ITEM_HISTORY_BY_ID,
-        produces = { "application/json" }
-    )
+            method = RequestMethod.GET,
+            value = CustomerItemHistoriesApi.PATH_GET_CUSTOMER_ITEM_HISTORY_BY_ID,
+            produces = {"application/json"})
     default ResponseEntity<CustomerItemHistory> getCustomerItemHistoryById(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"itemId\" : \"itemId\", \"customerId\" : \"customerId\", \"id\" : \"id\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"itemId\" : \"itemId\", \"customerId\" : \"customerId\", \"id\" : \"id\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
 
-
     String PATH_UPDATE_CUSTOMER_ITEM_HISTORY = "/customer-item-histories/{id}";
+
     /**
      * PUT /customer-item-histories/{id} : Aggiorna una cronologia articolo cliente
      *
-     * @param id  (required)
-     * @param customerItemHistory  (required)
-     * @return Cronologia articolo cliente aggiornata (status code 200)
-     *         or Richiesta non valida (status code 400)
-     *         or Cronologia articolo cliente non trovata (status code 404)
+     * @param id (required)
+     * @param customerItemHistory (required)
+     * @return Cronologia articolo cliente aggiornata (status code 200) or Richiesta non valida
+     *     (status code 400) or Cronologia articolo cliente non trovata (status code 404)
      */
     @Operation(
-        operationId = "updateCustomerItemHistory",
-        summary = "Aggiorna una cronologia articolo cliente",
-        tags = { "CustomerItemHistory" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Cronologia articolo cliente aggiornata", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = CustomerItemHistory.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
-            @ApiResponse(responseCode = "404", description = "Cronologia articolo cliente non trovata")
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
+            operationId = "updateCustomerItemHistory",
+            summary = "Aggiorna una cronologia articolo cliente",
+            tags = {"CustomerItemHistory"},
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Cronologia articolo cliente aggiornata",
+                        content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CustomerItemHistory.class))
+                        }),
+                @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Cronologia articolo cliente non trovata")
+            },
+            security = {@SecurityRequirement(name = "bearerAuth")})
     @RequestMapping(
-        method = RequestMethod.PUT,
-        value = CustomerItemHistoriesApi.PATH_UPDATE_CUSTOMER_ITEM_HISTORY,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+            method = RequestMethod.PUT,
+            value = CustomerItemHistoriesApi.PATH_UPDATE_CUSTOMER_ITEM_HISTORY,
+            produces = {"application/json"},
+            consumes = {"application/json"})
     default ResponseEntity<CustomerItemHistory> updateCustomerItemHistory(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") String id,
-        @Parameter(name = "CustomerItemHistory", description = "", required = true) @Valid @RequestBody CustomerItemHistory customerItemHistory
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"itemId\" : \"itemId\", \"customerId\" : \"customerId\", \"id\" : \"id\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH)
+                    @PathVariable("id")
+                    String id,
+            @Parameter(name = "CustomerItemHistory", description = "", required = true)
+                    @Valid
+                    @RequestBody
+                    CustomerItemHistory customerItemHistory) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    String exampleString =
+                                            "{ \"itemId\" : \"itemId\", \"customerId\" : \"customerId\", \"id\" : \"id\" }";
+                                    ApiUtil.setExampleResponse(
+                                            request, "application/json", exampleString);
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
     }
-
 }

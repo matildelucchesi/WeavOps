@@ -1,11 +1,26 @@
 package org.openapitools.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.openapitools.domain.ArrangementEntity;
 import org.openapitools.domain.ItemEntity;
+import org.openapitools.domain.LoomEntity;
 import org.openapitools.domain.LoomItemAssignmentEntity;
 import org.openapitools.domain.ProcessEntity;
-import org.openapitools.domain.LoomEntity;
 import org.openapitools.model.LoomItemAssignment;
 import org.openapitools.model.ProductionAdvice;
 import org.openapitools.repository.ArrangementRepository;
@@ -13,22 +28,6 @@ import org.openapitools.repository.ItemRepository;
 import org.openapitools.repository.LoomItemAssignmentRepository;
 import org.openapitools.repository.LoomRepository;
 import org.openapitools.repository.ProcessRepository;
-
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 class ProductionForecastServiceTest {
     private static final Instant FRIDAY_START = Instant.parse("2026-10-09T00:00:00Z");
@@ -60,7 +59,9 @@ class ProductionForecastServiceTest {
         when(calendar.findClosureDates()).thenReturn(Set.of(LocalDate.parse("2026-10-10")));
         ProductionForecastService service = createService(calendar);
 
-        float days = service.calculateAvailableWorkingDays(FRIDAY_START, MONDAY_END, new ArrangementEntity());
+        float days =
+                service.calculateAvailableWorkingDays(
+                        FRIDAY_START, MONDAY_END, new ArrangementEntity());
 
         assertEquals(2f, days, 0.0001f);
     }
@@ -103,9 +104,15 @@ class ProductionForecastServiceTest {
         when(processService.calculateDailyCapacity(any())).thenReturn(100f);
         when(calendar.findClosureDates()).thenReturn(Set.of());
 
-        ProductionForecastService service = new ProductionForecastService(
-                items, arrangements, assignments, processes, mock(LoomRepository.class), processService, calendar
-        );
+        ProductionForecastService service =
+                new ProductionForecastService(
+                        items,
+                        arrangements,
+                        assignments,
+                        processes,
+                        mock(LoomRepository.class),
+                        processService,
+                        calendar);
         float effectiveDays = service.calculateAvailableWorkingDays(now, delivery, arrangement);
         ProductionAdvice advice = service.calculateProductionAdvice(item.getId()).orElseThrow();
 
@@ -126,11 +133,21 @@ class ProductionForecastServiceTest {
 
         ItemEntity item = itemWithDeliveryDate();
         ArrangementEntity arrangement = arrangementFor(item);
-        LoomItemAssignmentEntity queued = assignment("queued", item.getId(), "loom-1", "queued-process",
-                LoomItemAssignment.StatusEnum.QUEUED);
+        LoomItemAssignmentEntity queued =
+                assignment(
+                        "queued",
+                        item.getId(),
+                        "loom-1",
+                        "queued-process",
+                        LoomItemAssignment.StatusEnum.QUEUED);
         ProcessEntity process = process("queued-process");
-        LoomItemAssignmentEntity otherItemRunning = assignment("running-other", "other-item", "loom-1", "other-process",
-                LoomItemAssignment.StatusEnum.RUNNING);
+        LoomItemAssignmentEntity otherItemRunning =
+                assignment(
+                        "running-other",
+                        "other-item",
+                        "loom-1",
+                        "other-process",
+                        LoomItemAssignment.StatusEnum.RUNNING);
 
         when(items.findById(item.getId())).thenReturn(Optional.of(item));
         when(arrangements.findById(arrangement.getId())).thenReturn(Optional.of(arrangement));
@@ -141,9 +158,15 @@ class ProductionForecastServiceTest {
         when(processService.calculateDailyCapacity(process)).thenReturn(100f);
         when(calendar.findClosureDates()).thenReturn(Set.of());
 
-        ProductionForecastService service = new ProductionForecastService(
-                items, arrangements, assignments, processes, looms, processService, calendar
-        );
+        ProductionForecastService service =
+                new ProductionForecastService(
+                        items,
+                        arrangements,
+                        assignments,
+                        processes,
+                        looms,
+                        processService,
+                        calendar);
 
         ProductionAdvice advice = service.calculateProductionAdvice(item.getId()).orElseThrow();
 
@@ -167,12 +190,27 @@ class ProductionForecastServiceTest {
         ProcessEntity queuedProcess = process("queued-process");
         item.setProcessing(new ArrayList<>(List.of(runningProcess, queuedProcess)));
         ArrangementEntity arrangement = arrangementFor(item);
-        LoomItemAssignmentEntity running = assignment("running", item.getId(), "loom-1", "running-process",
-                LoomItemAssignment.StatusEnum.RUNNING);
-        LoomItemAssignmentEntity queued = assignment("queued", item.getId(), "loom-2", "queued-process",
-                LoomItemAssignment.StatusEnum.QUEUED);
-        LoomItemAssignmentEntity otherItemRunning = assignment("other-running", "other-item", "loom-2", "other-process",
-                LoomItemAssignment.StatusEnum.RUNNING);
+        LoomItemAssignmentEntity running =
+                assignment(
+                        "running",
+                        item.getId(),
+                        "loom-1",
+                        "running-process",
+                        LoomItemAssignment.StatusEnum.RUNNING);
+        LoomItemAssignmentEntity queued =
+                assignment(
+                        "queued",
+                        item.getId(),
+                        "loom-2",
+                        "queued-process",
+                        LoomItemAssignment.StatusEnum.QUEUED);
+        LoomItemAssignmentEntity otherItemRunning =
+                assignment(
+                        "other-running",
+                        "other-item",
+                        "loom-2",
+                        "other-process",
+                        LoomItemAssignment.StatusEnum.RUNNING);
         LoomEntity busyLoom = new LoomEntity();
         busyLoom.setId("loom-2");
         busyLoom.setStatus(org.openapitools.model.Loom.StatusEnum.WORKING);
@@ -188,15 +226,22 @@ class ProductionForecastServiceTest {
                 .thenReturn(List.of(otherItemRunning));
         when(processes.findById("running-process")).thenReturn(Optional.of(runningProcess));
         when(processes.findById("queued-process")).thenReturn(Optional.of(queuedProcess));
-        when(processes.save(any(ProcessEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(processes.save(any(ProcessEntity.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
         when(looms.findById("loom-1")).thenReturn(Optional.of(runningLoom));
         when(looms.findById("loom-2")).thenReturn(Optional.of(busyLoom));
         when(processService.calculateDailyCapacity(runningProcess)).thenReturn(100f);
         when(calendar.findClosureDates()).thenReturn(Set.of());
 
-        ProductionForecastService service = new ProductionForecastService(
-                items, arrangements, assignments, processes, looms, processService, calendar
-        );
+        ProductionForecastService service =
+                new ProductionForecastService(
+                        items,
+                        arrangements,
+                        assignments,
+                        processes,
+                        looms,
+                        processService,
+                        calendar);
 
         ItemEntity forecasted = service.recalculateProductionForecast(item.getId()).orElseThrow();
 
@@ -230,8 +275,7 @@ class ProductionForecastServiceTest {
             String itemId,
             String loomId,
             String processId,
-            LoomItemAssignment.StatusEnum status
-    ) {
+            LoomItemAssignment.StatusEnum status) {
         LoomItemAssignmentEntity assignment = new LoomItemAssignmentEntity();
         assignment.setId(id);
         assignment.setItemId(itemId);
@@ -256,7 +300,6 @@ class ProductionForecastServiceTest {
                 mock(ProcessRepository.class),
                 mock(LoomRepository.class),
                 mock(ProcessService.class),
-                calendar
-        );
+                calendar);
     }
 }

@@ -5,6 +5,8 @@ export interface CustomerTableRow {
   customer: Customer;
   name: string;
   email: string;
+  vatNumber?: string;
+  destinationNames?: string;
   referent: string;
   phoneNumber: string;
   note: string;

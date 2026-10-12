@@ -1,16 +1,15 @@
 package org.openapitools.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
+
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.openapitools.domain.LoomItemAssignmentEntity;
 import org.openapitools.model.LoomItemAssignment;
 import org.openapitools.repository.LoomItemAssignmentRepository;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 class LoomItemAssignmentServiceTest {
     @Test
@@ -18,8 +17,10 @@ class LoomItemAssignmentServiceTest {
         LoomItemAssignmentRepository repository = mock(LoomItemAssignmentRepository.class);
         LoomItemAssignmentService service = new LoomItemAssignmentService(repository);
 
-        LoomItemAssignmentEntity queued = assignment("queued-1", LoomItemAssignment.StatusEnum.QUEUED);
-        LoomItemAssignmentEntity running = assignment("running-1", LoomItemAssignment.StatusEnum.RUNNING);
+        LoomItemAssignmentEntity queued =
+                assignment("queued-1", LoomItemAssignment.StatusEnum.QUEUED);
+        LoomItemAssignmentEntity running =
+                assignment("running-1", LoomItemAssignment.StatusEnum.RUNNING);
         when(repository.findById("queued-1")).thenReturn(Optional.of(queued));
         when(repository.findByLoomIdAndStatus("loom-1", LoomItemAssignment.StatusEnum.RUNNING))
                 .thenReturn(List.of(running));
@@ -48,13 +49,16 @@ class LoomItemAssignmentServiceTest {
     void refusesCreatingQueuedAssignmentForAnItemAlreadyQueuedOnTheSameLoom() {
         LoomItemAssignmentRepository repository = mock(LoomItemAssignmentRepository.class);
         LoomItemAssignmentService service = new LoomItemAssignmentService(repository);
-        LoomItemAssignmentEntity existing = assignment("existing", LoomItemAssignment.StatusEnum.QUEUED);
+        LoomItemAssignmentEntity existing =
+                assignment("existing", LoomItemAssignment.StatusEnum.QUEUED);
         LoomItemAssignmentEntity request = assignment(null, LoomItemAssignment.StatusEnum.QUEUED);
         when(repository.findByItemIdAndLoomIdAndStatusIn(
-                "item-1",
-                "loom-1",
-                List.of(LoomItemAssignment.StatusEnum.QUEUED, LoomItemAssignment.StatusEnum.RUNNING)
-        )).thenReturn(List.of(existing));
+                        "item-1",
+                        "loom-1",
+                        List.of(
+                                LoomItemAssignment.StatusEnum.QUEUED,
+                                LoomItemAssignment.StatusEnum.RUNNING)))
+                .thenReturn(List.of(existing));
 
         assertThatThrownBy(() -> service.save(request))
                 .isInstanceOf(DuplicateItemLoomAssignmentException.class)
@@ -68,10 +72,12 @@ class LoomItemAssignmentServiceTest {
         LoomItemAssignmentService service = new LoomItemAssignmentService(repository);
         LoomItemAssignmentEntity request = assignment(null, LoomItemAssignment.StatusEnum.QUEUED);
         when(repository.findByItemIdAndLoomIdAndStatusIn(
-                "item-1",
-                "loom-1",
-                List.of(LoomItemAssignment.StatusEnum.QUEUED, LoomItemAssignment.StatusEnum.RUNNING)
-        )).thenReturn(List.of());
+                        "item-1",
+                        "loom-1",
+                        List.of(
+                                LoomItemAssignment.StatusEnum.QUEUED,
+                                LoomItemAssignment.StatusEnum.RUNNING)))
+                .thenReturn(List.of());
         when(repository.save(request)).thenReturn(request);
 
         assertThat(service.save(request)).isSameAs(request);

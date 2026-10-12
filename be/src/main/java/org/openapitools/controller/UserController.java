@@ -1,5 +1,7 @@
 package org.openapitools.controller;
 
+import jakarta.validation.Valid;
+import java.util.List;
 import org.openapitools.api.UsersApi;
 import org.openapitools.mapper.UserMapper;
 import org.openapitools.model.User;
@@ -9,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
-import java.util.List;
 
 @RestController
 public class UserController implements UsersApi {
@@ -44,7 +43,8 @@ public class UserController implements UsersApi {
     }
 
     @Override
-    public ResponseEntity<User> updateUser(@PathVariable("id") String id, @Valid @RequestBody User user) {
+    public ResponseEntity<User> updateUser(
+            @PathVariable("id") String id, @Valid @RequestBody User user) {
         return service.update(id, mapper.toEntity(user))
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)

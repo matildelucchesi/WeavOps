@@ -1,10 +1,9 @@
 package org.openapitools.mapper;
 
+import java.time.ZoneOffset;
 import org.openapitools.domain.LoomLogEntity;
 import org.openapitools.model.LoomLog;
 import org.springframework.stereotype.Component;
-
-import java.time.ZoneOffset;
 
 @Component
 public class LoomLogMapper {
@@ -22,7 +21,10 @@ public class LoomLogMapper {
         dto.setItemId(entity.getItemId());
         dto.setItemName(entity.getItemName());
         dto.setMetersAdded(entity.getMetersAdded());
-        dto.setCreatedAt(entity.getCreatedAt() != null ? entity.getCreatedAt().atOffset(ZoneOffset.UTC) : null);
+        dto.setCreatedAt(
+                entity.getCreatedAt() != null
+                        ? entity.getCreatedAt().atOffset(ZoneOffset.UTC)
+                        : null);
         return dto;
     }
 

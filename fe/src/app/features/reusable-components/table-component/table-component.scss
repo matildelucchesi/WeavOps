@@ -286,7 +286,7 @@ td{
 }
 
 .action-button:hover:not(:disabled){
-    color: color-mix(in srgb, var(--action-icon-color) 70%, var(--weavops-color-surface));
+    color: var(--action-hover-color, color-mix(in srgb, var(--action-icon-color) 70%, var(--weavops-color-surface)));
 }
 
 .action-button--edit:hover:not(:disabled){
@@ -414,3 +414,6 @@ td{
 td{
     border-bottom: 1px solid var(--weavops-color-primary);
 }
+:host .table-cell-action { display: inline-flex; vertical-align: middle; align-items: center; justify-content: center; margin-left: 8px; padding: 4px; border: 0; border-radius: 4px; background: transparent; color: var(--weavops-color-primary); cursor: pointer; }
+:host .table-cell-action:focus-visible { outline: 2px solid var(--weavops-color-primary); }
+:host .table-cell-action mat-icon { width: 18px; height: 18px; font-size: 18px; line-height: 18px; font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20; }

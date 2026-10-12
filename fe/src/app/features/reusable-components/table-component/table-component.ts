@@ -18,6 +18,7 @@ export interface TableColumn<T = any> {
   chip?: boolean | TableChipConfig<T>;
   icon?: TableIconConfig<T>;
   checkbox?: TableCheckboxConfig<T>;
+  cellAction?: { icon: string; label: string; onClick: (row: T) => void; visible?: (row: T) => boolean };
 }
 
 export interface TableCheckboxConfig<T = any> {
@@ -56,7 +57,8 @@ export interface TableAction<T = any> {
   icon?: string;
   imageIcon?: string | ((row: T) => string | undefined);
   imageAlt?: string;
-  iconColor?: string;
+  iconColor?: string | ((row: T) => string);
+  hoverColor?: (row: T) => string;
   visible?: boolean | ((row: T) => boolean);
   disabled?: boolean | ((row: T) => boolean);
   deleteItem?: (row: T) => Observable<unknown>;
@@ -112,6 +114,9 @@ export interface TableFilterButtonConfig {
   standalone: true,
 })
 export class TableComponent {
+  public getColumnCellAction(column: string | TableColumn) {
+    return typeof column === 'string' ? null : column.cellAction;
+  }
   private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
 
@@ -500,7 +505,8 @@ export class TableComponent {
     this.filterSelected.emit({});
   }
 
-  public getActionIconColor(action: TableAction): string {
+  public getActionIconColor(action: TableAction, row?: any): string {
+    if (typeof action.iconColor === 'function') return action.iconColor(row);
     return this.actionIconColor;
   }
 
