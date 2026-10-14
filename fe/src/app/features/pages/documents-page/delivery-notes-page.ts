@@ -9,6 +9,7 @@ import { SelectFabricsDialog } from './select-fabrics-dialog';
 import { forkJoin } from 'rxjs';
 import { Customer, Destination, Item, Arrangement, Fabric, User } from '../../../api';
 import { UserFacadeService } from '../../../services/user-facade.service';
+import { DeliveryNoteOptionService, DeliveryNoteOption } from '../../../services/delivery-note-option.service';
 import { FabricFacadeService } from '../../../services/fabric-facade.service';
 import { deliveryNoteTotals } from '../../../services/delivery-note-totals';
 import { ItemFacadeService } from '../../../services/item-facade.service';
@@ -104,6 +105,10 @@ export class DeliveryNotesPage implements OnInit, OnDestroy {
   private readonly fabricsApi = inject(FabricFacadeService);
   private readonly usersApi = inject(UserFacadeService);
   issuer: User | null = null;
+  private readonly optionsApi = inject(DeliveryNoteOptionService);
+  options: DeliveryNoteOption[] = [];
+  get transportOptions() { return this.options.filter(option => option.active && option.type === 'TRANSPORT'); }
+  get freightOptions() { return this.options.filter(option => option.active && option.type === 'FREIGHT'); }
   readonly documentColumns: TableColumn<SavedDeliveryNote>[] = [
     { header: 'Nome documento', value: document => `DDT ${document.number}/${document.year} · ${document.customerName}` },
     { header: 'Data', value: document => document.date.split('-').reverse().join('/') },
@@ -165,6 +170,7 @@ export class DeliveryNotesPage implements OnInit, OnDestroy {
   ngOnInit() {
     forkJoin({
       issuer: this.usersApi.getCurrent(),
+      options: this.optionsApi.getAll(),
       customers: this.customersApi.getAll(),
       items: this.itemsApi.getAll(),
       arrangements: this.arrangementsApi.getAll(),

@@ -28,6 +28,15 @@ describe('Composizione DDT', () => {
     page.destinationId = 'db'; expect(page.canGenerate).toBe(false);
     page.destinationId = 'da'; expect(page.canGenerate).toBe(true);
   });
+  it('mostra nei menu solo le opzioni attive della corretta tipologia', () => {
+    page.options = [
+      { id: '1', type: 'TRANSPORT', value: 'Mittente', active: true },
+      { id: '2', type: 'FREIGHT', value: 'FRANCO', active: true },
+      { id: '3', type: 'TRANSPORT', value: 'Disattivata', active: false },
+    ];
+    expect(page.transportOptions.map(option => option.value)).toEqual(['Mittente']);
+    expect(page.freightOptions.map(option => option.value)).toEqual(['FRANCO']);
+  });
   it('apre ogni nuovo DDT con solo numero automatico e data odierna', () => {
     vi.spyOn(TestBed.inject(DeliveryNoteService), 'reserveNumber').mockReturnValue(of({ number: 7, year: 2026 }));
     page.loading = false;

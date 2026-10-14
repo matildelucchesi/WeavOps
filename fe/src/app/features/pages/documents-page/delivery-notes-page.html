@@ -205,13 +205,18 @@
           </div>
           <div class="transport-row">
             <label class="box"
-              >Trasporto a cura del<input maxlength="40" [(ngModel)]="transport" [disabled]="busy"
-            /></label>
+              >Trasporto a cura del<select aria-label="Trasporto a cura del" [(ngModel)]="transport" [disabled]="busy">
+                <option value="" disabled>Seleziona…</option>
+                @for (option of transportOptions; track option.id) { <option [value]="option.value">{{ option.value }}</option> }
+              </select></label>
             <div class="box">
               N. Colli<span>{{ totalPieces }}</span>
             </div>
             <label class="box"
-              >Porto<input maxlength="50" [(ngModel)]="freight" [disabled]="busy" /></label
+              >Porto<select aria-label="Porto" [(ngModel)]="freight" [disabled]="busy">
+                <option value="" disabled>Seleziona…</option>
+                @for (option of freightOptions; track option.id) { <option [value]="option.value">{{ option.value }}</option> }
+              </select></label
             ><label class="box"
               >Data Ritiro<input type="date" [(ngModel)]="pickupDate" [disabled]="busy" /></label
             ><label class="box"

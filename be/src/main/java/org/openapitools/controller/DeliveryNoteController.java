@@ -9,11 +9,11 @@ import org.bson.Document;
 import org.bson.types.Binary;
 import org.openapitools.domain.FabricEntity;
 import org.openapitools.service.DeliveryNotePersistenceService;
-import org.springframework.data.mongodb.core.FindAndModifyOptions;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,23 +25,32 @@ import org.springframework.web.multipart.MultipartFile;
 public class DeliveryNoteController {
     private final MongoTemplate mongo;
     private final DeliveryNotePersistenceService persistence;
+    private final int initialNumber;
 
-    public DeliveryNoteController(MongoTemplate mongo, DeliveryNotePersistenceService persistence) {
+    public DeliveryNoteController(
+            MongoTemplate mongo,
+            DeliveryNotePersistenceService persistence,
+            @Value("${app.delivery-notes.initial-number:1}") int initialNumber) {
+        if (initialNumber < 1) {
+            throw new IllegalArgumentException(
+                    "Il numero iniziale DDT deve essere maggiore di zero");
+        }
         this.mongo = mongo;
         this.persistence = persistence;
+        this.initialNumber = initialNumber;
     }
 
     @PostMapping("/reserve-number")
     public Document reserveNumber() {
         int year = LocalDate.now(ZoneId.of("Europe/Rome")).getYear();
-        Document counter =
-                mongo.findAndModify(
-                        Query.query(Criteria.where("_id").is("ddt-" + year)),
-                        new Update().inc("value", 1),
-                        FindAndModifyOptions.options().upsert(true).returnNew(true),
-                        Document.class,
-                        "document-counters");
-        return new Document("number", counter.get("value")).append("year", year);
+        Query query = new Query().with(Sort.by(Sort.Direction.DESC, "number")).limit(1);
+        query.fields().include("number");
+        Document lastDocument = mongo.findOne(query, Document.class, "delivery-notes");
+        int nextNumber =
+                lastDocument == null
+                        ? initialNumber
+                        : Math.addExact(((Number) lastDocument.get("number")).intValue(), 1);
+        return new Document("number", nextNumber).append("year", year);
     }
 
     @GetMapping
@@ -85,6 +94,9 @@ public class DeliveryNoteController {
             return ResponseEntity.status(409).build();
         }
         // L'indice impedisce di associare la stessa Tela a due DDT, anche simultanei.
+        if (!mongo.collectionExists("document-counters")) {
+            mongo.createCollection("document-counters");
+        }
         mongo.indexOps("delivery-notes")
                 .ensureIndex(
                         new org.springframework.data.mongodb.core.index.Index()

@@ -1,0 +1,11 @@
+<app-title-page-component title="Audit articoli" iconName="fact_check" [imageWidth]="40" [imageHeight]="40" />
+<section class="audit-body">
+  <div class="audit-filters">
+    <label>Cerca<input aria-label="Cerca articolo, cliente o certificazione" placeholder="Articolo, cliente o certificazione" [ngModel]="search()" (ngModelChange)="search.set($event)"></label>
+    <button class="filter-button" type="button" (click)="openFilters()"><mat-icon>search</mat-icon><span>Filtri</span></button>
+  </div>
+  @if (invalidPeriod()) { <p role="alert">La data iniziale deve precedere o coincidere con quella finale.</p> }
+  @if (loading()) { <p role="status">Caricamento…</p> }
+  @if (error()) { <p role="alert">Impossibile caricare gli articoli. <button type="button" (click)="load()">Riprova</button></p> }
+  <app-table-component [columns]="columns" [rows]="rows()" [enableMultiSelection]="false" [sortByCreationDate]="false" [pageSize]="10" />
+</section>

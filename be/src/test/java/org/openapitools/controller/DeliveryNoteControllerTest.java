@@ -17,9 +17,30 @@ class DeliveryNoteControllerTest {
     private final org.openapitools.service.DeliveryNotePersistenceService persistence =
             mock(org.openapitools.service.DeliveryNotePersistenceService.class);
     private final DeliveryNoteController controller =
-            new DeliveryNoteController(mongo, persistence);
+            new DeliveryNoteController(mongo, persistence, 1);
     private final MockMultipartFile pdf =
             new MockMultipartFile("file", "ddt.pdf", "application/pdf", "%PDF-test".getBytes());
+
+    @Test
+    void emptyDatabaseUsesConfiguredInitialNumberWithoutConsumingIt() {
+        var configured = new DeliveryNoteController(mongo, persistence, 40);
+        assertEquals(40, configured.reserveNumber().getInteger("number"));
+        assertEquals(40, configured.reserveNumber().getInteger("number"));
+        verify(mongo, never()).findAndModify(any(), any(), any(), eq(Document.class), anyString());
+    }
+
+    @Test
+    void nextNumberUsesAllYearsAndHighestSavedNumber() {
+        when(mongo.findOne(any(), eq(Document.class), eq("delivery-notes")))
+                .thenReturn(new Document("number", 125).append("year", 2025));
+        assertEquals(126, controller.reserveNumber().getInteger("number"));
+        var query =
+                org.mockito.ArgumentCaptor.forClass(
+                        org.springframework.data.mongodb.core.query.Query.class);
+        verify(mongo).findOne(query.capture(), eq(Document.class), eq("delivery-notes"));
+        assertTrue(query.getValue().getQueryObject().isEmpty());
+        assertEquals(-1, query.getValue().getSortObject().getInteger("number"));
+    }
 
     @Test
     void invalidDateDoesNotSave() throws Exception {

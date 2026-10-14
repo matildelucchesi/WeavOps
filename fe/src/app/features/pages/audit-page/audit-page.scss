@@ -1,0 +1,11 @@
+.audit-body { margin-top: 20px; color: var(--weavops-color-primary); }
+.audit-filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px; margin-bottom: 20px; }
+.audit-filters label { width: min(100%, 430px); }
+.filter-button { display: inline-flex; align-items: center; gap: 5px; height: 35px; min-height: 35px; padding: 8px 16px; background: var(--weavops-color-primary); color: var(--weavops-color-surface); border: 0; border-radius: 10px; font-family: 'Instrument Sans', sans-serif; font-size: 14px; font-weight: 500; }
+.filter-button mat-icon { font-size: 20px; width: 20px; height: 20px; }
+.filter-button:hover { background: var(--weavops-color-primary); opacity: .9; }
+label { display: grid; gap: 6px; font-weight: 600; }
+input, select, button { box-sizing: border-box; min-height: 38px; padding: 8px 12px; border: 1.5px solid var(--weavops-color-primary); border-radius: 10px; background: var(--weavops-color-surface-muted); color: var(--weavops-color-primary); font: inherit; }
+button { cursor: pointer; font-weight: 700; }
+button:hover { background: var(--weavops-color-primary-hover); color: white; }
+input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--weavops-color-primary); outline-offset: 2px; }

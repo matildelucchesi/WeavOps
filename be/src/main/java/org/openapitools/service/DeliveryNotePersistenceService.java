@@ -22,6 +22,17 @@ public class DeliveryNotePersistenceService {
 
     @Transactional(rollbackFor = Exception.class)
     public void save(Document document, List<String> fabricIds) {
+        // Serializza i salvataggi concorrenti; questo contatore non prenota numeri.
+        mongo.upsert(
+                Query.query(Criteria.where("_id").is("ddt-global")),
+                new Update().inc("revision", 1),
+                "document-counters");
+        if (mongo.exists(
+                Query.query(Criteria.where("number").is(document.getInteger("number"))),
+                Document.class,
+                "delivery-notes")) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Numero DDT già utilizzato");
+        }
         mongo.insert(document, "delivery-notes");
         var result =
                 mongo.updateMulti(
@@ -33,10 +44,6 @@ public class DeliveryNotePersistenceService {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "Una Tela non è più disponibile");
         }
-        mongo.upsert(
-                Query.query(Criteria.where("_id").is("ddt-" + document.getInteger("year"))),
-                new Update().max("value", document.getInteger("number")),
-                "document-counters");
     }
 
     @Transactional(rollbackFor = Exception.class)

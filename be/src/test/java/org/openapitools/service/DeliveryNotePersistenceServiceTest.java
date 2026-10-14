@@ -48,7 +48,7 @@ class DeliveryNotePersistenceServiceTest {
                 .thenReturn(UpdateResult.acknowledged(0, 0L, null));
         assertThrows(
                 ResponseStatusException.class, () -> service.save(new Document(), List.of("a")));
-        verify(mongo, never()).upsert(any(), any(), eq("document-counters"));
+        verify(mongo, never()).remove(any(), eq(Document.class), eq("delivery-notes"));
     }
 
     @Test

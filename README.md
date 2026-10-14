@@ -36,6 +36,7 @@ In ambiente di sviluppo, il proxy del frontend inoltra le richieste `/api` al ba
 - Esporta in PDF la disposizione delle lavorazioni per ciascun telaio.
 - Esporta in PDF lo storico delle operazioni eseguite su un telaio.
 - Esporta in PDF i dati riepilogativi della produzione al suo completamento.
+- Consente di generare automaticamente Documenti di Trasporto e Fatture.
 
 ## Entità e relazioni
 

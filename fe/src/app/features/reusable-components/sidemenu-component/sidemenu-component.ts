@@ -77,3 +77,5 @@ export class SidemenuComponent {
     this.isMiniMenuOpen = false;
   }
 }
+
+

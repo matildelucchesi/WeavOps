@@ -1,0 +1,4 @@
+app:
+  delivery-notes:
+    # Numero del primo DDT quando non esistono documenti salvati.
+    initial-number: ${WEAVOPS_DDT_INITIAL_NUMBER:1}
