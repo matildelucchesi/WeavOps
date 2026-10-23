@@ -45,6 +45,43 @@ public class Customer {
     private @Nullable String city;
 
     private @Nullable String provinceCode;
+    private @Nullable String country;
+
+    public Customer country(@Nullable String country) {
+        this.country = country;
+        return this;
+    }
+
+    @JsonProperty("country")
+    @Size(max = 100)
+    @Schema(description = "Nazione del cliente; assente se non specificata.")
+    public @Nullable String getCountry() {
+        return country;
+    }
+
+    public void setCountry(@Nullable String country) {
+        this.country = country;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    @Schema(hidden = true)
+    @AssertTrue(
+            message =
+                    "Per gli indirizzi italiani il CAP deve avere 5 cifre e la provincia 2 lettere")
+    public boolean isAddressFormatValid() {
+        String normalized =
+                country == null ? "" : country.trim().toUpperCase(java.util.Locale.ROOT);
+        boolean italian =
+                normalized.isEmpty()
+                        || java.util.Set.of("ITALIA", "IT", "ITA", "ITALY").contains(normalized);
+        return !italian
+                || ((postalCode == null
+                                || postalCode.isBlank()
+                                || postalCode.trim().matches("[0-9]{5}"))
+                        && (provinceCode == null
+                                || provinceCode.isBlank()
+                                || provinceCode.trim().matches("[A-Za-z]{2}")));
+    }
 
     public Customer() {
         super();
@@ -319,14 +356,14 @@ public class Customer {
     }
 
     /**
-     * CAP italiano, conservato come stringa.
+     * Codice postale; cinque cifre per gli indirizzi italiani.
      *
      * @return postalCode
      */
-    @Pattern(regexp = "^([0-9]{5})?$")
+    @Size(max = 20)
     @Schema(
             name = "postalCode",
-            description = "CAP italiano, conservato come stringa.",
+            description = "Codice postale; cinque cifre per gli indirizzi italiani.",
             requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("postalCode")
     public @Nullable String getPostalCode() {
@@ -368,14 +405,14 @@ public class Customer {
     }
 
     /**
-     * Sigla provincia italiana, normalizzata in maiuscolo.
+     * Provincia o regione; due lettere per gli indirizzi italiani.
      *
      * @return provinceCode
      */
-    @Pattern(regexp = "^([A-Za-z]{2})?$")
+    @Size(max = 100)
     @Schema(
             name = "provinceCode",
-            description = "Sigla provincia italiana, normalizzata in maiuscolo.",
+            description = "Provincia o regione; due lettere per gli indirizzi italiani.",
             requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("provinceCode")
     public @Nullable String getProvinceCode() {
@@ -408,7 +445,8 @@ public class Customer {
                 && Objects.equals(this.streetNumber, customer.streetNumber)
                 && Objects.equals(this.postalCode, customer.postalCode)
                 && Objects.equals(this.city, customer.city)
-                && Objects.equals(this.provinceCode, customer.provinceCode);
+                && Objects.equals(this.provinceCode, customer.provinceCode)
+                && Objects.equals(this.country, customer.country);
     }
 
     @Override
@@ -426,7 +464,8 @@ public class Customer {
                 streetNumber,
                 postalCode,
                 city,
-                provinceCode);
+                provinceCode,
+                country);
     }
 
     @Override

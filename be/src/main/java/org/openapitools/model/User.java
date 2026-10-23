@@ -30,6 +30,18 @@ public class User {
     private @Nullable String email;
     private @Nullable String companyName;
     private @Nullable String vatNumber;
+    private @Nullable String fiscalCode;
+
+    @JsonProperty("fiscalCode")
+    @Size(max = 100)
+    @Pattern(regexp = "[A-Za-z0-9]*")
+    public @Nullable String getFiscalCode() {
+        return fiscalCode;
+    }
+
+    public void setFiscalCode(@Nullable String fiscalCode) {
+        this.fiscalCode = fiscalCode;
+    }
 
     @JsonProperty("companyName")
     @Size(max = 200)
@@ -211,13 +223,22 @@ public class User {
                 && Objects.equals(this.lastName, user.lastName)
                 && Objects.equals(this.email, user.email)
                 && Objects.equals(this.companyName, user.companyName)
-                && Objects.equals(this.vatNumber, user.vatNumber);
+                && Objects.equals(this.vatNumber, user.vatNumber)
+                && Objects.equals(this.fiscalCode, user.fiscalCode);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(
-                id, username, password, firstName, lastName, email, companyName, vatNumber);
+                id,
+                username,
+                password,
+                firstName,
+                lastName,
+                email,
+                companyName,
+                vatNumber,
+                fiscalCode);
     }
 
     @Override

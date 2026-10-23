@@ -301,7 +301,8 @@ export class DeliveryNotesPage implements OnInit, OnDestroy {
     else this.selected.delete(key);
   }
   address(c: Customer | Destination) {
-    return `${c.street ?? ''} ${c.streetNumber ?? ''}\n${c.postalCode ?? ''} ${c.city ?? ''} ${c.provinceCode ?? ''}`.trim();
+    const address = `${c.street ?? ''} ${c.streetNumber ?? ''}\n${c.postalCode ?? ''} ${c.city ?? ''} ${c.provinceCode ?? ''}`.trim();
+    return [address, 'country' in c ? c.country?.trim() : ''].filter(Boolean).join('\n');
   }
   async generate(preview: boolean) {
     if (!this.canGenerate || this.busy) return;

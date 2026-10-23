@@ -19,7 +19,8 @@ class CustomerAddressMapperTest {
                         .streetNumber("1/A")
                         .postalCode("00100")
                         .city("Roma")
-                        .provinceCode("RM");
+                        .provinceCode("RM")
+                        .country("ITALIA");
         CustomerMapper mapper =
                 new CustomerMapper(mock(ReferentMapper.class), mock(ItemMapper.class));
         Customer restored = mapper.toDto(mapper.toEntity(source));
@@ -28,6 +29,7 @@ class CustomerAddressMapperTest {
         assertThat(restored.getPostalCode()).isEqualTo("00100");
         assertThat(restored.getCity()).isEqualTo("Roma");
         assertThat(restored.getProvinceCode()).isEqualTo("RM");
+        assertThat(restored.getCountry()).isEqualTo("ITALIA");
         assertThat(restored.getVatNumber()).isEqualTo(source.getVatNumber());
         try (var factory = Validation.buildDefaultValidatorFactory()) {
             assertThat(factory.getValidator().validate(restored)).isEmpty();

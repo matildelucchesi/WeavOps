@@ -58,8 +58,17 @@ describe('CustomerDetailsPage', () => {
   it('saves the VAT number and shared destination references', async () => {
     const fixture = await create(); const component = fixture.componentInstance;
     component.customerName = 'Cliente'; component.vatNumber = 'IT001234567891234'; component.street = 'Via Roma'; component.streetNumber = '1/a'; component.postalCode = '00100'; component.city = 'Roma'; component.provinceCode = 'rm'; component.selectedDestinationIds = ['d1', 'd2'];
+    component.country = ' Italia ';
     component.createNewCustomer();
-    expect(customers.create).toHaveBeenCalledWith(expect.objectContaining({ name: 'CLIENTE', vatNumber: 'IT001234567891234', street: 'VIA ROMA', streetNumber: '1/A', postalCode: '00100', city: 'ROMA', provinceCode: 'RM', destinationIds: ['d1', 'd2'] }));
+    expect(customers.create).toHaveBeenCalledWith(expect.objectContaining({ name: 'CLIENTE', vatNumber: 'IT001234567891234', street: 'VIA ROMA', streetNumber: '1/A', postalCode: '00100', city: 'ROMA', provinceCode: 'RM', country: 'ITALIA', destinationIds: ['d1', 'd2'] }));
+  });
+  it('ripristina la nazione e accetta codici postali e regioni estere', async () => {
+    const fixture = await create({id:'c1', name:'Estero', email:'', vatNumber:'GB123', country:'REGNO UNITO', postalCode:'SW1A 1AA', provinceCode:'LONDON'});
+    const page = fixture.componentInstance;
+    expect(page.country).toBe('REGNO UNITO');
+    expect(fixture.nativeElement.querySelector('#customer-country').value).toBe('REGNO UNITO');
+    page.toggleModifications(); page.createNewCustomer();
+    expect(customers.update).toHaveBeenCalledWith('c1', expect.objectContaining({country:'REGNO UNITO', postalCode:'SW1A 1AA', provinceCode:'LONDON'}));
   });
   it('shows assigned destinations as soon as asynchronous requests complete without a user click', async () => {
     const destinationResponse = new Subject<typeof destinations>();

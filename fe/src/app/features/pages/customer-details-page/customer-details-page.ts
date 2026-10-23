@@ -1,4 +1,5 @@
 import { MatSelectModule } from '@angular/material/select';
+import { normalizeCustomerCountry, usesItalianAddressRules } from '../../../services/customer-country';
 import { Destination } from '../../../api/model/destination';
 import { DestinationFacadeService } from '../../../services/destination-facade.service';
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject, signal } from '@angular/core';
@@ -54,6 +55,8 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
   public postalCode = '';
   public city = '';
   public provinceCode = '';
+  public country = '';
+  get usesItalianAddressRules() { return usesItalianAddressRules(this.country); }
   public selectedDestinationIds: string[] = [];
   public removeDestination(id: string): void {
     this.selectedDestinationIds = this.selectedDestinationIds.filter(value => value !== id);
@@ -155,6 +158,7 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
       postalCode: this.postalCode.trim(),
       city: this.city.trim().toLocaleUpperCase('it'),
       provinceCode: this.provinceCode.trim().toUpperCase(),
+      country: normalizeCustomerCountry(this.country),
       destinationIds: [...this.selectedDestinationIds],
       note: this.note.trim(),
       items: this.customer?.items ?? [],
@@ -278,6 +282,7 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
     this.postalCode = customer.postalCode ?? '';
     this.city = (customer.city ?? '').toLocaleUpperCase('it');
     this.provinceCode = customer.provinceCode ?? '';
+    this.country = normalizeCustomerCountry(customer.country);
     this.selectedDestinationIds = [...(customer.destinationIds ?? [])];
     this.note = customer.note ?? '';
     this.referentName1 = firstReferent?.firstName ?? '';
@@ -313,8 +318,11 @@ export class CustomerDetailsPage implements OnInit, OnDestroy {
 
   private getValidationErrorMessage(): string | null {
     if (!/^[A-Za-z0-9]+$/.test(this.vatNumber.trim())) return 'La partita IVA è obbligatoria e può contenere solo lettere e cifre.';
-    if (this.postalCode.trim() && !/^[0-9]{5}$/.test(this.postalCode.trim())) return 'Il CAP deve contenere 5 cifre.';
-    if (this.provinceCode.trim() && !/^[A-Za-z]{2}$/.test(this.provinceCode.trim())) return 'La sigla provincia deve contenere 2 lettere.';
+    if (this.country.trim().length > 100) return 'La nazione può contenere al massimo 100 caratteri.';
+    if (this.postalCode.trim().length > 20) return 'Il codice postale può contenere al massimo 20 caratteri.';
+    if (this.provinceCode.trim().length > 100) return 'La provincia può contenere al massimo 100 caratteri.';
+    if (this.usesItalianAddressRules && this.postalCode.trim() && !/^[0-9]{5}$/.test(this.postalCode.trim())) return 'Il CAP deve contenere 5 cifre.';
+    if (this.usesItalianAddressRules && this.provinceCode.trim() && !/^[A-Za-z]{2}$/.test(this.provinceCode.trim())) return 'La sigla provincia deve contenere 2 lettere.';
     if (this.destinationsLoading) return 'Attendere il caricamento delle destinazioni.';
     if (this.destinationsLoadError) return 'Impossibile caricare le destinazioni. Ricaricare la pagina prima di salvare.';
     const customerName = this.customerName.trim();

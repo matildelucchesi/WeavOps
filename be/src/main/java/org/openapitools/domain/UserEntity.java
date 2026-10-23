@@ -24,6 +24,15 @@ public class UserEntity {
     private String email;
     private String companyName;
     private String vatNumber;
+    private String fiscalCode;
+
+    public String getFiscalCode() {
+        return fiscalCode;
+    }
+
+    public void setFiscalCode(String fiscalCode) {
+        this.fiscalCode = fiscalCode;
+    }
 
     public String getCompanyName() {
         return companyName;

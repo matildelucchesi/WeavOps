@@ -21,6 +21,8 @@ h3 { font-size: 16px; margin: 20px 0 10px; }
 .assigned-grid { background: #f5f5f5; border-color: #bbb; }
 .assigned-card { color: #626262; cursor: default; }
 .assigned-card img { filter: grayscale(1); opacity: 0.6; }
+.assigned-card.invoice-selectable { color: var(--weavops-color-primary); cursor: pointer; }
+.assigned-card.invoice-selectable img { filter: none; opacity: 1; }
 .document-state { margin-top: auto; padding: 6px 8px; border-radius: 6px; background: #e5e5e5; font-size: 12px; text-align: center; }
 .empty { grid-column: 1 / -1; }
 .action { @include dialogAlert.cancel-button; border-radius: 10px; min-width: 100px; height: 30px; padding: 0 14px; font-family: 'Instrument Sans', sans-serif; font-weight: 600; cursor: pointer; }

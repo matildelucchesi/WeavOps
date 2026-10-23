@@ -19,6 +19,7 @@ class UserServiceTest {
         UserEntity current = user(4);
         current.setCompanyName("Azienda");
         current.setVatNumber("IT123");
+        current.setFiscalCode("12345678901");
         when(repository.findById("user-1")).thenReturn(Optional.of(current));
         when(encoder.encode("new-password")).thenReturn("new-hash");
         when(repository.save(any(UserEntity.class)))
@@ -32,6 +33,7 @@ class UserServiceTest {
         assertThat(saved.getPassword()).isEqualTo("new-hash");
         assertThat(saved.getCompanyName()).isEqualTo("Azienda");
         assertThat(saved.getVatNumber()).isEqualTo("IT123");
+        assertThat(saved.getFiscalCode()).isEqualTo("12345678901");
     }
 
     @Test

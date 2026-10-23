@@ -25,7 +25,7 @@ interface ProfileForm {
 export class ProfilePage implements OnInit {
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
   private readonly userService = inject(UserFacadeService);
-  public company = { name: '', vatNumber: '' };
+  public company = { name: '', vatNumber: '', fiscalCode: '' };
   public isLoadingCompany = true;
   private readonly snackBar = inject(MatSnackBar);
   private loaderStartedAt = 0;
@@ -56,7 +56,7 @@ export class ProfilePage implements OnInit {
           lastName: user.lastName ?? '',
           email: user.email ?? '',
         };
-        this.company = { name: user.companyName ?? '', vatNumber: user.vatNumber ?? '' };
+        this.company = { name: user.companyName ?? '', vatNumber: user.vatNumber ?? '', fiscalCode: user.fiscalCode ?? '' };
         this.isLoadingCompany = false;
         this.changeDetectorRef.detectChanges();
       },
@@ -70,12 +70,16 @@ export class ProfilePage implements OnInit {
 
   public saveCompany(): void {
     if (this.isSaving || this.isLoadingCompany) return;
-    const company = { name: this.company.name.trim(), vatNumber: this.company.vatNumber.trim() };
+    const company = { name: this.company.name.trim(), vatNumber: this.company.vatNumber.trim(), fiscalCode: this.company.fiscalCode.trim().toUpperCase() };
     if (!company.name || !/^[a-z0-9]+$/i.test(company.vatNumber)) {
       this.showError('Inserisci nome azienda e partita IVA alfanumerica');
       return;
     }
     this.company = company;
+    if (company.fiscalCode && !/^[a-z0-9]+$/i.test(company.fiscalCode)) {
+      this.showError('Inserisci un codice fiscale alfanumerico');
+      return;
+    }
     this.updateUser('', 'Informazioni azienda aggiornate');
   }
 
@@ -204,7 +208,7 @@ export class ProfilePage implements OnInit {
 
     this.isSaving = true;
     this.startLoader();
-    const user: User = { ...this.profile, password, companyName: this.company.name, vatNumber: this.company.vatNumber };
+    const user: User = { ...this.profile, password, companyName: this.company.name, vatNumber: this.company.vatNumber, fiscalCode: this.company.fiscalCode };
     this.userService.update(this.userId, user).subscribe({
       next: (updatedUser) => {
         this.profile = {
@@ -213,7 +217,7 @@ export class ProfilePage implements OnInit {
           lastName: updatedUser.lastName ?? '',
           email: updatedUser.email ?? '',
         };
-        this.company = { name: updatedUser.companyName ?? '', vatNumber: updatedUser.vatNumber ?? '' };
+        this.company = { name: updatedUser.companyName ?? '', vatNumber: updatedUser.vatNumber ?? '', fiscalCode: updatedUser.fiscalCode ?? '' };
         this.newPassword = '';
         this.confirmPassword = '';
         this.finishLoader(() => {

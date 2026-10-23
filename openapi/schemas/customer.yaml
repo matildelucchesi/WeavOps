@@ -44,12 +44,16 @@ properties:
     description: Numero civico, inclusi suffissi o SNC.
   postalCode:
     type: string
-    pattern: '^([0-9]{5})?$'
-    description: CAP italiano, conservato come stringa.
+    maxLength: 20
+    description: Codice postale; cinque cifre per gli indirizzi italiani.
   city:
     type: string
     description: Comune del cliente.
   provinceCode:
     type: string
-    pattern: '^([A-Za-z]{2})?$'
-    description: Sigla provincia italiana, normalizzata in maiuscolo.
+    maxLength: 100
+    description: Provincia o regione; due lettere per gli indirizzi italiani.
+  country:
+    type: string
+    maxLength: 100
+    description: Nazione del cliente; assente se non specificata.

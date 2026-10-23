@@ -14,7 +14,7 @@ describe('ProfilePage', () => {
       imports: [ProfilePage],
       providers: [
         { provide: UserFacadeService, useValue: {
-          getById: () => of({ username: 'utente', companyName: 'Azienda', vatNumber: 'IT123456789' }),
+          getById: () => of({ username: 'utente', companyName: 'Azienda', vatNumber: 'IT123456789', fiscalCode: '12345678901' }),
           update: vi.fn((id, user) => of(user)),
         } },
       ],
@@ -35,13 +35,14 @@ describe('ProfilePage', () => {
     expect(personal.querySelector('input[name="username"]')).not.toBeNull();
     expect(company.querySelector('input[name="companyName"]').value).toBe('Azienda');
     expect(company.querySelector('input[name="companyVatNumber"]').value).toBe('IT123456789');
+    expect(company.querySelector('input[name="companyFiscalCode"]').value).toBe('12345678901');
     expect(company.querySelector('mat-icon').textContent.trim()).toBe('factory');
     expect(company.querySelector('.avatar-control')).toBeNull();
     expect(personal.nextElementSibling).toBe(company);
   });
   it('salva i dati aziendali insieme al profilo utente', () => {
-    component.company = { name: 'Nuova azienda', vatNumber: 'IT987654321' };
+    component.company = { name: 'Nuova azienda', vatNumber: 'IT987654321', fiscalCode: '98765432100' };
     component.saveCompany();
-    expect(TestBed.inject(UserFacadeService).update).toHaveBeenCalledWith('user-1', expect.objectContaining({ username: 'utente', password: '', companyName: 'Nuova azienda', vatNumber: 'IT987654321' }));
+    expect(TestBed.inject(UserFacadeService).update).toHaveBeenCalledWith('user-1', expect.objectContaining({ username: 'utente', password: '', companyName: 'Nuova azienda', vatNumber: 'IT987654321', fiscalCode: '98765432100' }));
   });
 });

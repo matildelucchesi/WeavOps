@@ -16,9 +16,10 @@ export interface AssignedFabricRow extends DeliveryNoteRow {
   styleUrl: './select-fabrics-dialog.scss',
 })
 export class SelectFabricsDialog {
-  readonly data = inject<{ customerName: string; rows: DeliveryNoteRow[]; assignedRows?: AssignedFabricRow[]; selected: string[] }>(MAT_DIALOG_DATA);
+  readonly data = inject<{ customerName: string; rows: DeliveryNoteRow[]; assignedRows?: AssignedFabricRow[]; selected: string[]; allowAssignedSelection?: boolean }>(MAT_DIALOG_DATA);
   readonly ref = inject(MatDialogRef<SelectFabricsDialog>);
-  selected = new Set(this.data.selected.filter(key => this.data.rows.some(row => row.key === key)));
+  get selectableRows() { return this.data.allowAssignedSelection ? [...this.data.rows, ...(this.data.assignedRows ?? [])] : this.data.rows; }
+  selected = new Set(this.data.selected.filter(key => this.selectableRows.some(row => row.key === key)));
   search = '';
   get filtered() {
     const q = this.search.trim().toLocaleLowerCase('it');
@@ -30,7 +31,7 @@ export class SelectFabricsDialog {
       `${row.fabricCode} ${row.description} DDT ${row.deliveryNote.number}/${row.deliveryNote.year}`.toLocaleLowerCase('it').includes(q));
   }
   toggle(key: string, checked: boolean) {
-    if (!this.data.rows.some(row => row.key === key)) return;
+    if (!this.selectableRows.some(row => row.key === key)) return;
     if (checked) this.selected.add(key);
     else this.selected.delete(key);
   }

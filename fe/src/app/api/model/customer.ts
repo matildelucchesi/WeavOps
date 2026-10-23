@@ -38,7 +38,7 @@ export interface Customer {
      */
     streetNumber?: string;
     /**
-     * CAP italiano, conservato come stringa.
+     * Codice postale; per l'Italia, cinque cifre.
      */
     postalCode?: string;
     /**
@@ -46,8 +46,10 @@ export interface Customer {
      */
     city?: string;
     /**
-     * Sigla provincia italiana, normalizzata in maiuscolo.
+     * Provincia o regione; per l'Italia, sigla di due lettere.
      */
     provinceCode?: string;
+    /** Nazione del cliente; assente se non specificata. */
+    country?: string;
 }
 

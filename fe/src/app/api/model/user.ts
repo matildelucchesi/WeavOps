@@ -21,5 +21,6 @@ export interface User {
     email?: string;
     companyName?: string;
     vatNumber?: string;
+    fiscalCode?: string;
 }
 

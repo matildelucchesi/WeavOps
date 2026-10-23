@@ -1,0 +1,126 @@
+<app-title-page-component title="Fatture" iconName="receipt_long" [imageWidth]="40" [imageHeight]="40" />
+<section class="documents">
+  @if (loading) { <p role="status">Caricamento…</p> }
+  @if (!editing) {
+    <app-table-component [columns]="columns" [rows]="saved" [actions]="actions"
+      [addButton]="{ariaLabel: 'Aggiungi nuova fattura'}" [enableMultiSelection]="false" [sortByCreationDate]="false"
+      (addButtonClick)="start()" (actionClick)="onAction($event)" />
+    @if (!loading && !saved.length && !error) { <p>Non ci sono fatture. Aggiungi una fattura per iniziare.</p> }
+  } @else {
+    <div class="toolbar"><h2>{{ editingId ? 'Modifica fattura' : 'Nuova fattura' }}</h2>
+      <button class="back-button" type="button" (click)="back()" [disabled]="busy"><mat-icon>arrow_back</mat-icon>Indietro</button>
+    </div>
+    <fieldset [disabled]="busy" class="editor">
+      <ng-template #addRowActions>
+        <div class="table-add-actions">
+          <button class="table-add-button" type="button" (click)="addFabrics()" [disabled]="busy || fabricsLoading" aria-label="Aggiungi tele da articoli" matTooltip="Aggiungi una tela" matTooltipPosition="above" matTooltipClass="weavops-action-tooltip"><img src="/icon/itemicon-violet.png" alt="" /></button>
+          <button class="table-add-button" type="button" (click)="addRow()" [disabled]="busy" aria-label="Aggiungi riga manuale" matTooltip="Aggiungi riga" matTooltipPosition="above" matTooltipClass="weavops-action-tooltip"><mat-icon>add</mat-icon></button>
+        </div>
+      </ng-template>
+      <mat-menu #customersMenu="matMenu" class="ddt-selection-panel">
+        <div class="menu-search" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+          <input aria-label="Cerca Spett." placeholder="Cerca cliente…" [(ngModel)]="customerSearch" />
+        </div>
+        @for (customer of filteredCustomers; track customer.id) {
+          <button mat-menu-item [class.ddt-option-selected]="draft.customerId === customer.id" (click)="chooseCustomer(customer.id!)">{{ customer.name }}@if (customer.city) { — {{ customer.city }} }</button>
+        }
+        @if (!filteredCustomers.length) { <div class="menu-search">Nessun cliente trovato.</div> }
+      </mat-menu>
+      <div class="paper-workspace" #paperWorkspace>
+        @for (pageRows of sheets; track $index; let page = $index; let last = $last) {
+          <article class="paper" [style.zoom]="paperScale()" [attr.aria-label]="page === 0 ? 'Template fattura' : 'Template fattura pagina ' + (page + 1)">
+            <header class="letterhead">
+              <h1 class="company-name" aria-label="Ragione sociale azienda">{{ draft.issuer.name }}</h1>
+              <div class="parties">
+                <div class="issuer-address">
+                  <textarea rows="3" aria-label="Indirizzo azienda" placeholder="Indirizzo azienda" [(ngModel)]="draft.issuer.address"></textarea>
+                  <label>P. IVA <input aria-label="Partita IVA azienda" [(ngModel)]="draft.issuer.vat" /></label>
+                  <label>Email <input aria-label="Email azienda" [(ngModel)]="draft.issuer.email" /></label>
+                </div>
+                <div class="customer-recipient"><span class="outside-label">Spett.</span>
+                  <div class="customer-address">
+                    <div class="customer-selection">
+                      <input class="customer-name" aria-label="Ragione sociale cliente" placeholder="Seleziona cliente" [disabled]="busy || !draft.customerId" [(ngModel)]="draft.customer.name" />
+                      <button class="customer-select-button" type="button" [matMenuTriggerFor]="customersMenu" (menuOpened)="customerSearch = ''" [disabled]="busy" aria-label="Seleziona Spett."><mat-icon>arrow_drop_down</mat-icon></button>
+                    </div>
+                    <input class="customer-street" aria-label="Indirizzo cliente" [placeholder]="draft.customer.name ? 'Via e numero civico' : ''" [disabled]="busy || !draft.customerId" [(ngModel)]="customerStreet" />
+                    <div class="customer-city-line">
+                      <input aria-label="CAP e comune cliente" [placeholder]="draft.customer.name ? 'CAP e comune' : ''" [disabled]="busy || !draft.customerId" [(ngModel)]="customerCity" />
+                      <input class="customer-province" aria-label="Provincia cliente" maxlength="100" [disabled]="busy || !draft.customerId" [(ngModel)]="customerProvince" />
+                    </div>
+                    <input class="customer-country" aria-label="Paese cliente" maxlength="100" [disabled]="busy || !draft.customerId" [(ngModel)]="customerCountry" />
+                  </div>
+                </div>
+              </div>
+            </header>
+            <input class="document-title" aria-label="Titolo documento" [(ngModel)]="draft.title" />
+            <div class="metadata">
+              <label>Numero Doc.<input aria-label="Numero Doc." type="number" min="1" step="1" [(ngModel)]="draft.number" (ngModelChange)="numberEdited = true" /></label>
+              <label>Data Doc.<input aria-label="Data Doc." type="date" [(ngModel)]="draft.date" /></label>
+              <label>Partita I.V.A.<input aria-label="Partita IVA azienda nel documento" [(ngModel)]="draft.issuer.vat" /></label>
+              <label>Codice Fiscale<input aria-label="Codice fiscale" [(ngModel)]="draft.fiscalCode" /></label>
+              <div class="page-number">Pag.<strong>{{ page + 1 }}</strong></div>
+              <label class="bank">Banca d’appoggio<input aria-label="Banca d’appoggio" [(ngModel)]="draft.bank" /></label>
+              <label class="payment">Pagamento<input aria-label="Pagamento" [(ngModel)]="draft.payment" /></label>
+            </div>
+            <table class="invoice-rows" aria-label="Righe fattura">
+              <colgroup><col class="article-col" /><col class="description-col" /><col class="reference-col" /><col class="quantity-col" /><col class="price-col" /><col class="amount-col" /><col class="vat-col" /></colgroup>
+              <thead><tr><th>Articolo</th><th>Descrizione</th><th>Tela</th><th>Tot. Colpi/1.000</th><th>Tariffa</th><th>Importo</th><th>C.I.</th></tr></thead>
+              <tbody>
+                <tr class="protocol-row"><td></td><td><input aria-label="Protocollo / riferimento" placeholder="Protocollo / riferimento" [(ngModel)]="draft.protocol" /></td><td></td><td></td><td></td><td></td><td class="table-add-anchor">
+                </td></tr>
+                @for (row of pageRows; track $index; let local = $index) {
+                  <tr class="item-row" [class.manual-row]="!row.fabricId">
+                    <td><input [attr.aria-label]="'Articolo riga ' + (page * 13 + local + 1)" [(ngModel)]="row.article" /></td>
+                    <td><textarea rows="2" [attr.aria-label]="'Descrizione riga ' + (page * 13 + local + 1)" [(ngModel)]="row.description"></textarea></td>
+                    <td><input [attr.aria-label]="'Riferimento riga ' + (page * 13 + local + 1)" [(ngModel)]="row.reference" /></td>
+                    <td><input type="number" inputmode="decimal" min="0" step="any" (keydown)="numericKey($event)" (paste)="numericPaste($event)" [attr.aria-label]="'Quantità riga ' + (page * 13 + local + 1)" [(ngModel)]="row.quantity" /></td>
+                    <td><input type="number" inputmode="decimal" min="0" step="any" (keydown)="numericKey($event)" (paste)="numericPaste($event)" [attr.aria-label]="'Tariffa riga ' + (page * 13 + local + 1)" [(ngModel)]="row.price" /></td>
+                    <td><input type="number" inputmode="decimal" step="0.01" (keydown)="numericKey($event)" (paste)="numericPaste($event)" [attr.aria-label]="'Importo manuale riga ' + (page * 13 + local + 1)" [ngModel]="rowAmount(row)" (ngModelChange)="row.amount = $event" /></td>
+                    <td class="row-end"><input list="vat-codes" [attr.aria-label]="'Codice IVA riga ' + (page * 13 + local + 1)" [(ngModel)]="row.vatCode" /><button class="remove-row" type="button" (click)="removeRow(page * 13 + local)" [attr.aria-label]="'Elimina riga ' + (page * 13 + local + 1)">×</button>
+                    </td>
+                  </tr>
+                }
+                @for (blank of blankRows(pageRows.length); track blank) {
+                  <tr class="item-row blank-row" [attr.aria-hidden]="last && blank === 0 ? null : 'true'"><td></td><td></td><td></td><td></td><td></td><td></td><td class="table-add-anchor">
+                    @if (last && blank === 0) { <ng-container [ngTemplateOutlet]="addRowActions" /> }
+                  </td></tr>
+                }
+              </tbody>
+            </table>
+            @if (last) {
+              <table class="tax-table" aria-label="Riepilogo IVA">
+                <colgroup><col style="width:6%" /><col style="width:34%" /><col style="width:12%" /><col style="width:15%" /><col style="width:8%" /><col style="width:12%" /><col style="width:13%" /></colgroup>
+                <thead><tr><th>C.I.</th><th>Descrizione</th><th>Sp. / Bollo</th><th>Imponibile</th><th>Aliq. %</th><th>Imposta</th><th>Totale</th></tr></thead>
+                <tbody>
+                  <tr><td></td><td>Bollo</td><td></td><td><input aria-label="Bollo €" type="number" step="0.01" [(ngModel)]="draft.stamp" /></td><td></td><td></td><td>{{ (draft.stamp || 0).toFixed(2) }}</td></tr>
+                  @for (group of totals.taxes; track group.key) {
+                    <tr><td>{{ group.code }}</td><td><input [attr.aria-label]="'Descrizione IVA ' + group.key" [(ngModel)]="taxOverride(group.key).description" /></td><td></td>
+                      <td><input type="number" step="0.01" [attr.aria-label]="'Imponibile manuale ' + group.key" [placeholder]="group.taxable.toFixed(2)" [(ngModel)]="taxOverride(group.key).taxable" /></td>
+                      <td>{{ group.rate }}</td><td><input type="number" step="0.01" [attr.aria-label]="'Imposta manuale ' + group.key" [placeholder]="group.tax.toFixed(2)" [(ngModel)]="taxOverride(group.key).tax" /></td><td>{{ (group.taxable + group.tax).toFixed(2) }}</td></tr>
+                  }
+                </tbody>
+              </table>
+              <div class="document-bottom">
+                <label class="notes">Note<textarea aria-label="Note" rows="3" [(ngModel)]="draft.notes"></textarea></label>
+                <div class="totals" aria-label="Totali fattura">
+                  <div class="totals-top"><label>Tot. Imponibile<strong>{{ totals.taxable.toFixed(2) }}</strong></label><label>Tot. Imposta<strong>{{ totals.tax.toFixed(2) }}</strong></label><label>Totale Documento<strong aria-label="Totale documento €">{{ totals.total.toFixed(2) }}</strong></label></div>
+                  <div class="totals-bottom"><label>Acconto<input aria-label="Acconto €" type="number" step="0.01" [(ngModel)]="draft.advance" /></label><label class="payable">Totale Da Pagare<input aria-label="Totale da pagare manuale €" type="number" step="0.01" [placeholder]="totals.payable.toFixed(2)" [(ngModel)]="draft.payableOverride" /></label></div>
+                </div>
+              </div>
+              <div class="deadline"><label>Scadenza<input aria-label="Scadenza" type="date" [(ngModel)]="draft.dueDate" /></label><strong>{{ money(totals.payable) }}</strong></div>
+            } @else { <div class="continued">Segue a pagina {{ page + 2 }}</div> }
+          </article>
+        }
+      </div>
+      <datalist id="vat-codes"><option value="N1"></option><option value="N2.1"></option><option value="N2.2"></option><option value="N3.1"></option><option value="N3.2"></option><option value="N3.3"></option><option value="N3.4"></option><option value="N3.5"></option><option value="N3.6"></option><option value="N4"></option><option value="N5"></option><option value="N6.1"></option><option value="N6.2"></option><option value="N6.3"></option><option value="N6.4"></option><option value="N6.5"></option><option value="N6.6"></option><option value="N6.7"></option><option value="N6.8"></option><option value="N6.9"></option><option value="N7"></option></datalist>
+      @if (hasFabricRows) { <p class="quantity-reminder" role="note">Tot. Colpi/1.000: compila la quantità manualmente. Il calcolo automatico è ancora da configurare.</p> }
+      <div class="row-actions"><button type="button" (click)="resetCalculations()">Ripristina calcoli automatici</button></div>
+      <details class="vat-settings"><summary>Aliquote IVA delle righe</summary><div class="vat-settings-grid">
+        @for (row of draft.rows; track $index; let i = $index) { <label>IVA % · riga {{ i + 1 }}<input type="number" min="0" max="100" step="any" [attr.aria-label]="'Aliquota IVA riga ' + (i + 1)" [(ngModel)]="row.vatRate" /></label> }
+      </div></details>
+    </fieldset>
+    <div class="actions"><button type="button" (click)="preview()" [disabled]="busy">Anteprima PDF</button><button class="primary" type="button" (click)="save()" [disabled]="busy">{{ busy ? 'Salvataggio…' : 'Salva fattura e PDF' }}</button></div>
+  }
+</section>
+

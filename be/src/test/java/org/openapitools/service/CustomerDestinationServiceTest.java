@@ -112,4 +112,20 @@ class CustomerDestinationServiceTest {
         assertThat(service.save(entity).getDestinationIds()).isEmpty();
         verifyNoInteractions(destinations);
     }
+
+    @Test
+    void savesCountryAndAcceptsForeignPostcodesWithoutInventingItaly() {
+        CustomerEntity foreign = customer("Estero");
+        foreign.setCountry(" Regno Unito ");
+        foreign.setPostalCode("SW1A 1AA");
+        foreign.setProvinceCode("London");
+        CustomerEntity saved = service.save(foreign);
+        assertThat(saved.getCountry()).isEqualTo("REGNO UNITO");
+        assertThat(saved.getPostalCode()).isEqualTo("SW1A 1AA");
+        assertThat(saved.getProvinceCode()).isEqualTo("LONDON");
+        assertThat(service.save(customer("Senza paese")).getCountry()).isEmpty();
+        CustomerEntity italian = customer("Italiano");
+        italian.setCountry("it");
+        assertThat(service.save(italian).getCountry()).isEqualTo("ITALIA");
+    }
 }

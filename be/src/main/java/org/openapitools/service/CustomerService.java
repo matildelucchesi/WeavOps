@@ -94,6 +94,9 @@ public class CustomerService {
         if (!repository.existsById(id)) {
             return Optional.empty();
         }
+        if (entity.getCountry() == null) {
+            repository.findById(id).ifPresent(existing -> entity.setCountry(existing.getCountry()));
+        }
         validateCustomerData(entity);
         entity.setId(id);
         return Optional.of(repository.save(entity));
@@ -157,12 +160,27 @@ public class CustomerService {
         entity.setPostalCode(trimAddress(entity.getPostalCode()));
         entity.setProvinceCode(
                 trimAddress(entity.getProvinceCode()).toUpperCase(java.util.Locale.ROOT));
-        if (!entity.getPostalCode().isEmpty() && !entity.getPostalCode().matches("[0-9]{5}")) {
+        String country = trimAddress(entity.getCountry()).toUpperCase(java.util.Locale.ROOT);
+        if (java.util.Set.of("IT", "ITA", "ITALY").contains(country)) country = "ITALIA";
+        entity.setCountry(country);
+        if (country.length() > 100
+                || entity.getPostalCode().length() > 20
+                || entity.getProvinceCode().length() > 100) {
+            throw new DestinationValidationException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Indirizzo cliente troppo lungo.");
+        }
+        boolean italian = country.isEmpty() || country.equals("ITALIA");
+        if (italian
+                && !entity.getPostalCode().isEmpty()
+                && !entity.getPostalCode().matches("[0-9]{5}")) {
             throw new DestinationValidationException(
                     org.springframework.http.HttpStatus.BAD_REQUEST,
                     "Il CAP deve contenere 5 cifre.");
         }
-        if (!entity.getProvinceCode().isEmpty() && !entity.getProvinceCode().matches("[A-Z]{2}")) {
+        if (italian
+                && !entity.getProvinceCode().isEmpty()
+                && !entity.getProvinceCode().matches("[A-Z]{2}")) {
             throw new DestinationValidationException(
                     org.springframework.http.HttpStatus.BAD_REQUEST,
                     "La sigla provincia deve contenere 2 lettere.");

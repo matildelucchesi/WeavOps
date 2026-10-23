@@ -20,6 +20,7 @@ public class UserMapper {
         dto.setEmail(entity.getEmail());
         dto.setCompanyName(entity.getCompanyName());
         dto.setVatNumber(entity.getVatNumber());
+        dto.setFiscalCode(entity.getFiscalCode());
         return dto;
     }
 
@@ -37,6 +38,7 @@ public class UserMapper {
         entity.setEmail(dto.getEmail());
         entity.setCompanyName(dto.getCompanyName());
         entity.setVatNumber(dto.getVatNumber());
+        entity.setFiscalCode(dto.getFiscalCode());
         return entity;
     }
 }

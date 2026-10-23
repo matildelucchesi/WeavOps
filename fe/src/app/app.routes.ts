@@ -93,9 +93,19 @@ export const routes: Routes = [
         loadComponent: () => import('./features/pages/documents-page/delivery-notes-page').then(page => page.DeliveryNotesPage),
       },
       {
+        path: 'documenti/fatture/nuova',
+        data: {title: 'Nuova fattura', icon: 'receipt_long', editor: true},
+        loadComponent: () => import('./features/pages/documents-page/invoices-page').then(page => page.InvoicesPage),
+      },
+      {
+        path: 'documenti/fatture/:id/modifica',
+        data: {title: 'Modifica fattura', icon: 'receipt_long', editor: true},
+        loadComponent: () => import('./features/pages/documents-page/invoices-page').then(page => page.InvoicesPage),
+      },
+      {
         path: 'documenti/fatture',
         data: {title: 'Fatture', icon: 'receipt_long'},
-        loadComponent: () => import('./features/pages/documents-page/documents-page').then(page => page.DocumentsPage),
+        loadComponent: () => import('./features/pages/documents-page/invoices-page').then(page => page.InvoicesPage),
       },
       {
         path: 'aggiungi-cliente',

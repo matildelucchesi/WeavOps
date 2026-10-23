@@ -136,22 +136,26 @@
         </div>
         <h3 style="font-size: 17px;">Indirizzo cliente</h3>
         <div class="customer-address">
+            <div class="form-group"><label for="customer-country">Nazione</label>
+              <input id="customer-country" name="country" [ngModel]="country" (ngModelChange)="country = $event.toLocaleUpperCase('it')" maxlength="100" placeholder="Es. ITALIA" autocomplete="country-name" #countryModel="ngModel" [class.input-invalid]="shouldShowControlError(countryModel)">
+              @if (shouldShowControlError(countryModel)) { <mat-error class="validation-error">Inserire una nazione di massimo 100 caratteri.</mat-error> }
+            </div>
           <div class="form-group"><label for="customer-street">Via/piazza</label>
             <input id="customer-street" name="street" [ngModel]="street" (ngModelChange)="street = $event.toLocaleUpperCase('it')" style="text-transform: uppercase"  #streetModel="ngModel" [class.input-invalid]="shouldShowControlError(streetModel)">
           </div>
           <div class="form-group"><label for="customer-streetNumber">Numero civico</label>
             <input id="customer-streetNumber" name="streetNumber" [ngModel]="streetNumber" (ngModelChange)="streetNumber = $event.toLocaleUpperCase('it')" style="text-transform: uppercase" placeholder="Numero o SNC" #streetNumberModel="ngModel" [class.input-invalid]="shouldShowControlError(streetNumberModel)">
           </div>
-          <div class="form-group"><label for="customer-postalCode">CAP</label>
-            <input id="customer-postalCode" name="postalCode" [(ngModel)]="postalCode" pattern="([0-9]{5})?" maxlength="5" inputmode="numeric" #postalCodeModel="ngModel" [class.input-invalid]="shouldShowControlError(postalCodeModel)">
-            @if (shouldShowControlError(postalCodeModel)) { <mat-error class="validation-error">Inserire un CAP di 5 cifre.</mat-error> }
+          <div class="form-group"><label for="customer-postalCode">{{ usesItalianAddressRules ? 'CAP' : 'Codice postale' }}</label>
+            <input id="customer-postalCode" name="postalCode" [(ngModel)]="postalCode" [pattern]="usesItalianAddressRules ? '([0-9]{5})?' : '.*'" [maxlength]="usesItalianAddressRules ? 5 : 20" [attr.inputmode]="usesItalianAddressRules ? 'numeric' : 'text'" #postalCodeModel="ngModel" [class.input-invalid]="shouldShowControlError(postalCodeModel)">
+            @if (shouldShowControlError(postalCodeModel)) { <mat-error class="validation-error">{{ usesItalianAddressRules ? 'Inserire un CAP di 5 cifre.' : 'Inserire un codice postale di massimo 20 caratteri.' }}</mat-error> }
           </div>
           <div class="form-group"><label for="customer-city">Comune</label>
             <input id="customer-city" name="city" [ngModel]="city" (ngModelChange)="city = $event.toLocaleUpperCase('it')" style="text-transform: uppercase"  #cityModel="ngModel" [class.input-invalid]="shouldShowControlError(cityModel)">
           </div>
-          <div class="form-group"><label for="customer-provinceCode">Sigla provincia</label>
-            <input id="customer-provinceCode" name="provinceCode" [ngModel]="provinceCode" (ngModelChange)="provinceCode = $event.toUpperCase()" pattern="([A-Za-z]{2})?" maxlength="2" #provinceCodeModel="ngModel" [class.input-invalid]="shouldShowControlError(provinceCodeModel)">
-            @if (shouldShowControlError(provinceCodeModel)) { <mat-error class="validation-error">Inserire una provincia di 2 lettere.</mat-error> }
+          <div class="form-group"><label for="customer-provinceCode">{{ usesItalianAddressRules ? 'Sigla provincia' : 'Provincia / regione' }}</label>
+            <input id="customer-provinceCode" name="provinceCode" [ngModel]="provinceCode" (ngModelChange)="provinceCode = $event.toUpperCase()" [pattern]="usesItalianAddressRules ? '([A-Za-z]{2})?' : '.*'" [maxlength]="usesItalianAddressRules ? 2 : 100" #provinceCodeModel="ngModel" [class.input-invalid]="shouldShowControlError(provinceCodeModel)">
+            @if (shouldShowControlError(provinceCodeModel)) { <mat-error class="validation-error">{{ usesItalianAddressRules ? 'Inserire una provincia di 2 lettere.' : 'Inserire una provincia o regione di massimo 100 caratteri.' }}</mat-error> }
           </div>
         </div>
         <h3 style="font-size: 17px;">Referenti</h3>

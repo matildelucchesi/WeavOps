@@ -3277,16 +3277,20 @@ components:
           description: "Numero civico, inclusi suffissi o SNC."
           type: string
         postalCode:
-          description: "CAP italiano, conservato come stringa."
-          pattern: "^([0-9]{5})?$"
+          description: "Codice postale; cinque cifre per gli indirizzi italiani."
+          maxLength: 20
           type: string
         city:
           description: Comune del cliente.
           type: string
         provinceCode:
-          description: "Sigla provincia italiana, normalizzata in maiuscolo."
-          pattern: "^([A-Za-z]{2})?$"
+          description: "Provincia o regione; due lettere per gli indirizzi italiani."
+          maxLength: 100
           type: string
+        country:
+          type: string
+          maxLength: 100
+          description: Nazione del cliente; assente se non specificata.
       required:
       - email
       - name
@@ -3335,6 +3339,10 @@ components:
         email:
           format: email
           type: string
+        fiscalCode:
+          type: string
+          maxLength: 100
+          pattern: '[A-Za-z0-9]*'
       required:
       - password
       - username

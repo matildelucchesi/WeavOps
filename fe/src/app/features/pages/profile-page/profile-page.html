@@ -64,6 +64,7 @@
     <form class="profile-form" #companyForm="ngForm" (ngSubmit)="saveCompany()">
       <label><span>Nome azienda</span><input name="companyName" [(ngModel)]="company.name" required maxlength="200" autocomplete="organization" [disabled]="isSaving || isLoadingCompany"></label>
       <label><span>Partita IVA</span><input name="companyVatNumber" [(ngModel)]="company.vatNumber" required maxlength="100" pattern="[A-Za-z0-9]+" [disabled]="isSaving || isLoadingCompany"></label>
+      <label><span>Codice fiscale</span><input name="companyFiscalCode" [(ngModel)]="company.fiscalCode" maxlength="100" pattern="[A-Za-z0-9]*" [disabled]="isSaving || isLoadingCompany"></label>
       <div class="form-actions"><button class="primary-action" type="submit" [disabled]="isSaving || isLoadingCompany || !userId || companyForm.invalid">Salva modifiche</button></div>
     </form>
   </section>

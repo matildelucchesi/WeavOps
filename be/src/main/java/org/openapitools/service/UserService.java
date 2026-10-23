@@ -60,6 +60,9 @@ public class UserService {
                             if (entity.getVatNumber() == null) {
                                 entity.setVatNumber(existing.getVatNumber());
                             }
+                            if (entity.getFiscalCode() == null) {
+                                entity.setFiscalCode(existing.getFiscalCode());
+                            }
 
                             if (entity.getPassword() == null || entity.getPassword().isBlank()) {
                                 entity.setPassword(existing.getPassword());

@@ -37,6 +37,7 @@ public class CustomerMapper {
         dto.setPostalCode(entity.getPostalCode());
         dto.setCity(entity.getCity());
         dto.setProvinceCode(entity.getProvinceCode());
+        dto.setCountry(entity.getCountry());
         dto.setDestinationIds(
                 entity.getDestinationIds() == null
                         ? java.util.List.of()
@@ -67,6 +68,7 @@ public class CustomerMapper {
         entity.setPostalCode(dto.getPostalCode());
         entity.setCity(dto.getCity());
         entity.setProvinceCode(dto.getProvinceCode());
+        entity.setCountry(dto.getCountry());
         entity.setDestinationIds(
                 dto.getDestinationIds() == null
                         ? new java.util.ArrayList<>()
